@@ -18,6 +18,8 @@ A city-management game set in Memphis, Tennessee. You play the mayor. You handle
 | N | Skip to the end of the month |
 | B / C / V / L / H | Budget office / Council chamber / Whip count / Map layers / Guide |
 
+**Your mayor is a character.** Start by naming your mayor and choosing their look, up to 3 traits (at most one background, such as Former Police Officer or Community Organizer) and 22 skill points across six skills: Diplomacy, Stewardship, Intrigue, Public Safety, Learning and Charisma. No skill can start above 14. Skills shape council opinion, revenue, crime, school results, approval and how often your hooks leak. Like CK3, they grow with experience: from the work you do, from a monthly lifestyle focus, and from training. Click your portrait at the top left to see them.
+
 **The council are characters.** Each of the 13 members has a portrait, traits (Ambitious, Loyal, Frugal, Reformer, Ward Boss, Vengeful, Gregarious, Pragmatic, Stubborn), a home district and an opinion of you from −100 to +100. Click a member to see every reason behind that number. Reasons fade over time. You get 3 private meetings a month, and you can fund a $1M project in a member's district every 6 months, though Frugal members resent the pork.
 
 **Favors and hooks.** Members owe you favors when you grant their requests (blue pins in their home districts, often naming real poorly rated roads from the city's pavement data), fund their district projects, or quietly protect them. Your inspector general's confidential memos can give you a hook on a member. Before a vote, open the whip count (V) to see who's with you, who's leaning and who's against. You can call in a favor or use a hook to lock a vote. Hooks have a 30% chance to leak.
