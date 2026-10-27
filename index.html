@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="description" content="Govern Memphis on a real city map built from City of Memphis GIS data: handle issues at real places, write the budget, win 7 council votes.">
+<meta name="description" content="Govern Memphis on a real city map built from City of Memphis GIS data: handle issues at real places, win over 13 council members, write the budget.">
 <title>Bluff City Mayor</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -81,7 +81,7 @@ a{color:var(--amber)}
 .meter i{display:block;height:100%;background:var(--amber);width:50%}
 .stat.next b{font-family:var(--f-body);font-weight:600;font-size:14px;white-space:normal}
 
-.side{position:absolute;left:max(16px,env(safe-area-inset-left,0px));top:92px;width:272px;display:flex;flex-direction:column;gap:10px;z-index:4;max-height:calc(100% - 170px)}
+.side{position:absolute;left:max(16px,env(safe-area-inset-left,0px));top:92px;width:272px;display:flex;flex-direction:column;gap:10px;z-index:4;max-height:calc(100% - 172px)}
 .box{background:rgba(19,33,45,.93);border:1px solid var(--line);border-radius:6px;padding:10px 12px;display:flex;flex-direction:column;gap:7px;min-height:0}
 .box h3{margin:0 0 2px;font-family:var(--f-label);font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:var(--amber);font-weight:600;display:flex;justify-content:space-between;align-items:center}
 .box h3 button{background:none;border:0;color:var(--muted);cursor:pointer;font-size:12px;font-family:var(--f-label);letter-spacing:.1em}
@@ -113,7 +113,7 @@ a{color:var(--amber)}
 .zoomctl button{width:36px;height:36px;background:rgba(19,33,45,.93);border:1px solid var(--line);border-radius:5px;cursor:pointer;font-family:var(--f-mono);font-size:17px}
 .zoomctl button:hover{border-color:var(--amber)}
 .status{position:absolute;left:50%;transform:translateX(-50%);bottom:calc(18px + env(safe-area-inset-bottom,0px));background:rgba(13,24,34,.92);border:1px solid var(--line);border-radius:14px;padding:4px 12px;font-family:var(--f-mono);font-size:12px;color:var(--muted);z-index:4;white-space:nowrap}
-.credit{position:absolute;left:max(16px,env(safe-area-inset-left,0px));bottom:calc(6px + env(safe-area-inset-bottom,0px));font-size:10.5px;color:rgba(156,170,180,.7);z-index:3;pointer-events:none}
+.credit{position:absolute;left:max(16px,env(safe-area-inset-left,0px));bottom:calc(4px + env(safe-area-inset-bottom,0px));font-size:10.5px;color:rgba(156,170,180,.7);z-index:3;pointer-events:none}
 .toast{position:absolute;left:50%;top:92px;transform:translateX(-50%);background:var(--panel);border:1px solid var(--line);border-left:3px solid var(--amber);padding:8px 14px;border-radius:4px;font-size:14px;max-width:min(520px,calc(100% - 32px));opacity:0;transition:opacity .25s;pointer-events:none;z-index:8}
 .toast.show{opacity:1}
 .tip{position:absolute;z-index:7;pointer-events:none;background:rgba(13,24,34,.95);border:1px solid var(--line);border-radius:4px;padding:5px 9px;font-size:13px;line-height:1.3;max-width:260px}
@@ -173,6 +173,44 @@ input[type=range]{width:150px;accent-color:var(--amber);vertical-align:middle}
 .vote{font-family:var(--f-mono);font-size:13px}
 .vote.yes{color:var(--good)} .vote.no{color:var(--bad)}
 
+/* Characters */
+button.seat{font:inherit;color:inherit;text-align:left;cursor:pointer}
+button.seat:hover{border-color:var(--amber)}
+.seatrow{display:grid;grid-template-columns:auto 1fr auto;gap:10px;align-items:center}
+.seatinfo{min-width:0;display:flex;flex-direction:column;gap:3px}
+.opn{font-family:var(--f-mono);font-size:18px;font-weight:500;font-variant-numeric:tabular-nums}
+.pt{display:block;border-radius:5px;flex:none}
+.traits{display:flex;flex-wrap:wrap;gap:4px}
+.trait{display:inline-flex;align-items:center;gap:4px;font-family:var(--f-label);font-weight:600;font-size:12.5px;letter-spacing:.03em;padding:1px 7px 1px 5px;border-radius:4px;border:1px solid var(--tc);color:var(--text);background:color-mix(in srgb,var(--tc) 18%,transparent);cursor:help}
+.trait.sm{padding:0 5px;font-size:11.5px}
+.char{display:grid;grid-template-columns:auto 1fr;gap:14px;align-items:start}
+.charinfo{display:flex;flex-direction:column;gap:7px;min-width:0}
+.opbig{font-family:var(--f-mono);font-size:34px;line-height:1;font-weight:500}
+.opbig small{display:block;font-family:var(--f-label);font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-top:4px}
+.opl{display:flex;flex-direction:column;gap:4px;font-size:13.5px}
+.opl div{display:flex;justify-content:space-between;gap:10px}
+.opl b{font-family:var(--f-mono);font-weight:500}
+.choice[disabled]{opacity:.5;cursor:not-allowed}
+.choice[disabled]:hover{border-color:var(--line)}
+.minis{display:flex;flex-wrap:wrap;gap:8px}
+.mini{display:flex;flex-direction:column;align-items:center;gap:3px;background:none;border:1px solid var(--line);border-radius:6px;padding:6px;cursor:pointer;width:88px;font-size:12px;line-height:1.2;text-align:center}
+.mini:hover{border-color:var(--amber)}
+.mini b{font-family:var(--f-mono);font-weight:500}
+/* Map modes */
+.modes{position:absolute;left:max(16px,env(safe-area-inset-left,0px));bottom:calc(24px + env(safe-area-inset-bottom,0px));display:flex;gap:6px;z-index:5;background:rgba(13,24,34,.9);border:1px solid var(--line);border-radius:7px;padding:5px}
+.modes button{width:40px;height:40px;border:1px solid transparent;background:var(--panel2);border-radius:5px;cursor:pointer;font-size:17px;position:relative;display:flex;align-items:center;justify-content:center}
+.modes button:hover{border-color:var(--muted)}
+.modes button.on{border-color:var(--amber);background:#2a2416;color:var(--amber)}
+.modes button kbd{position:absolute;right:2px;bottom:1px;font-family:var(--f-mono);font-size:9px;color:var(--muted)}
+.modename{font-family:var(--f-label);font-weight:600;font-size:13px;letter-spacing:.08em;text-transform:uppercase;color:var(--amber);align-self:center;padding:0 6px 0 4px;white-space:nowrap}
+.legend{overflow:auto;flex:0 1 auto}
+.legend .grad{height:10px;border-radius:3px}
+.legend .ticks{display:flex;justify-content:space-between;font-family:var(--f-mono);font-size:11px;color:var(--muted)}
+.legend .lrow{display:grid;grid-template-columns:12px 1fr auto;gap:8px;align-items:center;font-size:13px;cursor:pointer;background:none;border:0;padding:2px 0;text-align:left}
+.legend .lrow i{width:12px;height:12px;border-radius:3px}
+.legend .lrow b{font-family:var(--f-mono);font-weight:500;font-variant-numeric:tabular-nums}
+.legend p{margin:0;font-size:12px;color:var(--muted);line-height:1.4}
+
 /* Start */
 #start{position:absolute;inset:0;z-index:30;display:flex;align-items:center;padding-top:calc(16px + env(safe-area-inset-top,0px));padding-bottom:calc(16px + env(safe-area-inset-bottom,0px));padding-left:max(24px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));overflow:auto;background:linear-gradient(90deg,rgba(9,16,23,.95) 0%,rgba(9,16,23,.88) 40%,rgba(9,16,23,.1) 62%,rgba(9,16,23,0) 100%)}
 .startbox{max-width:600px;display:flex;flex-direction:column;gap:16px;margin-left:clamp(0px,4vw,60px)}
@@ -184,6 +222,8 @@ input[type=range]{width:150px;accent-color:var(--amber);vertical-align:middle}
 
 @media (max-width:860px){
   .side{display:none}
+  .modename{display:none}
+  .modes{bottom:calc(72px + env(safe-area-inset-bottom,0px))}
   .stat.next{display:none}
   .actions .btn kbd{display:none}
   .brand{font-size:16px}
@@ -208,17 +248,17 @@ input[type=range]{width:150px;accent-color:var(--amber);vertical-align:middle}
   <aside class="side">
     <div class="box" id="metrics" aria-label="City indicators"></div>
     <div class="box" style="min-height:0;flex:1 1 auto"><h3>On your desk <span id="deskN" class="pill"></span></h3><div class="desk" id="desk"></div></div>
+    <div class="box legend" id="legend" hidden></div>
   </aside>
+  <div class="modes" id="modes" role="toolbar" aria-label="Map modes"></div>
   <div class="zoomctl"><button data-act="zin" aria-label="Zoom in">+</button><button data-act="zout" aria-label="Zoom out">−</button><button data-act="home" aria-label="Show whole city" title="Whole city">⌂</button></div>
   <div class="box layers" id="layers" hidden>
     <h3>Map layers</h3>
-    <label><input type="checkbox" id="lyCouncil"> Council districts 1–7</label>
     <label><input type="checkbox" id="lySuper"> Super Districts 8 & 9</label>
-    <label><input type="checkbox" id="lyPrecinct"> MPD precincts</label>
     <label><input type="checkbox" id="lyBld" checked> Buildings</label>
     <label><input type="checkbox" id="lyLabels" checked> Landmark labels</label>
     <label><input type="checkbox" id="lyEdge" checked> Scroll at screen edges</label>
-    <p class="note">Boundaries are the City of Memphis's official GIS layers. Click a district to see who represents it.</p>
+    <p class="note">Map modes (bottom left, keys 1–5) switch between the city, the political map, council opinion, street condition and police precincts.</p>
   </div>
   <nav class="actions">
     <button class="btn" data-act="layers" id="bLayers">Layers <kbd>L</kbd></button>
@@ -334,21 +374,70 @@ const POLICIES={
  air:{name:'Independent air monitoring',cost:0.5,where:'xai'},
 };
 const COUNCIL=[
- {seat:'District 1',d:1,name:'Kendra Mosby',prio:['safety','blight']},
- {seat:'District 2',d:2,name:'Grant Ellison',prio:['fiscal','streets']},
- {seat:'District 3',d:3,name:'Darnell Whitfield',prio:['streets','jobs']},
- {seat:'District 4',d:4,name:'Angela Rucker',prio:['education','safety']},
- {seat:'District 5',d:5,name:'Morgan Pryor',prio:['transit','oversight']},
- {seat:'District 6',d:6,name:'Leonard Gaines',prio:['blight','labor']},
- {seat:'District 7',d:7,name:'Tasha Bell',prio:['education','oversight']},
- {seat:'Super District 8 · Pos. 1',d:8,name:'Marcus Holloway',prio:['labor','transit']},
- {seat:'Super District 8 · Pos. 2',d:8,name:'Denise Carter',prio:['education','blight']},
- {seat:'Super District 8 · Pos. 3',d:8,name:'Raymond Oakes',prio:['safety','jobs']},
- {seat:'Super District 9 · Pos. 1',d:9,name:'Collin Brandt',prio:['fiscal','safety']},
- {seat:'Super District 9 · Pos. 2',d:9,name:'Heather Lund',prio:['fiscal','streets']},
- {seat:'Super District 9 · Pos. 3',d:9,name:'Victor Sims',prio:['jobs','fiscal']},
+ {seat:'District 1',d:1,name:'Kendra Mosby',g:'f',age:48,traits:['wardboss','gregarious'],prio:['safety','blight']},
+ {seat:'District 2',d:2,name:'Grant Ellison',g:'m',age:61,traits:['frugal','stubborn'],prio:['fiscal','streets']},
+ {seat:'District 3',d:3,name:'Darnell Whitfield',g:'m',age:44,traits:['ambitious','wardboss'],prio:['streets','jobs']},
+ {seat:'District 4',d:4,name:'Angela Rucker',g:'f',age:52,traits:['loyal','pragmatic'],prio:['education','safety']},
+ {seat:'District 5',d:5,name:'Morgan Pryor',g:'f',age:39,traits:['reformer','ambitious'],prio:['transit','oversight']},
+ {seat:'District 6',d:6,name:'Leonard Gaines',g:'m',age:66,traits:['vengeful','wardboss'],prio:['blight','labor']},
+ {seat:'District 7',d:7,name:'Tasha Bell',g:'f',age:41,traits:['reformer','gregarious'],prio:['education','oversight']},
+ {seat:'Super District 8 · Pos. 1',d:8,name:'Marcus Holloway',g:'m',age:57,traits:['loyal','gregarious'],prio:['labor','transit']},
+ {seat:'Super District 8 · Pos. 2',d:8,name:'Denise Carter',g:'f',age:50,traits:['pragmatic','stubborn'],prio:['education','blight']},
+ {seat:'Super District 8 · Pos. 3',d:8,name:'Raymond Oakes',g:'m',age:63,traits:['stubborn','vengeful'],prio:['safety','jobs']},
+ {seat:'Super District 9 · Pos. 1',d:9,name:'Collin Brandt',g:'m',age:46,traits:['ambitious','frugal'],prio:['fiscal','safety']},
+ {seat:'Super District 9 · Pos. 2',d:9,name:'Heather Lund',g:'f',age:55,traits:['frugal','pragmatic'],prio:['fiscal','streets']},
+ {seat:'Super District 9 · Pos. 3',d:9,name:'Victor Sims',g:'m',age:59,traits:['gregarious','pragmatic'],prio:['jobs','fiscal']},
 ];
 const PRIO_LABEL={safety:'Public safety',fiscal:'Fiscal restraint',streets:'Streets',education:'Education',transit:'Transit',blight:'Blight',labor:'City workers',jobs:'Jobs',oversight:'Police oversight'};
+const TRAITS={
+ ambitious:{n:'Ambitious',c:'#e8644f',ic:'▲',base:-10,d:'Wants your job. −10 opinion of you, and may run against you in the 2027 election.'},
+ loyal:{n:'Loyal',c:'#5cc28d',ic:'♥',base:10,d:'Sticks with allies. +10 opinion, and bad news from you hurts 40% less.'},
+ frugal:{n:'Frugal',c:'#e6c547',ic:'$',base:0,d:'Counts every dollar. Weighs deficits and tax increases heavily, whatever else they care about.'},
+ reformer:{n:'Reformer',c:'#b98ee6',ic:'⚖',base:0,d:'Pushes for police accountability and open government. Rewards oversight moves.'},
+ wardboss:{n:'Ward Boss',c:'#f2a93b',ic:'⌂',base:0,d:'All politics is local. Twice the opinion from what you do in their home district.'},
+ vengeful:{n:'Vengeful',c:'#c9473a',ic:'✕',base:-5,d:'Never forgets. Grudges against you fade half as fast.'},
+ gregarious:{n:'Gregarious',c:'#5aa7d8',ic:'☺',base:5,d:'Loves face time. Private meetings earn 50% more opinion.'},
+ pragmatic:{n:'Pragmatic',c:'#9caab4',ic:'≈',base:3,d:'Cares about results, not ideology. Swings over their priorities count 30% less.'},
+ stubborn:{n:'Stubborn',c:'#8a6524',ic:'■',base:-3,d:'Hard to move. Your lobbying on votes counts 40% less.'},
+};
+const has=(m,t)=>(m.traits||[]).includes(t);
+function initMember(c,k){const m={...c,mods:[{t:'First impressions',v:Math.round((hash(k,9)-.5)*16),perm:true}],met:-1,funded:-99,op:50,opinion:0};return m}
+function weights(m){const w={};m.prio.forEach((p,k)=>w[p]=k?0.7:1);if(has(m,'frugal'))w.fiscal=(w.fiscal||0)+0.8;if(has(m,'reformer'))w.oversight=(w.oversight||0)+0.6;
+  if(has(m,'pragmatic'))for(const k in w)w[k]*=0.7;return w}
+function addMod(m,t,v,perm){v=Math.round(v*10)/10;if(!v)return;if(v<0&&has(m,'loyal'))v*=0.6;const e=m.mods.find(x=>x.t===t);if(e)e.v+=v;else m.mods.push({t,v,perm:!!perm});
+  if(m.mods.length>14){m.mods.sort((a,b)=>(b.perm-a.perm)||Math.abs(b.v)-Math.abs(a.v));m.mods.length=14}}
+function decayMods(m){m.mods.forEach(x=>{if(x.perm)return;const f=x.v<0&&has(m,'vengeful')?0.95:0.9;x.v*=f});m.mods=m.mods.filter(x=>x.perm||Math.abs(x.v)>=1)}
+function traitBase(m){return(m.traits||[]).reduce((a,t)=>a+(TRAITS[t]?TRAITS[t].base:0),0)}
+function approvalMod(){return Math.round((S.approval-50)*0.6)}
+function opinionParts(m){const parts=[];(m.traits||[]).forEach(t=>{if(TRAITS[t].base)parts.push({t:TRAITS[t].n+' (trait)',v:TRAITS[t].base})});
+  const a=approvalMod();if(a)parts.push({t:`Your approval rating (${Math.round(S.approval)}%)`,v:a});
+  m.mods.forEach(x=>{const v=Math.round(x.v);if(v)parts.push({t:x.t,v})});return parts.sort((a,b)=>Math.abs(b.v)-Math.abs(a.v))}
+function recompute(m){const o=opinionParts(m).reduce((a,x)=>a+x.v,0);m.opinion=clamp(Math.round(o),-100,100);m.op=50+m.opinion/2}
+function recomputeAll(s){(s||S).council.forEach(recompute)}
+function fmtOp(o){return(o>0?'+':o<0?'−':'')+Math.abs(o)}
+function opColor(o){const st=[[-60,[192,57,43]],[-20,[232,100,79]],[0,[140,146,152]],[20,[127,191,106]],[60,[46,158,91]]];o=clamp(o,-60,60);
+  for(let i=0;i<st.length-1;i++){const[a,ca]=st[i],[b,cb]=st[i+1];if(o<=b){const t=(o-a)/(b-a);return'#'+ca.map((v,j)=>Math.round(v+(cb[j]-v)*t).toString(16).padStart(2,'0')).join('')}}return'#2e9e5b'}
+function homeOf(m){return m.home||m.d}
+// Procedural CK3-style portrait (fictional people).
+function portrait(m,w){const h=Math.round(w*1.25),r=k=>hash(m.name.length*31+k,m.name.charCodeAt(0)*7+m.name.charCodeAt(1));
+  const skins=['#5a3825','#6b4226','#8d5524','#a8693f','#c68642','#e0ac69','#f1c27d','#ffdbac'],skin=skins[Math.floor(r(1)*skins.length)];
+  const gray=m.age>=58&&r(2)<.7;const hairs=['#17110d','#2c1d13','#3d281a','#5a3d26','#8a6440'];const hair=gray?(r(3)<.5?'#b9b4ab':'#8e8a84'):hairs[Math.floor(r(4)*hairs.length)];
+  const suits=['#1f2c45','#2b2f36','#4a2530','#22382e','#3a3048'],suit=suits[Math.floor(r(5)*suits.length)];const glasses=r(6)<.4;
+  const frame=DCOL[homeOf(m)]||'#c9a15a';const f=m.g==='f';const style=Math.floor(r(7)*3);
+  let hairBack='',hairFront='';
+  if(f){hairBack=style===0?`<path d="M28 44 Q28 18 50 17 Q72 18 72 44 L74 78 Q62 72 60 60 L40 60 Q38 72 26 78 Z" fill="${hair}"/>`:style===1?`<circle cx="50" cy="16" r="9" fill="${hair}"/><path d="M30 42 Q30 20 50 20 Q70 20 70 42 Z" fill="${hair}"/>`:`<path d="M27 46 Q24 16 50 15 Q76 16 73 46 Q74 56 68 58 L66 40 L34 40 L32 58 Q26 56 27 46Z" fill="${hair}"/>`;
+    hairFront=style===2?'':`<path d="M33 37 Q38 24 52 25 Q64 26 67 38 Q58 30 46 32 Q38 33 33 37Z" fill="${hair}"/>`}
+  else{hairFront=style===0?`<path d="M32 40 Q31 22 50 21 Q69 22 68 40 Q66 30 50 29 Q34 30 32 40Z" fill="${hair}"/>`:style===1?`<path d="M33 36 Q36 24 50 24 Q64 24 67 36 Q60 31 50 31 Q40 31 33 36Z" fill="${hair}"/>`:`<path d="M32 42 Q30 20 50 20 Q70 20 68 42 L66 34 Q50 28 34 34Z" fill="${hair}"/>`}
+  const neck=f?`<path d="M42 60 L58 60 L60 72 L40 72Z" fill="${skin}"/>`:`<path d="M41 60 L59 60 L61 74 L39 74Z" fill="${skin}"/>`;
+  const body=`<path d="M8 125 Q10 82 38 74 L50 84 L62 74 Q90 82 92 125Z" fill="${suit}"/>`+(f?`<path d="M38 74 L50 92 L62 74 L58 72 L50 84 L42 72Z" fill="#e9e4da"/>`:`<path d="M40 73 L50 86 L60 73 L56 71 L50 80 L44 71Z" fill="#ecebe7"/><path d="M48.5 80 L51.5 80 L53 100 L50 104 L47 100Z" fill="${['#8c2f2f','#2f4f8c','#7a6a2a','#3f6b4f'][Math.floor(r(8)*4)]}"/>`);
+  const face=`<ellipse cx="50" cy="44" rx="16" ry="19" fill="${skin}"/><ellipse cx="34" cy="46" rx="3" ry="5" fill="${skin}"/><ellipse cx="66" cy="46" rx="3" ry="5" fill="${skin}"/>
+   <ellipse cx="44" cy="45" rx="1.9" ry="2.2" fill="#1a1410"/><ellipse cx="56" cy="45" rx="1.9" ry="2.2" fill="#1a1410"/>
+   <path d="M40 40 Q44 38 47 40" stroke="${gray?'#7d776f':'#1a1410'}" stroke-width="1.4" fill="none"/><path d="M53 40 Q56 38 60 40" stroke="${gray?'#7d776f':'#1a1410'}" stroke-width="1.4" fill="none"/>
+   <path d="M50 46 Q48.5 51 50.5 52" stroke="rgba(0,0,0,.25)" stroke-width="1.2" fill="none"/><path d="M44.5 55.5 Q50 ${58+r(9)*2} 55.5 55.5" stroke="#5a2e26" stroke-width="1.5" fill="none" stroke-linecap="round"/>`+
+   (glasses?`<g stroke="#20201f" stroke-width="1.2" fill="rgba(255,255,255,.08)"><rect x="38.5" y="41" width="10" height="7.5" rx="2.5"/><rect x="51.5" y="41" width="10" height="7.5" rx="2.5"/><path d="M48.5 44 L51.5 44"/></g>`:'')+
+   (!f&&r(10)<.35?`<path d="M42 57 Q50 64 58 57 Q57 62 50 63 Q43 62 42 57Z" fill="${hair}" opacity=".85"/>`:'');
+  return`<svg width="${w}" height="${h}" viewBox="0 0 100 125" role="img" aria-label="Portrait of ${m.name}" class="pt"><defs><radialGradient id="bg${m.name.length}${w}" cx="50%" cy="35%" r="70%"><stop offset="0" stop-color="#2a3c4c"/><stop offset="1" stop-color="#101a23"/></radialGradient></defs>
+   <rect width="100" height="125" fill="url(#bg${m.name.length}${w})"/>${hairBack}${neck}${body}${face}${hairFront}<rect x="1.5" y="1.5" width="97" height="122" rx="4" fill="none" stroke="${frame}" stroke-width="3"/></svg>`}
 const MONTHS=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
 const MONTHS_L=['January','February','March','April','May','June','July','August','September','October','November','December'];
 
@@ -542,7 +631,7 @@ function newState(){
   return{y:2026,m:10,enacted,ratio,taxRate:3.39,raise:2,raiseCost:0,fyIndex:0,
     reserve:96,policies:{},met:{officers:1917,crime:88,reading:25.7,streets:46,blight:60,transit:40,jobs:55},
     approval:52,mood:0,jobsBoost:0,revBoost:0,county:35,eduBoost:0,
-    council:COUNCIL.map((c,k)=>({...c,op:52+Math.round((hash(k,9)-.5)*14)})),
+    council:COUNCIL.map((c,k)=>initMember(c,k)),slots:3,mode:'real',
     events:[],used:{},stage:'none',draft:null,proposal:null,pending:null,term:1,over:false,
     layers:{council:false,superd:false,precinct:false,bld:true,labels:true,edge:true},started:false}
 }
@@ -558,11 +647,11 @@ function annualRevenue(s){return revenueFor(s,s.fyIndex,s.taxRate)}
 function safetyScore(s){return clamp(50+(100-s.met.crime)*1.5,0,100)}
 
 // ======================= COUNCIL MATH =======================
-function applyCouncil(s,cfx){if(!cfx)return;
-  s.council.forEach(m=>{let d=cfx.all||0;m.prio.forEach((p,k)=>{if(cfx[p])d+=cfx[p]*(k?0.7:1)});m.op=clamp(m.op+d,5,95)})}
-function leanFor(m,lean){let d=0;m.prio.forEach((p,k)=>{if(lean[p])d+=lean[p]*(k?0.7:1)});return d}
-function favorable(s){return s.council.filter(m=>m.op>=50).length}
-function rollVote(s,lean,threshold=45){return s.council.map(m=>({m,yes:m.op+leanFor(m,lean)+rnd(-5,5)>=threshold}))}
+function applyCouncil(s,cfx,label){if(!cfx)return;
+  s.council.forEach(m=>{let d=cfx.all||0;const w=weights(m);for(const p in w)if(cfx[p])d+=cfx[p]*w[p];if(Math.abs(d)>=0.25)addMod(m,label||'Recent decisions',d*2)});recomputeAll(s)}
+function leanFor(m,lean){let d=0;const w=weights(m);for(const p in w)if(lean[p])d+=lean[p]*w[p];return has(m,'stubborn')?d*0.6:d}
+function favorable(s){recomputeAll(s);return s.council.filter(m=>m.opinion>=0).length}
+function rollVote(s,lean,threshold=45){recomputeAll(s);return s.council.map(m=>({m,yes:m.op+leanFor(m,lean)+rnd(-5,5)>=threshold}))}
 function maintFor(s){const o={};DIVS.forEach(d=>o[d.id]=+(s.enacted[d.id]*(1+d.growth)).toFixed(1));return o}
 function budgetCalc(s,p){
   const maint=p.maint;const spend=DIVS.reduce((a,d)=>a+p.divs[d.id],0)+p.raise*5+policyCost(s);
@@ -576,14 +665,14 @@ function budgetCalc(s,p){
 }
 function budgetScore(s,m,p,c){
   let sc=m.op;
-  m.prio.forEach((pr,k)=>{const w=k?0.7:1;
+  Object.entries(weights(m)).forEach(([pr,w])=>{
     if(pr==='fiscal'){sc+=w*((c.gap<0?c.gap*0.45:c.gap*0.15)-Math.max(0,(p.tax-3.39)*100)*2.2+Math.max(0,(3.39-p.tax)*100)*1.2)}
     else sc+=w*clamp(c.align[pr]||0,-12,12)*1.8});
   sc-=Math.max(0,(p.tax-3.39)*100)*0.35;
   if(c.reservePct<9)sc-=4;if(c.reservePct<6)sc-=10;
   return sc+8;
 }
-function whip(s,p){const c=budgetCalc(s,p);return s.council.filter(m=>budgetScore(s,m,p,c)>=50).length}
+function whip(s,p){recomputeAll(s);const c=budgetCalc(s,p);return s.council.filter(m=>budgetScore(s,m,p,c)>=50).length}
 
 // ======================= SIM =======================
 function snapshotMet(s){return{...s.met,approval:s.approval,reserve:s.reserve}}
@@ -605,14 +694,14 @@ function monthlySim(s){
   const target=0.30*safetyScore(s)+0.15*M.streets+0.15*(100-M.blight)+0.10*M.transit+0.10*M.jobs+0.10*(M.reading*2)+5-tax+s.mood;
   s.approval=clamp(s.approval+(target-s.approval)*0.22+rnd(-.5,.5),5,95);
   s.mood*=0.85;
-  s.council.forEach(m=>m.op=clamp(m.op+(s.approval-50)*0.03,5,95));
+  s.council.forEach(decayMods);s.slots=3;recomputeAll(s);
 }
 function readingUpdate(s){const r=id=>s.ratio[id]||1,P=s.policies;
   const d=0.8+(r('lib')-1)*10+(P.tutors?1.2:0)+(P.libHours?0.6:0)+(P.mploy?0.3:0)+s.county/100*1.2+s.eduBoost+rnd(-0.4,0.4);
   s.eduBoost=0;const before=s.met.reading;s.met.reading=clamp(s.met.reading+d,10,60);return{before,after:s.met.reading}}
 
 // ======================= GEO HELPERS =======================
-let GEO={council:[],superd:[],precincts:[]}; // decoded polygons with attrs
+let GEO={council:[],superd:[],precincts:[]};const PAVE={}; // decoded polygons with attrs
 function pip(pt,ring){let c=false;for(let i=0,j=ring.length-1;i<ring.length;j=i++){const[xi,yi]=ring[i],[xj,yj]=ring[j];if(((yi>pt[1])!==(yj>pt[1]))&&(pt[0]<(xj-xi)*(pt[1]-yi)/(yj-yi)+xi))c=!c}return c}
 function inPoly(pt,parts){let c=false;for(const r of parts)if(pip(pt,r))c=!c;return c}
 function districtAt(lon,lat){for(const f of GEO.council)if(inPoly([lon,lat],f.parts))return f.v;return null}
@@ -651,24 +740,24 @@ function describe(c){const out=[];if(c.cost)out.push(`${fmtM(-c.cost)} reserves`
 function resolve(ev,ci){
   const def=evDef(ev);let msg='';
   if(ev.kind==='ordinance'){
-    if(ci===0){applyFx(S,def.sign.fx);applyCouncil(S,def.sign.council);msg=`You signed "${def.title}" into law.`}
+    if(ci===0){applyFx(S,def.sign.fx);applyCouncil(S,def.sign.council,`Signed: ${def.title}`);msg=`You signed "${def.title}" into law.`}
     else{const yesVoters=S.council.filter((m,k)=>ev.votes[k]);let stay=0;yesVoters.forEach(m=>{if(!(m.op>68&&Math.random()<.4))stay++});
-      if(stay>=7){applyCouncil(S,{all:-1});yesVoters.forEach(m=>m.op=clamp(m.op-3,5,95));S.mood-=1;msg=`You vetoed "${def.title}". The council overrode you ${stay}–${13-stay}; under the charter a simple majority of 7 is enough.`}
-      else{applyFx(S,def.veto.fx);applyCouncil(S,def.veto.council);msg=`You vetoed "${def.title}". The override failed with ${stay} votes; it needed 7.`}}
+      if(stay>=7){applyCouncil(S,{all:-1},'Vetoes the council');yesVoters.forEach(m=>addMod(m,`Vetoed their ordinance: ${def.title}`,-8));S.mood-=1;msg=`You vetoed "${def.title}". The council overrode you ${stay}–${13-stay}; under the charter a simple majority of 7 is enough.`}
+      else{applyFx(S,def.veto.fx);applyCouncil(S,def.veto.council,`Vetoed: ${def.title}`);S.council.filter((m,k)=>ev.votes[k]).forEach(m=>addMod(m,`Vetoed their ordinance: ${def.title}`,-6));msg=`You vetoed "${def.title}". The override failed with ${stay} votes; it needed 7.`}}
   }else{
     const c=def.choices[ci];
-    if(c.cost)S.reserve-=c.cost;if(c.policy)S.policies[c.policy]=true;applyFx(S,c.fx);applyCouncil(S,c.council);
+    if(c.cost)S.reserve-=c.cost;if(c.policy)S.policies[c.policy]=true;applyFx(S,c.fx);applyCouncil(S,c.council,def.title);
     if(c.vote){const res=rollVote(S,c.vote.lean,50);const yes=res.filter(r=>r.yes).length;const pass=yes>=7;
       applyFx(S,(pass?c.vote.pass:c.vote.fail).fx);msg=`Council ${pass?'confirmed':'rejected'} your nominee ${yes}–${13-yes}.`}
     else msg=def.id==='briefing'?'Amber pins on the map mark places that need you. Click one.':`Decision made: ${c.label}.`;
     // the district member notices when you show up for their district
-    const pl=placeOf(def.at);const d=districtAt(pl.lon,pl.lat);if(d){const m=memberFor(d);if(m)m.op=clamp(m.op+2,5,95)}
+    showedUp(def.at);
   }
   S.events=S.events.filter(e=>e!==ev);save();toast(msg);refreshHUD();return msg}
 function expire(s,report){const now=s.y*12+s.m;
   s.events=s.events.filter(ev=>{if(ev.kind==='budget'||ev.id==='briefing')return true;if(now-ev.born<ev.expires)return true;
     const def=evDef(ev);if(ev.kind==='ordinance'){applyFx(s,def.sign.fx);report.push(`"${def.title}" became law without your signature.`)}
-    else{const ig=def.ignore||{};applyFx(s,ig.fx);applyCouncil(s,ig.council);report.push(`Unanswered: ${def.title}. People noticed.`)}
+    else{const ig=def.ignore||{};applyFx(s,ig.fx);applyCouncil(s,ig.council,`Ignored: ${def.title}`);report.push(`Unanswered: ${def.title}. People noticed.`)}
     return false})}
 
 // ======================= CALENDAR =======================
@@ -699,7 +788,7 @@ function enact(s,p){DIVS.forEach(d=>{s.enacted[d.id]=p.divs[d.id];s.ratio[d.id]=
 const $=id=>document.getElementById(id);
 let prevMet=null;
 function refreshHUD(){
-  if(!S)return;
+  if(!S)return;recomputeAll(S);if(S.council.some(m=>m.d>7&&!m.home))assignHomes();
   $('hDate').textContent=`${MONTHS[S.m-1]} ${S.y}`;$('hFY').textContent=`FY${fyOf(S)} · term ${S.term}`;
   $('hRes').textContent=fmtM(S.reserve);const pct=S.reserve/annualSpend(S)*100;$('hResPct').textContent=`${pct.toFixed(1)}% of budget${pct<10?' · below 10%':''}`;$('hResPct').style.color=pct<10?'var(--bad)':'';
   $('hApp').textContent=Math.round(S.approval)+'%';$('hAppBar').style.width=S.approval+'%';$('hAppBar').style.background=S.approval>=50?'var(--good)':S.approval>=40?'var(--warn)':'var(--bad)';
@@ -849,7 +938,7 @@ function renderBudgetEditor(){const p=S.draft,c=budgetCalc(S,p),w=whip(S,p);
    <div class="row"><button class="btn primary" data-act="submitBudget">Submit to the council</button><button class="btn" data-act="resetBudget">Reset to cost-to-continue</button><button class="btn" data-act="close">Keep drafting later</button></div>
    <p class="note">Revenue model: each 1¢ of property tax ≈ $1.5M (game estimate). The council's own reaction to your choices decides the June vote; the whip count is your staff's best guess.</p>`,true);
 }
-function budgetVote(next){const p=S.proposal,c=budgetCalc(S,p);
+function budgetVote(next){recomputeAll(S);const p=S.proposal,c=budgetCalc(S,p);
   const res=S.council.map(m=>({m,yes:budgetScore(S,m,p,c)+rnd(-4,4)>=50}));const yes=res.filter(r=>r.yes).length;
   const list=res.map(r=>`<div class="seat"><div class="sn">${r.m.seat}</div><div class="nm">${r.m.name}</div><div class="vote ${r.yes?'yes':'no'}">${r.yes?'YES':'NO'}</div></div>`).join('');
   if(yes>=7){S.pending=p;S.stage='adopted';S.mood+=1;
@@ -865,28 +954,50 @@ function amend(s,p){const am={divs:{...p.divs},maint:p.maint,tax:Math.min(p.tax,
     const f=Math.max(0.85,1+c.gap/tot);cut.forEach(d=>am.divs[d.id]=+(am.divs[d.id]*f).toFixed(1))}return am}
 
 // ---- Council ----
-function seatCard(m){return`<div class="seat"><div class="sn">${m.seat}</div><div class="nm">${m.name}</div>
-    <div class="row">${m.prio.map(p=>`<span class="pill">${PRIO_LABEL[p]}</span>`).join('')}</div>
-    <div class="opbar"><i style="width:${m.op}%;background:${m.op>=60?'var(--good)':m.op>=45?'var(--warn)':'var(--bad)'}"></i></div><div class="note">Relationship with you: ${Math.round(m.op)}/100</div></div>`}
+function traitChips(m,small){return(m.traits||[]).map(t=>`<span class="trait${small?' sm':''}" style="--tc:${TRAITS[t].c}" title="${TRAITS[t].n}: ${TRAITS[t].d}">${TRAITS[t].ic}${small?'':' '+TRAITS[t].n}</span>`).join('')}
+function seatCard(m){const i=S.council.indexOf(m);recompute(m);return`<button class="seat" data-char="${i}"><div class="seatrow">${portrait(m,52)}<div class="seatinfo"><div class="sn">${m.seat.replace('Super District','Super Dist.')}</div><div class="nm">${m.name}</div><div class="traits">${traitChips(m,true)}</div></div><div class="opn" style="color:${opColor(m.opinion)}" title="Opinion of you">${fmtOp(m.opinion)}</div></div></button>`}
+function miniCard(m){const i=S.council.indexOf(m);recompute(m);return`<button class="mini" data-char="${i}">${portrait(m,64)}<span>${m.name}</span><b style="color:${opColor(m.opinion)}">${fmtOp(m.opinion)}</b></button>`}
+function showedUp(at){const pl=placeOf(at);const d=districtAt(pl.lon,pl.lat);if(!d)return;S.council.forEach(m=>{if(homeOf(m)===d)addMod(m,`Showed up in District ${d}`,has(m,'wardboss')?8:4)});recomputeAll(S)}
+function assignHomes(){if(!S||!GEO.council.length)return;[8,9].forEach(sd=>{const ds=[1,2,3,4,5,6,7].filter(d=>superOfDistrict(d)===sd);if(!ds.length)return;
+  S.council.filter(m=>m.d===sd).forEach((m,k)=>{if(!m.home)m.home=ds[k%ds.length]})})}
+function openCharacter(i){const m=S.council[i];if(!m)return;recompute(m);const now=S.y*12+S.m;const hd=homeOf(m);const parts=opinionParts(m);
+  const canMeet=m.met!==now&&S.slots>0,canFund=now-m.funded>=6&&S.reserve>=1;
+  openPanel(m.seat,m.name,`
+   <div class="char"><div>${portrait(m,104)}</div><div class="charinfo">
+     <div class="opbig" style="color:${opColor(m.opinion)}">${fmtOp(m.opinion)}<small>Opinion of you</small></div>
+     <div class="note">Age ${m.age} · Lives in District ${hd}${m.d>7?` · elected from Super District ${m.d}`:''}</div>
+     <div class="traits">${traitChips(m)}</div></div></div>
+   <div class="facts"><h4>Why they feel this way</h4><div class="opl">${parts.length?parts.map(x=>`<div><span>${x.t}</span><b class="${x.v>0?'up':'down'}">${fmtOp(x.v)}</b></div>`).join(''):'<div><span>No strong feelings yet</span><b>0</b></div>'}</div></div>
+   <div class="facts"><h4>Cares about</h4><div class="row">${Object.entries(weights(m)).sort((a,b)=>b[1]-a[1]).map(([p])=>`<span class="pill">${PRIO_LABEL[p]}</span>`).join('')}</div>
+     <p class="note">Decisions that touch these move their opinion. ${m.d<=7?'They vote on everything, but care most about District '+m.d+'.':'They answer to half the city, but live in District '+hd+'.'}</p></div>
+   <div class="choices">
+    <button class="choice" data-act="meet" data-i="${i}" ${canMeet?'':'disabled'}><b>Meet privately</b><small>${m.met===now?'You already met this month':S.slots<=0?'No meetings left on your schedule this month':`Opinion +${has(m,'gregarious')?9:6} · uses 1 of ${S.slots} meetings left this month`}</small></button>
+    <button class="choice" data-act="fund" data-i="${i}" ${canFund?'':'disabled'}><b>Fund a project in District ${hd}</b><small>${now-m.funded<6?`Available again in ${6-(now-m.funded)} month${6-(now-m.funded)===1?'':'s'}`:S.reserve<1?'Not enough in reserves':`−$1.0M reserves · Opinion +${has(m,'wardboss')?30:18} · Frugal members see pork (−4)`}</small></button>
+    <button class="choice" data-act="godist" data-d="${hd}"><b>Go to District ${hd}</b><small>Fly the map to their home district</small></button>
+   </div>`,'char'+i)}
+function districtCenter(d){const f=GEO.council.find(x=>x.v===d);return f?polyCenter(f.parts):null}
 function openCouncil(){closePanel();
-  openModal('Memphis City Council · 13 seats','Council chamber',`
+  recomputeAll(S);
+  openModal(`Memphis City Council · ${favorable(S)} of 13 favorable · ${S.slots} meeting${S.slots===1?'':'s'} left this month`,'Council chamber',`
    <div class="facts"><h4>How power works</h4><ul>
     <li>7 members represent single districts (1–7). 6 more are elected three apiece from Super District 8 and Super District 9, so every resident votes for four council members.</li>
     <li>Council members serve four-year terms with a two-term limit and elect their own chair and vice chair.</li>
     <li>The council approves the budget, sets the property tax rate, and confirms the mayor's division directors and board appointees.</li>
     <li>The mayor can veto council actions; a simple majority, 7 of 13, overrides.</li></ul></div>
    <div class="seats">${S.council.map(seatCard).join('')}</div>
-   <div class="row"><button class="btn" data-act="showDistricts">Show districts on the map</button></div>
-   <p class="note">Members are fictional. Seats, district boundaries and powers are real.</p>`,true)}
+   <div class="row"><button class="btn" data-act="showDistricts">Council opinion map</button></div>
+   <p class="note">Click a member to see their traits, why they feel the way they do, and what you can do about it. Members are fictional; seats, district boundaries and powers are real.</p>`,true)}
 function openDistrict(d,isSuper){
   const ms=S.council.filter(m=>m.d===d);
   openPanel(isSuper?'Super District':'Council District',isSuper?`Super District ${d}`:`District ${d}`,
    `<p>${isSuper?`Three council members are elected at large from this half of the city. Every resident here votes for all three, plus their single-district member.`:`One council member represents this district. Residents here also vote for the three Super District ${superOfDistrict(d)||''} members.`}</p>
-   <div class="seats">${ms.map(seatCard).join('')}</div>
+   <div class="minis">${ms.map(miniCard).join('')}${isSuper?'':S.council.filter(m=>m.d>7&&homeOf(m)===d).map(miniCard).join('')}</div>
+   ${!isSuper&&S.council.some(m=>m.d>7&&homeOf(m)===d)?'<p class="note">Super District members who live here are shown after the district member.</p>':''}
+   ${!isSuper&&PAVE[d]?`<div class="facts"><h4>Pavement on city-tracked routes</h4><div class="opl"><div><span>Average condition (PCI, 0–100)</span><b>${PAVE[d].avg.toFixed(1)}</b></div><div><span>Lane-miles rated poor (PCI under 40)</span><b>${PAVE[d].poor.toFixed(1)}%</b></div><div><span>Citywide average</span><b>${PAVE.all.avg.toFixed(1)}</b></div></div><p class="note">City of Memphis GIS, Highways and Routes layer.</p></div>`:''}
    ${(()=>{const evs=S.events.map((e,i)=>[e,i]).filter(([e])=>{const pl=placeOf(evAt(e));return isSuper?superAt(pl.lon,pl.lat)===d:districtAt(pl.lon,pl.lat)===d});
      return evs.length?`<div class="facts"><h4>Open issues here</h4><ul>${evs.map(([e,i])=>`<li><a href="#" data-goev="${i}">${evTitle(e)}</a></li>`).join('')}</ul></div>`:'<p class="note">No open issues in this district right now.</p>'})()}
    <p class="note">Boundary from the City of Memphis's official council district layer.</p>`,'d'+d)}
-function superOfDistrict(d){const f=GEO.council.find(x=>x.v===d);if(!f)return null;const r=f.parts[0];let x=0,y=0;r.forEach(p=>{x+=p[0];y+=p[1]});return superAt(x/r.length,y/r.length)}
+function superOfDistrict(d){const f=GEO.council.find(x=>x.v===d);if(!f)return null;const c=polyCenter(f.parts);return superAt(c[0],c[1])}
 function openPrecinct(name){
   const evs=S.events.map((e,i)=>[e,i]).filter(([e])=>{const pl=placeOf(evAt(e));return precinctAt(pl.lon,pl.lat)===name});
   openPanel('MPD precinct',`${name} Precinct`,`<p>One of the Memphis Police Department's 9 patrol precincts. Citywide, MPD has ${Math.round(S.met.officers).toLocaleString()} sworn officers against about 2,500 authorized.</p>
@@ -897,18 +1008,20 @@ function openPolicies(){const ks=Object.keys(POLICIES);
   openPanel('Ongoing programs you control','Your initiatives',`<p>Mid-year, these are paid from the reserve fund. In April they go into the budget you send the council.</p>
    ${ks.map(k=>`<div class="row"><span class="pill ${S.policies[k]?'on':''}">${S.policies[k]?'Active':'Off'}</span><span style="flex:1;min-width:160px">${POLICIES[k].name} · ${fmtM(POLICIES[k].cost)}/yr</span>${S.policies[k]?`<button class="btn" data-act="toggle" data-k="${k}">End it</button>`:`<a href="#" data-go="${POLICIES[k].where}">Fund it at ${placeOf(POLICIES[k].where).name}</a>`}</div>`).join('')}`,'policies')}
 function election(next){
-  const share=clamp(20+S.approval*0.6+rnd(-4,4),10,80),rival=clamp(60-S.approval*0.5+rnd(-4,4),10,70);const won=share>rival;
+  recomputeAll(S);const amb=S.council.filter(m=>has(m,'ambitious')).sort((a,b)=>a.opinion-b.opinion)[0];
+  const share=clamp(20+S.approval*0.6+rnd(-4,4),10,80),rival=clamp(60-S.approval*0.5+(amb?Math.max(0,-amb.opinion)/8:0)+rnd(-4,4),10,70);const won=share>rival;
+  const rivalName=amb?`Councilmember ${amb.name} (${amb.seat})`:'your closest rival';
   const other=Math.max(0,100-share-rival);
-  if(won&&S.term===1){S.term=2;S.council.forEach((m,k)=>{if(hash(k,S.y)<.4)m.op=clamp(50+rnd(-10,10),5,95)});
-    openModal('City election · October 2027','You won a second term',`<p>You took ${share.toFixed(1)}% of the vote to ${rival.toFixed(1)}% for your closest rival, with ${other.toFixed(1)}% split among the rest of the field. Memphis elects its mayor by plurality, with no runoff since a 1991 federal court ruling.</p><p>Several council seats turned over. You can serve one more term; the next election is October 2031 and you are term-limited after it.</p><div class="row"><button class="btn primary" data-act="close">Start term two</button></div>`,false,next)}
+  if(won&&S.term===1){S.term=2;S.council.forEach((m,k)=>{if(hash(k,S.y)<.4){m.mods=[{t:'Newly elected',v:Math.round(rnd(-8,8)),perm:true}]}});recomputeAll(S);
+    openModal('City election · October 2027','You won a second term',`<p>You took ${share.toFixed(1)}% of the vote to ${rival.toFixed(1)}% for ${rivalName}, with ${other.toFixed(1)}% split among the rest of the field. Memphis elects its mayor by plurality, with no runoff since a 1991 federal court ruling.</p><p>Several council seats turned over. You can serve one more term; the next election is October 2031 and you are term-limited after it.</p><div class="row"><button class="btn primary" data-act="close">Start term two</button></div>`,false,next)}
   else{S.over=true;
-    openModal(`City election · October ${S.y}`,won?'Term-limited, with a win':'You lost the election',`<p>${won?`Your approval carried your side's agenda to a ${share.toFixed(1)}% win, but the charter limits a mayor to two terms. Your time in office is done.`:`You took ${share.toFixed(1)}% to ${rival.toFixed(1)}% for the winner.`}</p>${summary()}<div class="row"><button class="btn primary" data-act="newgame">Run again</button></div>`,false,next)}
+    openModal(`City election · October ${S.y}`,won?'Term-limited, with a win':'You lost the election',`<p>${won?`Your approval carried your side's agenda to a ${share.toFixed(1)}% win, but the charter limits a mayor to two terms. Your time in office is done.`:`You took ${share.toFixed(1)}% to ${rival.toFixed(1)}% for ${rivalName}, who wins the mayor's office.`}</p>${summary()}<div class="row"><button class="btn primary" data-act="newgame">Run again</button></div>`,false,next)}
   save()}
 function summary(){const M=S.met;return`<div class="facts"><h4>Your record</h4><ul><li>Approval: ${Math.round(S.approval)}%</li><li>Sworn officers: ${Math.round(M.officers).toLocaleString()} (started at 1,917)</li><li>Violent crime index: ${M.crime.toFixed(0)} (started at 88)</li><li>MSCS reading proficiency: ${M.reading.toFixed(1)}% (started at 25.7%)</li><li>Reserve fund: ${fmtM(S.reserve)} (started at $96.0M)</li><li>Property tax: $${S.taxRate.toFixed(2)} (started at $3.39)</li></ul></div>`}
 function showEnd(){openModal('Game over','Your time in office is over',`${summary()}<div class="row"><button class="btn primary" data-act="newgame">Run again</button></div>`)}
 function openHelp(){closePanel();openModal('How to play','Guide',`
-  <div class="facts"><h4>Controls</h4><ul><li>WASD or the arrow keys pan the map; hold Shift to pan faster. Moving the mouse to the edge of the screen scrolls too (turn it off under Layers). You can also drag.</li><li>Scroll or pinch to zoom toward the cursor. Zoomed out you get the political map, with each council district in its own color. Zoom in and the camera tilts down into the 3D city.</li><li>Click a landmark or amber pin to open it. Click a district or precinct when those layers are on.</li><li>N advances one month. B opens the budget, C the council, L the map layers.</li></ul></div>
-  <div class="facts"><h4>The year</h4><ul><li>Fiscal year runs July–June. Write the next budget in April, the council votes in June, it takes effect July 1.</li><li>TCAP reading results arrive in June.</li><li>Unanswered problems expire and cost you approval and council goodwill. Handling an issue in a member's district earns a little goodwill from that member.</li><li>City elections: October 2027 and October 2031. Mayors are limited to two terms.</li></ul></div>
+  <div class="facts"><h4>Controls</h4><ul><li>WASD or the arrow keys pan the map; hold Shift to pan faster. Moving the mouse to the edge of the screen scrolls too (turn it off under Layers). You can also drag.</li><li>Scroll or pinch to zoom toward the cursor. Zoomed out you get the political map, with each council district in its own color. Zoom in and the camera tilts down into the 3D city.</li><li>Click a landmark or amber pin to open it. Click a district or precinct when those layers are on.</li><li>N advances one month. B opens the budget, C the council, L the map layers. Keys 1–5 switch map modes: City, Political, Council opinion, Street condition, MPD precincts.</li></ul></div>
+  <div class="facts"><h4>The year</h4><ul><li>Council members are characters. Each has traits, a home district and an opinion of you from −100 to +100, built from the reasons listed on their page. Reasons fade over time. Each month you get 3 private meetings, and you can fund a $1M project in a member's district every 6 months. Frugal members resent that spending.</li><li>Fiscal year runs July–June. Write the next budget in April, the council votes in June, it takes effect July 1.</li><li>TCAP reading results arrive in June.</li><li>Unanswered problems expire and cost you approval and council goodwill. Handling an issue in a member's district earns a little goodwill from that member.</li><li>City elections: October 2027 and October 2031. Mayors are limited to two terms.</li></ul></div>
   <div class="facts"><h4>The map</h4><ul><li>Streets, building footprints and heights, city limits, the Mississippi River, creeks, parks, railroads, council districts, super districts and MPD precincts all come from the City of Memphis's public GIS services (maps.memphistn.gov and gis.memphistn.gov), downloaded October 2026. Road classes come from the Memphis MPO's functional classification layer.</li><li>Landmark positions come from the city's facility records and address locator.</li></ul></div>
   <div class="facts"><h4>Real vs. modeled</h4><ul><li>Real: FY2027 operating budget ($906M adopted), $3.39 tax rate, 2% raises, $96M reserve, MATA $32M, xAI's $15M in taxes, the $13.6M Southwest Twin precinct, MPD's ~1,917 officers and ~2,500 authorized, MSCS 25.7% reading vs ~45% statewide, 2025's 26.4% drop in murders, and the council's structure and charter powers.</li><li>Modeled: the division split (FY2025 shares scaled to FY2027), revenue per tax cent, how spending moves indicators, the crime and street indexes, council members and their votes.</li></ul></div>
   <div class="facts"><h4>Sources</h4><ul>
@@ -963,6 +1076,7 @@ const BUILD={
   rail:()=>fcLine(decodeLayer(RAW.rail.g)),
   streets:()=>fcLine(decodeLayer(RAW.streets.g)),
   fc:()=>fcLine(decodeLayer(RAW.fc.g),i=>({c:FCC[RAW.fc.a[i][0]]||'C'})),
+  pci:()=>{const f=decodeLayer(RAW.pci.g);return{type:'FeatureCollection',features:f.map((parts,i)=>({type:'Feature',id:i+1,properties:{p:RAW.pci.a[i][0]==null?-1:RAW.pci.a[i][0],n:RAW.pci.a[i][3]},geometry:{type:'MultiLineString',coordinates:parts}}))}},
   council:()=>fcPoly(GEO.council.map(f=>f.parts),i=>({d:GEO.council[i].v})),
   superd:()=>fcPoly(GEO.superd.map(f=>f.parts),i=>({d:GEO.superd[i].v})),
   precincts:()=>fcPoly(GEO.precincts.map(f=>f.parts),i=>({n:GEO.precincts[i].v,k:i})),
@@ -977,8 +1091,12 @@ async function loadBase(){
     GEO.council=decodeLayer(RAW.council.g).map((p,i)=>({parts:p,v:RAW.council.a[i][0]}));
     GEO.superd=decodeLayer(RAW.superd.g).map((p,i)=>({parts:p,v:RAW.superd.a[i][0]}));
     GEO.precincts=decodeLayer(RAW.precincts.g).map((p,i)=>({parts:p,v:RAW.precincts.a[i][0]}));
+    assignHomes();
+    try{const pv=await getJSON('data/pavement.json');RAW.pci=pv.layers.pci;const by={},all={w:0,s:0,poor:0,n:0};
+      RAW.pci.a.forEach(([v,d,lm])=>{if(v==null)return;all.n++;all.w+=lm;all.s+=v*lm;if(v<40)all.poor+=lm;if(!d)return;const b=by[d]=by[d]||{w:0,s:0,poor:0};b.w+=lm;b.s+=v*lm;if(v<40)b.poor+=lm});
+      for(const d in by)PAVE[d]={avg:by[d].s/by[d].w,poor:by[d].poor/by[d].w*100};PAVE.all={avg:all.s/all.w,poor:all.poor/all.w*100,n:RAW.pci.a.length}}catch(e){console.warn('pavement data',e)}
     const src=id=>map.addSource(id,{type:'geojson',data:'bcm://'+id,tolerance:0.3,buffer:64});
-    ['muni','city','parks','airport','river','streams','creeks','rail','streets','fc','council','superd','precincts'].forEach(src);
+    ['muni','city','parks','airport','river','streams','creeks','rail','streets','fc','council','superd','precincts'].forEach(src);if(RAW.pci)src('pci');
     const W=(a)=>['interpolate',['exponential',1.6],['zoom'],...a];
     const add=l=>map.addLayer(l);
     add({id:'city-fill',type:'fill',source:'city',paint:{'fill-color':CITY}});
@@ -995,6 +1113,7 @@ async function loadBase(){
     add({id:'roads-p',type:'line',source:'fc',filter:['==',['get','c'],'P'],layout:{'line-cap':'round','line-join':'round'},paint:{'line-color':'#8a7552','line-width':W([9,0.8,12,1.8,14,3.6,16,8,18,18])}});
     add({id:'roads-i-case',type:'line',source:'fc',filter:['==',['get','c'],'I'],layout:{'line-cap':'round','line-join':'round'},paint:{'line-color':'#2a1d0b','line-width':W([9,2.2,12,4,14,7,16,13,18,26])}});
     add({id:'roads-i',type:'line',source:'fc',filter:['==',['get','c'],'I'],layout:{'line-cap':'round','line-join':'round'},paint:{'line-color':'#d79a3b','line-width':W([9,1.2,12,2.4,14,4.6,16,9,18,20])}});
+    if(map.getSource('pci'))add({id:'pci',type:'line',source:'pci',layout:{visibility:'none','line-cap':'round','line-join':'round'},paint:{'line-color':['case',['<',['get','p'],0],'#59626b',['interpolate',['linear'],['get','p'],0,'#b8322a',40,'#e8644f',55,'#e6c547',70,'#8fcf6a',90,'#2e9e5b']],'line-width':W([9,2.6,12,4.6,14,7,16,12,18,22])}});
     add({id:'city-line',type:'line',source:'city',paint:{'line-color':'#f2a93b','line-opacity':['interpolate',['linear'],['zoom'],9,.75,13,.35],'line-width':W([9,1.2,14,2.4]),'line-dasharray':[4,2]}});
     // overlays
     add({id:'council-fill',type:'fill',source:'council',paint:{'fill-color':['match',['get','d'],1,DCOL[1],2,DCOL[2],3,DCOL[3],4,DCOL[4],5,DCOL[5],6,DCOL[6],7,DCOL[7],'#888'],'fill-opacity':['case',['boolean',['feature-state','hover'],false],.36,.2]}});
@@ -1057,7 +1176,7 @@ function zoomClasses(){if(!map||!mapReady)return;const z=map.getZoom();
   roadMarkers.forEach(r=>r.el.style.display=(r.sh?z>=10:(z>=12.4&&z<16.5))?'':'none');
   const lab=S&&S.layers.labels;
   Object.values(lmMarkers).forEach(o=>{const busy=o.el.classList.contains('busy');const show=busy||(lab&&z>=(o.L.pri===1?10.4:o.L.pri===2?12.6:13.8));o.el.style.display=show||z>=11.6?'':'none';o.el.classList.toggle('z0',!show)});
-  const dz=z>=10.1&&z<15.5,pol=z<POLZ;distMarkers.forEach(o=>{const on=o.kind==='council'?(S&&S.layers.council)||(pol&&!(S&&(S.layers.superd||S.layers.precinct))):o.kind==='superd'?S&&S.layers.superd:S&&S.layers.precinct;o.el.style.display=on&&dz?'':'none';o.el.classList.toggle('big',pol)});
+  const mode=S?S.mode||'real':'real',dz=z>=9.4&&z<15.5,pol=z<POLZ;distMarkers.forEach(o=>{const on=o.kind==='council'?(mode==='political'||mode==='opinion'||mode==='streets'||(mode==='real'&&pol&&!(S&&S.layers.superd))):o.kind==='superd'?S&&S.layers.superd:mode==='precinct';o.el.style.display=on&&dz?'':'none';o.el.classList.toggle('big',pol)});
 }
 function renderPins(){
   if(!mapReady)return;
@@ -1070,32 +1189,39 @@ function renderPins(){
     el.addEventListener('click',ev=>{ev.stopPropagation();openPlace(at)});
     pinMarkers.push(new maplibregl.Marker({element:el,anchor:'bottom'}).setLngLat([pl.lon,pl.lat]).addTo(map))});
   Object.values(lmMarkers).forEach(o=>{const n=counts[o.L.id]||0;o.el.classList.toggle('busy',n>0);o.el.querySelector('.ct').textContent=n?String(n):'';o.el.style.zIndex=n?'3':'1'});
-  distMarkers.forEach(o=>{if(o.kind!=='council')return;const m=memberFor(o.d);o.el.innerHTML=`D${o.d}<small>${m?m.name:''}</small>`});
+  recomputeAll(S);distMarkers.forEach(o=>{if(o.kind!=='council')return;const m=memberFor(o.d);
+    o.el.innerHTML=S.mode==='opinion'&&m?`<span style="color:${opColor(m.opinion)}">${fmtOp(m.opinion)}</span><small>D${o.d} · ${m.name}</small>`:S.mode==='streets'&&PAVE[o.d]?`PCI ${PAVE[o.d].avg.toFixed(0)}<small>D${o.d} · ${PAVE[o.d].poor.toFixed(0)}% poor</small>`:`D${o.d}<small>${m?m.name:''}</small>`});
+  if(S.mode==='opinion')paintCouncil();renderLegend();
   zoomClasses();
 }
-function applyLayers(){if(!mapReady)return;const L=S?S.layers:{council:false,superd:false,precinct:false,bld:true,labels:true};
+function applyLayers(){if(!mapReady)return;const L=S?S.layers:{superd:false,bld:true,labels:true};const mode=S?S.mode||'real':'real';
   const vis=(id,on)=>{if(map.getLayer(id))map.setLayoutProperty(id,'visibility',on?'visible':'none')};
-  politicalPaint(L.council,(L.superd||L.precinct)&&!L.council);vis('superd-fill',L.superd);vis('superd-line',L.superd);vis('precinct-fill',L.precinct);vis('precinct-line',L.precinct);
+  paintCouncil();vis('superd-fill',L.superd);vis('superd-line',L.superd);vis('precinct-fill',mode==='precinct');vis('precinct-line',mode==='precinct');
+  vis('pci',mode==='streets');['streets','roads-c','roads-m','roads-p','roads-i','roads-i-case'].forEach(id=>{if(map.getLayer(id))map.setPaintProperty(id,'line-opacity',mode==='streets'?0.35:1)});
+  renderModes();renderLegend();
   ['bmain-flat','bmain-3d','bhomes-flat','bhomes-3d'].forEach(id=>vis(id,L.bld));
-  $('lyCouncil').checked=L.council;$('lySuper').checked=L.superd;$('lyPrecinct').checked=L.precinct;$('lyBld').checked=L.bld;$('lyLabels').checked=L.labels;$('lyEdge').checked=L.edge!==false;
+  $('lySuper').checked=L.superd;$('lyBld').checked=L.bld;$('lyLabels').checked=L.labels;$('lyEdge').checked=L.edge!==false;
   zoomClasses();if(L.bld&&homesState==='idle'&&map.getSource('bmain'))maybeLoadHomes()}
 let hoverState=null;
 function setupMapInteractions(){
-  const hoverLayers=['council-fill','superd-fill','precinct-fill'];
-  const activeLayers=()=>hoverLayers.filter(l=>l==='council-fill'?(S.layers.council||map.getZoom()<POLZ)&&!((S.layers.superd||S.layers.precinct)&&!S.layers.council):map.getLayoutProperty(l,'visibility')==='visible');
+  const activeLayers=()=>{const mode=S.mode||'real',out=[];
+    if(mode==='streets'&&map.getLayer('pci'))out.push('pci');
+    if(mode==='political'||mode==='opinion'||mode==='streets'||(mode==='real'&&map.getZoom()<POLZ&&!S.layers.superd))out.push('council-fill');
+    if(S.layers.superd)out.push('superd-fill');if(mode==='precinct')out.push('precinct-fill');return out};
   map.on('mousemove',e=>{if(!S||!S.started)return;const fs=map.queryRenderedFeatures(e.point,{layers:activeLayers()});
     const tip=$('tip');
     if(hoverState){map.setFeatureState(hoverState,{hover:false});hoverState=null}
     if(!fs.length){tip.hidden=true;$('map').classList.remove('hot');return}
     const f=fs[0];hoverState={source:f.source,id:f.id};map.setFeatureState(hoverState,{hover:true});$('map').classList.add('hot');
-    let html='';if(f.source==='council'){const m=memberFor(f.properties.d);html=`<b>DISTRICT ${f.properties.d}</b><br>${m?m.name:''} · relationship ${m?Math.round(m.op):'–'}/100`}
+    let html='';if(f.source==='council'){const m=memberFor(f.properties.d);if(m)recompute(m);html=`<b>DISTRICT ${f.properties.d}</b><br>${m?m.name:''} · opinion <span style="color:${m?opColor(m.opinion):''}">${m?fmtOp(m.opinion):'–'}</span>`+(S.mode==='opinion'&&m?'<br>'+opinionParts(m).slice(0,3).map(x=>`${fmtOp(x.v)} ${x.t}`).join('<br>'):'')}
+    else if(f.source==='pci'){const v=f.properties.p;html=`<b>${String(f.properties.n||'Road').toUpperCase()}</b><br>${v<0?'Not rated':`PCI ${v} · ${v<40?'Poor':v<55?'Fair':v<70?'Satisfactory':'Good'}`}`}
     else if(f.source==='superd'){html=`<b>SUPER DISTRICT ${f.properties.d}</b><br>${S.council.filter(m=>m.d===f.properties.d).map(m=>m.name).join(', ')}`}
     else html=`<b>${String(f.properties.n).toUpperCase()} PRECINCT</b><br>Memphis Police Department`;
     tip.innerHTML=html;tip.hidden=false;tip.style.left=(e.point.x+14)+'px';tip.style.top=(e.point.y+14)+'px'});
   map.on('mouseout',()=>{$('tip').hidden=true});
   map.on('movestart',()=>{$('tip').hidden=true;if(hoverState){map.setFeatureState(hoverState,{hover:false});hoverState=null}$('map').classList.remove('hot')});
   map.on('click',e=>{if(!S||!S.started)return;const fs=map.queryRenderedFeatures(e.point,{layers:activeLayers()});
-    if(!fs.length)return;const f=fs[0];
+    if(!fs.length)return;const f=fs.find(x=>x.source!=='pci')||fs[0];if(f.source==='pci')return;
     if(f.source==='council')openDistrict(f.properties.d,false);else if(f.source==='superd')openDistrict(f.properties.d,true);else openPrecinct(f.properties.n)});
 }
 
@@ -1124,6 +1250,34 @@ document.addEventListener('mousemove',e=>{mouse.x=e.clientX;mouse.y=e.clientY;mo
 document.addEventListener('mouseleave',()=>{mouse.in=false});
 document.addEventListener('mousedown',()=>{mouse.btn=true});document.addEventListener('mouseup',()=>{mouse.btn=false});
 requestAnimationFrame(camLoop);
+// ======================= MAP MODES =======================
+const MODES=[{id:'real',n:'City',ic:'◩',d:'The city as it is. Council districts show only when zoomed far out.'},
+ {id:'political',n:'Political',ic:'▦',d:'Council districts 1–7 at every zoom.'},
+ {id:'opinion',n:'Council opinion',ic:'☺',d:'Each district colored by its council member\'s opinion of you.'},
+ {id:'streets',n:'Street condition',ic:'≡',d:'Pavement condition on city-tracked routes (real city data).'},
+ {id:'precinct',n:'MPD precincts',ic:'★',d:'The Memphis Police Department\'s 9 patrol precincts.'}];
+function setMode(id){if(!S)return;S.mode=id;applyLayers();refreshHUD();save();const m=MODES.find(x=>x.id===id);toast(`Map mode: ${m.n}. ${m.d}`)}
+function renderModes(){const el=$('modes');if(!el||!S)return;const mode=S.mode||'real';
+  el.innerHTML=MODES.map((m,i)=>`<button data-mode="${m.id}" class="${mode===m.id?'on':''}" title="${m.n} (${i+1}): ${m.d}" aria-label="${m.n}" aria-pressed="${mode===m.id}">${m.ic}<kbd>${i+1}</kbd></button>`).join('')+`<span class="modename">${MODES.find(m=>m.id===mode).n}</span>`}
+const DCOL_EXPR=()=>['match',['get','d'],1,DCOL[1],2,DCOL[2],3,DCOL[3],4,DCOL[4],5,DCOL[5],6,DCOL[6],7,DCOL[7],'#888'];
+function paintCouncil(){if(!map||!map.getLayer('council-fill')||!S)return;const mode=S.mode||'real',H=['boolean',['feature-state','hover'],false];
+  if(mode==='real'){politicalPaint(false,S.layers.superd);map.setPaintProperty('council-fill','fill-color',DCOL_EXPR());map.setPaintProperty('council-line','line-color',DCOL_EXPR());return}
+  if(mode==='precinct'){map.setPaintProperty('council-fill','fill-opacity',0);map.setPaintProperty('council-line','line-opacity',0);return}
+  if(mode==='streets'){map.setPaintProperty('council-fill','fill-opacity',['case',H,.12,0]);map.setPaintProperty('council-line','line-opacity',.6);map.setPaintProperty('council-line','line-color','#cfd8e3');map.setPaintProperty('council-line','line-width',1.4);return}
+  if(mode==='opinion'){recomputeAll(S);const ex=['match',['get','d']];for(let d=1;d<=7;d++){const m=memberFor(d);ex.push(d,opColor(m?m.opinion:0))}ex.push('#888');
+    map.setPaintProperty('council-fill','fill-color',ex);map.setPaintProperty('council-line','line-color','#0d1822')}
+  else{map.setPaintProperty('council-fill','fill-color',DCOL_EXPR());map.setPaintProperty('council-line','line-color',DCOL_EXPR())}
+  map.setPaintProperty('council-fill','fill-opacity',['interpolate',['linear'],['zoom'],11,['case',H,.7,.58],14,['case',H,.4,.28]]);
+  map.setPaintProperty('council-line','line-opacity',1);map.setPaintProperty('council-line','line-width',['interpolate',['linear'],['zoom'],10,3,13,2.2])}
+function renderLegend(){const el=$('legend');if(!el||!S)return;const mode=S.mode||'real';if(mode==='real'){el.hidden=true;return}el.hidden=false;
+  if(mode==='political'){el.innerHTML=`<h3>Political map</h3>${[1,2,3,4,5,6,7].map(d=>{const m=memberFor(d);return`<button class="lrow" data-dist="${d}"><i style="background:${DCOL[d]}"></i><span>District ${d}</span><b>${m?m.name.split(' ')[1]:''}</b></button>`}).join('')}<p>Official City of Memphis council district boundaries. Super Districts 8 and 9 are under Layers.</p>`}
+  else if(mode==='opinion'){recomputeAll(S);el.innerHTML=`<h3>Council opinion</h3><div class="grad" style="background:linear-gradient(90deg,${opColor(-60)},${opColor(-20)},${opColor(0)},${opColor(20)},${opColor(60)})"></div><div class="ticks"><span>−60</span><span>0</span><span>+60</span></div>
+    ${[1,2,3,4,5,6,7].map(d=>{const m=memberFor(d);return`<button class="lrow" data-char="${S.council.indexOf(m)}"><i style="background:${opColor(m.opinion)}"></i><span>D${d} · ${m.name}</span><b>${fmtOp(m.opinion)}</b></button>`}).join('')}
+    <p>Super District members: ${S.council.filter(m=>m.d>7).map(m=>`${m.name.split(' ')[1]} ${fmtOp(m.opinion)}`).join(', ')}.</p>`}
+  else if(mode==='streets'){el.innerHTML=`<h3>Street condition</h3><div class="grad" style="background:linear-gradient(90deg,#b8322a,#e8644f 40%,#e6c547 55%,#8fcf6a 70%,#2e9e5b)"></div><div class="ticks"><span>0 poor</span><span>55</span><span>100 good</span></div>
+    ${[1,2,3,4,5,6,7].filter(d=>PAVE[d]).map(d=>`<button class="lrow" data-dist="${d}"><i style="background:${PAVE[d].avg<60?'#e8644f':PAVE[d].avg<68?'#e6c547':'#8fcf6a'}"></i><span>District ${d} · ${PAVE[d].poor.toFixed(0)}% poor</span><b>${PAVE[d].avg.toFixed(1)}</b></button>`).join('')}
+    <p>Pavement Condition Index on ${PAVE.all?PAVE.all.n.toLocaleString():'1,738'} segments of city-tracked highways and routes, lane-mile weighted. Source: City of Memphis GIS. Most neighborhood streets aren't in this layer.</p>`}
+  else{el.innerHTML=`<h3>MPD precincts</h3>${GEO.precincts.map((f,k)=>`<button class="lrow" data-prec="${k}"><i style="background:${PCOL[k]}"></i><span>${f.v}</span><b></b></button>`).join('')}<p>Patrol precinct boundaries from City of Memphis GIS.</p>`}}
 // Political map: council districts are painted like realms when zoomed out, and fade as you zoom into the streets.
 function politicalPaint(on,suppress){if(!map.getLayer('council-fill'))return;const P=on?.2:0,L1=on?1:0,F=suppress?0:.52,FH=suppress?0:.66,LF=suppress?0:1;
   map.setPaintProperty('council-fill','fill-opacity',['interpolate',['linear'],['zoom'],POLZ-0.9,['case',['boolean',['feature-state','hover'],false],FH,F],POLZ+0.4,['case',['boolean',['feature-state','hover'],false],on?.36:0,P]]);
@@ -1137,13 +1291,18 @@ window.addEventListener('keydown',e=>{
   const k=e.key.toLowerCase();
   if(modalOpen){if(k==='escape')closeModal();return}
   if(PANKEYS.has(k)||k==='shift'){keysDown.add(k);if(k.startsWith('arrow'))e.preventDefault();return}
+  if(k>='1'&&k<='5'){setMode(MODES[+k-1].id);return}
   if(k==='escape'){closePanel();$('layers').hidden=true;return}
   if(k==='n')advance();else if(k==='b')openBudget();else if(k==='c')openCouncil();else if(k==='h')openHelp();else if(k==='l')toggleLayersBox();
 });
 function toggleLayersBox(){$('layers').hidden=!$('layers').hidden;$('bLayers').classList.toggle('on',!$('layers').hidden)}
-document.addEventListener('change',e=>{const t=e.target;if(!S)return;const map_={lyCouncil:'council',lySuper:'superd',lyPrecinct:'precinct',lyBld:'bld',lyLabels:'labels',lyEdge:'edge'};
+document.addEventListener('change',e=>{const t=e.target;if(!S)return;const map_={lySuper:'superd',lyBld:'bld',lyLabels:'labels',lyEdge:'edge'};
   if(map_[t.id]){S.layers[map_[t.id]]=t.checked;applyLayers();save()}});
 document.addEventListener('click',e=>{
+  const mo=e.target.closest('[data-mode]');if(mo){setMode(mo.dataset.mode);return}
+  const chr=e.target.closest('[data-char]');if(chr){if(modalOpen){onClose=null;closeModal()}openCharacter(+chr.dataset.char);return}
+  const di=e.target.closest('[data-dist]');if(di){const d=+di.dataset.dist,c=districtCenter(d);if(c)camFly({center:c,zoom:Math.max(map.getZoom(),11.2),speed:1.4});openDistrict(d,false);return}
+  const pr=e.target.closest('[data-prec]');if(pr){const f=GEO.precincts[+pr.dataset.prec];if(f){camFly({center:polyCenter(f.parts),zoom:Math.max(map.getZoom(),11.4),speed:1.4});openPrecinct(f.v)}return}
   const ge=e.target.closest('[data-goev]');if(ge){e.preventDefault();const ev=S.events[+ge.dataset.goev];if(ev)flyTo(evAt(ev),true);return}
   const go=e.target.closest('[data-go]');if(go){e.preventDefault();flyTo(go.dataset.go,true);return}
   const ch=e.target.closest('[data-ev]');if(ch){const ev=S.events[+ch.dataset.ev];if(!ev)return;const at=evAt(ev);resolve(ev,+ch.dataset.ci);
@@ -1160,19 +1319,23 @@ document.addEventListener('click',e=>{
   else if(a==='zout')map&&map.zoomOut();
   else if(a==='home')camFly({...HOME_VIEW,speed:1.6});
     else if(a==='gompd')flyTo('mpd',true);
-  else if(a==='showDistricts'){S.layers.council=true;applyLayers();closeModal();camFly({...HOME_VIEW,speed:1.6});save()}
+  else if(a==='showDistricts'){closeModal();setMode('opinion');camFly({...HOME_VIEW,speed:1.6})}
+  else if(a==='meet'){const m=S.council[+b.dataset.i],now=S.y*12+S.m;if(!m||m.met===now||S.slots<=0)return;m.met=now;S.slots--;addMod(m,'Private meeting',has(m,'gregarious')?9:6);recompute(m);save();refreshHUD();toast(`You met with ${m.name}. Opinion is now ${fmtOp(m.opinion)}.`);openCharacter(+b.dataset.i)}
+  else if(a==='fund'){const m=S.council[+b.dataset.i],now=S.y*12+S.m;if(!m||now-m.funded<6||S.reserve<1)return;const hd=homeOf(m);S.reserve-=1;m.funded=now;addMod(m,`Funded a District ${hd} project`,has(m,'wardboss')?30:18);
+    S.council.forEach(o=>{if(o!==m&&has(o,'frugal'))addMod(o,'Pork-barrel spending',-4)});S.met.streets+=0.3;S.met.blight-=0.3;recomputeAll(S);save();refreshHUD();toast(`$1M project funded in District ${hd}. ${m.name}: ${fmtOp(m.opinion)}.`);openCharacter(+b.dataset.i)}
+  else if(a==='godist'){const c=districtCenter(+b.dataset.d);if(c)camFly({center:c,zoom:12.4,speed:1.4})}
   else if(a==='advance'){if(modalOpen){onClose=null;closeModal()}advance()}
   else if(a==='toggle'){const k=b.dataset.k;S.policies[k]=!S.policies[k];
-    if(S.policies[k]){const cf={recruit:{safety:5,fiscal:-3},libHours:{education:4,fiscal:-2},mata:{transit:6,fiscal:-3},mploy:{education:4,safety:3,fiscal:-2},crews:{blight:6,fiscal:-2},tutors:{education:6,fiscal:-2},air:{oversight:3}}[k];applyCouncil(S,cf);S.mood+=1}
+    if(S.policies[k]){const cf={recruit:{safety:5,fiscal:-3},libHours:{education:4,fiscal:-2},mata:{transit:6,fiscal:-3},mploy:{education:4,safety:3,fiscal:-2},crews:{blight:6,fiscal:-2},tutors:{education:6,fiscal:-2},air:{oversight:3}}[k];applyCouncil(S,cf,`Funded: ${POLICIES[k].name}`);S.mood+=1}
     else{S.mood-=1}
     toast(`${POLICIES[k].name}: ${S.policies[k]?'funded':'ended'}.`);save();refreshHUD();
     if(panelFor==='policies')openPolicies();else openPlace(POLICIES[k].where)}
-  else if(a==='countymeet'){S.county=clamp(S.county+6,0,100);S.countyMet=S.y*12+S.m;applyCouncil(S,{education:1});toast('Commissioners took the meeting. County relations improved.');save();openPlace('county')}
+  else if(a==='countymeet'){S.county=clamp(S.county+6,0,100);S.countyMet=S.y*12+S.m;applyCouncil(S,{education:1},'Lobbied the county for schools');toast('Commissioners took the meeting. County relations improved.');save();openPlace('county')}
   else if(a==='submitBudget'){S.proposal=S.draft;S.stage='submitted';S.events=S.events.filter(e=>e.kind!=='budget');S.draft=null;save();closeModal();closePanel();toast('Budget submitted. The council votes in June.');refreshHUD()}
   else if(a==='resetBudget'){S.draft=defaultProposal(S);renderBudgetEditor()}
   else if(a==='acceptAmend'){S.pending=S._amend.am;S.stage='adopted';delete S._amend;save();closeModal()}
   else if(a==='vetoAmend'){const{am,ayes}=S._amend;delete S._amend;const keep=Math.round(ayes-rnd(0,2));
-    if(keep>=7){S.pending=am;S.stage='adopted';S.mood-=2;applyCouncil(S,{all:-3});openModal('Veto','The council overrode you',`<p>${keep}–${13-keep}. The council's budget takes effect July 1. Under the charter a simple majority overrides a mayoral veto.</p><div class="row"><button class="btn primary" data-act="close">Continue</button></div>`,false,onClose)}
+    if(keep>=7){S.pending=am;S.stage='adopted';S.mood-=2;applyCouncil(S,{all:-3},'Vetoed the council\'s budget');openModal('Veto','The council overrode you',`<p>${keep}–${13-keep}. The council's budget takes effect July 1. Under the charter a simple majority overrides a mayoral veto.</p><div class="row"><button class="btn primary" data-act="close">Continue</button></div>`,false,onClose)}
     else{S.pending={divs:{...S.enacted},maint:maintFor(S),tax:S.taxRate,raise:0};S.stage='adopted';S.mood-=3;openModal('Veto','Your veto held',`<p>The override got ${keep} votes and needed 7. The city will run on this year's appropriations with no raise, while costs rise about 2–3%. Expect service to slip.</p><div class="row"><button class="btn primary" data-act="close">Continue</button></div>`,false,onClose)}
     save()}
   else if(a==='newgame'){onClose=null;closeModal();closePanel();beginTerm()}
@@ -1188,17 +1351,21 @@ function save(){if(!S||!S.started)return;try{localStorage.setItem(KEY,JSON.strin
 function load(){try{const t=localStorage.getItem(KEY);if(!t)return null;const s=JSON.parse(t);return s&&s.started?s:null}catch(e){return null}}
 
 // ======================= BOOT =======================
-function beginTerm(){S=newState();S.started=true;spawn(S,EVENTS[0],{expires:99});save();$('start').hidden=true;prevMet=null;applyLayers();refreshHUD();
+function beginTerm(){S=newState();assignHomes();recomputeAll(S);S.started=true;spawn(S,EVENTS[0],{expires:99});save();$('start').hidden=true;prevMet=null;applyLayers();refreshHUD();
   camFly({center:[LM.cityhall.lon,LM.cityhall.lat],zoom:15.6,speed:0.9});
   setTimeout(()=>openPlace('cityhall'),2600);toast('Sworn in. Your chief of staff is waiting at City Hall.')}
+function migrate(s){if(!s)return s;s.mode=s.mode||'real';if(s.slots==null)s.slots=3;
+  s.council.forEach((m,k)=>{const c=COUNCIL.find(x=>x.seat===m.seat)||COUNCIL[k];Object.assign(m,{g:c.g,age:c.age,traits:c.traits,name:m.name||c.name});
+    if(!m.mods){const old=m.op==null?50:m.op;m.mods=[{t:'First impressions',v:Math.round((hash(k,9)-.5)*16),perm:true}];if(Math.abs(old-50)>=1)m.mods.push({t:'Past dealings',v:Math.round((old-50)*2)});m.met=-1;m.funded=-99}});
+  S=s;recomputeAll(s);return s}
 function start(data){
-  const saved=(data&&data.S)||load();
+  const saved=migrate((data&&data.S)||load());
   S=saved||newState();
   if(saved)$('bLoad').hidden=false;
   if(data&&data.S&&data.S.started)$('start').hidden=true;
   refreshHUD();
   $('bNew').onclick=beginTerm;
-  $('bLoad').onclick=()=>{S=load()||S;S.started=true;$('start').hidden=true;applyLayers();refreshHUD();camFly({center:[-90.02,35.135],zoom:12.4,speed:1.2})};
+  $('bLoad').onclick=()=>{S=migrate(load())||S;assignHomes();S.started=true;$('start').hidden=true;applyLayers();refreshHUD();camFly({center:[-90.02,35.135],zoom:12.4,speed:1.2})};
   if(window.maplibregl)initMap();else window.addEventListener('mlready',initMap,{once:true});
 }
 window.claude?.hot?.snapshot?.(()=>({S}));

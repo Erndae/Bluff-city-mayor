@@ -12,8 +12,11 @@ A city-management game set in Memphis, Tennessee. You play the mayor. You handle
 | Mouse at screen edge | Scroll the map (can be turned off under Layers) |
 | Scroll wheel | Zoom toward the cursor. Zoom out for the political map of council districts; zoom in and the city tilts into 3D |
 | Click | Open a landmark, an amber issue pin, a council district or a police precinct |
+| 1–5 | Map modes: City, Political, Council opinion, Street condition, MPD precincts |
 | N | Advance one month |
 | B / C / L / H | Budget office / Council chamber / Map layers / Guide |
+
+**The council are characters.** Each of the 13 members has a portrait, traits (Ambitious, Loyal, Frugal, Reformer, Ward Boss, Vengeful, Gregarious, Pragmatic, Stubborn), a home district and an opinion of you from −100 to +100. Click a member to see every reason behind that number. Reasons fade over time. You get 3 private meetings a month, and you can fund a $1M project in a member's district every 6 months, though Frugal members resent the pork.
 
 The fiscal year runs July–June. You write the next budget in April, the council votes in June (7 of 13 votes to pass), and the city election is in October 2027.
 
@@ -32,6 +35,7 @@ Council members are fictional (the seats and districts are real). The division-b
 - `data/base.json` – streets, roads, water, parks, rail, city limits, districts, precincts
 - `data/buildings-main.json` – downtown and larger buildings, with heights
 - `data/buildings-homes.json` – 250,970 homes and small buildings, loaded when you zoom in
+- `data/pavement.json` – Pavement Condition Index for 1,738 segments of city-tracked highways and routes (City of Memphis GIS), used by the Street condition map mode
 
 Map data is stored compactly: coordinates on a 2-meter grid, delta- and varint-encoded, then base64. `index.html` decodes it in the browser. The map engine is [MapLibre GL JS](https://maplibre.org/) 4.7.1, loaded from jsDelivr.
 
