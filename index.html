@@ -1,0 +1,1209 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="Govern Memphis on a real city map built from City of Memphis GIS data: handle issues at real places, write the budget, win 7 council votes.">
+<title>Bluff City Mayor</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bungee&family=Barlow:wght@400;500;600;700&family=Barlow+Condensed:wght@500;600;700&family=DM+Mono:wght@400;500&display=swap">
+<style>
+body{margin:0}
+
+/* Layout: full-bleed night map of Memphis from City GIS data; civic-ledger HUD and a right-hand dossier panel float over it. Single dark look by design. */
+:root{
+  --ink:#0d1822; --panel:#13212d; --panel2:#1a2c3b; --line:#2a4052; --text:#ece4d3; --muted:#9caab4;
+  --amber:#f2a93b; --good:#5cc28d; --bad:#e8644f; --warn:#e6c547; --river:#2f6f9e;
+  --f-display:"Bungee","Impact","Arial Black",sans-serif;
+  --f-body:"Barlow","Segoe UI",system-ui,sans-serif;
+  --f-label:"Barlow Condensed","Arial Narrow","Segoe UI",sans-serif;
+  --f-mono:"DM Mono",ui-monospace,"SFMono-Regular",Menlo,monospace;
+  color-scheme:dark;
+}
+html,body{height:100%;background:var(--ink);color:var(--text);font-family:var(--f-body);font-size:15px;overflow:hidden}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+button{font:inherit;color:inherit}
+button:focus-visible,input:focus-visible,a:focus-visible{outline:2px solid var(--amber);outline-offset:2px}
+a{color:var(--amber)}
+
+/* MapLibre essentials (inlined) */
+.maplibregl-map{overflow:hidden;position:relative;-webkit-tap-highlight-color:rgb(0 0 0/0)}
+.maplibregl-canvas{left:0;position:absolute;top:0}
+.maplibregl-canvas-container.maplibregl-interactive{cursor:grab}
+.maplibregl-canvas-container.maplibregl-interactive:active{cursor:grabbing}
+.maplibregl-canvas-container.maplibregl-interactive.maplibregl-track-pointer{cursor:pointer}
+.maplibregl-canvas-container.maplibregl-touch-zoom-rotate.maplibregl-touch-drag-pan,.maplibregl-canvas-container.maplibregl-touch-zoom-rotate.maplibregl-touch-drag-pan .maplibregl-canvas{touch-action:none}
+.maplibregl-marker{left:0;position:absolute;top:0;will-change:transform}
+.maplibregl-boxzoom{background:#fff;border:2px dotted #202020;height:0;left:0;opacity:.5;position:absolute;top:0;width:0}
+
+#app{position:fixed;inset:0;background:var(--ink)}
+#map{position:absolute;inset:0;background:#0b131a}
+#map.hot canvas{cursor:pointer}
+
+/* Map labels (HTML markers) */
+.lm{display:flex;align-items:center;gap:5px;transform:translateY(-50%);cursor:pointer;border:0;background:none;padding:0}
+.lm .dot{width:11px;height:11px;border-radius:3px;border:2px solid #0d1822;box-shadow:0 0 0 1px rgba(255,255,255,.25);flex:none}
+.lm .nm{font-family:var(--f-label);font-weight:600;font-size:13px;letter-spacing:.02em;color:var(--text);background:rgba(13,24,34,.82);border:1px solid rgba(255,255,255,.08);padding:1px 6px;border-radius:3px;white-space:nowrap}
+.lm:hover .nm{border-color:var(--amber)}
+.lm .ct{display:none;font-family:var(--f-mono);font-size:11px;font-weight:500;background:var(--amber);color:#1b1206;border-radius:8px;padding:0 5px;margin-left:-2px}
+.lm.busy .ct{display:inline-block}
+.lm.busy .nm{border-color:var(--amber);color:#fff}
+.lm.busy .dot{animation:pulse 1.6s ease-in-out infinite}
+.lm.planned .dot{background:transparent!important;border:2px dashed var(--muted)}
+.lm.z0 .nm{display:none}
+.hood{font-family:var(--f-label);font-weight:600;font-size:13px;letter-spacing:.28em;text-transform:uppercase;color:rgba(236,228,211,.5);white-space:nowrap;pointer-events:none;text-shadow:0 1px 3px #000}
+.hood.town{color:rgba(156,170,180,.55);letter-spacing:.18em;font-size:12px}
+.road{font-family:var(--f-body);font-weight:600;font-size:11.5px;color:#d8c9a6;white-space:nowrap;pointer-events:none;text-shadow:0 0 3px #000,0 0 6px #000}
+.shield{font-family:var(--f-label);font-weight:700;font-size:12px;color:#fff;background:#1d4f91;border:1.5px solid #fff;border-radius:4px 4px 9px 9px;padding:0 5px;pointer-events:none;box-shadow:0 1px 3px rgba(0,0,0,.6)}
+.dlabel{font-family:var(--f-display);font-size:15px;color:#fff;text-shadow:0 0 6px #000;pointer-events:none;text-align:center;line-height:1.05}
+.dlabel.big{font-size:22px}.dlabel.big small{font-size:13px}
+.dlabel small{display:block;font-family:var(--f-label);font-size:12px;letter-spacing:.06em;color:#e6dccb}
+.pin{width:30px;height:38px;cursor:pointer;border:0;padding:0;background:none;transform:translateY(-50%)}
+.pin svg{display:block;filter:drop-shadow(0 2px 3px rgba(0,0,0,.6))}
+.pin:hover svg path{fill:#ffc56a}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 1px rgba(255,255,255,.25),0 0 0 0 rgba(242,169,59,.7)}50%{box-shadow:0 0 0 1px rgba(255,255,255,.25),0 0 0 7px rgba(242,169,59,0)}}
+
+/* HUD */
+.hud-top{position:absolute;top:0;left:0;right:0;display:flex;flex-wrap:wrap;gap:8px 18px;align-items:stretch;z-index:5;
+  padding-top:calc(10px + env(safe-area-inset-top,0px));padding-bottom:14px;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));
+  background:linear-gradient(to bottom,rgba(13,24,34,.97),rgba(13,24,34,.82) 70%,rgba(13,24,34,0));pointer-events:none}
+.brand{font-family:var(--f-display);font-size:20px;line-height:1;color:var(--amber);display:flex;flex-direction:column;justify-content:center;margin-right:6px;text-shadow:0 0 14px rgba(242,169,59,.35)}
+.brand span{font-size:11px;color:var(--text);letter-spacing:.32em;margin-top:3px}
+.stat{display:flex;flex-direction:column;justify-content:center;min-width:0}
+.stat label{font-family:var(--f-label);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+.stat b{font-family:var(--f-mono);font-weight:500;font-size:17px;font-variant-numeric:tabular-nums;white-space:nowrap}
+.stat small{font-size:12px;color:var(--muted);white-space:nowrap}
+.meter{height:4px;width:96px;background:var(--line);border-radius:2px;margin-top:3px;overflow:hidden}
+.meter i{display:block;height:100%;background:var(--amber);width:50%}
+.stat.next b{font-family:var(--f-body);font-weight:600;font-size:14px;white-space:normal}
+
+.side{position:absolute;left:max(16px,env(safe-area-inset-left,0px));top:92px;width:272px;display:flex;flex-direction:column;gap:10px;z-index:4;max-height:calc(100% - 170px)}
+.box{background:rgba(19,33,45,.93);border:1px solid var(--line);border-radius:6px;padding:10px 12px;display:flex;flex-direction:column;gap:7px;min-height:0}
+.box h3{margin:0 0 2px;font-family:var(--f-label);font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:var(--amber);font-weight:600;display:flex;justify-content:space-between;align-items:center}
+.box h3 button{background:none;border:0;color:var(--muted);cursor:pointer;font-size:12px;font-family:var(--f-label);letter-spacing:.1em}
+.mrow{display:grid;grid-template-columns:1fr auto auto;gap:8px;align-items:baseline;font-size:13px}
+.mrow span:first-child{color:var(--muted)}
+.mrow b{font-family:var(--f-mono);font-weight:500;font-variant-numeric:tabular-nums}
+.tr{font-family:var(--f-mono);font-size:11px;width:34px;text-align:right}
+.up{color:var(--good)} .down{color:var(--bad)} .flat{color:var(--muted)}
+.mfoot{font-size:11px;color:var(--muted);border-top:1px solid var(--line);padding-top:6px;line-height:1.35}
+.desk{overflow:auto;display:flex;flex-direction:column;gap:4px}
+.desk button{display:grid;grid-template-columns:10px 1fr auto;gap:8px;align-items:center;text-align:left;background:none;border:0;border-radius:4px;padding:5px 4px;cursor:pointer;font-size:13px;line-height:1.25}
+.desk button:hover{background:var(--panel2)}
+.desk i{width:8px;height:8px;border-radius:50%;background:var(--amber)}
+.desk i.b{background:var(--good)} .desk i.o{background:#b98ee6}
+.desk small{font-family:var(--f-mono);font-size:11px;color:var(--warn)}
+.desk .empty{font-size:12.5px;color:var(--muted)}
+
+.actions{position:absolute;right:max(16px,env(safe-area-inset-right,0px));bottom:calc(16px + env(safe-area-inset-bottom,0px));display:flex;flex-wrap:wrap;gap:8px;justify-content:flex-end;max-width:calc(100% - 32px);z-index:5}
+.btn{background:var(--panel2);border:1px solid var(--line);border-radius:5px;padding:9px 13px;font-family:var(--f-label);font-size:15px;font-weight:600;letter-spacing:.04em;cursor:pointer;display:inline-flex;gap:7px;align-items:center}
+.btn:hover{border-color:var(--amber)}
+.btn kbd{font-family:var(--f-mono);font-size:11px;color:var(--muted);border:1px solid var(--line);border-radius:3px;padding:0 4px}
+.btn.primary{background:var(--amber);color:#1b1206;border-color:var(--amber)}
+.btn.primary kbd{color:#4a330c;border-color:#b07a22}
+.btn.on{border-color:var(--amber);color:var(--amber)}
+.layers{position:absolute;right:max(16px,env(safe-area-inset-right,0px));bottom:calc(66px + env(safe-area-inset-bottom,0px));z-index:6;width:250px}
+.layers label{display:flex;gap:9px;align-items:center;font-size:14px;cursor:pointer;padding:3px 0}
+.layers input{accent-color:var(--amber);width:16px;height:16px}
+.zoomctl{position:absolute;right:max(16px,env(safe-area-inset-right,0px));top:96px;display:flex;flex-direction:column;gap:6px;z-index:4}
+.zoomctl button{width:36px;height:36px;background:rgba(19,33,45,.93);border:1px solid var(--line);border-radius:5px;cursor:pointer;font-family:var(--f-mono);font-size:17px}
+.zoomctl button:hover{border-color:var(--amber)}
+.status{position:absolute;left:50%;transform:translateX(-50%);bottom:calc(18px + env(safe-area-inset-bottom,0px));background:rgba(13,24,34,.92);border:1px solid var(--line);border-radius:14px;padding:4px 12px;font-family:var(--f-mono);font-size:12px;color:var(--muted);z-index:4;white-space:nowrap}
+.credit{position:absolute;left:max(16px,env(safe-area-inset-left,0px));bottom:calc(6px + env(safe-area-inset-bottom,0px));font-size:10.5px;color:rgba(156,170,180,.7);z-index:3;pointer-events:none}
+.toast{position:absolute;left:50%;top:92px;transform:translateX(-50%);background:var(--panel);border:1px solid var(--line);border-left:3px solid var(--amber);padding:8px 14px;border-radius:4px;font-size:14px;max-width:min(520px,calc(100% - 32px));opacity:0;transition:opacity .25s;pointer-events:none;z-index:8}
+.toast.show{opacity:1}
+.tip{position:absolute;z-index:7;pointer-events:none;background:rgba(13,24,34,.95);border:1px solid var(--line);border-radius:4px;padding:5px 9px;font-size:13px;line-height:1.3;max-width:260px}
+.tip b{font-family:var(--f-label);letter-spacing:.06em;color:var(--amber)}
+
+/* Dossier panel */
+.panel{position:absolute;top:84px;right:max(16px,env(safe-area-inset-right,0px));bottom:calc(68px + env(safe-area-inset-bottom,0px));width:min(420px,calc(100% - 32px));background:var(--panel);border:1px solid var(--line);border-radius:8px;display:flex;flex-direction:column;z-index:6;box-shadow:0 18px 50px rgba(0,0,0,.5)}
+.panel>header,.sheet>header{display:flex;align-items:flex-start;gap:12px;padding:14px 16px 11px;border-bottom:1px solid var(--line)}
+.panel h2,.sheet h2{margin:0;font-family:var(--f-display);font-weight:400;font-size:19px;line-height:1.15;text-wrap:balance}
+.sub{font-family:var(--f-label);font-size:12.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--amber);margin-bottom:4px}
+.x{margin-left:auto;background:none;border:1px solid var(--line);border-radius:4px;width:32px;height:32px;cursor:pointer;flex:none;font-size:16px}
+.pbody,.sbody{overflow:auto;padding:13px 16px 16px;display:flex;flex-direction:column;gap:13px;line-height:1.5;min-height:0}
+.pbody p,.sbody p{margin:0;max-width:68ch}
+.facts{background:var(--panel2);border:1px solid var(--line);border-radius:6px;padding:10px 12px;display:flex;flex-direction:column;gap:6px;font-size:14px}
+.facts h4,.card h4{margin:0;font-family:var(--f-label);font-size:12px;letter-spacing:.15em;text-transform:uppercase;color:var(--muted);font-weight:600}
+.facts ul{margin:0;padding-left:18px;display:flex;flex-direction:column;gap:3px}
+.card{border:1px solid var(--line);border-left:3px solid var(--amber);border-radius:6px;padding:12px 14px;display:flex;flex-direction:column;gap:10px;background:rgba(26,44,59,.5)}
+.card .ttl{font-weight:700;font-size:16px}
+.card .due{font-family:var(--f-mono);font-size:12px;color:var(--warn)}
+.card .where{font-size:12.5px;color:var(--muted)}
+.choices{display:flex;flex-direction:column;gap:8px}
+.choice{text-align:left;background:var(--panel);border:1px solid var(--line);border-radius:5px;padding:9px 12px;cursor:pointer;display:flex;flex-direction:column;gap:3px}
+.choice:hover{border-color:var(--amber)}
+.choice b{font-weight:600}
+.choice small{color:var(--muted);font-size:12.5px;font-family:var(--f-mono)}
+.row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.note{font-size:12.5px;color:var(--muted)}
+.pill{display:inline-block;font-family:var(--f-label);font-size:12px;letter-spacing:.06em;padding:1px 7px;border-radius:10px;border:1px solid var(--line);color:var(--muted)}
+.pill.on{border-color:var(--good);color:var(--good)}
+
+/* Modal */
+.modal{position:absolute;inset:0;background:rgba(5,10,15,.62);display:flex;align-items:center;justify-content:center;padding-top:calc(12px + env(safe-area-inset-top,0px));padding-bottom:calc(12px + env(safe-area-inset-bottom,0px));padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));z-index:20}
+.sheet{background:var(--panel);border:1px solid var(--line);border-radius:8px;width:min(760px,100%);max-height:100%;display:flex;flex-direction:column;box-shadow:0 20px 60px rgba(0,0,0,.5)}
+.sheet.wide{width:min(1040px,100%)}
+.tablewrap{overflow-x:auto;border:1px solid var(--line);border-radius:6px}
+table{border-collapse:collapse;width:100%;font-size:13.5px;min-width:640px}
+th,td{padding:6px 10px;border-bottom:1px solid var(--line);text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+th{font-family:var(--f-label);font-weight:600;letter-spacing:.1em;text-transform:uppercase;font-size:11.5px;color:var(--muted);background:var(--panel2);position:sticky;top:0}
+td:first-child,th:first-child{text-align:left}
+td.num{font-family:var(--f-mono)}
+tr.grp td{background:rgba(242,169,59,.06);color:var(--amber);font-family:var(--f-label);letter-spacing:.12em;text-transform:uppercase;font-size:11.5px;font-weight:600}
+input[type=range]{width:150px;accent-color:var(--amber);vertical-align:middle}
+.summary{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}
+.sumcell{background:var(--panel2);border:1px solid var(--line);border-radius:6px;padding:9px 11px;min-width:0}
+.sumcell label{display:block;font-family:var(--f-label);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+.sumcell b{font-family:var(--f-mono);font-weight:500;font-size:18px;font-variant-numeric:tabular-nums}
+.ctrls{display:flex;flex-wrap:wrap;gap:16px;align-items:center}
+.ctrls label{font-family:var(--f-label);letter-spacing:.08em;text-transform:uppercase;font-size:12.5px;color:var(--muted);display:flex;gap:8px;align-items:center}
+.ctrls output{font-family:var(--f-mono);color:var(--text);font-size:14px;min-width:54px}
+.seats{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:10px}
+.seat{border:1px solid var(--line);border-radius:6px;padding:10px 12px;display:flex;flex-direction:column;gap:5px;background:var(--panel2);min-width:0}
+.seat .sn{font-family:var(--f-label);font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--amber)}
+.seat .nm{font-weight:700}
+.seat .ar{font-size:12.5px;color:var(--muted)}
+.opbar{height:5px;background:var(--line);border-radius:3px;overflow:hidden}
+.opbar i{display:block;height:100%}
+.vote{font-family:var(--f-mono);font-size:13px}
+.vote.yes{color:var(--good)} .vote.no{color:var(--bad)}
+
+/* Start */
+#start{position:absolute;inset:0;z-index:30;display:flex;align-items:center;padding-top:calc(16px + env(safe-area-inset-top,0px));padding-bottom:calc(16px + env(safe-area-inset-bottom,0px));padding-left:max(24px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));overflow:auto;background:linear-gradient(90deg,rgba(9,16,23,.95) 0%,rgba(9,16,23,.88) 40%,rgba(9,16,23,.1) 62%,rgba(9,16,23,0) 100%)}
+.startbox{max-width:600px;display:flex;flex-direction:column;gap:16px;margin-left:clamp(0px,4vw,60px)}
+.startbox h1{margin:0;font-family:var(--f-display);font-weight:400;font-size:clamp(38px,7vw,64px);line-height:.95;color:var(--amber);text-shadow:0 0 26px rgba(242,169,59,.35);text-wrap:balance}
+.startbox h1 span{display:block;color:var(--text);font-size:.42em;letter-spacing:.3em;margin-top:8px;text-shadow:none}
+.startbox p{margin:0;line-height:1.55;max-width:60ch;color:#d9d1c1}
+.keys{display:grid;grid-template-columns:auto 1fr;gap:5px 14px;font-size:14px}
+.keys kbd{font-family:var(--f-mono);font-size:12px;border:1px solid var(--line);border-radius:3px;padding:1px 6px;color:var(--amber);justify-self:start}
+
+@media (max-width:860px){
+  .side{display:none}
+  .stat.next{display:none}
+  .actions .btn kbd{display:none}
+  .brand{font-size:16px}
+  .panel{top:auto;height:62%;bottom:calc(64px + env(safe-area-inset-bottom,0px))}
+  #start{background:rgba(9,16,23,.9)}
+}
+@media (prefers-reduced-motion:reduce){.toast{transition:none}.lm.busy .dot{animation:none}}
+</style>
+</head>
+<body>
+
+<div id="app">
+  <div id="map" aria-label="Map of Memphis"></div>
+  <div class="hud-top">
+    <div class="brand">BLUFF CITY<span>MAYOR</span></div>
+    <div class="stat"><label>Date</label><b id="hDate">Oct 2026</b><small id="hFY">FY2027</small></div>
+    <div class="stat"><label>Reserve fund</label><b id="hRes">$96.0M</b><small id="hResPct"></small></div>
+    <div class="stat"><label>Approval</label><b id="hApp">52%</b><div class="meter"><i id="hAppBar"></i></div></div>
+    <div class="stat"><label>Council</label><b id="hCouncil">–</b><small>members favorable</small></div>
+    <div class="stat next"><label>Next on the calendar</label><b id="hNext">–</b></div>
+  </div>
+  <aside class="side">
+    <div class="box" id="metrics" aria-label="City indicators"></div>
+    <div class="box" style="min-height:0;flex:1 1 auto"><h3>On your desk <span id="deskN" class="pill"></span></h3><div class="desk" id="desk"></div></div>
+  </aside>
+  <div class="zoomctl"><button data-act="zin" aria-label="Zoom in">+</button><button data-act="zout" aria-label="Zoom out">−</button><button data-act="home" aria-label="Show whole city" title="Whole city">⌂</button></div>
+  <div class="box layers" id="layers" hidden>
+    <h3>Map layers</h3>
+    <label><input type="checkbox" id="lyCouncil"> Council districts 1–7</label>
+    <label><input type="checkbox" id="lySuper"> Super Districts 8 & 9</label>
+    <label><input type="checkbox" id="lyPrecinct"> MPD precincts</label>
+    <label><input type="checkbox" id="lyBld" checked> Buildings</label>
+    <label><input type="checkbox" id="lyLabels" checked> Landmark labels</label>
+    <label><input type="checkbox" id="lyEdge" checked> Scroll at screen edges</label>
+    <p class="note">Boundaries are the City of Memphis's official GIS layers. Click a district to see who represents it.</p>
+  </div>
+  <nav class="actions">
+    <button class="btn" data-act="layers" id="bLayers">Layers <kbd>L</kbd></button>
+    <button class="btn" data-act="budget">Budget <kbd>B</kbd></button>
+    <button class="btn" data-act="council">Council <kbd>C</kbd></button>
+    <button class="btn" data-act="help">Guide <kbd>H</kbd></button>
+    <button class="btn primary" data-act="advance">Advance month <kbd>N</kbd></button>
+  </nav>
+  <div class="status" id="status">Loading map…</div>
+  <div class="credit">Map data: City of Memphis GIS · Shelby County MPO</div>
+  <div class="tip" id="tip" hidden></div>
+  <div class="toast" id="toast" role="status"></div>
+  <section class="panel" id="panel" hidden aria-live="polite">
+    <header><div><div class="sub" id="pSub"></div><h2 id="pTitle"></h2></div><button class="x" data-act="pclose" aria-label="Close panel">✕</button></header>
+    <div class="pbody" id="pBody"></div>
+  </section>
+  <div class="modal" id="modal" hidden>
+    <div class="sheet" id="sheet" role="dialog" aria-modal="true">
+      <header><div><div class="sub" id="mSub"></div><h2 id="mTitle"></h2></div><button class="x" data-act="close" aria-label="Close">✕</button></header>
+      <div class="sbody" id="mBody"></div>
+    </div>
+  </div>
+  <div id="start">
+    <div class="startbox">
+      <h1>Bluff City<span>MAYOR</span></h1>
+      <p>You were sworn in as Mayor of Memphis. It's October 2026, four months into fiscal year 2027: a $906 million operating budget, a $3.39 property tax rate and a $96 million rainy-day fund. Thirteen council members hold the purse. The next city election is October 2027.</p>
+      <p>The map is the real city, built from the City of Memphis's own GIS: every street, every building footprint, the river, and the official council district and police precinct lines. Problems pop up as amber pins at real places. Click one to deal with it, write the FY2028 budget in April, get 7 votes in June, and win in October.</p>
+      <div class="keys">
+        <kbd>WASD · arrows</kbd><span>Pan the map (hold Shift to go faster), or push the mouse to the screen edge</span>
+        <kbd>Scroll</kbd><span>Zoom toward the cursor. Zoom out for the political map of council districts; zoom in and the city tilts into 3D</span>
+        <kbd>Click</kbd><span>Open a landmark, an issue pin, or a district</span>
+        <kbd>N</kbd><span>Advance one month</span>
+        <kbd>B · C · L</kbd><span>Budget office · Council chamber · Map layers</span>
+      </div>
+      <div class="row">
+        <button class="btn primary" id="bNew">Take the oath</button>
+        <button class="btn" id="bLoad" hidden>Continue saved term</button>
+      </div>
+      <p class="note">Budget totals, tax rate, reserve, MPD staffing, school reading scores and the council's structure and charter powers come from city documents and local reporting (see Guide → Sources). Council members are fictional; seats and districts are real.</p>
+    </div>
+  </div>
+</div>
+
+<script>
+// Load MapLibre from jsDelivr, fall back to unpkg.
+(function(){const urls=['https://cdn.jsdelivr.net/npm/maplibre-gl@4.7.1/dist/maplibre-gl.js','https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js'];let k=0;
+  function next(){if(k>=urls.length){window.__mlFail=true;window.dispatchEvent(new Event('mlready'));return}const s=document.createElement('script');s.src=urls[k++];s.onload=()=>window.dispatchEvent(new Event('mlready'));s.onerror=next;document.head.appendChild(s)}next()})();
+</script>
+<script>
+"use strict";
+// ======================= PLACES =======================
+const LMKS=[
+ {id:'cityhall',name:'City Hall',addr:'125 N. Main St.',lat:35.14894,lon:-90.05207,col:'#c9a15a',pri:1},
+ {id:'county',name:'Vasco A. Smith Jr. County Administration Bldg.',short:'County Commission',addr:'160 N. Main St.',lat:35.14945,lon:-90.04990,col:'#8f9aa6',pri:2,off:[-6,17]},
+ {id:'mpd',name:'MPD Headquarters',short:'MPD HQ',addr:'170 N. Main St. (Public Safety Building)',lat:35.14975,lon:-90.05046,col:'#4a6fd6',pri:1},
+ {id:'fire',name:'Memphis Fire Headquarters',short:'Fire HQ',addr:'65 S. Front St.',lat:35.14393,lon:-90.05538,col:'#c9473a',pri:2},
+ {id:'mlgw',name:'MLGW Headquarters',short:'MLGW',addr:'220 S. Main St.',lat:35.13937,lon:-90.05475,col:'#e2b23a',pri:2},
+ {id:'beale',name:'Beale Street',addr:'Beale St. entertainment district',lat:35.13970,lon:-90.05230,col:'#d9579b',pri:2},
+ {id:'forum',name:'FedExForum',addr:'191 Beale St.',lat:35.13817,lon:-90.05059,col:'#5c7bb0',pri:2},
+ {id:'ncrm',name:'National Civil Rights Museum',short:'Civil Rights Museum',addr:'450 Mulberry St.',lat:35.13524,lon:-90.05729,col:'#9a7650',pri:2},
+ {id:'pyramid',name:'The Pyramid',addr:'1 Bass Pro Dr.',lat:35.15554,lon:-90.05246,col:'#aeb9c2',pri:2},
+ {id:'stjude',name:"St. Jude Children's Research Hospital",short:'St. Jude',addr:'262 Danny Thomas Pl.',lat:35.15331,lon:-90.04171,col:'#e05c80',pri:2},
+ {id:'mata',name:'MATA North End Terminal',short:'MATA Terminal',addr:'444 N. Main St.',lat:35.15655,lon:-90.04780,col:'#33a873',pri:2},
+ {id:'mscs',name:'MSCS Board of Education',short:'MSCS',addr:'160 S. Hollywood St.',lat:35.13043,lon:-89.97542,col:'#e0803a',pri:1},
+ {id:'liberty',name:'Liberty Park & Simmons Bank Liberty Stadium',short:'Liberty Park',addr:'335 S. Hollywood St.',lat:35.12179,lon:-89.97670,col:'#3f9a58',pri:2},
+ {id:'zoo',name:'Memphis Zoo',addr:'2000 Prentiss Pl. (Overton Park)',lat:35.15000,lon:-89.99435,col:'#6fae4f',pri:3},
+ {id:'library',name:'Benjamin L. Hooks Central Library',short:'Central Library',addr:'3030 Poplar Ave.',lat:35.13358,lon:-89.96126,col:'#8467cf',pri:1},
+ {id:'uofm',name:'University of Memphis',short:'U of M',addr:'Central Ave. & Patterson St.',lat:35.11870,lon:-89.93750,col:'#2f5fb3',pri:2},
+ {id:'pw',name:'Bellevue Sanitation Yard',short:'Solid Waste',addr:'1514 N. Bellevue Blvd.',lat:35.18020,lon:-90.01477,col:'#7f8e57',pri:1},
+ {id:'graceland',name:'Graceland',addr:'3764 Elvis Presley Blvd.',lat:35.04594,lon:-90.02293,col:'#d6c07a',pri:2},
+ {id:'airport',name:'Memphis International Airport',short:'Airport & FedEx hub',addr:'2491 Winchester Rd.',lat:35.04460,lon:-89.98170,col:'#a3b6c9',pri:2},
+ {id:'swtwin',name:'Southwest Twin Precinct (planned)',short:'New precinct site',addr:'Former Southwest Twin Drive-In, 4233 S. Third St.',lat:35.03302,lon:-90.07542,col:'#7d93c9',planned:true,pri:2},
+ {id:'parkway',name:'Parkway Village Library (planned)',short:'New library site',addr:'Near 4655 Knight Arnold Rd.',lat:35.06211,lon:-89.90837,col:'#9b86d6',planned:true,pri:3},
+ {id:'xai',name:'xAI Colossus Data Center',short:'xAI data center',addr:'3231 Paul R. Lowry Rd.',lat:35.06055,lon:-90.15513,col:'#8a94a2',pri:2},
+ {id:'oem',name:'911 Emergency Communications Center',short:'911 Center',addr:'79 S. Flicker St.',lat:35.13140,lon:-89.97172,col:'#c75a5a',pri:3},
+];
+const LM=Object.fromEntries(LMKS.map(l=>[l.id,l]));
+const POINTS={frayser:[35.2232,-90.0302,'Frayser'],lamar:[35.0970,-89.9718,'Lamar Ave.'],southmem:[35.0990,-90.0430,'South Memphis'],orangemound:[35.1110,-89.9620,'Orange Mound']};
+const HOODS=[['Downtown',35.1462,-90.0455],['South Main',35.1305,-90.0585],['Uptown',35.1625,-90.0420],['Harbor Town',35.1660,-90.0585],['Medical District',35.1415,-90.0300],['Midtown',35.1395,-89.9990],['Cooper-Young',35.1185,-89.9900],['Orange Mound',35.1105,-89.9580],['Binghampton',35.1430,-89.9545],['East Memphis',35.1050,-89.8850],['Berclair',35.1660,-89.8960],['Raleigh',35.2140,-89.9100],['Frayser',35.2245,-90.0230],['North Memphis',35.1810,-90.0300],['Hollywood',35.1760,-89.9700],['Nutbush',35.1690,-89.9330],['South Memphis',35.1005,-90.0450],['Soulsville',35.1155,-90.0310],['Westwood',35.0360,-90.0820],['Whitehaven',35.0230,-90.0200],['Oakhaven',35.0300,-89.9650],['Parkway Village',35.0660,-89.9100],['Hickory Hill',35.0430,-89.8400],['Southwind',35.0380,-89.7900],['Cordova',35.1600,-89.7700],['Shelby Farms',35.1430,-89.8500],['Hyde Park',35.1880,-89.9950],['Castalia',35.0900,-89.9700],['Whitehaven South',35.0010,-90.0150]];
+const TOWNS=[['Germantown',35.0820,-89.7814],['Bartlett',35.2466,-89.8196],['West Memphis, AR',35.1470,-90.1850],['Southaven, MS',34.9900,-90.0100]];
+const ROADS=[["I-40",35.1614,-90.01982,1],["I-40",35.18984,-89.94402,1],["I-40",35.15563,-89.88026,1],["I-240",35.07127,-90.01991,1],["I-240",35.07628,-89.99054,1],["I-240",35.07821,-89.90743,1],["I-240",35.08778,-89.87217,1],["I-55",35.0918,-90.07658,1],["I-55",35.07612,-90.04225,1],["Bill Morris Pkwy",35.05439,-89.82884,0],["Poplar Ave",35.12992,-89.9532,0],["Poplar Ave",35.10184,-89.86745,0],["Lamar Ave",35.09703,-89.97185,0],["Lamar Ave",35.04781,-89.92129,0],["Winchester Rd",35.05257,-89.97506,0],["Winchester Rd",35.0489,-89.8233,0],["Austin Peay Hwy",35.21636,-89.91386,0],["Jackson Ave",35.16008,-89.9626,0],["Airways Blvd",35.07554,-89.98571,0],["S. Third St",35.07374,-90.05789,0],["Shelby Dr",35.02092,-90.00756,0],["Shelby Dr",35.02038,-89.88493,0],["Germantown Rd",35.11092,-89.80261,0],["Union Ave",35.13724,-90.02061,0],["Summer Ave",35.14863,-89.89726,0],["Sam Cooper Blvd",35.14786,-89.94095,0],["Elvis Presley Blvd",35.08291,-90.01864,0],["Kirby Pkwy",35.0481,-89.84377,0],["Knight Arnold Rd",35.06265,-89.91738,0],["Walnut Grove Rd",35.13093,-89.86725,0],["Getwell Rd",35.0368,-89.93653,0],["Macon Rd",35.15031,-89.8052,0],["North Pkwy",35.15431,-90.02127,0],["Central Ave",35.12562,-89.97389,0],["Mt. Moriah Rd",35.08486,-89.89528,0],["Holmes Rd",35.00605,-89.93884,0],["Frayser Blvd",35.21712,-89.98947,0],["Thomas St",35.19269,-90.03513,0],["Madison Ave",35.1405,-90.0326,0],["Park Ave",35.10658,-89.89539,0],["Quince Rd",35.08444,-89.85291,0],["Perkins Rd",35.07808,-89.90692,0],["National St",35.16084,-89.94749,0],["N. Watkins St",35.20232,-90.00737,0],["Tchulahoma Rd",35.03774,-89.95485,0],["White Station Rd",35.108,-89.88926,0],["Danny Thomas Blvd",35.13522,-90.04629,0],["Chelsea Ave",35.17288,-90.01128,0]];
+const DCOL=['','#e8644f','#5aa7d8','#e6c547','#5cc28d','#b98ee6','#f2a93b','#e07fae'];
+const PCOL=['#5aa7d8','#e8644f','#e6c547','#5cc28d','#b98ee6','#f2a93b','#e07fae','#7fd1c7','#c9a15a'];
+const HOME_VIEW={center:[-89.955,35.12],zoom:10.35,pitch:0,bearing:0};
+
+// ======================= GAME DATA =======================
+const DIVS=[
+ {id:'police',name:'Police Services',grp:'Public safety',base:310.4,growth:.03},
+ {id:'fire',name:'Fire Services',grp:'Public safety',base:248.3,growth:.03},
+ {id:'grants',name:'Grants & Subsidies (incl. MATA)',grp:'Community investment',base:73.0,growth:.015},
+ {id:'parks',name:'Memphis Parks',grp:'Neighborhood services',base:49.6,growth:.02},
+ {id:'gs',name:'General Services',grp:'Neighborhood services',base:30.6,growth:.02},
+ {id:'pw',name:'Public Works',grp:'Neighborhood services',base:29.0,growth:.02},
+ {id:'lib',name:'Library Services',grp:'Neighborhood services',base:26.4,growth:.02},
+ {id:'eng',name:'City Engineer',grp:'Neighborhood services',base:15.4,growth:.02},
+ {id:'hcd',name:'Housing & Community Development',grp:'Neighborhood services',base:6.4,growth:.02},
+ {id:'it',name:'Information Technology',grp:'Administration',base:28.7,growth:.02},
+ {id:'exec',name:'Executive',grp:'Administration',base:25.3,growth:.02},
+ {id:'law',name:'City Attorney',grp:'Administration',base:23.5,growth:.02},
+ {id:'fin',name:'Finance',grp:'Administration',base:14.7,growth:.02},
+ {id:'hr',name:'Human Resources',grp:'Administration',base:10.5,growth:.02},
+ {id:'clerk',name:'City Court Clerk',grp:'Administration',base:9.3,growth:.02},
+ {id:'council',name:'City Council',grp:'Administration',base:3.9,growth:.02},
+ {id:'judges',name:'City Court Judges',grp:'Administration',base:1.0,growth:.02},
+];
+const POLICIES={
+ recruit:{name:'MPD recruitment & retention bonuses',cost:6,where:'mpd'},
+ libHours:{name:'Extended library hours',cost:2.5,where:'library'},
+ mata:{name:'More frequent MATA bus service',cost:4,where:'mata'},
+ mploy:{name:'Expanded summer youth jobs',cost:3,where:'liberty'},
+ crews:{name:'Anti-blight cleanup crews',cost:3,where:'pw'},
+ tutors:{name:'City-funded literacy tutors',cost:3,where:'mscs'},
+ air:{name:'Independent air monitoring',cost:0.5,where:'xai'},
+};
+const COUNCIL=[
+ {seat:'District 1',d:1,name:'Kendra Mosby',prio:['safety','blight']},
+ {seat:'District 2',d:2,name:'Grant Ellison',prio:['fiscal','streets']},
+ {seat:'District 3',d:3,name:'Darnell Whitfield',prio:['streets','jobs']},
+ {seat:'District 4',d:4,name:'Angela Rucker',prio:['education','safety']},
+ {seat:'District 5',d:5,name:'Morgan Pryor',prio:['transit','oversight']},
+ {seat:'District 6',d:6,name:'Leonard Gaines',prio:['blight','labor']},
+ {seat:'District 7',d:7,name:'Tasha Bell',prio:['education','oversight']},
+ {seat:'Super District 8 · Pos. 1',d:8,name:'Marcus Holloway',prio:['labor','transit']},
+ {seat:'Super District 8 · Pos. 2',d:8,name:'Denise Carter',prio:['education','blight']},
+ {seat:'Super District 8 · Pos. 3',d:8,name:'Raymond Oakes',prio:['safety','jobs']},
+ {seat:'Super District 9 · Pos. 1',d:9,name:'Collin Brandt',prio:['fiscal','safety']},
+ {seat:'Super District 9 · Pos. 2',d:9,name:'Heather Lund',prio:['fiscal','streets']},
+ {seat:'Super District 9 · Pos. 3',d:9,name:'Victor Sims',prio:['jobs','fiscal']},
+];
+const PRIO_LABEL={safety:'Public safety',fiscal:'Fiscal restraint',streets:'Streets',education:'Education',transit:'Transit',blight:'Blight',labor:'City workers',jobs:'Jobs',oversight:'Police oversight'};
+const MONTHS=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+const MONTHS_L=['January','February','March','April','May','June','July','August','September','October','November','December'];
+
+// ======================= EVENTS =======================
+const EVENTS=[
+ {id:'briefing',title:'Chief of staff briefing',at:'cityhall',scripted:true,
+  body:s=>`Welcome to the 7th floor. The FY2027 budget you're running on is $906 million, held together with a 2% raise for every city employee, no property tax increase at $3.39, and $15 million in new property tax from the xAI data center. About 72% of it is payroll. Next April you write the FY2028 budget, and costs grow faster than revenue: police and fire pay, pensions and health care rise about 3% a year, while revenue grows closer to 1.5%.`,
+  fact:'Memphis has a strong-mayor charter. You run every division and sign every contract, but the 13-member council approves the budget, sets the tax rate, confirms your appointments, and overrides a veto with a simple majority of 7.',
+  choices:[{label:'Understood. Let\'s get to work.',fx:{}}]},
+ {id:'mpd_staffing',title:'MPD is ~580 officers short',at:'mpd',tags:['safety'],
+  body:s=>`The police director brings the staffing chart: ${Math.round(s.met.officers).toLocaleString()} sworn officers against roughly 2,500 authorized. Overtime is covering the gap, and that costs money and burns people out.`,
+  fact:'MPD had about 1,917 sworn officers in late 2025, roughly 583 short of full strength.',
+  choices:[
+   {label:'Fund recruitment & retention bonuses',policy:'recruit',fx:{mood:1},council:{safety:6,fiscal:-3}},
+   {label:'Add two academy classes this year',cost:3,fx:{officers:35},council:{safety:4,fiscal:-1}},
+   {label:'Hire civilian crime analysts instead',cost:1,fx:{crime:-1},council:{oversight:3,safety:-2}}],
+  ignore:{fx:{mood:-1},council:{safety:-3}}},
+ {id:'sanitation',title:'Sanitation workers want 5%',at:'pw',tags:['labor'],
+  body:s=>`AFSCME leaders say the solid waste budget could absorb a 5% raise. The FY2027 deal gave sanitation workers the citywide 2% plus a one-time $2,000 bonus. Crews are short and trucks are aging.`,
+  fact:'The council added a 2% raise and a one-time $2,000 bonus for sanitation workers when it approved the FY2027 budget, 11-1.',
+  choices:[
+   {label:'Back a 5% raise for sanitation crews',cost:2.6,fx:{blight:-1,mood:1},council:{labor:9,fiscal:-5}},
+   {label:'Hold at the FY2027 deal and buy new trucks',cost:1.5,fx:{blight:-1.5},council:{labor:-2,fiscal:1}},
+   {label:'Promise to revisit it in the FY2028 budget',fx:{},council:{labor:-4}}],
+  ignore:{fx:{mood:-1},council:{labor:-5}}},
+ {id:'reading',title:'Three in four students can\'t read on grade level',at:'mscs',tags:['education'],
+  body:s=>`MSCS reading proficiency sits at ${s.met.reading.toFixed(1)}%, against roughly 45% statewide. The city doesn't run the schools: MSCS has its own elected board, and the Shelby County Commission and the state fund it. What you control is libraries, youth programs and the bully pulpit.`,
+  fact:'MSCS reading proficiency rose 1 point to 25.7% on the 2025–26 TCAP; nearly 45% of Tennessee students were proficient. MSCS leadership proposed a $1.85 billion budget.',
+  choices:[
+   {label:'Fund city literacy tutors in libraries and community centers',policy:'tutors',fx:{mood:1},council:{education:7,fiscal:-3}},
+   {label:'Extend library hours citywide',policy:'libHours',fx:{mood:1},council:{education:5,fiscal:-2}},
+   {label:'Lobby the County Commission for early-literacy money',fx:{county:12},council:{education:2}}],
+  ignore:{council:{education:-4}}},
+ {id:'lamar',title:'Potholes on Lamar Avenue',at:'point:lamar',tags:['streets'],
+  body:s=>`Lamar is a freight corridor and a neighborhood street at once. Trucks are tearing it up, and the 311 queue for this stretch is the longest in the city. Street condition citywide: ${Math.round(s.met.streets)}/100.`,
+  fact:'The FY2027 plan put about $50 million toward neighborhood improvements such as pothole repair and street paving.',
+  choices:[
+   {label:'Repave the worst 3 miles now',cost:5,fx:{streets:4,mood:1},council:{streets:7,fiscal:-3}},
+   {label:'Patch crews this month, repave next year',cost:1,fx:{streets:1},council:{streets:2}},
+   {label:'Ask TDOT to share the cost',fx:{streets:0.5},council:{fiscal:2,streets:-2}}],
+  ignore:{fx:{streets:-1,mood:-1},council:{streets:-4}}},
+ {id:'mata',title:'An hour between buses',at:'mata',tags:['transit'],
+  body:s=>`Riders at North End say some routes run once an hour. MATA's FY2027 city subsidy is $32 million, $2 million more than last year, and it still isn't enough to cut waits.`,
+  fact:'Mayor Young\'s FY2027 budget gave MATA $32 million, an increase of $2 million.',
+  choices:[
+   {label:'Fund more frequent service on core routes',policy:'mata',fx:{mood:1},council:{transit:8,fiscal:-3}},
+   {label:'Pilot on-demand microtransit in two neighborhoods',cost:1.5,fx:{transit:3},council:{transit:4}},
+   {label:'Hold funding flat this year',fx:{},council:{transit:-4,fiscal:2}}],
+  ignore:{fx:{transit:-1},council:{transit:-4}}},
+ {id:'frayser',title:'Blight on Frayser\'s side streets',at:'point:frayser',tags:['blight'],
+  body:s=>`Neighbors have walked you past a row of vacant, burned-out houses. Code enforcement has the cases; it doesn't have the crews. Blight index: ${Math.round(s.met.blight)}/100 (lower is better).`,
+  fact:'The FY2027 budget moved about $704,000 in leftover Accelerate Memphis funds into new solid waste and anti-blight vehicles.',
+  choices:[
+   {label:'Fund year-round anti-blight cleanup crews',policy:'crews',fx:{mood:1},council:{blight:7,fiscal:-3}},
+   {label:'Demolish the 40 worst structures',cost:2,fx:{blight:-3},council:{blight:5}},
+   {label:'Partner with the land bank to sell lots for $1',cost:0.3,fx:{blight:-1},council:{blight:2,fiscal:1}}],
+  ignore:{fx:{blight:1.5},council:{blight:-4}}},
+ {id:'forum',title:'FedExForum renovation deal',at:'forum',tags:['jobs'],
+  body:s=>`The arena's lease talks have reached your desk. Under the charter you have sole contracting authority for the city, but any city money still has to be appropriated by the council.`,
+  fact:'The Mayor has sole contracting authority for the City of Memphis.',
+  choices:[
+   {label:'Sign the city\'s share, funded by tourism tax revenue',fx:{jobs:3,mood:2},council:{jobs:6,fiscal:-4}},
+   {label:'Send it back for a better community-benefits package',fx:{jobs:1},council:{labor:3,jobs:-1}},
+   {label:'Decline: no city money for arenas',fx:{jobs:-2,mood:-2},council:{fiscal:5,jobs:-6}}],
+  ignore:{fx:{jobs:-1},council:{jobs:-3}}},
+ {id:'xai',title:'Data center taxes and air quality',at:'xai',tags:['jobs'],
+  body:s=>`The xAI site on Paul R. Lowry Road paid property taxes that helped balance FY2027. Residents in the surrounding Southwest Memphis neighborhoods want answers about turbines and air quality; business groups want more data centers.`,
+  fact:'Mayor Young said $15 million in property taxes paid by xAI helped balance the FY2027 budget.',
+  choices:[
+   {label:'Fund independent air monitoring near the site',policy:'air',fx:{mood:1},council:{oversight:3,blight:2,jobs:-1}},
+   {label:'Recruit more data-center investment',fx:{jobs:3,revenue:4},council:{jobs:6,blight:-3}},
+   {label:'Hold a public hearing before taking a position',fx:{mood:0.5},council:{oversight:1}}],
+  ignore:{fx:{mood:-1}}},
+ {id:'mlgw_board',title:'Open seat on the MLGW board',at:'mlgw',tags:['streets'],
+  body:s=>`MLGW is the city-owned utility. You appoint its board, and the council confirms. Two names are on your desk: a consumer advocate who wants bill relief and faster outage response, and a retired utility engineer who wants to spend on grid hardening.`,
+  fact:'The mayor appoints board members to agencies including MLGW and MATA; the council approves appointments.',
+  choices:[
+   {label:'Nominate the consumer advocate',vote:{lean:{oversight:10,labor:8,fiscal:-6},pass:{fx:{mood:2}},fail:{fx:{mood:-1}}}},
+   {label:'Nominate the utility engineer',vote:{lean:{fiscal:8,streets:8,jobs:6,oversight:-4},pass:{fx:{streets:1}},fail:{fx:{mood:-1}}}}],
+  ignore:{fx:{mood:-0.5}}},
+ {id:'winter',title:'Hard freeze: low water pressure',at:'mlgw',tags:['streets'],months:[12,1,2],
+  body:s=>`A hard freeze has burst pipes across the system and MLGW is warning about low pressure. People are calling City Hall, not the utility.`,
+  fact:'MLGW is a division of the City of Memphis governed by its own board.',
+  choices:[
+   {label:'Open warming and water-distribution sites at libraries and community centers',cost:0.8,fx:{mood:3},council:{all:2}},
+   {label:'Let MLGW run the response; you do the briefings',fx:{mood:-1}}],
+  ignore:{fx:{mood:-3}}},
+ {id:'swtwin',title:'New precinct bids come in high',at:'swtwin',tags:['safety'],
+  body:s=>`The new police station at the old Southwest Twin Drive-In is budgeted at $13.6 million. Construction bids came in 12% over.`,
+  fact:'The FY2027 capital plan includes $13.6 million for the new police station at the Southwest Twin site.',
+  choices:[
+   {label:'Approve the change order and keep the schedule',cost:1.6,fx:{crime:-0.5,mood:1},council:{safety:4,fiscal:-3}},
+   {label:'Rebid the project (adds about six months)',fx:{mood:-0.5},council:{fiscal:3,safety:-2}},
+   {label:'Scale back the building',cost:0.4,fx:{},council:{fiscal:2,safety:-1}}],
+  ignore:{fx:{mood:-1}}},
+ {id:'mploy',title:'Summer jobs waitlist',at:'liberty',tags:['education','safety'],months:[2,3,4,5],
+  body:s=>`The city's summer youth jobs program has more applicants than slots. Council members from both super districts are asking for more slots before school lets out.`,
+  fact:'Youth and workforce development were among the stated priorities of the FY2027 budget.',
+  choices:[
+   {label:'Expand summer youth jobs',policy:'mploy',fx:{mood:1},council:{education:5,safety:4,fiscal:-3}},
+   {label:'Ask employers to sponsor more slots',fx:{jobs:0.5},council:{jobs:3}},
+   {label:'Keep it at current size',fx:{},council:{education:-3}}],
+  ignore:{council:{education:-3,safety:-2}}},
+ {id:'dumping',title:'Illegal dumping in South Memphis',at:'point:southmem',tags:['blight'],
+  body:s=>`Mattresses, tires and construction debris are being dumped along creek beds and dead-end streets. Neighborhood groups want cameras and fines that actually get collected.`,
+  fact:'The FY2027 budget included $500,000 for parks security and illegal-dumping cameras.',
+  choices:[
+   {label:'Double the dumping-camera network',cost:0.5,fx:{blight:-1.5},council:{blight:5}},
+   {label:'Weekend bulk-trash amnesty days',cost:0.7,fx:{blight:-1,mood:1},council:{blight:3,labor:1}},
+   {label:'Leave it to code enforcement',fx:{},council:{blight:-3}}],
+  ignore:{fx:{blight:1},council:{blight:-3}}},
+ {id:'oversight',title:'Civilian review board budget',at:'cityhall',tags:['oversight'],
+  body:s=>`Members of the council want more staff for civilian review of police complaints. Others say the money should go to patrol.`,
+  fact:'Civilian review of complaints against police has been a recurring council debate in Memphis.',
+  choices:[
+   {label:'Add investigators to civilian review',cost:0.6,fx:{mood:0.5},council:{oversight:8,safety:-3}},
+   {label:'Keep current staffing',fx:{},council:{oversight:-4,safety:2}}],
+  ignore:{council:{oversight:-3}}},
+ {id:'heat',title:'Heat advisory',at:'library',tags:['education'],months:[6,7,8],
+  body:s=>`A week of heat indexes above 110°F. Libraries and community centers are the city's cooling centers, but most close at 6 p.m.`,
+  fact:'Memphis Public Libraries serve as cooling centers during heat advisories.',
+  choices:[
+   {label:'Keep cooling centers open until 10 p.m. all week',cost:0.4,fx:{mood:2},council:{all:1}},
+   {label:'Run the regular schedule',fx:{mood:-1}}],
+  ignore:{fx:{mood:-2}}},
+ {id:'housing',title:'Housing trust fund ask',at:'point:orangemound',tags:['blight'],
+  body:s=>`Orange Mound housing advocates thank you for the $3 million Housing Trust Fund in FY2027 and ask you to double it for rehab grants for older homeowners.`,
+  fact:'The FY2027 budget includes a $3 million Housing Trust Fund, $918,000 for down-payment assistance and $1 million for middle-income housing.',
+  choices:[
+   {label:'Add $3 million to the trust fund',cost:3,fx:{blight:-2,mood:1},council:{blight:6,fiscal:-4}},
+   {label:'Add $1 million for senior home repair',cost:1,fx:{blight:-0.8},council:{blight:3}},
+   {label:'Hold at $3 million',fx:{},council:{blight:-2}}],
+  ignore:{council:{blight:-2}}},
+ {id:'beale',title:'Beale Street weekend crowds',at:'beale',tags:['safety','jobs'],
+  body:s=>`Tourism is up and weekend crowds on Beale are bigger than the district was built for. Businesses want more visible safety without scaring visitors off.`,
+  fact:'The FY2027 budget included $150,000 for a Safeways initiative.',
+  choices:[
+   {label:'Weekend safety zone with off-duty officers',cost:0.8,fx:{crime:-0.5,jobs:0.5},council:{safety:4,oversight:-2}},
+   {label:'Hire hospitality ambassadors',cost:0.5,fx:{jobs:1,mood:0.5},council:{jobs:3,oversight:2}},
+   {label:'No change',fx:{}}],
+  ignore:{}},
+ {id:'airport',title:'Logistics workforce pipeline',at:'airport',tags:['jobs'],
+  body:s=>`The FedEx hub and the distribution centers around the airport can't hire mechanics and CDL drivers fast enough. They're asking the city to co-fund a training program.`,
+  fact:'Memphis is home to FedEx\'s World Hub at Memphis International Airport.',
+  choices:[
+   {label:'Co-fund a training pipeline',cost:1,fx:{jobs:2.5},council:{jobs:5,labor:2}},
+   {label:'Offer city permitting help instead',fx:{jobs:0.5},council:{jobs:1}}],
+  ignore:{}},
+ {id:'taskforce',title:'Federal–local task force',at:'mpd',tags:['safety','oversight'],
+  body:s=>`The federal–local Memphis Safe Task Force has operated in the city since 2025. Federal officials credit it with large drops in violent crime; some residents and council members want clearer local rules for how it works with MPD.`,
+  fact:'Memphis saw a 26.4% decline in murders in 2025, the fewest since 2015.',
+  choices:[
+   {label:'Keep full coordination',fx:{crime:-1.5},council:{safety:5,oversight:-5}},
+   {label:'Keep coordination and publish local guidelines',fx:{crime:-1,mood:1},council:{safety:2,oversight:3}},
+   {label:'Limit MPD\'s role to information sharing',fx:{crime:0.5},council:{oversight:6,safety:-6}}],
+  ignore:{}},
+ {id:'county_ask',title:'County Commission budget hearing',at:'county',tags:['education'],months:[3,4,5,6],
+  body:s=>`The Shelby County Commission is setting the schools' operating budget. As mayor you get a seat at the table but no vote.`,
+  fact:'MSCS is funded through the Shelby County Commission and the state, not the City Council.',
+  choices:[
+   {label:'Testify for more early-literacy funding',fx:{county:10,mood:0.5},council:{education:3}},
+   {label:'Offer city libraries as summer reading sites',cost:0.3,fx:{county:6},council:{education:2}}],
+  ignore:{fx:{county:-3}}},
+ {id:'dispatch',title:'911 hold times',at:'oem',tags:['safety'],
+  body:s=>`Callers are waiting too long for 911 to pick up during peak hours. The communications center is short of call-takers, and many calls are non-emergencies that belong with 311.`,
+  fact:'Memphis runs its 911 Emergency Communications Center out of 79 S. Flicker St.',
+  choices:[
+   {label:'Hire and train 25 more call-takers',cost:1.4,fx:{crime:-0.4,mood:1.5},council:{safety:5,fiscal:-2}},
+   {label:'Launch a public "311 not 911" campaign',cost:0.2,fx:{mood:0.5},council:{safety:1}},
+   {label:'Route mental-health calls to crisis counselors',cost:0.9,fx:{mood:1},council:{oversight:5,safety:1}}],
+  ignore:{fx:{mood:-1.5},council:{safety:-3}}},
+];
+const ORDINANCES=[
+ {id:'str',title:'Short-term rental registration',lean:{blight:10,streets:4,jobs:-6,fiscal:-2},
+  sign:{fx:{blight:-0.5},council:{blight:2}},veto:{council:{jobs:3,blight:-4}}},
+ {id:'curfew',title:'Stricter youth curfew enforcement',lean:{safety:12,oversight:-10,education:-2},
+  sign:{fx:{crime:-0.5,mood:0.5},council:{safety:3,oversight:-3}},veto:{council:{oversight:3,safety:-4}}},
+ {id:'fines',title:'Higher illegal-dumping fines',lean:{blight:12,fiscal:4},
+  sign:{fx:{blight:-0.7,revenue:0.5},council:{blight:2}},veto:{council:{blight:-5}}},
+ {id:'cams',title:'Speed cameras in school zones',lean:{safety:6,education:6,oversight:-6,fiscal:4},
+  sign:{fx:{revenue:1.5,mood:-0.5},council:{safety:2}},veto:{fx:{mood:0.5},council:{safety:-3}}},
+ {id:'wage',title:'$17 minimum wage for city contractors',lean:{labor:14,oversight:4,fiscal:-10,jobs:-4},
+  sign:{fx:{revenue:-1,mood:1},council:{labor:4,fiscal:-2}},veto:{council:{labor:-6,fiscal:3}}},
+];
+
+// ======================= STATE =======================
+let S;
+function hash(x,y){let h=(x*374761393+y*668265263)|0;h=(h^(h>>>13))*1274126177|0;return((h^(h>>>16))>>>0)/4294967295}
+function newState(){
+  const enacted={},ratio={};DIVS.forEach(d=>{enacted[d.id]=d.base;ratio[d.id]=1});
+  return{y:2026,m:10,enacted,ratio,taxRate:3.39,raise:2,raiseCost:0,fyIndex:0,
+    reserve:96,policies:{},met:{officers:1917,crime:88,reading:25.7,streets:46,blight:60,transit:40,jobs:55},
+    approval:52,mood:0,jobsBoost:0,revBoost:0,county:35,eduBoost:0,
+    council:COUNCIL.map((c,k)=>({...c,op:52+Math.round((hash(k,9)-.5)*14)})),
+    events:[],used:{},stage:'none',draft:null,proposal:null,pending:null,term:1,over:false,
+    layers:{council:false,superd:false,precinct:false,bld:true,labels:true,edge:true},started:false}
+}
+const fyOf=s=>s.y+(s.m>=7?1:0);
+const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+const rnd=(a,b)=>a+Math.random()*(b-a);
+const fmtM=v=>(v<0?'−$':'$')+Math.abs(v).toFixed(1)+'M';
+function policyCost(s){return Object.keys(s.policies).filter(k=>s.policies[k]).reduce((a,k)=>a+POLICIES[k].cost,0)}
+function enactedTotal(s){return DIVS.reduce((a,d)=>a+s.enacted[d.id],0)+s.raiseCost}
+function annualSpend(s){return enactedTotal(s)+policyCost(s)}
+function revenueFor(s,fyIndex,tax){return 906*Math.pow(1.015,fyIndex)+(tax-3.39)*150+(s.met.jobs-55)*0.8+s.revBoost}
+function annualRevenue(s){return revenueFor(s,s.fyIndex,s.taxRate)}
+function safetyScore(s){return clamp(50+(100-s.met.crime)*1.5,0,100)}
+
+// ======================= COUNCIL MATH =======================
+function applyCouncil(s,cfx){if(!cfx)return;
+  s.council.forEach(m=>{let d=cfx.all||0;m.prio.forEach((p,k)=>{if(cfx[p])d+=cfx[p]*(k?0.7:1)});m.op=clamp(m.op+d,5,95)})}
+function leanFor(m,lean){let d=0;m.prio.forEach((p,k)=>{if(lean[p])d+=lean[p]*(k?0.7:1)});return d}
+function favorable(s){return s.council.filter(m=>m.op>=50).length}
+function rollVote(s,lean,threshold=45){return s.council.map(m=>({m,yes:m.op+leanFor(m,lean)+rnd(-5,5)>=threshold}))}
+function maintFor(s){const o={};DIVS.forEach(d=>o[d.id]=+(s.enacted[d.id]*(1+d.growth)).toFixed(1));return o}
+function budgetCalc(s,p){
+  const maint=p.maint;const spend=DIVS.reduce((a,d)=>a+p.divs[d.id],0)+p.raise*5+policyCost(s);
+  const rev=revenueFor(s,s.fyIndex+1,p.tax);const gap=rev-spend;
+  const reserveEnd=s.reserve+gap;const reservePct=reserveEnd/spend*100;
+  const pct=ids=>ids.reduce((a,id)=>a+(p.divs[id]/maint[id]-1)*100,0)/ids.length;
+  const align={safety:pct(['police','fire']),streets:pct(['pw','eng']),blight:pct(['hcd','gs']),education:pct(['lib'])+(s.policies.tutors?3:0)+(s.policies.libHours?2:0),
+    transit:pct(['grants'])+(s.policies.mata?4:0),jobs:pct(['grants'])*0.5,labor:(p.raise-2)*3,oversight:0,fiscal:0};
+  align.education+=pct(['parks'])*0.3;
+  return{spend,rev,gap,reserveEnd,reservePct,align}
+}
+function budgetScore(s,m,p,c){
+  let sc=m.op;
+  m.prio.forEach((pr,k)=>{const w=k?0.7:1;
+    if(pr==='fiscal'){sc+=w*((c.gap<0?c.gap*0.45:c.gap*0.15)-Math.max(0,(p.tax-3.39)*100)*2.2+Math.max(0,(3.39-p.tax)*100)*1.2)}
+    else sc+=w*clamp(c.align[pr]||0,-12,12)*1.8});
+  sc-=Math.max(0,(p.tax-3.39)*100)*0.35;
+  if(c.reservePct<9)sc-=4;if(c.reservePct<6)sc-=10;
+  return sc+8;
+}
+function whip(s,p){const c=budgetCalc(s,p);return s.council.filter(m=>budgetScore(s,m,p,c)>=50).length}
+
+// ======================= SIM =======================
+function snapshotMet(s){return{...s.met,approval:s.approval,reserve:s.reserve}}
+function applyFx(s,fx){if(!fx)return;for(const k in fx){const v=fx[k];
+  if(k==='mood')s.mood+=v;else if(k==='county')s.county=clamp(s.county+v,0,100);else if(k==='revenue')s.revBoost+=v;
+  else if(k==='jobs')s.jobsBoost+=v,s.met.jobs+=v*0.5;else if(k==='reading')s.eduBoost+=v;
+  else if(s.met[k]!==undefined)s.met[k]+=v}}
+function monthlySim(s){
+  const r=id=>s.ratio[id]||1,M=s.met,P=s.policies;
+  const rev=annualRevenue(s),spend=annualSpend(s);s.reserve+=(rev-spend)/12;
+  M.officers=clamp(M.officers+16+(P.recruit?7:0)+(r('police')-1)*140-17+rnd(-3,3),1500,2650);
+  const crimeT=86-(M.officers-1917)/35-(P.mploy?2.5:0)-(r('parks')-1)*20-(60-M.blight)*0.12;
+  M.crime=clamp(M.crime+(crimeT-M.crime)*0.12+rnd(-0.6,0.6),40,140);
+  M.streets=clamp(M.streets+(r('pw')-1)*8+(r('eng')-1)*4-0.12+rnd(-.15,.15),0,100);
+  M.blight=clamp(M.blight+0.12-(r('hcd')-1)*5-(r('gs')-1)*2-(P.crews?0.5:0)+rnd(-.1,.1),0,100);
+  const trT=40+(P.mata?9:0)+(r('grants')-1)*40;M.transit=clamp(M.transit+(trT-M.transit)*0.15,0,100);
+  M.jobs=clamp(M.jobs+(55+s.jobsBoost-M.jobs)*0.06+rnd(-.2,.2),0,100);
+  const tax=(s.taxRate-3.39)*100*0.25;
+  const target=0.30*safetyScore(s)+0.15*M.streets+0.15*(100-M.blight)+0.10*M.transit+0.10*M.jobs+0.10*(M.reading*2)+5-tax+s.mood;
+  s.approval=clamp(s.approval+(target-s.approval)*0.22+rnd(-.5,.5),5,95);
+  s.mood*=0.85;
+  s.council.forEach(m=>m.op=clamp(m.op+(s.approval-50)*0.03,5,95));
+}
+function readingUpdate(s){const r=id=>s.ratio[id]||1,P=s.policies;
+  const d=0.8+(r('lib')-1)*10+(P.tutors?1.2:0)+(P.libHours?0.6:0)+(P.mploy?0.3:0)+s.county/100*1.2+s.eduBoost+rnd(-0.4,0.4);
+  s.eduBoost=0;const before=s.met.reading;s.met.reading=clamp(s.met.reading+d,10,60);return{before,after:s.met.reading}}
+
+// ======================= GEO HELPERS =======================
+let GEO={council:[],superd:[],precincts:[]}; // decoded polygons with attrs
+function pip(pt,ring){let c=false;for(let i=0,j=ring.length-1;i<ring.length;j=i++){const[xi,yi]=ring[i],[xj,yj]=ring[j];if(((yi>pt[1])!==(yj>pt[1]))&&(pt[0]<(xj-xi)*(pt[1]-yi)/(yj-yi)+xi))c=!c}return c}
+function inPoly(pt,parts){let c=false;for(const r of parts)if(pip(pt,r))c=!c;return c}
+function districtAt(lon,lat){for(const f of GEO.council)if(inPoly([lon,lat],f.parts))return f.v;return null}
+function superAt(lon,lat){for(const f of GEO.superd)if(inPoly([lon,lat],f.parts))return f.v;return null}
+function precinctAt(lon,lat){for(const f of GEO.precincts)if(inPoly([lon,lat],f.parts))return f.v;return null}
+function memberFor(d){return S.council.find(m=>m.d===d)}
+
+// ======================= EVENTS RUNTIME =======================
+function placeOf(at){
+  if(at.startsWith('point:')){const p=POINTS[at.slice(6)];return{lat:p[0],lon:p[1],lmk:null,name:p[2]}}
+  const L=LM[at];return{lat:L.lat,lon:L.lon,lmk:L.id,name:L.short||L.name}}
+function evAt(ev){if(ev.kind==='ordinance'||ev.kind==='budget')return'cityhall';return EVENTS.find(e=>e.id===ev.id).at}
+function spawn(s,def,extra){const ev={id:def.id,kind:'event',expires:3,born:s.y*12+s.m,...(extra||{})};s.events.push(ev);s.used[def.id]=s.y*12+s.m;return ev}
+function evDef(ev){if(ev.kind==='ordinance')return ORDINANCES.find(o=>o.id===ev.id);if(ev.kind==='budget')return null;return EVENTS.find(e=>e.id===ev.id)}
+function evTitle(ev){if(ev.kind==='budget')return`Write the FY${fyOf(S)+1} budget`;if(ev.kind==='ordinance')return'Ordinance: '+evDef(ev).title;return evDef(ev).title}
+function maybeSpawn(s,report){
+  const now=s.y*12+s.m;const active=new Set(s.events.map(e=>e.id));
+  const pool=EVENTS.filter(e=>!e.scripted&&!active.has(e.id)&&(!s.used[e.id]||now-s.used[e.id]>=12)&&(!e.months||e.months.includes(s.m))&&!(e.id==='mpd_staffing'&&s.policies.recruit));
+  const n=s.events.length<5?(Math.random()<.45?2:1):0;
+  for(let k=0;k<n&&pool.length;k++){const def=pool.splice(Math.floor(Math.random()*pool.length),1)[0];spawn(s,def);report.push(`New: ${def.title} (${placeOf(def.at).name})`)}
+  if(Math.random()<.3&&!s.events.some(e=>e.kind==='ordinance')){
+    const pool2=ORDINANCES.filter(o=>!s.used['ord_'+o.id]||now-s.used['ord_'+o.id]>=18);
+    if(pool2.length){const o=pool2[Math.floor(Math.random()*pool2.length)];s.used['ord_'+o.id]=now;
+      const votes=s.council.map(m=>({m,yes:50+leanFor(m,o.lean)+rnd(-8,8)>=50}));const yes=votes.filter(v=>v.yes).length;
+      if(yes>=7){s.events.push({id:o.id,kind:'ordinance',expires:2,born:now,yes,votes:votes.map(v=>v.yes)});
+        report.push(`Council passed "${o.title}" ${yes}–${13-yes}. It's on your desk to sign or veto.`)}
+      else report.push(`Council voted down "${o.title}" ${yes}–${13-yes}.`)}}
+}
+function describe(c){const out=[];if(c.cost)out.push(`${fmtM(-c.cost)} reserves`);if(c.policy)out.push(`${fmtM(-POLICIES[c.policy].cost)}/yr ongoing`);
+  const fx=c.fx||{};const nm={crime:'Violent crime',streets:'Streets',blight:'Blight',transit:'Transit',jobs:'Jobs',officers:'Officers',mood:'Public mood',county:'County relations',revenue:'Revenue',reading:'Reading'};
+  for(const k in fx){if(!fx[k]||!nm[k])continue;const good=(k==='crime'||k==='blight')?fx[k]<0:fx[k]>0;out.push(`${nm[k]} ${good?'▲':'▼'}`)}
+  if(c.vote)out.push('Needs 7 council votes to confirm');
+  const cf=c.council||{};const ups=[],downs=[];for(const k in cf){if(k==='all'){(cf[k]>0?ups:downs).push('everyone');continue}(cf[k]>0?ups:downs).push(PRIO_LABEL[k].toLowerCase())}
+  if(ups.length)out.push('Pleases '+ups.join(', '));if(downs.length)out.push('Annoys '+downs.join(', '));
+  return out.join(' · ')}
+function resolve(ev,ci){
+  const def=evDef(ev);let msg='';
+  if(ev.kind==='ordinance'){
+    if(ci===0){applyFx(S,def.sign.fx);applyCouncil(S,def.sign.council);msg=`You signed "${def.title}" into law.`}
+    else{const yesVoters=S.council.filter((m,k)=>ev.votes[k]);let stay=0;yesVoters.forEach(m=>{if(!(m.op>68&&Math.random()<.4))stay++});
+      if(stay>=7){applyCouncil(S,{all:-1});yesVoters.forEach(m=>m.op=clamp(m.op-3,5,95));S.mood-=1;msg=`You vetoed "${def.title}". The council overrode you ${stay}–${13-stay}; under the charter a simple majority of 7 is enough.`}
+      else{applyFx(S,def.veto.fx);applyCouncil(S,def.veto.council);msg=`You vetoed "${def.title}". The override failed with ${stay} votes; it needed 7.`}}
+  }else{
+    const c=def.choices[ci];
+    if(c.cost)S.reserve-=c.cost;if(c.policy)S.policies[c.policy]=true;applyFx(S,c.fx);applyCouncil(S,c.council);
+    if(c.vote){const res=rollVote(S,c.vote.lean,50);const yes=res.filter(r=>r.yes).length;const pass=yes>=7;
+      applyFx(S,(pass?c.vote.pass:c.vote.fail).fx);msg=`Council ${pass?'confirmed':'rejected'} your nominee ${yes}–${13-yes}.`}
+    else msg=def.id==='briefing'?'Amber pins on the map mark places that need you. Click one.':`Decision made: ${c.label}.`;
+    // the district member notices when you show up for their district
+    const pl=placeOf(def.at);const d=districtAt(pl.lon,pl.lat);if(d){const m=memberFor(d);if(m)m.op=clamp(m.op+2,5,95)}
+  }
+  S.events=S.events.filter(e=>e!==ev);save();toast(msg);refreshHUD();return msg}
+function expire(s,report){const now=s.y*12+s.m;
+  s.events=s.events.filter(ev=>{if(ev.kind==='budget'||ev.id==='briefing')return true;if(now-ev.born<ev.expires)return true;
+    const def=evDef(ev);if(ev.kind==='ordinance'){applyFx(s,def.sign.fx);report.push(`"${def.title}" became law without your signature.`)}
+    else{const ig=def.ignore||{};applyFx(s,ig.fx);applyCouncil(s,ig.council);report.push(`Unanswered: ${def.title}. People noticed.`)}
+    return false})}
+
+// ======================= CALENDAR =======================
+function advance(){
+  if(S.over){showEnd();return}
+  const before=snapshotMet(S);const report=[];
+  monthlySim(S);
+  S.m++;if(S.m>12){S.m=1;S.y++}
+  expire(S,report);
+  const queue=[];
+  if(S.m===4){S.stage='draft';S.draft=null;S.events.push({id:'budget',kind:'budget',expires:99,born:S.y*12+S.m});
+    report.push(`Budget season: write the FY${fyOf(S)+1} budget at City Hall and submit it this month.`)}
+  if(S.m===5&&S.stage==='draft'){const p=defaultProposal(S);S.proposal=p;S.stage='submitted';S.events=S.events.filter(e=>e.kind!=='budget');
+    report.push(`You missed the April deadline. Finance submitted a cost-to-continue budget at $${S.taxRate.toFixed(2)} for you.`)}
+  if(S.m===6){if(S.stage==='submitted')queue.push(budgetVote);const r=readingUpdate(S);
+    report.push(`TCAP results are out: MSCS reading proficiency went from ${r.before.toFixed(1)}% to ${r.after.toFixed(1)}%.`)}
+  if(S.m===7&&S.pending){enact(S,S.pending);report.push(`FY${fyOf(S)} begins. The new budget is in effect.`);S.pending=null;S.stage='none'}
+  if(S.m===10&&(S.y===2027||S.y===2031))queue.push(election);
+  maybeSpawn(S,report);
+  save();refreshHUD();closePanel();
+  showReport(before,report,()=>runQueue(queue));
+}
+function runQueue(q){if(!q.length)return;const f=q.shift();f(()=>runQueue(q))}
+function defaultProposal(s){const maint=maintFor(s);return{divs:{...maint},maint,tax:s.taxRate,raise:2}}
+function enact(s,p){DIVS.forEach(d=>{s.enacted[d.id]=p.divs[d.id];s.ratio[d.id]=p.divs[d.id]/p.maint[d.id]});s.taxRate=p.tax;s.raise=p.raise;s.raiseCost=p.raise*5;s.fyIndex++}
+
+// ======================= HUD =======================
+const $=id=>document.getElementById(id);
+let prevMet=null;
+function refreshHUD(){
+  if(!S)return;
+  $('hDate').textContent=`${MONTHS[S.m-1]} ${S.y}`;$('hFY').textContent=`FY${fyOf(S)} · term ${S.term}`;
+  $('hRes').textContent=fmtM(S.reserve);const pct=S.reserve/annualSpend(S)*100;$('hResPct').textContent=`${pct.toFixed(1)}% of budget${pct<10?' · below 10%':''}`;$('hResPct').style.color=pct<10?'var(--bad)':'';
+  $('hApp').textContent=Math.round(S.approval)+'%';$('hAppBar').style.width=S.approval+'%';$('hAppBar').style.background=S.approval>=50?'var(--good)':S.approval>=40?'var(--warn)':'var(--bad)';
+  $('hCouncil').textContent=`${favorable(S)} / 13`;
+  $('hNext').textContent=nextDeadline();
+  const M=S.met,p=prevMet||M;
+  const tr=(a,b,inv,dig=1)=>{const d=a-b;if(Math.abs(d)<0.05*Math.pow(10,1-dig))return'<span class="tr flat">·</span>';const good=inv?d<0:d>0;return`<span class="tr ${good?'up':'down'}">${d>0?'+':'−'}${Math.abs(d).toFixed(dig)}</span>`};
+  $('metrics').innerHTML=`<h3>City indicators</h3>
+   <div class="mrow"><span>MPD officers</span><b>${Math.round(M.officers).toLocaleString()}</b>${tr(M.officers,p.officers,false,0)}</div>
+   <div class="mrow"><span>Violent crime index</span><b>${M.crime.toFixed(0)}</b>${tr(M.crime,p.crime,true)}</div>
+   <div class="mrow"><span>MSCS reading</span><b>${M.reading.toFixed(1)}%</b>${tr(M.reading,p.reading,false)}</div>
+   <div class="mrow"><span>Street condition</span><b>${M.streets.toFixed(0)}</b>${tr(M.streets,p.streets,false)}</div>
+   <div class="mrow"><span>Blight (lower = better)</span><b>${M.blight.toFixed(0)}</b>${tr(M.blight,p.blight,true)}</div>
+   <div class="mrow"><span>Transit service</span><b>${M.transit.toFixed(0)}</b>${tr(M.transit,p.transit,false)}</div>
+   <div class="mrow"><span>Jobs climate</span><b>${M.jobs.toFixed(0)}</b>${tr(M.jobs,p.jobs,false)}</div>
+   <div class="mfoot">Crime index: 2025 = 100. Spending ${fmtM(annualSpend(S))} · revenue ${fmtM(annualRevenue(S))} · tax $${S.taxRate.toFixed(2)}/$100</div>`;
+  const now=S.y*12+S.m;
+  $('deskN').textContent=S.events.length;
+  $('desk').innerHTML=S.events.length?S.events.map((e,i)=>{const pl=placeOf(evAt(e));const left=e.expires-(now-e.born);
+    return`<button data-goev="${i}"><i class="${e.kind==='budget'?'b':e.kind==='ordinance'?'o':''}"></i><span>${evTitle(e)}<br><span class="note">${pl.name}</span></span>${e.kind!=='budget'&&e.id!=='briefing'?`<small>${left<=1?'now':left+' mo'}</small>`:''}</button>`}).join(''):'<div class="empty">Nothing waiting. Advance the month when you\'re ready.</div>';
+  renderPins();
+}
+function nextDeadline(){const m=S.m,y=S.y;
+  if(S.over)return'Your time in office is over';
+  if(m===4&&S.stage==='draft')return`FY${fyOf(S)+1} budget due this month`;
+  if(S.stage==='submitted')return`Council budget vote in June ${m<=6?y:y+1}`;
+  if(S.pending)return`New budget takes effect July`;
+  const elY=S.term===1?2027:2031;
+  const cand=[{t:(m<4?y:y+1)*12+4,txt:`Budget due April ${m<4?y:y+1}`},{t:elY*12+10,txt:`City election October ${elY}`}];
+  cand.sort((a,b)=>a.t-b.t);return cand[0].txt}
+let toastT;function toast(msg){const t=$('toast');t.textContent=msg;t.classList.add('show');clearTimeout(toastT);toastT=setTimeout(()=>t.classList.remove('show'),4200)}
+function setStatus(t){const s=$('status');if(!t){s.hidden=true;return}s.hidden=false;s.textContent=t}
+
+// ======================= PANEL & MODALS =======================
+let modalOpen=false,onClose=null,panelFor=null;
+function openModal(sub,title,html,wide,cb){$('mSub').textContent=sub;$('mTitle').textContent=title;$('mBody').innerHTML=html;$('sheet').classList.toggle('wide',!!wide);$('modal').hidden=false;modalOpen=true;onClose=cb||null;$('mBody').scrollTop=0}
+function closeModal(){$('modal').hidden=true;modalOpen=false;const f=onClose;onClose=null;if(f)f()}
+function openPanel(sub,title,html,key){$('pSub').textContent=sub;$('pTitle').textContent=title;$('pBody').innerHTML=html;$('panel').hidden=false;$('pBody').scrollTop=0;panelFor=key||null;$('layers').hidden=true}
+function closePanel(){$('panel').hidden=true;panelFor=null}
+function whereLine(lon,lat){const d=districtAt(lon,lat),sd=superAt(lon,lat),pc=precinctAt(lon,lat);
+  if(!d&&!sd)return'Outside Memphis city limits';const m=d&&memberFor(d);
+  return[d?`Council District ${d}${m?` (${m.name})`:''}`:null,sd?`Super District ${sd}`:null,pc?`MPD ${pc} Precinct`:null].filter(Boolean).join(' · ')}
+function eventCard(ev,idx){
+  if(ev.kind==='budget')return`<div class="card"><div class="ttl">Write the FY${fyOf(S)+1} budget</div><p>The charter requires you to send the council a budget. They have until the end of June to adopt it and set the tax rate.</p><div class="row"><button class="btn primary" data-act="budget">Open the budget office</button></div></div>`;
+  const def=evDef(ev);const left=ev.expires-((S.y*12+S.m)-ev.born);
+  if(ev.kind==='ordinance'){return`<div class="card"><div class="ttl">Ordinance: ${def.title}</div><div class="due">Passed ${ev.yes}–${13-ev.yes} · becomes law without your signature in ${left} month${left===1?'':'s'}</div>
+    <p>You can sign it or veto it. If you veto, the council can override with a simple majority: 7 of 13 votes, the same number it took to pass.</p>
+    <div class="choices"><button class="choice" data-ev="${idx}" data-ci="0"><b>Sign it</b><small>${describe(def.sign)||'No major effects'}</small></button>
+    <button class="choice" data-ev="${idx}" data-ci="1"><b>Veto it</b><small>Override vote follows · ${describe(def.veto)}</small></button></div></div>`}
+  const pl=placeOf(def.at);
+  return`<div class="card"><div class="ttl">${def.title}</div>${ev.id!=='briefing'?`<div class="due">${left<=1?'Respond this month':`Respond within ${left} months`}</div>`:''}
+   <div class="where">${whereLine(pl.lon,pl.lat)}</div>
+   <p>${def.body(S)}</p>${def.fact?`<div class="note"><b>On the record:</b> ${def.fact}</div>`:''}
+   <div class="choices">${def.choices.map((c,ci)=>`<button class="choice" data-ev="${idx}" data-ci="${ci}"><b>${c.label}</b><small>${describe(c)||'No major effects'}</small></button>`).join('')}</div></div>`}
+function lmkInfo(L){
+  const M=S.met;const f=[];let acts='';
+  switch(L.id){
+   case 'cityhall':f.push('Mayor: four-year term, two-term limit. Runs all city divisions and has sole contracting authority.','Appoints division directors and board members (MLGW, MATA, others), subject to council approval.','Council: 13 members, 7 single-member districts plus 2 super districts of 3 seats each. Approves the budget and sets the property tax rate.','A mayoral veto can be overridden by a simple majority of the council (7 votes).','Council meets about 24 times a year, usually the first and third Tuesdays.');
+     acts=`<div class="row"><button class="btn primary" data-act="budget">Budget office</button><button class="btn" data-act="council">Council chamber</button><button class="btn" data-act="policies">Your initiatives</button></div>`;break;
+   case 'county':f.push('The Shelby County Commission, not the City Council, funds Memphis-Shelby County Schools.',`Your standing with commissioners: ${Math.round(S.county)}/100. Better relations nudge school reading results each year.`);
+     acts=S.countyMet===S.y*12+S.m?'<p class="note">You already met with commissioners this month.</p>':`<div class="row"><button class="btn" data-act="countymeet">Meet with commissioners on early literacy</button></div>`;break;
+   case 'mpd':f.push(`Sworn officers: ${Math.round(M.officers).toLocaleString()} (about 2,500 authorized).`,`Police Services budget this year: ${fmtM(S.enacted.police)}. Police and fire personnel together top $500 million in FY2027.`,'MPD patrols the city through 9 precincts. Turn on the precinct layer to see them.','Memphis recorded a 26.4% drop in murders in 2025, the fewest since 2015.');acts=policyToggle('recruit');break;
+   case 'fire':f.push(`Fire Services budget this year: ${fmtM(S.enacted.fire)}. Fire and EMS are the city's second-largest division.`);break;
+   case 'mlgw':f.push('Memphis Light, Gas and Water is owned by the city and run by a board the mayor appoints and the council confirms.');break;
+   case 'mscs':f.push(`MSCS reading proficiency: ${M.reading.toFixed(1)}% (state ≈ 45%).`,'The district has its own elected board. The County Commission and the state fund it; the City Council has no vote on its budget.','City levers: libraries, youth programs, literacy partnerships, and pressure on the county.');acts=policyToggle('tutors');break;
+   case 'library':f.push(`Library Services budget: ${fmtM(S.enacted.lib)}.`,'FY2027 put more than $40 million into parks, libraries and community spaces, and plans a new library in Parkway Village.');acts=policyToggle('libHours');break;
+   case 'mata':f.push('MATA\'s FY2027 city subsidy is $32 million, up $2 million.',`Transit service index: ${M.transit.toFixed(0)}/100.`,'The North Main police precinct station shares this building.');acts=policyToggle('mata');break;
+   case 'liberty':f.push('Home of the Liberty Bowl stadium and the redeveloped Liberty Park.',`Parks budget: ${fmtM(S.enacted.parks)}.`);acts=policyToggle('mploy');break;
+   case 'pw':f.push('One of the city\'s solid waste yards. Crews got a 2% raise and a one-time $2,000 bonus in FY2027.',`Public Works budget: ${fmtM(S.enacted.pw)}.`);acts=policyToggle('crews');break;
+   case 'swtwin':f.push('$13.6 million in the FY2027 capital plan for a new police station on the former Southwest Twin Drive-In site.');break;
+   case 'parkway':f.push('A new library in Parkway Village is planned in the FY2027 budget. The current branch is on Knight Arnold Rd.');break;
+   case 'xai':f.push('xAI\'s property taxes, about $15 million, helped balance FY2027.','Neighbors in Southwest Memphis have raised concerns about emissions.');acts=policyToggle('air');break;
+   case 'oem':f.push('The city\'s 911 call center, next to the Office of Emergency Management on Avery Ave.');break;
+   case 'forum':f.push('Arena home of the Memphis Grizzlies, owned by the public and leased to the team.');break;
+   case 'airport':f.push('FedEx\'s World Hub makes Memphis International one of the busiest cargo airports in the world.');break;
+   case 'pyramid':f.push('The former arena on the riverfront, now a Bass Pro Shops megastore. The city still owns the building.');break;
+   case 'stjude':f.push('One of the city\'s largest employers and a global pediatric research center.');break;
+   case 'ncrm':f.push('Built around the Lorraine Motel, where Dr. Martin Luther King Jr. was assassinated in 1968. A city-owned property.');break;
+   case 'beale':f.push('Memphis\'s best-known entertainment district and a key tourism draw. The city owns the Beale Street district.');break;
+   case 'uofm':f.push('Public research university in East Memphis.');break;
+   case 'graceland':f.push('Elvis Presley\'s home, one of the most-visited houses in America and a Whitehaven anchor.');break;
+   case 'zoo':f.push('In Overton Park, Midtown.');break;
+  }
+  return{f,acts}}
+function policyToggle(k){const P=POLICIES[k],on=!!S.policies[k];return`<div class="row"><span class="pill ${on?'on':''}">${on?'Active':'Not funded'}</span><button class="btn" data-act="toggle" data-k="${k}">${on?'End':'Fund'}: ${P.name} (${fmtM(P.cost)}/yr)</button></div>`}
+function openPlace(at){
+  const pl=placeOf(at);
+  const evs=S.events.map((e,i)=>[e,i]).filter(([e])=>evAt(e)===at);
+  if(pl.lmk){const L=LM[at];const{f,acts}=lmkInfo(L);
+    openPanel(L.addr,L.name,`${evs.map(([e,i])=>eventCard(e,i)).join('')}<div class="note">${whereLine(L.lon,L.lat)}</div>${f.length?`<div class="facts"><h4>About this place</h4><ul>${f.map(x=>`<li>${x}</li>`).join('')}</ul></div>`:''}${acts}${!evs.length&&!acts?'<p class="note">Nothing needs you here right now.</p>':''}`,at)}
+  else openPanel('Neighborhood',pl.name,evs.length?evs.map(([e,i])=>eventCard(e,i)).join(''):'<p class="note">Nothing needs you here right now.</p>',at);
+}
+function flyTo(at,open){const pl=placeOf(at);camFly({center:[pl.lon,pl.lat],zoom:Math.max(map?map.getZoom():15,15.2),speed:1.4});if(open)openPlace(at)}
+function showReport(before,lines,next){
+  const a=S.met,b=before;const row=(n,x,y,inv,dig=1,suf='')=>{const d=x-y;const good=inv?d<0:d>0;return`<tr><td>${n}</td><td class="num">${y.toFixed(dig)}${suf}</td><td class="num">${x.toFixed(dig)}${suf}</td><td class="num ${Math.abs(d)<.05?'':good?'up':'down'}">${d>=0?'+':'−'}${Math.abs(d).toFixed(dig)}</td></tr>`};
+  prevMet=b;refreshHUD();
+  openModal('Monthly report',`${MONTHS_L[S.m-1]} ${S.y}`,`
+   ${lines.length?`<div class="facts"><h4>This month</h4><ul>${lines.map(l=>`<li>${l}</li>`).join('')}</ul></div>`:'<p>A quiet month.</p>'}
+   <div class="tablewrap"><table style="min-width:420px"><thead><tr><th>Indicator</th><th>Last month</th><th>Now</th><th>Change</th></tr></thead><tbody>
+   ${row('Approval',S.approval,b.approval,false,0,'%')}${row('Reserve fund ($M)',S.reserve,b.reserve,false)}${row('Sworn officers',a.officers,b.officers,false,0)}${row('Violent crime index',a.crime,b.crime,true)}
+   ${row('Street condition',a.streets,b.streets,false)}${row('Blight',a.blight,b.blight,true)}${row('Transit service',a.transit,b.transit,false)}${row('Jobs climate',a.jobs,b.jobs,false)}</tbody></table></div>
+   <div class="row"><button class="btn primary" data-act="close">See the map</button></div>`,false,next)}
+
+// ---- Budget office ----
+function openBudget(){
+  closePanel();
+  const editable=S.stage==='draft';
+  if(!editable){const t=enactedTotal(S);
+    openModal(`FY${fyOf(S)} adopted budget`,'Budget office',`
+     <p>${S.stage==='submitted'?'Your proposal is with the council. They vote in June.':S.pending?'The council adopted next year\'s budget. It takes effect July 1.':'You write the next budget in April. Until then, this is the budget the city is running on.'}</p>
+     ${budgetTable(S.enacted,null,false)}
+     <div class="summary"><div class="sumcell"><label>Divisions</label><b>${fmtM(t)}</b></div><div class="sumcell"><label>Your initiatives</label><b>${fmtM(policyCost(S))}</b></div>
+     <div class="sumcell"><label>Revenue</label><b>${fmtM(annualRevenue(S))}</b></div><div class="sumcell"><label>Property tax</label><b>$${S.taxRate.toFixed(2)}</b></div></div>
+     <p class="note">Division split follows the City's FY2025 adopted General Fund, scaled to the $906M FY2027 total. Some reporting puts MPD's FY2027 operating line at $221M; this game uses the division's full FY2025 share.</p>`,true);return}
+  if(!S.draft)S.draft=defaultProposal(S);
+  renderBudgetEditor();
+}
+function budgetTable(vals,maint,edit){let html='<div class="tablewrap"><table><thead><tr><th>Division</th>'+(maint?'<th>This year</th><th>Cost to continue</th><th>Proposed</th><th>vs. continue</th>':'<th>Budget</th>')+'</tr></thead><tbody>';let g='';
+  DIVS.forEach(d=>{if(d.grp!==g){g=d.grp;html+=`<tr class="grp"><td colspan="${maint?5:2}">${g}</td></tr>`}
+    if(maint){const v=vals[d.id],m=maint[d.id],pct=(v/m-1)*100;
+      html+=`<tr><td>${d.name}</td><td class="num">${fmtM(S.enacted[d.id])}</td><td class="num">${fmtM(m)}</td><td class="num">${edit?`<input type="range" id="r_${d.id}" data-div="${d.id}" min="-15" max="15" step="1" value="${Math.round(pct)}" aria-label="${d.name}"> `:''}<span id="v_${d.id}">${fmtM(v)}</span></td><td class="num ${pct>0.4?'up':pct<-0.4?'down':''}" id="p_${d.id}">${pct>=0?'+':'−'}${Math.abs(pct).toFixed(0)}%</td></tr>`}
+    else html+=`<tr><td>${d.name}</td><td class="num">${fmtM(vals[d.id])}</td></tr>`});
+  return html+'</tbody></table></div>'}
+function updateBudgetView(){const p=S.draft,c=budgetCalc(S,p),w=whip(S,p);
+  DIVS.forEach(d=>{const v=p.divs[d.id],pct=(v/p.maint[d.id]-1)*100;const a=$('v_'+d.id),b=$('p_'+d.id);if(a)a.textContent=fmtM(v);
+    if(b){b.textContent=`${pct>=0?'+':'−'}${Math.abs(pct).toFixed(0)}%`;b.className='num '+(pct>0.4?'up':pct<-0.4?'down':'')}});
+  const set=(id,txt,cls)=>{const e=$(id);if(e){e.textContent=txt;if(cls!==undefined)e.className=cls}};
+  set('taxOut','$'+p.tax.toFixed(2));set('raiseOut',p.raise.toFixed(1)+'%');set('raiseLine',fmtM(p.raise*5));
+  set('sRev',fmtM(c.rev));set('sSpend',fmtM(c.spend));set('sGapL',c.gap>=0?'Surplus':'Deficit');set('sGap',fmtM(c.gap),c.gap>=0?'up':'down');
+  set('sRes',fmtM(c.reserveEnd),c.reservePct<10?'down':'');set('sResP',`${c.reservePct.toFixed(1)}% · state guideline 10%`);set('sWhip',`${w} yes`,w>=7?'up':'down')}
+function renderBudgetEditor(){const p=S.draft,c=budgetCalc(S,p),w=whip(S,p);
+  openModal(`FY${fyOf(S)+1} proposal · due this month`,'Budget office',`
+   <p>"Cost to continue" is what each division needs next year to deliver the same services: pay steps, pensions and health care grow faster than revenue. Move each slider from −15% to +15% of that level.</p>
+   <div class="ctrls">
+    <label for="taxIn">Property tax per $100<input type="range" id="taxIn" min="300" max="399" step="1" value="${Math.round(p.tax*100)}"><output id="taxOut">$${p.tax.toFixed(2)}</output></label>
+    <label for="raiseIn">Employee raise<input type="range" id="raiseIn" min="0" max="5" step="0.5" value="${p.raise}"><output id="raiseOut">${p.raise.toFixed(1)}%</output></label>
+   </div>
+   <div class="summary">
+    <div class="sumcell"><label>Projected revenue</label><b id="sRev">${fmtM(c.rev)}</b></div>
+    <div class="sumcell"><label>Proposed spending</label><b id="sSpend">${fmtM(c.spend)}</b></div>
+    <div class="sumcell"><label id="sGapL">${c.gap>=0?'Surplus':'Deficit'}</label><b id="sGap" class="${c.gap>=0?'up':'down'}">${fmtM(c.gap)}</b></div>
+    <div class="sumcell"><label>Reserve at year end</label><b id="sRes" class="${c.reservePct<10?'down':''}">${fmtM(c.reserveEnd)}</b><div class="note" id="sResP">${c.reservePct.toFixed(1)}% · state guideline 10%</div></div>
+    <div class="sumcell"><label>Whip count</label><b id="sWhip" class="${w>=7?'up':'down'}">${w} yes</b><div class="note">7 needed to adopt</div></div>
+   </div>
+   ${budgetTable(p.divs,p.maint,true)}
+   <div class="facts"><h4>Also in the budget</h4><ul><li>Employee raise: <span id="raiseLine">${fmtM(p.raise*5)}</span> (about $5M per point)</li>${Object.keys(S.policies).filter(k=>S.policies[k]).map(k=>`<li>${POLICIES[k].name}: ${fmtM(POLICIES[k].cost)}</li>`).join('')||'<li>No mayoral initiatives funded</li>'}</ul></div>
+   <div class="row"><button class="btn primary" data-act="submitBudget">Submit to the council</button><button class="btn" data-act="resetBudget">Reset to cost-to-continue</button><button class="btn" data-act="close">Keep drafting later</button></div>
+   <p class="note">Revenue model: each 1¢ of property tax ≈ $1.5M (game estimate). The council's own reaction to your choices decides the June vote; the whip count is your staff's best guess.</p>`,true);
+}
+function budgetVote(next){const p=S.proposal,c=budgetCalc(S,p);
+  const res=S.council.map(m=>({m,yes:budgetScore(S,m,p,c)+rnd(-4,4)>=50}));const yes=res.filter(r=>r.yes).length;
+  const list=res.map(r=>`<div class="seat"><div class="sn">${r.m.seat}</div><div class="nm">${r.m.name}</div><div class="vote ${r.yes?'yes':'no'}">${r.yes?'YES':'NO'}</div></div>`).join('');
+  if(yes>=7){S.pending=p;S.stage='adopted';S.mood+=1;
+    openModal('Council vote',`Budget adopted ${yes}–${13-yes}`,`<p>The council adopted your FY${fyOf(S)+1} budget and set the tax rate at $${p.tax.toFixed(2)}. It takes effect July 1.</p><div class="seats">${list}</div><div class="row"><button class="btn primary" data-act="close">Continue</button></div>`,true,next)}
+  else{const am=amend(S,p),ac=budgetCalc(S,am);const ayes=S.council.filter(m=>budgetScore(S,m,am,ac)+6>=50).length;
+    openModal('Council vote',`Your budget failed ${yes}–${13-yes}`,`<p>The council rejected your proposal and passed its own amended version ${Math.max(ayes,7)}–${13-Math.max(ayes,7)}: tax rate $${am.tax.toFixed(2)}, ${am.raise}% raise, with non-safety divisions trimmed to close the gap. Spending ${fmtM(ac.spend)} against revenue ${fmtM(ac.rev)}.</p>
+     <p>You can accept it, or veto it. A veto is overridden with 7 votes. If the veto holds, the city runs on this year's appropriations, which means service cuts as costs rise.</p><div class="seats">${list}</div>
+     <div class="row"><button class="btn primary" data-act="acceptAmend">Accept the council's budget</button><button class="btn" data-act="vetoAmend">Veto it</button></div>`,true,next);
+    S._amend={am,ayes:Math.max(ayes,7)};S.approval-=2}
+  save()}
+function amend(s,p){const am={divs:{...p.divs},maint:p.maint,tax:Math.min(p.tax,s.taxRate),raise:Math.min(p.raise,2)};
+  const c=budgetCalc(s,am);if(c.gap<0){const cut=DIVS.filter(d=>d.grp!=='Public safety');const tot=cut.reduce((a,d)=>a+am.divs[d.id],0);
+    const f=Math.max(0.85,1+c.gap/tot);cut.forEach(d=>am.divs[d.id]=+(am.divs[d.id]*f).toFixed(1))}return am}
+
+// ---- Council ----
+function seatCard(m){return`<div class="seat"><div class="sn">${m.seat}</div><div class="nm">${m.name}</div>
+    <div class="row">${m.prio.map(p=>`<span class="pill">${PRIO_LABEL[p]}</span>`).join('')}</div>
+    <div class="opbar"><i style="width:${m.op}%;background:${m.op>=60?'var(--good)':m.op>=45?'var(--warn)':'var(--bad)'}"></i></div><div class="note">Relationship with you: ${Math.round(m.op)}/100</div></div>`}
+function openCouncil(){closePanel();
+  openModal('Memphis City Council · 13 seats','Council chamber',`
+   <div class="facts"><h4>How power works</h4><ul>
+    <li>7 members represent single districts (1–7). 6 more are elected three apiece from Super District 8 and Super District 9, so every resident votes for four council members.</li>
+    <li>Council members serve four-year terms with a two-term limit and elect their own chair and vice chair.</li>
+    <li>The council approves the budget, sets the property tax rate, and confirms the mayor's division directors and board appointees.</li>
+    <li>The mayor can veto council actions; a simple majority, 7 of 13, overrides.</li></ul></div>
+   <div class="seats">${S.council.map(seatCard).join('')}</div>
+   <div class="row"><button class="btn" data-act="showDistricts">Show districts on the map</button></div>
+   <p class="note">Members are fictional. Seats, district boundaries and powers are real.</p>`,true)}
+function openDistrict(d,isSuper){
+  const ms=S.council.filter(m=>m.d===d);
+  openPanel(isSuper?'Super District':'Council District',isSuper?`Super District ${d}`:`District ${d}`,
+   `<p>${isSuper?`Three council members are elected at large from this half of the city. Every resident here votes for all three, plus their single-district member.`:`One council member represents this district. Residents here also vote for the three Super District ${superOfDistrict(d)||''} members.`}</p>
+   <div class="seats">${ms.map(seatCard).join('')}</div>
+   ${(()=>{const evs=S.events.map((e,i)=>[e,i]).filter(([e])=>{const pl=placeOf(evAt(e));return isSuper?superAt(pl.lon,pl.lat)===d:districtAt(pl.lon,pl.lat)===d});
+     return evs.length?`<div class="facts"><h4>Open issues here</h4><ul>${evs.map(([e,i])=>`<li><a href="#" data-goev="${i}">${evTitle(e)}</a></li>`).join('')}</ul></div>`:'<p class="note">No open issues in this district right now.</p>'})()}
+   <p class="note">Boundary from the City of Memphis's official council district layer.</p>`,'d'+d)}
+function superOfDistrict(d){const f=GEO.council.find(x=>x.v===d);if(!f)return null;const r=f.parts[0];let x=0,y=0;r.forEach(p=>{x+=p[0];y+=p[1]});return superAt(x/r.length,y/r.length)}
+function openPrecinct(name){
+  const evs=S.events.map((e,i)=>[e,i]).filter(([e])=>{const pl=placeOf(evAt(e));return precinctAt(pl.lon,pl.lat)===name});
+  openPanel('MPD precinct',`${name} Precinct`,`<p>One of the Memphis Police Department's 9 patrol precincts. Citywide, MPD has ${Math.round(S.met.officers).toLocaleString()} sworn officers against about 2,500 authorized.</p>
+   ${evs.length?`<div class="facts"><h4>Open issues here</h4><ul>${evs.map(([e,i])=>`<li><a href="#" data-goev="${i}">${evTitle(e)}</a></li>`).join('')}</ul></div>`:''}
+   <div class="row"><button class="btn" data-act="gompd">Go to MPD headquarters</button></div>
+   <p class="note">Boundary from the City of Memphis's police precinct layer.</p>`,'p'+name)}
+function openPolicies(){const ks=Object.keys(POLICIES);
+  openPanel('Ongoing programs you control','Your initiatives',`<p>Mid-year, these are paid from the reserve fund. In April they go into the budget you send the council.</p>
+   ${ks.map(k=>`<div class="row"><span class="pill ${S.policies[k]?'on':''}">${S.policies[k]?'Active':'Off'}</span><span style="flex:1;min-width:160px">${POLICIES[k].name} · ${fmtM(POLICIES[k].cost)}/yr</span>${S.policies[k]?`<button class="btn" data-act="toggle" data-k="${k}">End it</button>`:`<a href="#" data-go="${POLICIES[k].where}">Fund it at ${placeOf(POLICIES[k].where).name}</a>`}</div>`).join('')}`,'policies')}
+function election(next){
+  const share=clamp(20+S.approval*0.6+rnd(-4,4),10,80),rival=clamp(60-S.approval*0.5+rnd(-4,4),10,70);const won=share>rival;
+  const other=Math.max(0,100-share-rival);
+  if(won&&S.term===1){S.term=2;S.council.forEach((m,k)=>{if(hash(k,S.y)<.4)m.op=clamp(50+rnd(-10,10),5,95)});
+    openModal('City election · October 2027','You won a second term',`<p>You took ${share.toFixed(1)}% of the vote to ${rival.toFixed(1)}% for your closest rival, with ${other.toFixed(1)}% split among the rest of the field. Memphis elects its mayor by plurality, with no runoff since a 1991 federal court ruling.</p><p>Several council seats turned over. You can serve one more term; the next election is October 2031 and you are term-limited after it.</p><div class="row"><button class="btn primary" data-act="close">Start term two</button></div>`,false,next)}
+  else{S.over=true;
+    openModal(`City election · October ${S.y}`,won?'Term-limited, with a win':'You lost the election',`<p>${won?`Your approval carried your side's agenda to a ${share.toFixed(1)}% win, but the charter limits a mayor to two terms. Your time in office is done.`:`You took ${share.toFixed(1)}% to ${rival.toFixed(1)}% for the winner.`}</p>${summary()}<div class="row"><button class="btn primary" data-act="newgame">Run again</button></div>`,false,next)}
+  save()}
+function summary(){const M=S.met;return`<div class="facts"><h4>Your record</h4><ul><li>Approval: ${Math.round(S.approval)}%</li><li>Sworn officers: ${Math.round(M.officers).toLocaleString()} (started at 1,917)</li><li>Violent crime index: ${M.crime.toFixed(0)} (started at 88)</li><li>MSCS reading proficiency: ${M.reading.toFixed(1)}% (started at 25.7%)</li><li>Reserve fund: ${fmtM(S.reserve)} (started at $96.0M)</li><li>Property tax: $${S.taxRate.toFixed(2)} (started at $3.39)</li></ul></div>`}
+function showEnd(){openModal('Game over','Your time in office is over',`${summary()}<div class="row"><button class="btn primary" data-act="newgame">Run again</button></div>`)}
+function openHelp(){closePanel();openModal('How to play','Guide',`
+  <div class="facts"><h4>Controls</h4><ul><li>WASD or the arrow keys pan the map; hold Shift to pan faster. Moving the mouse to the edge of the screen scrolls too (turn it off under Layers). You can also drag.</li><li>Scroll or pinch to zoom toward the cursor. Zoomed out you get the political map, with each council district in its own color. Zoom in and the camera tilts down into the 3D city.</li><li>Click a landmark or amber pin to open it. Click a district or precinct when those layers are on.</li><li>N advances one month. B opens the budget, C the council, L the map layers.</li></ul></div>
+  <div class="facts"><h4>The year</h4><ul><li>Fiscal year runs July–June. Write the next budget in April, the council votes in June, it takes effect July 1.</li><li>TCAP reading results arrive in June.</li><li>Unanswered problems expire and cost you approval and council goodwill. Handling an issue in a member's district earns a little goodwill from that member.</li><li>City elections: October 2027 and October 2031. Mayors are limited to two terms.</li></ul></div>
+  <div class="facts"><h4>The map</h4><ul><li>Streets, building footprints and heights, city limits, the Mississippi River, creeks, parks, railroads, council districts, super districts and MPD precincts all come from the City of Memphis's public GIS services (maps.memphistn.gov and gis.memphistn.gov), downloaded October 2026. Road classes come from the Memphis MPO's functional classification layer.</li><li>Landmark positions come from the city's facility records and address locator.</li></ul></div>
+  <div class="facts"><h4>Real vs. modeled</h4><ul><li>Real: FY2027 operating budget ($906M adopted), $3.39 tax rate, 2% raises, $96M reserve, MATA $32M, xAI's $15M in taxes, the $13.6M Southwest Twin precinct, MPD's ~1,917 officers and ~2,500 authorized, MSCS 25.7% reading vs ~45% statewide, 2025's 26.4% drop in murders, and the council's structure and charter powers.</li><li>Modeled: the division split (FY2025 shares scaled to FY2027), revenue per tax cent, how spending moves indicators, the crime and street indexes, council members and their votes.</li></ul></div>
+  <div class="facts"><h4>Sources</h4><ul>
+   <li><a href="https://content.govdelivery.com/accounts/TNMEMPHIS/bulletins/41dd99e" target="_blank" rel="noopener">City of Memphis: FY27 budget adopted</a></li>
+   <li><a href="https://tri-statedefender.com/city-council-approves-mayors-new-budget-with-wage-increases-and-capital-improvements/06/26/" target="_blank" rel="noopener">Tri-State Defender: Council approves FY27 budget</a></li>
+   <li><a href="https://actionnews5.com/2026/04/22/memphis-mayor-proposes-898-million-budget-with-no-new-tax-increase-2027/" target="_blank" rel="noopener">Action News 5: Mayor proposes FY27 budget</a></li>
+   <li><a href="https://tri-statedefender.com/memphis-mayor-paul-young-proposes-897m-fy2027-budget-with-raises-no-property-tax-increase/04/23/" target="_blank" rel="noopener">Tri-State Defender: proposed budget and reserve</a></li>
+   <li><a href="https://memphistn.gov/wp-content/uploads/2025/06/FY25-Q3-Operating-Budget-Council-Report_5-9-25.pdf" target="_blank" rel="noopener">City of Memphis: FY25 Q3 operating budget report</a></li>
+   <li><a href="https://www.memphistn.gov/?p=46" target="_blank" rel="noopener">City of Memphis: Meet Your Government</a></li>
+   <li><a href="https://memphisold.memphistn.gov/download/137/fy-2015-adopted-operating-budget/4705/organization-3.pdf" target="_blank" rel="noopener">City budget book: veto override by simple majority</a></li>
+   <li><a href="https://www.chalkbeat.org/tennessee/2026/06/24/memphis-students-improve-on-tcap-reading-but-struggle-in-math/" target="_blank" rel="noopener">Chalkbeat: 2026 MSCS TCAP results</a></li>
+   <li><a href="https://hoodline.com/2026/05/81-rookie-cops-pack-bellevue-as-memphis-bulks-up-thin-blue-line/" target="_blank" rel="noopener">Hoodline: MPD staffing</a></li>
+   <li><a href="https://dailymemphian.com/article/58605/2025-was-a-banner-year-for-memphis-crime-declines" target="_blank" rel="noopener">Daily Memphian: 2025 crime declines</a></li>
+   <li><a href="https://maps.memphistn.gov/mapping/rest/services/Basemaps/Common_Services_PROD/MapServer" target="_blank" rel="noopener">City of Memphis GIS: Common Services basemap layers</a></li>
+  </ul></div>
+  <div class="row"><button class="btn" data-act="newgame">Start over</button></div>`)}
+
+// ======================= MAP =======================
+let map=null,pinMarkers=[],lmMarkers={},hoodMarkers=[],roadMarkers=[],distMarkers=[],mapReady=false;
+let META=null;
+function decodeLayer(g){const s=atob(g),n=s.length;let i=0,px=0,py=0;const out=[];const k1=META.Q/META.KX,k2=META.Q/META.KY,L0=META.LON0,A1=META.LAT1;
+  const rv=()=>{let v=0,m=1,c;do{c=s.charCodeAt(i++);v+=(c&127)*m;m*=128}while(c>127);return v};
+  while(i<n){const np=rv();const parts=new Array(np);for(let a=0;a<np;a++){const cnt=rv();const ring=new Array(cnt);for(let b=0;b<cnt;b++){let dx=rv(),dy=rv();dx=dx&1?-(dx+1)/2:dx/2;dy=dy&1?-(dy+1)/2:dy/2;px+=dx;py+=dy;ring[b]=[+(L0+px*k1).toFixed(6),+(A1-py*k2).toFixed(6)]}parts[a]=ring}out.push(parts)}return out}
+function fcPoly(feats,props){return{type:'FeatureCollection',features:feats.map((parts,i)=>({type:'Feature',id:i+1,properties:props?props(i):{},geometry:{type:'Polygon',coordinates:parts.map(r=>{if(r.length&&(r[0][0]!==r[r.length-1][0]||r[0][1]!==r[r.length-1][1]))r=r.concat([r[0]]);return r}).filter(r=>r.length>=4)}})).filter(f=>f.geometry.coordinates.length)}}
+function fcLine(feats,props){return{type:'FeatureCollection',features:feats.map((parts,i)=>({type:'Feature',properties:props?props(i):{},geometry:{type:'MultiLineString',coordinates:parts}}))}}
+const FCC={'Interstate':'I','Freeway/Expressway':'I','Principal Arterial':'P','Minor Arterial':'M','Major Collector':'C','Minor Collector':'C'};
+const LAND='#111a21',CITY='#192630';
+function styleBase(){return{version:8,sources:{},layers:[{id:'bg',type:'background',paint:{'background-color':LAND}}]}}
+function initMap(){
+  if(window.__mlFail||!window.maplibregl){setStatus('The map engine could not load. Check your connection and reload.');return}
+  registerProtocol();
+  const wide=window.innerWidth>860&&!$('start').hidden;
+  map=new maplibregl.Map({container:'map',style:styleBase(),center:wide?[-90.085,35.13]:HOME_VIEW.center,zoom:wide?10.45:HOME_VIEW.zoom,pitch:0,bearing:0,maxPitch:60,minZoom:9.2,maxZoom:18.5,
+    maxBounds:[[-90.45,34.85],[-89.45,35.45]],attributionControl:false,dragRotate:false,pitchWithRotate:false,touchPitch:false,keyboard:false,fadeDuration:0});
+  map.touchZoomRotate.disableRotation();
+  map.on('load',loadBase);
+  map.on('zoom',zoomClasses);
+  window.addEventListener('resize',()=>map&&map.resize());
+}
+async function getJSON(u){const r=await fetch(u);if(!r.ok)throw new Error(u+' '+r.status);return r.json()}
+// Map sources are served through a custom "bcm://" protocol: each layer is decoded only when the map
+// engine asks for it and handed straight to its worker, so the page never holds a second full copy.
+let RAW={};
+const BUILD={
+  muni:()=>fcPoly(decodeLayer(RAW.muni.g),i=>({n:RAW.muni.a[i][0]})),
+  city:()=>fcPoly(decodeLayer(RAW.city.g)),
+  parks:()=>fcPoly(decodeLayer(RAW.parks.g).concat(decodeLayer(RAW.sparks.g))),
+  airport:()=>fcPoly(decodeLayer(RAW.airport.g)),
+  river:()=>fcPoly(decodeLayer(RAW.river.g)),
+  streams:()=>fcLine(decodeLayer(RAW.streams.g)),
+  creeks:()=>fcLine(decodeLayer(RAW.creeks.g)),
+  rail:()=>fcLine(decodeLayer(RAW.rail.g)),
+  streets:()=>fcLine(decodeLayer(RAW.streets.g)),
+  fc:()=>fcLine(decodeLayer(RAW.fc.g),i=>({c:FCC[RAW.fc.a[i][0]]||'C'})),
+  council:()=>fcPoly(GEO.council.map(f=>f.parts),i=>({d:GEO.council[i].v})),
+  superd:()=>fcPoly(GEO.superd.map(f=>f.parts),i=>({d:GEO.superd[i].v})),
+  precincts:()=>fcPoly(GEO.precincts.map(f=>f.parts),i=>({n:GEO.precincts[i].v,k:i})),
+  bmain:()=>{const feats=[],hs=[];for(const k of ['bldBig','bldCore']){const f=decodeLayer(RAW[k].g),a=RAW[k].a;for(let i=0;i<f.length;i++){feats.push(f[i]);hs.push(a[i]||0)}}
+    delete RAW.bldBig;delete RAW.bldCore;return fcPoly(feats,i=>({h:Math.max(3,Math.round(hs[i]*0.3048))}))},
+  bhomes:()=>{const r=fcPoly(decodeLayer(RAW.bldRest.g));delete RAW.bldRest;return r},
+};
+function registerProtocol(){maplibregl.addProtocol('bcm',async params=>{const key=params.url.replace('bcm://','');const fn=BUILD[key];if(!fn)throw new Error('No layer '+key);return{data:fn()}})}
+async function loadBase(){
+  try{setStatus('Loading streets, river and districts…');
+    const d=await getJSON('data/base.json');META=d.meta;RAW=d.layers;
+    GEO.council=decodeLayer(RAW.council.g).map((p,i)=>({parts:p,v:RAW.council.a[i][0]}));
+    GEO.superd=decodeLayer(RAW.superd.g).map((p,i)=>({parts:p,v:RAW.superd.a[i][0]}));
+    GEO.precincts=decodeLayer(RAW.precincts.g).map((p,i)=>({parts:p,v:RAW.precincts.a[i][0]}));
+    const src=id=>map.addSource(id,{type:'geojson',data:'bcm://'+id,tolerance:0.3,buffer:64});
+    ['muni','city','parks','airport','river','streams','creeks','rail','streets','fc','council','superd','precincts'].forEach(src);
+    const W=(a)=>['interpolate',['exponential',1.6],['zoom'],...a];
+    const add=l=>map.addLayer(l);
+    add({id:'city-fill',type:'fill',source:'city',paint:{'fill-color':CITY}});
+    add({id:'muni-fill',type:'fill',source:'muni',filter:['in',['get','n'],['literal',['ARLINGTON','BARTLETT','COLLIERVILLE','GERMANTOWN','LAKELAND','MILLINGTON']]],paint:{'fill-color':'#10181e','fill-opacity':.85}});
+    add({id:'airport-fill',type:'fill',source:'airport',paint:{'fill-color':'#1d2730'}});
+    add({id:'parks-fill',type:'fill',source:'parks',paint:{'fill-color':'#1b3526','fill-outline-color':'#24452f'}});
+    add({id:'river-fill',type:'fill',source:'river',paint:{'fill-color':'#0c2236'}});
+    add({id:'streams',type:'line',source:'streams',paint:{'line-color':'#123b5a','line-width':W([9,0.6,13,2,16,5])}});
+    add({id:'creeks',type:'line',source:'creeks',minzoom:10.5,paint:{'line-color':'#123b5a','line-width':W([10,0.4,14,1.2,17,3]),'line-opacity':.85}});
+    add({id:'streets',type:'line',source:'streets',layout:{'line-cap':'round','line-join':'round'},paint:{'line-color':['interpolate',['linear'],['zoom'],10,'#33424f',14,'#36475a',16,'#3f4f5e'],'line-width':W([9,0.35,12,0.7,14,1.6,16,4.5,18,12])}});
+    add({id:'rail',type:'line',source:'rail',minzoom:11,paint:{'line-color':'#5a5143','line-width':W([11,0.5,15,1.4,18,3]),'line-dasharray':[3,2]}});
+    add({id:'roads-c',type:'line',source:'fc',filter:['==',['get','c'],'C'],layout:{'line-cap':'round','line-join':'round'},paint:{'line-color':'#46525e','line-width':W([9,0.4,12,1,14,2.4,16,6,18,14])}});
+    add({id:'roads-m',type:'line',source:'fc',filter:['==',['get','c'],'M'],layout:{'line-cap':'round','line-join':'round'},paint:{'line-color':'#5f5d57','line-width':W([9,0.6,12,1.4,14,3,16,7,18,16])}});
+    add({id:'roads-p',type:'line',source:'fc',filter:['==',['get','c'],'P'],layout:{'line-cap':'round','line-join':'round'},paint:{'line-color':'#8a7552','line-width':W([9,0.8,12,1.8,14,3.6,16,8,18,18])}});
+    add({id:'roads-i-case',type:'line',source:'fc',filter:['==',['get','c'],'I'],layout:{'line-cap':'round','line-join':'round'},paint:{'line-color':'#2a1d0b','line-width':W([9,2.2,12,4,14,7,16,13,18,26])}});
+    add({id:'roads-i',type:'line',source:'fc',filter:['==',['get','c'],'I'],layout:{'line-cap':'round','line-join':'round'},paint:{'line-color':'#d79a3b','line-width':W([9,1.2,12,2.4,14,4.6,16,9,18,20])}});
+    add({id:'city-line',type:'line',source:'city',paint:{'line-color':'#f2a93b','line-opacity':['interpolate',['linear'],['zoom'],9,.75,13,.35],'line-width':W([9,1.2,14,2.4]),'line-dasharray':[4,2]}});
+    // overlays
+    add({id:'council-fill',type:'fill',source:'council',paint:{'fill-color':['match',['get','d'],1,DCOL[1],2,DCOL[2],3,DCOL[3],4,DCOL[4],5,DCOL[5],6,DCOL[6],7,DCOL[7],'#888'],'fill-opacity':['case',['boolean',['feature-state','hover'],false],.36,.2]}});
+    add({id:'council-line',type:'line',source:'council',paint:{'line-color':['match',['get','d'],1,DCOL[1],2,DCOL[2],3,DCOL[3],4,DCOL[4],5,DCOL[5],6,DCOL[6],7,DCOL[7],'#888'],'line-width':2.2}});
+    add({id:'superd-fill',type:'fill',source:'superd',layout:{visibility:'none'},paint:{'fill-color':['match',['get','d'],8,'#5aa7d8','#e8644f'],'fill-opacity':['case',['boolean',['feature-state','hover'],false],.26,.12]}});
+    add({id:'superd-line',type:'line',source:'superd',layout:{visibility:'none'},paint:{'line-color':'#ffffff','line-width':3,'line-dasharray':[3,1.5],'line-opacity':.85}});
+    add({id:'precinct-fill',type:'fill',source:'precincts',layout:{visibility:'none'},paint:{'fill-color':['to-color',['at',['get','k'],['literal',PCOL]]],'fill-opacity':['case',['boolean',['feature-state','hover'],false],.34,.18]}});
+    add({id:'precinct-line',type:'line',source:'precincts',layout:{visibility:'none'},paint:{'line-color':'#cfd8e3','line-width':1.8}});
+    map.setLight({anchor:'viewport',color:'#ffe7c2',intensity:.32,position:[1.4,200,40]});
+    addLabels();
+    mapReady=true;applyLayers();refreshHUD();zoomClasses();
+    setupMapInteractions();
+    loadBuildings();
+  }catch(e){console.error(e);setStatus('The map data could not load. Reload to try again.')}
+}
+async function loadBuildings(){
+  try{setStatus('Loading downtown and commercial buildings…');
+    const d=await getJSON('data/buildings-main.json');Object.assign(RAW,d.layers);
+    map.addSource('bmain',{type:'geojson',data:'bcm://bmain',tolerance:0.2,buffer:32});
+    map.addLayer({id:'bmain-flat',type:'fill',source:'bmain',maxzoom:13.5,paint:{'fill-color':'#2c3a47','fill-opacity':['interpolate',['linear'],['zoom'],11,.5,13.5,.9]}},'council-fill');
+    map.addLayer({id:'bmain-3d',type:'fill-extrusion',source:'bmain',minzoom:13.5,paint:{'fill-extrusion-color':['interpolate',['linear'],['get','h'],0,'#2e3c49',20,'#3a4a59',60,'#4d6072',140,'#7b8fa3'],'fill-extrusion-height':['interpolate',['linear'],['zoom'],13.5,0,14.2,['get','h']],'fill-extrusion-base':0,'fill-extrusion-opacity':.92,'fill-extrusion-vertical-gradient':true}},'council-fill');
+    applyLayers();setStatus(null);
+    map.on('moveend',maybeLoadHomes);maybeLoadHomes();
+  }catch(e){console.error(e);setStatus(null);toast('Some building data could not load. Streets and districts still work.')}
+}
+// Homes (250,970 footprints) load the first time you zoom in to neighborhood level.
+let homesState='idle';
+async function maybeLoadHomes(){
+  if(homesState!=='idle'||!map||map.getZoom()<12.6||!(S&&S.layers.bld))return;homesState='loading';
+  try{setStatus('Loading 250,970 homes and small buildings…');
+    const d=await getJSON('data/buildings-homes.json');Object.assign(RAW,d.layers);
+    map.addSource('bhomes',{type:'geojson',data:'bcm://bhomes',tolerance:0.25,buffer:32,maxzoom:15});
+    map.addLayer({id:'bhomes-flat',type:'fill',source:'bhomes',minzoom:13,maxzoom:15,paint:{'fill-color':'#28343f','fill-opacity':['interpolate',['linear'],['zoom'],13,0,13.6,.85]}},'bmain-flat');
+    map.addLayer({id:'bhomes-3d',type:'fill-extrusion',source:'bhomes',minzoom:15,paint:{'fill-extrusion-color':'#2b3845','fill-extrusion-height':4.5,'fill-extrusion-opacity':.9}},'bmain-3d');
+    homesState='done';applyLayers();setStatus(null);
+  }catch(e){console.error(e);homesState='idle';setStatus(null)}
+}
+function mk(el,lng,lat,anchor){return new maplibregl.Marker({element:el,anchor:anchor||'center'}).setLngLat([lng,lat]).addTo(map)}
+function addLabels(){
+  HOODS.forEach(h=>{const el=document.createElement('div');el.className='hood';el.textContent=h[0];hoodMarkers.push({m:mk(el,h[2],h[1]),el})});
+  TOWNS.forEach(h=>{const el=document.createElement('div');el.className='hood town';el.textContent=h[0];hoodMarkers.push({m:mk(el,h[2],h[1]),el,town:true})});
+  ROADS.forEach(r=>{const el=document.createElement('div');el.className=r[3]?'shield':'road';el.textContent=r[0];roadMarkers.push({m:mk(el,r[2],r[1]),el,sh:r[3]})});
+  LMKS.forEach(L=>{const el=document.createElement('button');el.className='lm'+(L.planned?' planned':'');el.setAttribute('aria-label',L.name);
+    el.innerHTML=`<span class="dot" style="background:${L.col}"></span><span class="nm">${L.short||L.name}</span><span class="ct"></span>`;
+    el.addEventListener('click',e=>{e.stopPropagation();if(!S.started)return;openPlace(L.id)});
+    lmMarkers[L.id]={m:new maplibregl.Marker({element:el,anchor:'left',offset:L.off||[-6,0]}).setLngLat([L.lon,L.lat]).addTo(map),el,L}});
+  GEO.council.forEach(f=>{const c=polyCenter(f.parts);const el=document.createElement('div');el.className='dlabel';distMarkers.push({m:mk(el,c[0],c[1]),el,d:f.v,kind:'council'})});
+  GEO.superd.forEach(f=>{const c=polyCenter(f.parts);const el=document.createElement('div');el.className='dlabel';el.innerHTML=`SD ${f.v}<small>Super District ${f.v}</small>`;distMarkers.push({m:mk(el,c[0],c[1]),el,d:f.v,kind:'superd'})});
+  GEO.precincts.forEach(f=>{const c=polyCenter(f.parts);const el=document.createElement('div');el.className='dlabel';el.style.fontSize='12px';el.innerHTML=`${f.v.toUpperCase()}<small>MPD precinct</small>`;distMarkers.push({m:mk(el,c[0],c[1]),el,d:f.v,kind:'precinct'})});
+}
+function polyCenter(parts){// centroid of the largest ring, nudged inside
+  let best=parts[0],ba=0;for(const r of parts){let a=0;for(let i=0,j=r.length-1;i<r.length;j=i++)a+=(r[j][0]*r[i][1]-r[i][0]*r[j][1]);a=Math.abs(a);if(a>ba){ba=a;best=r}}
+  let x=0,y=0,A=0;for(let i=0,j=best.length-1;i<best.length;j=i++){const f=best[j][0]*best[i][1]-best[i][0]*best[j][1];x+=(best[j][0]+best[i][0])*f;y+=(best[j][1]+best[i][1])*f;A+=f}
+  const c=[x/(3*A),y/(3*A)];if(inPoly(c,parts))return c;
+  // fallback: scan for an interior point
+  let bx=1e9,by=1e9,Bx=-1e9,By=-1e9;best.forEach(p=>{bx=Math.min(bx,p[0]);by=Math.min(by,p[1]);Bx=Math.max(Bx,p[0]);By=Math.max(By,p[1])});
+  for(let k=1;k<12;k++)for(let l=1;l<12;l++){const q=[bx+(Bx-bx)*k/12,by+(By-by)*l/12];if(inPoly(q,parts))return q}return c}
+function zoomClasses(){if(!map||!mapReady)return;const z=map.getZoom();
+  hoodMarkers.forEach(h=>{h.el.style.display=(h.town?z<13.5:(z>=POLZ-0.2&&z<15.3))?'':'none'});
+  roadMarkers.forEach(r=>r.el.style.display=(r.sh?z>=10:(z>=12.4&&z<16.5))?'':'none');
+  const lab=S&&S.layers.labels;
+  Object.values(lmMarkers).forEach(o=>{const busy=o.el.classList.contains('busy');const show=busy||(lab&&z>=(o.L.pri===1?10.4:o.L.pri===2?12.6:13.8));o.el.style.display=show||z>=11.6?'':'none';o.el.classList.toggle('z0',!show)});
+  const dz=z>=10.1&&z<15.5,pol=z<POLZ;distMarkers.forEach(o=>{const on=o.kind==='council'?(S&&S.layers.council)||(pol&&!(S&&(S.layers.superd||S.layers.precinct))):o.kind==='superd'?S&&S.layers.superd:S&&S.layers.precinct;o.el.style.display=on&&dz?'':'none';o.el.classList.toggle('big',pol)});
+}
+function renderPins(){
+  if(!mapReady)return;
+  pinMarkers.forEach(p=>p.remove());pinMarkers=[];
+  const counts={};
+  S.events.forEach((e,i)=>{const at=evAt(e);const pl=placeOf(at);
+    if(pl.lmk){counts[at]=(counts[at]||0)+1;return}
+    const el=document.createElement('button');el.className='pin';el.setAttribute('aria-label',evTitle(e));el.title=evTitle(e);
+    el.innerHTML=`<svg width="30" height="38" viewBox="0 0 30 38"><path d="M15 1C7.3 1 1.5 6.8 1.5 14.2 1.5 24 15 37 15 37s13.5-13 13.5-22.8C28.5 6.8 22.7 1 15 1z" fill="#f2a93b" stroke="#1b1206" stroke-width="1.5"/><rect x="13.4" y="6.5" width="3.2" height="10" rx="1" fill="#1b1206"/><rect x="13.4" y="19" width="3.2" height="3.2" rx="1" fill="#1b1206"/></svg>`;
+    el.addEventListener('click',ev=>{ev.stopPropagation();openPlace(at)});
+    pinMarkers.push(new maplibregl.Marker({element:el,anchor:'bottom'}).setLngLat([pl.lon,pl.lat]).addTo(map))});
+  Object.values(lmMarkers).forEach(o=>{const n=counts[o.L.id]||0;o.el.classList.toggle('busy',n>0);o.el.querySelector('.ct').textContent=n?String(n):'';o.el.style.zIndex=n?'3':'1'});
+  distMarkers.forEach(o=>{if(o.kind!=='council')return;const m=memberFor(o.d);o.el.innerHTML=`D${o.d}<small>${m?m.name:''}</small>`});
+  zoomClasses();
+}
+function applyLayers(){if(!mapReady)return;const L=S?S.layers:{council:false,superd:false,precinct:false,bld:true,labels:true};
+  const vis=(id,on)=>{if(map.getLayer(id))map.setLayoutProperty(id,'visibility',on?'visible':'none')};
+  politicalPaint(L.council,(L.superd||L.precinct)&&!L.council);vis('superd-fill',L.superd);vis('superd-line',L.superd);vis('precinct-fill',L.precinct);vis('precinct-line',L.precinct);
+  ['bmain-flat','bmain-3d','bhomes-flat','bhomes-3d'].forEach(id=>vis(id,L.bld));
+  $('lyCouncil').checked=L.council;$('lySuper').checked=L.superd;$('lyPrecinct').checked=L.precinct;$('lyBld').checked=L.bld;$('lyLabels').checked=L.labels;$('lyEdge').checked=L.edge!==false;
+  zoomClasses();if(L.bld&&homesState==='idle'&&map.getSource('bmain'))maybeLoadHomes()}
+let hoverState=null;
+function setupMapInteractions(){
+  const hoverLayers=['council-fill','superd-fill','precinct-fill'];
+  const activeLayers=()=>hoverLayers.filter(l=>l==='council-fill'?(S.layers.council||map.getZoom()<POLZ)&&!((S.layers.superd||S.layers.precinct)&&!S.layers.council):map.getLayoutProperty(l,'visibility')==='visible');
+  map.on('mousemove',e=>{if(!S||!S.started)return;const fs=map.queryRenderedFeatures(e.point,{layers:activeLayers()});
+    const tip=$('tip');
+    if(hoverState){map.setFeatureState(hoverState,{hover:false});hoverState=null}
+    if(!fs.length){tip.hidden=true;$('map').classList.remove('hot');return}
+    const f=fs[0];hoverState={source:f.source,id:f.id};map.setFeatureState(hoverState,{hover:true});$('map').classList.add('hot');
+    let html='';if(f.source==='council'){const m=memberFor(f.properties.d);html=`<b>DISTRICT ${f.properties.d}</b><br>${m?m.name:''} · relationship ${m?Math.round(m.op):'–'}/100`}
+    else if(f.source==='superd'){html=`<b>SUPER DISTRICT ${f.properties.d}</b><br>${S.council.filter(m=>m.d===f.properties.d).map(m=>m.name).join(', ')}`}
+    else html=`<b>${String(f.properties.n).toUpperCase()} PRECINCT</b><br>Memphis Police Department`;
+    tip.innerHTML=html;tip.hidden=false;tip.style.left=(e.point.x+14)+'px';tip.style.top=(e.point.y+14)+'px'});
+  map.on('mouseout',()=>{$('tip').hidden=true});
+  map.on('movestart',()=>{$('tip').hidden=true;if(hoverState){map.setFeatureState(hoverState,{hover:false});hoverState=null}$('map').classList.remove('hot')});
+  map.on('click',e=>{if(!S||!S.started)return;const fs=map.queryRenderedFeatures(e.point,{layers:activeLayers()});
+    if(!fs.length)return;const f=fs[0];
+    if(f.source==='council')openDistrict(f.properties.d,false);else if(f.source==='superd')openDistrict(f.properties.d,true);else openPrecinct(f.properties.n)});
+}
+
+
+// ======================= CK3-STYLE CAMERA =======================
+// Pan with WASD/arrows or the screen edge, scroll zooms toward the cursor, the camera tilts with zoom, no rotation.
+const POLZ=11.6;
+const PANKEYS=new Set(['w','a','s','d','arrowup','arrowdown','arrowleft','arrowright']);
+const keysDown=new Set();const mouse={x:0,y:0,in:false,btn:false};let flying=false,lastT=0;
+const pitchFor=z=>z<=11.2?0:z>=16.2?56:(z-11.2)/5*56;
+function camFly(o){if(!map)return;flying=true;map.flyTo({center:o.center,zoom:o.zoom,pitch:pitchFor(o.zoom),bearing:0,speed:o.speed||1.3,curve:1.42,essential:true});map.once('moveend',()=>{flying=false})}
+function camLoop(t){const dt=Math.min(.05,lastT?(t-lastT)/1000:0);lastT=t;
+  if(map&&mapReady&&S&&S.started&&!modalOpen&&$('start').hidden){
+    let dx=0,dy=0;
+    if(keysDown.has('w')||keysDown.has('arrowup'))dy-=1;if(keysDown.has('s')||keysDown.has('arrowdown'))dy+=1;
+    if(keysDown.has('a')||keysDown.has('arrowleft'))dx-=1;if(keysDown.has('d')||keysDown.has('arrowright'))dx+=1;
+    if(S.layers.edge!==false&&mouse.in&&!mouse.btn&&document.hasFocus()){const m=12,W=window.innerWidth,H=window.innerHeight;
+      if(mouse.x<=m)dx-=1;else if(mouse.x>=W-m)dx+=1;if(mouse.y<=m)dy-=1;else if(mouse.y>=H-m)dy+=1}
+    if(dx||dy){const n=Math.hypot(dx,dy),sp=(keysDown.has('shift')?1700:850)*dt;if(flying){map.stop();flying=false}map.panBy([dx/n*sp,dy/n*sp],{duration:0})}
+    if(!flying){const want=pitchFor(map.getZoom()),p=map.getPitch();if(Math.abs(p-want)>0.15)map.setPitch(p+(want-p)*Math.min(1,dt*9));if(Math.abs(map.getBearing())>0.01)map.setBearing(0)}
+  }
+  requestAnimationFrame(camLoop)}
+window.addEventListener('keyup',e=>keysDown.delete(e.key.toLowerCase()));
+window.addEventListener('blur',()=>keysDown.clear());
+document.addEventListener('mousemove',e=>{mouse.x=e.clientX;mouse.y=e.clientY;mouse.in=true});
+document.addEventListener('mouseleave',()=>{mouse.in=false});
+document.addEventListener('mousedown',()=>{mouse.btn=true});document.addEventListener('mouseup',()=>{mouse.btn=false});
+requestAnimationFrame(camLoop);
+// Political map: council districts are painted like realms when zoomed out, and fade as you zoom into the streets.
+function politicalPaint(on,suppress){if(!map.getLayer('council-fill'))return;const P=on?.2:0,L1=on?1:0,F=suppress?0:.52,FH=suppress?0:.66,LF=suppress?0:1;
+  map.setPaintProperty('council-fill','fill-opacity',['interpolate',['linear'],['zoom'],POLZ-0.9,['case',['boolean',['feature-state','hover'],false],FH,F],POLZ+0.4,['case',['boolean',['feature-state','hover'],false],on?.36:0,P]]);
+  map.setPaintProperty('council-line','line-opacity',['interpolate',['linear'],['zoom'],POLZ-0.9,LF,POLZ+0.4,L1]);
+  map.setPaintProperty('council-line','line-width',['interpolate',['linear'],['zoom'],10,3,13,2.2])}
+
+// ======================= INPUT =======================
+window.addEventListener('keydown',e=>{
+  if(!$('start').hidden)return;
+  if(e.target&&(e.target.tagName==='INPUT'))return;
+  const k=e.key.toLowerCase();
+  if(modalOpen){if(k==='escape')closeModal();return}
+  if(PANKEYS.has(k)||k==='shift'){keysDown.add(k);if(k.startsWith('arrow'))e.preventDefault();return}
+  if(k==='escape'){closePanel();$('layers').hidden=true;return}
+  if(k==='n')advance();else if(k==='b')openBudget();else if(k==='c')openCouncil();else if(k==='h')openHelp();else if(k==='l')toggleLayersBox();
+});
+function toggleLayersBox(){$('layers').hidden=!$('layers').hidden;$('bLayers').classList.toggle('on',!$('layers').hidden)}
+document.addEventListener('change',e=>{const t=e.target;if(!S)return;const map_={lyCouncil:'council',lySuper:'superd',lyPrecinct:'precinct',lyBld:'bld',lyLabels:'labels',lyEdge:'edge'};
+  if(map_[t.id]){S.layers[map_[t.id]]=t.checked;applyLayers();save()}});
+document.addEventListener('click',e=>{
+  const ge=e.target.closest('[data-goev]');if(ge){e.preventDefault();const ev=S.events[+ge.dataset.goev];if(ev)flyTo(evAt(ev),true);return}
+  const go=e.target.closest('[data-go]');if(go){e.preventDefault();flyTo(go.dataset.go,true);return}
+  const ch=e.target.closest('[data-ev]');if(ch){const ev=S.events[+ch.dataset.ev];if(!ev)return;const at=evAt(ev);resolve(ev,+ch.dataset.ci);
+    if(panelFor===at&&!$('panel').hidden)openPlace(at);return}
+  const b=e.target.closest('[data-act]');if(!b)return;const a=b.dataset.act;
+  if(a==='close')closeModal();
+  else if(a==='pclose')closePanel();
+  else if(a==='budget'){openBudget()}
+  else if(a==='council')openCouncil();
+  else if(a==='policies')openPolicies();
+  else if(a==='help')openHelp();
+  else if(a==='layers')toggleLayersBox();
+  else if(a==='zin')map&&map.zoomIn();
+  else if(a==='zout')map&&map.zoomOut();
+  else if(a==='home')camFly({...HOME_VIEW,speed:1.6});
+    else if(a==='gompd')flyTo('mpd',true);
+  else if(a==='showDistricts'){S.layers.council=true;applyLayers();closeModal();camFly({...HOME_VIEW,speed:1.6});save()}
+  else if(a==='advance'){if(modalOpen){onClose=null;closeModal()}advance()}
+  else if(a==='toggle'){const k=b.dataset.k;S.policies[k]=!S.policies[k];
+    if(S.policies[k]){const cf={recruit:{safety:5,fiscal:-3},libHours:{education:4,fiscal:-2},mata:{transit:6,fiscal:-3},mploy:{education:4,safety:3,fiscal:-2},crews:{blight:6,fiscal:-2},tutors:{education:6,fiscal:-2},air:{oversight:3}}[k];applyCouncil(S,cf);S.mood+=1}
+    else{S.mood-=1}
+    toast(`${POLICIES[k].name}: ${S.policies[k]?'funded':'ended'}.`);save();refreshHUD();
+    if(panelFor==='policies')openPolicies();else openPlace(POLICIES[k].where)}
+  else if(a==='countymeet'){S.county=clamp(S.county+6,0,100);S.countyMet=S.y*12+S.m;applyCouncil(S,{education:1});toast('Commissioners took the meeting. County relations improved.');save();openPlace('county')}
+  else if(a==='submitBudget'){S.proposal=S.draft;S.stage='submitted';S.events=S.events.filter(e=>e.kind!=='budget');S.draft=null;save();closeModal();closePanel();toast('Budget submitted. The council votes in June.');refreshHUD()}
+  else if(a==='resetBudget'){S.draft=defaultProposal(S);renderBudgetEditor()}
+  else if(a==='acceptAmend'){S.pending=S._amend.am;S.stage='adopted';delete S._amend;save();closeModal()}
+  else if(a==='vetoAmend'){const{am,ayes}=S._amend;delete S._amend;const keep=Math.round(ayes-rnd(0,2));
+    if(keep>=7){S.pending=am;S.stage='adopted';S.mood-=2;applyCouncil(S,{all:-3});openModal('Veto','The council overrode you',`<p>${keep}–${13-keep}. The council's budget takes effect July 1. Under the charter a simple majority overrides a mayoral veto.</p><div class="row"><button class="btn primary" data-act="close">Continue</button></div>`,false,onClose)}
+    else{S.pending={divs:{...S.enacted},maint:maintFor(S),tax:S.taxRate,raise:0};S.stage='adopted';S.mood-=3;openModal('Veto','Your veto held',`<p>The override got ${keep} votes and needed 7. The city will run on this year's appropriations with no raise, while costs rise about 2–3%. Expect service to slip.</p><div class="row"><button class="btn primary" data-act="close">Continue</button></div>`,false,onClose)}
+    save()}
+  else if(a==='newgame'){onClose=null;closeModal();closePanel();beginTerm()}
+});
+document.addEventListener('input',e=>{if(!S||!S.draft)return;const t=e.target;
+  if(t.dataset.div){S.draft.divs[t.dataset.div]=+(S.draft.maint[t.dataset.div]*(1+t.value/100)).toFixed(1);updateBudgetView()}
+  else if(t.id==='taxIn'){S.draft.tax=t.value/100;updateBudgetView()}
+  else if(t.id==='raiseIn'){S.draft.raise=+t.value;updateBudgetView()}});
+
+// ======================= SAVE =======================
+const KEY='bluffcity-save-v2';
+function save(){if(!S||!S.started)return;try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
+function load(){try{const t=localStorage.getItem(KEY);if(!t)return null;const s=JSON.parse(t);return s&&s.started?s:null}catch(e){return null}}
+
+// ======================= BOOT =======================
+function beginTerm(){S=newState();S.started=true;spawn(S,EVENTS[0],{expires:99});save();$('start').hidden=true;prevMet=null;applyLayers();refreshHUD();
+  camFly({center:[LM.cityhall.lon,LM.cityhall.lat],zoom:15.6,speed:0.9});
+  setTimeout(()=>openPlace('cityhall'),2600);toast('Sworn in. Your chief of staff is waiting at City Hall.')}
+function start(data){
+  const saved=(data&&data.S)||load();
+  S=saved||newState();
+  if(saved)$('bLoad').hidden=false;
+  if(data&&data.S&&data.S.started)$('start').hidden=true;
+  refreshHUD();
+  $('bNew').onclick=beginTerm;
+  $('bLoad').onclick=()=>{S=load()||S;S.started=true;$('start').hidden=true;applyLayers();refreshHUD();camFly({center:[-90.02,35.135],zoom:12.4,speed:1.2})};
+  if(window.maplibregl)initMap();else window.addEventListener('mlready',initMap,{once:true});
+}
+window.claude?.hot?.snapshot?.(()=>({S}));
+window.claude?.hot?.ready?window.claude.hot.ready(start):start(window.claude?.hot?.data??{});
+</script>
+
+</body>
+</html>
