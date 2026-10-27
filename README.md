@@ -16,7 +16,7 @@ A city-management game set in Memphis, Tennessee. You play the mayor. You handle
 | Space | Pause / resume time |
 | + / − | Change speed (1–5) |
 | N | Skip to the end of the month |
-| E / O | Mayor's actions / Public opinion |
+| E / O / I | Mayor's actions / Public opinion / Mayor's Desk |
 | B / C / V / L / H | Budget office / Council chamber / Whip count / Map layers / Guide |
 | Backspace / Esc | Back to the previous menu / close it. Every menu also has tabs along the top |
 
@@ -33,6 +33,12 @@ A city-management game set in Memphis, Tennessee. You play the mayor. You handle
 **Population groups and public opinion.** Like Victoria 3's pops, Memphis is split into eight groups: working families, homeowners and seniors, renters and bus riders, MSCS parents, the church community, young professionals, the business community, and city workers and unions. Each has a size, turnout, home districts, concerns and its own approval of you. Your approval is their turnout-weighted average, and each council district's approval comes from the groups that live there. Press O to see every group and why it feels the way it does, or use map mode 7 to see approval by district and suburb, or where each group lives.
 
 **Politicians want to stay in office, but don't always follow their voters.** Council members and suburban mayors react to how their own voters see you, more strongly in the year before their election. Bartlett, Germantown and Lakeland elect mayors in November 2026, and a suburban mayor can lose for being too friendly with Memphis. Each politician also has backers (business, unions, congregations and so on) and listens to their voters closely, mostly, somewhat or rarely. So some vote against what their district wants, the way many officials backed xAI's South Memphis site over neighbors' objections. Term-limited members barely care about their voters at all.
+
+**Projects and consequences (v10).** From Actions, start a capital project: repave a real poorly rated road from the city's pavement survey, rehab vacant homes in a neighborhood, or renovate a neighborhood park. Each goes to a council vote, out to bid, then takes months to build, with progress, monthly payments from reserves (or bond debt service), delays you must handle (rain, high bids, unmapped MLGW lines, short-handed contractors) and local reactions. Projects stay on the map; finished roads turn green in the street-condition mode.
+
+**Stories that follow your decisions.** Backing a data center deal, ordering hot-spot patrols, or finishing a home rehab starts a chain of events months long, with different endings depending on your choices. Endings and finished projects go on your public record, and your opponent uses that record in the election.
+
+**The Mayor's Desk** (press I) puts urgent decisions, council votes, projects and developing stories in one place. Click an item to go straight to it, and choose which kinds of news pause the clock.
 
 **City indicators are color-coded:** green is good, yellow is neutral, red is bad. **The Pyramid** is drawn as a real 3D pyramid.
 
