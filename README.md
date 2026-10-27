@@ -40,6 +40,8 @@ A city-management game set in Memphis, Tennessee. You play the mayor. You handle
 
 **The Mayor's Desk** (press I) puts urgent decisions, council votes, projects and developing stories in one place. Click an item to go straight to it, and choose which kinds of news pause the clock.
 
+**Promises and political deals (v11).** When you take office you make three campaign promises (fix streets, bring homes back, no new taxes, better buses, more officers and so on), each with a measurable target and a September 2027 deadline, tracked on the Mayor's Desk. Council members who lean against you will name a price for their vote, such as "put my district's worst road on the repair list" or "cut the cost by a third." You can accept, counteroffer or refuse. Deals that promise future action get a deadline; members remember whether you kept them. One challenger runs against you on a consistent platform, championing particular communities and using your record of broken promises, broken deals and neglected projects. Finished projects need upkeep: cut it to save money and satisfaction falls, the benefits wear off, and it can become an attack ad. A one-year check records whether each project delivered. Your mayor can now pick sex, hairstyle, facial hair, clothing and colors, glasses, earrings and a lapel pin, and change their look later.
+
 **City indicators are color-coded:** green is good, yellow is neutral, red is bad. **The Pyramid** is drawn as a real 3D pyramid.
 
 **Real-time clock.** Like CK3, time runs day by day. Pause with Space and set the speed from 1 to 5. New business arrives on random days and pauses the game (you can turn that off). Budget season, the June budget vote and elections also pause the clock. Each month closes into the Ledger.
