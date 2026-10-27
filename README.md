@@ -12,13 +12,15 @@ A city-management game set in Memphis, Tennessee. You play the mayor. You handle
 | Mouse at screen edge | Scroll the map (can be turned off under Layers) |
 | Scroll wheel | Zoom toward the cursor. Zoom out for the political map of council districts; zoom in and the city tilts into 3D |
 | Click | Open a landmark, an amber issue pin, a council district or a police precinct |
-| 1–5 | Map modes: City, Political, Council opinion, Street condition, MPD precincts |
+| 1–6 | Map modes: City, Political, Council opinion, Street condition, MPD precincts, Region |
 | N | Advance one month |
 | B / C / V / L / H | Budget office / Council chamber / Whip count / Map layers / Guide |
 
 **The council are characters.** Each of the 13 members has a portrait, traits (Ambitious, Loyal, Frugal, Reformer, Ward Boss, Vengeful, Gregarious, Pragmatic, Stubborn), a home district and an opinion of you from −100 to +100. Click a member to see every reason behind that number. Reasons fade over time. You get 3 private meetings a month, and you can fund a $1M project in a member's district every 6 months, though Frugal members resent the pork.
 
 **Favors and hooks.** Members owe you favors when you grant their requests (blue pins in their home districts, often naming real poorly rated roads from the city's pavement data), fund their district projects, or quietly protect them. Your inspector general's confidential memos can give you a hook on a member. Before a vote, open the whip count (V) to see who's with you, who's leaning and who's against. You can call in a favor or use a hook to lock a vote. Hooks have a 30% chance to leak.
+
+**Neighboring cities.** Bartlett and Germantown are separate cities with their own governments, outlined on the map at their official boundaries. Like neighboring realms in CK3, each has a mayor (fictional) with traits and a relations score. You can meet them, co-host events, and handle shared issues: fire and EMS mutual aid, annexation reserves, the three Germantown schools still run by MSCS, a backup water connection, and a bus line to Wolfchase. Good relations lift the regional economy. Bad relations can send the suburban mayors to Nashville against you.
 
 The fiscal year runs July–June. You write the next budget in April, the council votes in June (7 of 13 votes to pass), and the city election is in October 2027.
 
