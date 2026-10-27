@@ -207,7 +207,7 @@ button.seat:hover{border-color:var(--amber)}
 .speeds{display:flex;gap:3px}
 .speeds button{width:9px;height:16px;border-radius:2px;border:1px solid var(--line);background:var(--panel2);cursor:pointer;padding:0}
 .speeds button.on{background:var(--amber);border-color:var(--amber)}
-.clock .ptag{display:none;position:absolute;left:50%;top:100%;transform:translate(-50%,4px);font-family:var(--f-label);font-weight:700;font-size:11px;letter-spacing:.2em;color:#1b1206;background:var(--amber);padding:1px 8px;border-radius:3px}
+.clock .ptag{display:none;position:static;transform:none;align-self:center;flex:none;line-height:1.5;font-family:var(--f-label);font-weight:700;font-size:11px;letter-spacing:.2em;color:#1b1206;background:var(--amber);padding:1px 8px;border-radius:3px}
 .clock.paused{border-color:var(--amber)}
 .clock.paused .ptag{display:block}
 .clock.paused .speeds button.on{opacity:.45}
@@ -356,6 +356,8 @@ button.seat:hover{border-color:var(--amber)}
 .lsel button.on{color:var(--amber);border-color:var(--amber)}
   .actions .btn.act{border-color:var(--amber);color:var(--amber)}
 .choices .choice small{white-space:normal}
+/* v14 */
+details.analysis{margin-top:6px}details.analysis summary{cursor:pointer;color:var(--muted);font-size:13px}
 /* v13 */
 .mob-only{display:none}
 @media (max-width:860px){
@@ -367,7 +369,10 @@ button.seat:hover{border-color:var(--amber)}
   .toast{top:auto;bottom:calc(128px + env(safe-area-inset-bottom,0px));max-width:calc(100% - 32px)}
   .credit{display:none}
   .hud-top .stat small{display:none}
+  .hud-top{background:linear-gradient(rgba(13,24,34,.96),rgba(13,24,34,.88));padding-bottom:8px}
+  .clock{flex-wrap:wrap;max-width:100%;row-gap:4px}
 }
+.clock{max-width:100%}
 .acct3{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:10px}
 .acct3 .big{font-family:var(--f-mono);font-size:24px;margin:2px 0 4px}
 /* v12: keep the action bar clear of the map-mode bar */
@@ -444,7 +449,7 @@ button.seat:hover{border-color:var(--amber)}
     <button class="btn primary" data-act="pause" id="bPlay">▶ Resume <kbd>Space</kbd></button>
   </nav>
   <div class="status" id="status">Loading map…</div>
-  <div class="credit"><span class="ver" id="verTag">v13</span>Map data: City of Memphis GIS · Shelby County MPO</div>
+  <div class="credit"><span class="ver" id="verTag">v14</span>Map data: City of Memphis GIS · Shelby County MPO</div>
   <div class="tip" id="tip" hidden></div>
   <div class="toast" id="toast" role="status"></div>
   <section class="panel" id="panel" hidden aria-live="polite">
@@ -475,7 +480,7 @@ button.seat:hover{border-color:var(--amber)}
         <button class="btn primary" id="bNew">Create your mayor</button>
         <button class="btn" id="bLoad" hidden>Continue saved term</button>
       </div>
-      <p class="note startv">Version <b class="ver" id="verStart">v13</b></p>
+      <p class="note startv">Version <b class="ver" id="verStart">v14</b></p>
       <p class="note">Budget totals, tax rate, reserve, MPD staffing, school reading scores and the council's structure and charter powers come from city documents and local reporting (see Guide → Sources). Council members are fictional; seats and districts are real.</p>
     </div>
     <div class="startbox create" id="create" hidden>
@@ -1234,7 +1239,7 @@ function enact(s,p){DIVS.forEach(d=>{s.enacted[d.id]=p.divs[d.id];s.ratio[d.id]=
 // Victoria 3-style voter groups. Each has a share of residents, turnout, home districts, concerns and an approval of you.
 // Citywide approval is the turnout-weighted average of the groups; each council district's approval comes from the groups that live there.
 // Shares, district mix and turnout are modeled, loosely grounded in Memphis demographics; they are not survey data.
-const VERSION='v13';
+const VERSION='v14';
 const GROUPS=[
  {id:'working',sh:'Working families',n:'Working families',ic:'⚒',c:'#f2a93b',share:24,turn:.5,start:56,w:{jobs:1,safety:.8,transit:.5},
   d:'Hourly workers in logistics, warehouses, health care and service jobs. The biggest bloc in the city.',dm:{1:1.1,2:.8,3:1.3,4:1.2,5:.6,6:1.2,7:1.1}},
@@ -1468,6 +1473,7 @@ function openBudget(){
   if(!editable){const t=enactedTotal(S);
     openModal(`FY${fyOf(S)} adopted budget`,'Budget office',`
      <p>${S.stage==='submitted'?'Your proposal is with the council. They vote in June.':S.pending?'The council adopted next year\'s budget. It takes effect July 1.':'You write the next budget in April. Until then, this is the budget the city is running on.'}</p>
+     <p><button class="btn" data-act="outlook">Budget outlook: where the reserve is heading</button></p>
      ${budgetTable(S.enacted,null,false)}
      <div class="summary"><div class="sumcell"><label>Divisions</label><b>${fmtM(t)}</b></div><div class="sumcell"><label>Your initiatives</label><b>${fmtM(policyCost(S))}</b></div>
      <div class="sumcell"><label>Revenue</label><b>${fmtM(annualRevenue(S))}</b></div><div class="sumcell"><label>Property tax</label><b>$${S.taxRate.toFixed(2)}</b></div></div>
@@ -1808,7 +1814,7 @@ function checkProposal(next){if(!S.pendingOrd||absDay()<S.pendingOrd.due)return 
   const msg=`Council ${pass?'passed':'rejected'} "${p.title}" ${yes}–${13-yes}.${crossed.length?` Voted against their own districts: ${crossed.join(', ')}.`:''}`;logIt(msg);save();refreshHUD();
   setPaused(true);openModal('Council vote',`${pass?'Passed':'Failed'} ${yes}–${13-yes}: ${p.title}`,`<p>${pass?'It becomes law. The groups that wanted it noticed; so did the ones that didn\'t.':'It failed. You can bring it back in 6 months.'}</p>${crossed.length?`<p class="note">Went against what their own voters wanted: ${crossed.join(', ')}. Their backers or their own convictions pulled harder.</p>`:''}<div class="seats">${list}</div><div class="row"><button class="btn primary" data-act="close">Continue</button></div>`,true,next);return true}
 function doExec(id){const x=EXEC_ORDERS.find(e=>e.id===id);if(!x||cdLeft('ex_'+id,ACT_CD.exec))return;if(x.cost){if(S.reserve<x.cost)return;S.reserve-=x.cost}if(x.reserve)S.reserve+=x.reserve;
-  applyFx(S,x.fx);applyGroupReact(x.grp,`Executive order: ${x.title}`,1);applyCouncil(S,x.cf,`Executive order: ${x.title}`);markAct('ex_'+id);gainXP('stew',6);if(id==='saturate')startStory('pt');logIt(`Executive order: ${x.title}.`);save();refreshHUD();toast(`Signed: ${x.title}.`);openActions()}
+  applyFx(S,x.fx);applyGroupReact(x.grp,`Executive order: ${x.title}`,1);applyCouncil(S,x.cf,`Executive order: ${x.title}`);markAct('ex_'+id);gainXP('stew',6);if(id==='saturate')startStory('pt');logIt(`Executive order: ${x.title}.`);save();refreshHUD();toast(`Signed: ${x.title}.`);if(NAV.cur&&NAV.cur.name==='openOutlook')openOutlook();else openActions()}
 function doTownHall(d){if(cdLeft('th'+d,ACT_CD.townhall)||S.slots<=0)return;S.slots--;markAct('th'+d);const cha=mskill('cha');const bad=Math.random()<clamp(0.35-(cha-6)*0.04,0.05,0.45);
   const m=memberFor(d);if(bad){S.pop.d[d]=clamp(S.pop.d[d]-2,-20,20);if(m)addMod(m,'Town hall went badly in my district',-3);toast(`The District ${d} town hall turned rough. Residents shouted down your answers on ${['crime','potholes','the schools','MLGW bills'][Math.floor(Math.random()*4)]}.`);logIt(`Town hall in District ${d} went badly.`)}
   else{S.pop.d[d]=clamp(S.pop.d[d]+4+Math.max(0,cha-8)*0.3,-20,20);if(m)addMod(m,'Held a town hall in my district',has(m,'wardboss')?10:6);S.council.forEach(o=>{if(o!==m&&o.d>7&&homeOf(o)===d)addMod(o,`Town hall in District ${d}`,3)});toast(`Packed house in District ${d}. Approval there is now ${Math.round(dApp(d))}%.`);logIt(`Town hall in District ${d}.`)}
@@ -1887,7 +1893,7 @@ function checkProjectVotes(next){const P=(S.projects||[]).find(p=>p.stage==='cou
 // Monthly progress, payments, delays and completions. Returns report lines.
 function projectsMonth(report){const out={paid:0,lines:[]};(S.projects||[]).forEach(P=>{const T=PTYPES[P.type];
   if(P.stage==='design'){P.stage='build';P.contractor=CONTRACTORS[Math.floor(Math.random()*CONTRACTORS.length)];plog(P,`Contract awarded to ${P.contractor} (fictional). Construction begins.`);out.lines.push(`${P.name}: construction began.`);return}
-  if(P.stage!=='build')return;const issue=S.events.some(e=>e.kind==='projx'&&e.pid===P.id)||(S.queue||[]).some(q=>q.ev.kind==='projx'&&q.ev.pid===P.id);
+  if(P.stage!=='build')return;if(P.paused){S.pop.d[P.d]=clamp((S.pop.d[P.d]||0)-0.4,-20,20);return}const issue=S.events.some(e=>e.kind==='projx'&&e.pid===P.id)||(S.queue||[]).some(q=>q.ev.kind==='projx'&&q.ev.pid===P.id);
   const step=(issue?0.25:1)/P.months;const before=P.progress;P.progress=Math.min(1,P.progress+step);
   if(P.budget==null)P.budget=P.cost*P.scope;const pay=(P.budget-P.spent)*(P.progress-before)/Math.max(0.0001,1-before);if(P.fund==='cash'){S.reserve-=pay;out.paid+=pay}P.spent+=pay;
   if(P.type==='road')S.pop.d[P.d]=clamp((S.pop.d[P.d]||0)-0.5,-20,20);if(P.type==='park')S.pop.d[P.d]=clamp((S.pop.d[P.d]||0)-0.25,-20,20);
@@ -1926,7 +1932,7 @@ function renderProjects(){if(!mapReady||!map)return;if(!map.getSource('projects'
     el.innerHTML=P.stage==='done'?`<span class="pi" style="background:var(--good)">✓</span><span class="pn">${T.ic} ${P.name}</span>`:`<svg width="34" height="34" viewBox="0 0 34 34"><circle cx="17" cy="17" r="15" fill="#0d1822" stroke="${T.c}" stroke-width="1.5"/><circle cx="17" cy="17" r="${R}" fill="none" stroke="rgba(255,255,255,.12)" stroke-width="3"/><circle cx="17" cy="17" r="${R}" fill="none" stroke="#f2a93b" stroke-width="3" stroke-dasharray="${(Cc*pct/100).toFixed(1)} ${Cc.toFixed(1)}" transform="rotate(-90 17 17)"/><text x="17" y="21.5" text-anchor="middle" font-size="13" fill="${T.c}">${T.ic}</text></svg>${iss?'<b class="pbad">!</b>':''}<span class="pn">${P.stage==='council'?'Awaiting council':P.stage==='design'?'Out to bid':pct+'%'} · ${P.name}</span>`;
     el.addEventListener('click',ev=>{ev.stopPropagation();openProject(P.id)});projMarkers.push(new maplibregl.Marker({element:el,anchor:'center'}).setLngLat([P.site.lon,P.site.lat]).addTo(map))});
   const show=S.layers.bld!==false;projMarkers.forEach(m=>m.getElement().style.display=show?'':'none')}
-function projStageLabel(P){return P.stage==='council'?`Awaiting council vote (~${daysLeftWord(P.due)})`:P.stage==='design'?'Out to bid':P.stage==='build'?`Under construction · ${Math.round(P.progress*100)}%`:P.stage==='done'?'Finished':'Rejected by the council'}
+function projStageLabel(P){if(P.paused)return'Paused · '+Math.round(P.progress*100)+'% built';return P.stage==='council'?`Awaiting council vote (~${daysLeftWord(P.due)})`:P.stage==='design'?'Out to bid':P.stage==='build'?`Under construction · ${Math.round(P.progress*100)}%`:P.stage==='done'?'Finished':'Rejected by the council'}
 function daysLeftWord(due){const n=Math.max(0,due-absDay());return n<=1?'any day now':`${n} days`}
 function openProject(id){const P=projById(id);if(!P)return;const T=PTYPES[P.type];const stages=['council','design','build','done'],si=stages.indexOf(P.stage);
   const iss=S.events.map((e,i)=>[e,i]).filter(([e])=>e.kind==='projx'&&e.pid===P.id);const left=P.stage==='build'?Math.ceil((1-P.progress)*P.months):P.stage==='design'?P.months+1:P.stage==='council'?P.months+1:0;
@@ -1945,7 +1951,7 @@ function openProject(id){const P=projById(id);if(!P)return;const T=PTYPES[P.type
    <div class="facts"><h4>Local reaction</h4><div class="opl"><div><span>District ${P.d} approval of you</span><b style="color:${apColor(dApp(P.d))}">${Math.round(dApp(P.d))}%</b></div>${m?`<div><span>${m.name} (District ${P.d})</span><b style="color:${opColor(m.opinion)}">${fmtOp(m.opinion)}</b></div>`:''}</div>
     <p class="note">${P.stage==='build'?(P.type==='road'?'Detours cost you a little goodwill here each month until it\'s done.':P.type==='park'?'The park is fenced off; families notice.':'Neighbors are watching the houses go up.'):P.stage==='done'?`Finished. ${grpLine(T.done)}.`:'People here will notice when work starts.'}</p></div>
    <div class="facts"><h4>History</h4><div class="logl">${P.log.map(x=>`<div><span>${x.d}</span><p style="margin:0">${x.t}</p></div>`).join('')}</div></div>
-   <div class="row"><button class="btn" data-act="projgo" data-id="${P.id}">Go to the site</button>${P.stage==='rejected'?`<button class="btn" data-act="plan" data-type="${P.type}">Plan another</button>`:''}</div>`,'proj:'+P.id)}
+   <div class="row"><button class="btn" data-act="projgo" data-id="${P.id}">Go to the site</button>${P.stage==='build'&&P.fund==='cash'||P.paused?`<button class="btn" data-act="projpause" data-id="${P.id}">${P.paused?'Resume construction':'Pause construction (stops payments)'}</button>`:''}${P.stage==='rejected'?`<button class="btn" data-act="plan" data-type="${P.type}">Plan another</button>`:''}</div>`,'proj:'+P.id)}
 openProject=navWrap('openProject',openProject);
 function projIssueCard(ev,idx){const P=projById(ev.pid),I=PISSUES.find(x=>x.id===ev.iss);if(!P||!I)return'';const left=ev.expires-(nowM()-ev.born);const ot=Math.round(P.cost*I.ot*10)/10;
   return`<div class="card"><div class="ttl">${P.name}: ${I.t}</div><div class="due">${left<=1?'Decide this month':`Decide within ${left} months`}</div><p>${I.d} Work has slowed to a crawl until you decide.</p>
@@ -2057,6 +2063,7 @@ function deskItems(){const now=nowM(),items=[];
   else S.promises.forEach(st=>{const P=PMAP[st.id],ps=promiseState(st.id);if(st.status!=='open'&&now-((st.whenM)||now)>3)return;items.push({cat:'promises',ic:st.status==='kept'?'✔':st.status==='broken'?'✕':'★',t:P.n,s:st.status==='open'?`${ps.label} · ${promiseDeadline()-now} months left`:(st.status==='kept'?'Kept':'Broken'),pct:st.status==='open'?ps.pct:null,go:'promises'})});
   (S.deals||[]).filter(D=>D.status==='open').forEach(D=>{const left=D.due-now;items.push({cat:left<=1?'urgent':'deals',ic:'⚑',t:`${D.text}`,s:`Owed to ${D.name} · ${left<=0?'due this month':left+' month'+(left===1?'':'s')+' left'}`,go:D.type==='road'?`plan:road:${D.d}`:D.type==='townhall'?'actions':'desk'})});
   (S.projects||[]).filter(p=>p.stage==='done'&&(p.maintCut||(p.sat!=null&&p.sat<50))).forEach(p=>items.push({cat:'projects',ic:'⚠',t:p.name,s:`Satisfaction ${Math.round(p.sat??75)}%${p.maintCut?' · upkeep cut':''}`,go:`proj:${p.id}`}));
+  {const al=outlookAlert();if(al)items.unshift({cat:'urgent',ic:'$',t:S.reserve/annualSpend(S)*100<8?'Reserve is below 8% of spending':`Reserve heading below 8% by ${al.low.label}`,s:`About ${fmtM(al.F[11].r)} in 12 months if nothing changes`,go:'outlook'})}
   if(S.camp&&!S.over){const dte=daysToElection();const C=S.camp;Object.entries(C.debates).forEach(([n,D])=>{if(D.round<3)items.unshift({cat:'urgent',ic:'🎙',t:`Finish debate ${n}`,s:'The cameras are still rolling',go:'debate:'+n})});
     if(dte>0&&dte<=400)items.push({cat:'campaign',ic:'✪',t:`${dte} days to Election Day`,s:`${fmtK(C.cash)} campaign cash${C.polls.length?` · last poll ${C.polls[C.polls.length-1].you}–${C.polls[C.polls.length-1].rival}`:' · no poll yet'}`,go:'hq'})}
   return items}
@@ -2083,6 +2090,7 @@ function deskGo(go){const[k,v]=go.split(':');
   else if(k==='desk')openDesk();
   else if(k==='promises')openPromises();
   else if(k==='hq')openHQ();
+  else if(k==='outlook')openOutlook();
   else if(k==='debate')openDebate(+v);
   else if(k==='actions')openActions();
   else if(k==='plan'){const[,t,d]=go.split(':');openPlanner(t,+d)}}
@@ -2349,14 +2357,15 @@ function groupSupport(g,o){o=o||{};const G=S.groups[g.id],R=S.rival||{champs:[]}
   if(!o.noAds)b+=(S.camp.boost[g.id]||0);
   if(!o.noRecord)b+=recordSwing();
   if(!o.noDebate)b+=S.camp.debate||0;
-  if(!o.noRivalAds)b-=(rc.adPts||0)*(champ?1:0.5);
+  if(!o.noRivalAds)b-=rc.adBy?(rc.adBy[g.id]||0):(rc.adPts||0)*(champ?1:0.5);
+  if(!o.noRivalOff)b-=1.6*rivalOfficeReach(g);
   if(!o.noAttack)b+=(rc.dmg||0)*0.6;
   if(!o.noOff)b+=1.6*officeReach(g); // door-knocking from field offices persuades a little, where you have them and the race is close
   const e=endorsementFor(g);if(!o.noEndorse){if(e==='you')b+=3;else if(e==='rival')b-=3}
   return clamp(b/100,0.05,0.95)}
 function groupTurnout(g,sup,o){o=o||{};const rc=(S.rival&&S.rival.camp)||{};let t=tEff(g,S.groups[g.id].app);
   if(sup>=0.5){if(!o.noOrg)t*=1+Math.min(10,S.camp.organizers)*0.03*(1.25-g.turn);if(!o.noOff)t*=1+0.08*officeReach(g)}
-  else if(!o.noRivalOrg)t*=1+Math.min(10,rc.organizers||0)*0.03*(1.25-g.turn);
+  else{if(!o.noRivalOrg)t*=1+Math.min(10,rc.organizers||0)*0.03*(1.25-g.turn);if(!o.noRivalOff)t*=1+0.08*rivalOfficeReach(g)}
   const e=endorsementFor(g);if(!o.noEndorse){if(e==='you'&&sup>=0.5)t*=1.1;if(e==='rival'&&sup<0.5)t*=1.1}return t}
 function headToHead(dist,o){let a=0,w=0;const mix=dist?dComp(dist):null;GROUPS.forEach(g=>{const sup=groupSupport(g,o);let t=groupTurnout(g,sup,o);const sh=mix?mix[g.id]*100:g.share;
   if(dist&&S.camp.offices[dist]&&sup>=0.5&&!(o&&o.noOff))t*=1.06;a+=sh*t*sup;w+=sh*t});const p=a/w+(dist?(DLEAN[dist]+(S.pop.d[dist]||0))/100:0);return clamp(p,0.05,0.95)}
@@ -2364,7 +2373,7 @@ function headToHead(dist,o){let a=0,w=0;const mix=dist?dComp(dist):null;GROUPS.f
 function voteBreakdown(){const full=headToHead();const d=k=>(full-headToHead(null,{[k]:true}))*100;
   const C=S.camp,sb=C.spentBy||{};
   const rows=[{k:'Your ads',v:d('noAds'),cost:sb.ads||0},{k:'Your attack ads (damage to your opponent)',v:d('noAttack'),cost:0},{k:'Field organizers',v:d('noOrg'),cost:sb.org||0},{k:'Field offices',v:d('noOff'),cost:sb.off||0},
-    {k:'Endorsements',v:d('noEndorse')},{k:'Debates',v:d('noDebate')},{k:'Your record (promises, deals, stories, projects)',v:d('noRecord')},{k:'Opponent\'s ads',v:d('noRivalAds')},{k:'Opponent\'s organizers',v:d('noRivalOrg')}];
+    {k:'Endorsements',v:d('noEndorse')},{k:'Debates',v:d('noDebate')},{k:'Your record (promises, deals, stories, projects)',v:d('noRecord')},{k:'Opponent\'s ads',v:d('noRivalAds')},{k:'Opponent\'s organizers',v:d('noRivalOrg')},{k:'Opponent\'s field offices',v:d('noRivalOff')}];
   // support among all adults vs. among people who actually voted
   const resident=GROUPS.reduce((a,g)=>a+g.share*groupSupport(g),0)/100;
   return{full,resident,rows:rows.filter(r=>Math.abs(r.v)>=0.05)}}
@@ -2394,10 +2403,35 @@ function debatePick(n,c){const D=S.camp.debates[n],q=debateTopics()[D.round];let
   toast(win?'That landed. The room reacted.':`${S.rival.name.split(' ').pop()} got the better of that exchange.`);gainXP('cha',4);
   if(D.round>=3){S.camp.debate+=(D.won-1.5)*0.8;clog(`Debate ${n}: you took ${D.won} of 3 exchanges.`);logIt(`Debate ${n} with ${S.rival.name}: you took ${D.won} of 3 exchanges.`)}openDebate(n)}
 // ---------- rival campaign ----------
-function rivalMonth(report){const R=S.rival;if(!R)return;const rc=R.camp;const mo=monthsToElection();const champEnth=R.champs.reduce((a,g)=>a+Math.max(0,55-S.groups[g].app),0);
-  const inc=Math.round(26+champEnth*0.9+(R.plat.includes('fiscal')?12:0)+(monthsToElection()<=4?20:0));rc.cash+=inc;rc.raised+=inc;
-  if(mo<=8&&rc.cash>=60){const A=rivalAttacks();rc.cash-=60;rc.spent+=60;rc.ads++;rc.adPts=Math.min(6,(rc.adPts||0)+(A.length?1.2:0.5)*(mo<=3?1:0.6));const t=A.length?A[0].t:`${R.name} ran ads about ${PRIO_LABEL[R.plat[0]].toLowerCase()}.`;report.push(`Opponent ad: ${t}`);clog(`Opponent ad seen: ${t}`)}
-  if(mo<=5&&rc.cash>=30&&rc.organizers<8){rc.organizers+=2;rc.cash-=8;clog(`${R.name} hired field organizers.`)}rc.cash-=rc.organizers*4;rc.spent+=rc.organizers*4;rc.cash=Math.max(0,rc.cash);rc.adPts*=0.85;rc.dmg*=0.85}
+// ---------- the challenger's strategy ----------
+// No flat bonus: the opponent picks communities that are unhappy with you, aims ads at commitments you broke,
+// and opens field offices where the race is close. Everything they do is visible in Campaign HQ.
+function brokenAgainst(g){return(S.record||[]).filter(r=>(r.kind==='promise'||r.kind==='deal'||r.kind==='money'||r.kind==='upkeep')&&r.camp&&r.camp.d<0&&(r.bad||[]).includes(g)).length}
+function rivalPlan(){const R=S.rival;if(!R)return null;const rc=R.camp;
+  const score=g=>(52-S.groups[g.id].app)+(R.champs.includes(g.id)?4:0)+brokenAgainst(g.id)*3+g.share*0.08;
+  rc.targets=GROUPS.slice().sort((a,b)=>score(b)-score(a)).slice(0,3).map(g=>g.id);
+  const neg=(S.record||[]).filter(r=>r.camp&&r.camp.d<0&&!r.defended).sort((a,b)=>((b.bad||[]).filter(g=>rc.targets.includes(g)).length-(a.bad||[]).filter(g=>rc.targets.includes(g)).length)||(a.camp.d-b.camp.d));
+  rc.attack=neg[0]?{t:neg[0].camp.t,groups:neg[0].bad||[],ref:neg[0].t}:{t:`${R.name} says Memphis can't wait for ${PRIO_LABEL[R.plat[0]].toLowerCase()}.`,groups:R.champs,ref:null};return rc}
+function rivalOfficeReach(g){const rc=(S.rival&&S.rival.camp)||{};const offs=rc.offices||[];if(!offs.length)return 0;let a=0,t=0;for(let d=1;d<=7;d++){const c=dComp(d)[g.id];t+=c;if(offs.includes(d))a+=c*districtCloseness(d)}return a/t}
+function rivalMonth(report){const R=S.rival;if(!R)return;const rc=R.camp;rc.adBy=rc.adBy||{};rc.offices=rc.offices||[];const mo=monthsToElection();rivalPlan();
+  const champEnth=R.champs.reduce((a,g)=>a+Math.max(0,55-S.groups[g].app),0)+rc.targets.reduce((a,g)=>a+Math.max(0,50-S.groups[g].app)*0.5,0);
+  const inc=Math.round(26+champEnth*0.9+(R.plat.includes('fiscal')?12:0)+(mo<=4?20:0));rc.cash+=inc;rc.raised+=inc;
+  // offices in the closest districts, from five months out
+  if(mo<=5&&rc.offices.length<3&&rc.cash>=40){const pick=[1,2,3,4,5,6,7].filter(d=>!rc.offices.includes(d)).sort((a,b)=>districtCloseness(b)-districtCloseness(a))[0];rc.offices.push(pick);clog(`${R.name} opened a field office in District ${pick}, where the race is close.`)}
+  const offCost=rc.offices.length*6;rc.cash-=offCost;rc.spent+=offCost;
+  if(mo<=8&&rc.cash>=60){rc.cash-=60;rc.spent+=60;rc.ads++;const p=1.3*(mo<=3?1:0.6);
+    GROUPS.forEach(g=>{const w=rc.targets.includes(g.id)?1:rc.attack.groups.includes(g.id)?0.6:0.25;rc.adBy[g.id]=Math.min(5,(rc.adBy[g.id]||0)+p*w)});
+    const who=rc.targets.map(g=>GMAP[g].n.toLowerCase()).join(', ');report.push(`Opponent ad aimed at ${who}: ${rc.attack.t}`);clog(`Opponent ad aimed at ${who}: ${rc.attack.t}`)}
+  if(mo<=5&&rc.cash>=30&&rc.organizers<8){rc.organizers+=2;rc.cash-=8;clog(`${R.name} hired field organizers.`)}
+  rc.cash-=rc.organizers*4;rc.spent+=rc.organizers*4;rc.cash=Math.max(0,rc.cash);
+  for(const g in rc.adBy)rc.adBy[g]*=0.85;rc.adPts=GROUPS.reduce((a,g)=>a+(rc.adBy[g.id]||0)*g.share,0)/100;rc.dmg*=0.85}
+function rivalStrategyCard(){const R=S.rival;if(!R)return'';const rc=R.camp;if(!rc.targets)rivalPlan();
+  return`<div class="facts"><h4>${R.name}'s strategy</h4><ul>
+   <li><b>Courting:</b> ${rc.targets.map(g=>`${GMAP[g].n} (${Math.round(S.groups[g].app)}% approve of you${brokenAgainst(g)?`, ${brokenAgainst(g)} broken commitment${brokenAgainst(g)===1?'':'s'}`:''})`).join('; ')}.</li>
+   <li><b>Main attack:</b> ${rc.attack.t}</li>
+   <li><b>Field offices:</b> ${(rc.offices||[]).length?(rc.offices.map(d=>`District ${d}`).join(', ')+', the closest districts'):'none yet; they open offices in close districts about five months out'}.</li></ul>
+   <p class="note">Your opponent doesn't get a bonus for showing up. They work on the communities that are unhappy with you and the promises you didn't keep. Defend those, or win those groups back, and their campaign has less to work with.</p></div>`}
+
 function campaignMonth(report){if(!S.camp)return;const C=S.camp;const small=Math.round(4+enthusiasm()*1.2);C.cash+=small;C.raised+=small;flowC('small',small);
   const burn=campBurn();if(burn){if(C.cash>=burn){C.cash-=burn;C.spent+=burn;flowC('org',C.organizers*4);flowC('off',Object.keys(C.offices).length*6)}else{C.organizers=0;C.offices={};clog('You couldn\'t make campaign payroll. Organizers left and offices closed.');report.push('Campaign payroll missed: organizers left and field offices closed.')}}
   for(const g in C.boost)C.boost[g]*=0.75;
@@ -2431,7 +2465,7 @@ function openHQ(){campInit(S);const C=S.camp,R=S.rival,rc=R?R.camp:{};const e=el
    <div class="facts"><h4>Endorsements · decided July to September ${e.y}</h4><div class="dlist">${ENDORSERS.map(E=>{const st=C.endorse[E.id];return`<div class="drow" style="cursor:default;grid-template-columns:minmax(0,1fr) auto"><span>${E.n} <small>· speaks for ${GMAP[E.g].n.toLowerCase()} (${Math.round(S.groups[E.g].app)}%)</small></span>${st?`<b style="color:${st==='you'?'var(--good)':st==='rival'?'var(--bad)':'var(--muted)'}">${st==='you'?'Endorsed you':st==='rival'?'Endorsed '+R.name.split(' ').pop():'Neutral'}</b>`:`<button class="btn" data-act="seek" data-id="${E.id}" ${C.seek[E.id]||S.slots<=0?'disabled':''} style="padding:2px 8px">${C.seek[E.id]?'Asked':'Ask for it (1 slot)'}</button>`}</div>`}).join('')}</div></div>
    <div class="facts"><h4>Debates</h4><p class="note">Two televised debates, September ${DEBATE_DAYS[0]} and ${DEBATE_DAYS[1]}, ${e.y}. ${Object.keys(C.debates).length?Object.entries(C.debates).map(([n,D])=>`Debate ${n}: ${D.round>=3?`took ${D.won} of 3`:'in progress'}`).join(' · '):'They arrive on your desk on debate day.'}</p></div>
    ${R?`<div class="facts"><h4>Your opponent: ${R.name}</h4><div class="opl"><div><span>Estimated cash on hand</span><b>${fmtK(rc.cash)}</b></div><div><span>Raised / spent so far</span><b>${fmtK(rc.raised)} / ${fmtK(rc.spent)}</b></div><div><span>Ad flights run</span><b>${rc.ads}</b></div><div><span>Field organizers</span><b>${rc.organizers}</b></div></div>
-     <p class="note">Estimates from public finance reports. ${R.name.split(' ').pop()} raises more when ${R.champs.map(g=>GMAP[g].n.toLowerCase()).join(' and ')} are unhappy with you, and starts running ads about eight months out.</p></div>`:''}
+     <p class="note">Estimates from public finance reports. ${R.name.split(' ').pop()} raises more when ${R.champs.map(g=>GMAP[g].n.toLowerCase()).join(' and ')} are unhappy with you, and starts running ads about eight months out.</p></div>${rivalStrategyCard()}`:''}
    <div class="facts"><h4>Campaign log</h4><div class="logl">${C.log.slice(0,10).map(x=>`<div><span>${x.d}</span><p style="margin:0">${x.t}</p></div>`).join('')||'<p class="note">Nothing yet.</p>'}</div></div>`,true)}
 openHQ=navWrap('openHQ',openHQ);
 function openDonor(){const o=S.camp.offer;if(!o){openHQ();return}const D=DONORS[o.id];
@@ -2460,9 +2494,10 @@ function electionV2(next){recomputeAll(S);const p=headToHead();const others=6+rn
   const body=`<p>You took <b>${you.toFixed(1)}%</b> to <b>${rv.toFixed(1)}%</b> for ${R.name}, with ${others.toFixed(1)}% for the rest of the field. Memphis elects its mayor by plurality, with no runoff since a 1991 federal court ruling.</p>
    <div class="facts"><h4>The short version</h4><p style="margin:0">${story}</p>
     <div class="opl" style="margin-top:6px"><div><span>Support among all adults (two-way)</span><b>${(B.resident*100).toFixed(1)}%</b></div><div><span>Support among people who voted (two-way)</span><b>${(B.full*100).toFixed(1)}%</b></div><div><span>Your strongest group</span><b>${strongest.g.n} · ${Math.round(strongest.sup*100)}%</b></div><div><span>Your weakest group</span><b>${weakest.g.n} · ${Math.round(weakest.sup*100)}%</b></div></div></div>
-   <div class="facts"><h4>What moved the vote</h4><div class="dlist">${B.rows.sort((a,b)=>Math.abs(b.v)-Math.abs(a.v)).map(r=>`<div class="drow" style="cursor:default;grid-template-columns:minmax(0,1fr) auto"><span>${r.k}${r.cost?` <small>· ${fmtK(r.cost)}</small>`:''}</span><b style="color:${r.v>=0?'var(--good)':'var(--bad)'}">${r.v>=0?'+':'−'}${Math.abs(r.v).toFixed(1)} pts</b></div>`).join('')||'<p class="note">Nothing beyond your approval moved it much.</p>'}</div>
-    <p class="note">Points of two-way vote share each piece added or cost you. ${spendLine.length?'Spending: '+spendLine.join(' · ')+'.':'You spent almost nothing on the campaign.'} Your opponent spent ${fmtK(R.camp.spent)}.</p></div>
-   <div class="facts"><h4>Each group: support and turnout</h4><div class="dlist">${gRows.map(r=>`<div class="drow" style="cursor:default;grid-template-columns:minmax(0,1fr) 90px 44px 64px"><span>${r.g.ic} ${r.g.n}</span><span class="gbar"><i style="width:${Math.round(r.sup*100)}%;background:${apColor(r.sup*100)}"></i></span><b class="gv">${Math.round(r.sup*100)}%</b><small class="note" style="text-align:right">${Math.round(r.t*100)}% voted</small></div>`).join('')}</div>
+   <div class="facts"><h4>What moved the vote</h4><ul>${voteStory(B).map(x=>`<li>${x}</li>`).join('')||'<li>Nothing beyond your approval moved it much.</li>'}</ul>
+    <details class="analysis"><summary>Analysis: the exact numbers</summary><div class="dlist">${B.rows.sort((a,b)=>Math.abs(b.v)-Math.abs(a.v)).map(r=>`<div class="drow" style="cursor:default;grid-template-columns:minmax(0,1fr) auto"><span>${r.k}${r.cost?` <small>· ${fmtK(r.cost)}</small>`:''}</span><b style="color:${r.v>=0?'var(--good)':'var(--bad)'}">${r.v>=0?'+':'−'}${Math.abs(r.v).toFixed(1)} pts</b></div>`).join('')||'<p class="note">Nothing beyond your approval moved it much.</p>'}</div>
+    <p class="note">Points of two-way vote share each piece added or cost you. ${spendLine.length?'Spending: '+spendLine.join(' · ')+'.':'You spent almost nothing on the campaign.'} Your opponent spent ${fmtK(R.camp.spent)}.</p></details></div>
+   <div class="facts"><h4>Each group: support and turnout</h4><div class="dlist">${gRows.map(r=>`<div class="drow" style="cursor:default;grid-template-columns:minmax(0,1fr) 90px 44px 84px"><span>${r.g.ic} ${r.g.n}</span><span class="gbar"><i style="width:${Math.round(r.sup*100)}%;background:${apColor(r.sup*100)}"></i></span><b class="gv">${Math.round(r.sup*100)}%</b><small class="note" style="text-align:right">${Math.round(r.t*100)}% voted</small></div>`).join('')}</div>
     <p class="note">${R.name} ran on "${R.slogan}"${atk.length?` and hit you on: ${atk.slice(0,2).map(x=>x.t).join(' ')}`:''}</p></div>${recordLines()}`;
   logIt(`Election: you ${you.toFixed(1)}%, ${R.name} ${rv.toFixed(1)}%. ${won?'You won.':'You lost.'} Support among adults ${(B.resident*100).toFixed(1)}%, among voters ${(B.full*100).toFixed(1)}%.`);
   S.lastElection={you,rv,won,resident:B.resident,full:B.full,rows:B.rows.map(r=>({k:r.k,v:+r.v.toFixed(2),cost:r.cost||0})),spent:C.spent,rspent:R.camp.spent};
@@ -2471,6 +2506,20 @@ function electionV2(next){recomputeAll(S);const p=headToHead();const others=6+rn
     openModal(`City election · October ${S.y}`,'You won a second term',body+`<div class="facts"><h4>After Election Day</h4><ul>${wind.map(x=>`<li>${x}</li>`).join('')}</ul></div><p>You can serve one more term; the next election is October 2031 and you are term-limited after it. Make new promises for your second term.</p><div class="row"><button class="btn primary" data-act="close">Start term two</button></div>`,true,next)}
   else{S.over=true;openModal(`City election · October ${S.y}`,won?'Term-limited, with a win':'You lost the election',body+(won?'<p>The charter limits a mayor to two terms. Your time in office is done.</p>':'')+`${summary()}<div class="row"><button class="btn primary" data-act="newgame">Run again</button></div>`,true,next)}
   save()}
+// Plain-language reasons. Exact numbers live in the optional analysis section.
+function voteStory(B){const C=S.camp,R=S.rival,rc=R.camp,row=k=>(B.rows.find(r=>r.k===k)||{v:0}).v,nm=R.name.split(' ').pop(),L=[];const low=g=>GMAP[g].n.toLowerCase();
+  const boosted=GROUPS.filter(g=>(C.boost[g.id]||0)>=1).sort((a,b)=>(C.boost[b.id]||0)-(C.boost[a.id]||0)).slice(0,2).map(g=>low(g.id));
+  if(row('Your ads')>=0.3)L.push(`Your ads ${boosted.length?`landed best with ${boosted.join(' and ')}`:'helped across the board'}.`);else if((C.spentBy||{}).ads)L.push('Your ads barely registered: they ran too early, repeated themselves, or had little on your record to show.');
+  if(row('Field organizers')>=0.3){const gs=GROUPS.filter(g=>groupSupport(g)>=0.5).sort((a,b)=>a.turn-b.turn).slice(0,2).map(g=>low(g.id));L.push(`Your organizers raised turnout among ${gs.join(' and ')}, supporters who often stay home.`)}
+  else if((C.spentBy||{}).org)L.push('Your organizers had little to work with: the voters they could reach mostly weren\'t yours.');
+  const offs=Object.keys(C.offices||{}).map(Number);if(offs.length||(C.spentBy||{}).off){const close=offs.filter(d=>districtCloseness(d)>=0.6),safe=offs.filter(d=>districtCloseness(d)<0.4);
+    if(close.length)L.push(`Your field offices in ${close.map(d=>'District '+d).join(', ')} helped where the race was close.`);if(safe.length)L.push(`Offices in ${safe.map(d=>'District '+d).join(', ')} did little: those districts weren't competitive.`)}
+  if(row('Opponent\'s ads')<=-0.5)L.push(`${nm}'s ads cost you with ${(rc.targets||R.champs).map(low).join(', ')}${rc.attack&&rc.attack.ref?`, mostly about "${rc.attack.ref.toLowerCase()}"`:''}.`);
+  if(row('Opponent\'s field offices')<=-0.3)L.push(`${nm}'s field offices in ${(rc.offices||[]).map(d=>'District '+d).join(', ')} chipped away at you in close districts.`);
+  if(Math.abs(row('Your record (promises, deals, stories, projects)'))>=0.5)L.push(row('Your record (promises, deals, stories, projects)')>0?'Your record helped: kept promises and finished work gave voters reasons.':'Your record hurt: broken promises and deals followed you to the polls.');
+  const en=Object.entries(C.endorse||{});if(en.length)L.push(`Endorsements went ${en.filter(x=>x[1]==='you').length} for you, ${en.filter(x=>x[1]==='rival').length} for ${nm}.`);
+  if(Math.abs(row('Debates'))>=0.4)L.push(row('Debates')>0?'The debates helped you.':`${nm} got the better of the debates.`);
+  return L}
 // What carries over after a won election, stated plainly.
 function campaignWindDown(){const C=S.camp,out=[];const orgs=C.organizers,offs=Object.keys(C.offices).length;
   out.push(`${fmtK(C.cash)} left in the campaign fund carries over to your 2031 campaign.`);
@@ -2505,7 +2554,7 @@ function moneyMonth(report,paid){const m=S.mfOp||{rev:0,spend:0,bonds:0,upkeep:0
 function openFinances(){const H=S.moneyHist||[],L=H[H.length-1],st=payStub();closePanel();const row=(n,v,f)=>`<div><span>${n}</span><b style="color:${v>0.0001?'var(--good)':v<-0.0001?'var(--bad)':''}">${f(v)}</b></div>`;
   const sM=v=>Math.abs(v)<0.05?'$0.0M':(v>=0?'+':'−')+fmtM(Math.abs(v)),sK=v=>Math.abs(v)<0.5?'$0K':(v>=0?'+':'−')+fmtK(Math.abs(v));
   openModal(L?`Last closed month: ${L.d}`:'No month has closed yet','Your three accounts',`
-   <p class="note">Money never moves between the city and your campaign. Your own money can go to your campaign (capped), never the other way.</p>
+   <p class="note"><a href="#" data-act="outlook">Budget outlook: 12-month reserve forecast →</a></p><p class="note">Money never moves between the city and your campaign. Your own money can go to your campaign (capped), never the other way.</p>
    <div class="acct3">
     <div class="facts"><h4>City treasury</h4><div class="big">${fmtM(S.reserve)}</div><p class="note">The reserve fund. Pays for city services, projects and staff. Fed by city revenue and bonds.</p>
      ${L?`<div class="opl">${row('Revenue',L.city.rev,sM)}${row('Operating costs',-L.city.ops,sM)}${row('Bond payments',-L.city.bonds,sM)}${row('Project upkeep',-L.city.upkeep,sM)}${row('Construction payments',-L.city.construction,sM)}${row('One-time decisions',L.city.oneTime,sM)}${row('Change this month',L.city.total,sM)}</div>`:''}</div>
@@ -2523,6 +2572,58 @@ function openMoneyIntro(){openModal('Before you start','Three kinds of money',`<
    <div class="facts"><h4>👤 Personal money</h4><p>Your salary, about ${$0(payStub().net)} a month after estimated deductions. Spend it on optional wardrobe items, or put up to $25,000 per election into your campaign.</p></div></div>
    <p class="note">Every month closes with a one-line money summary in the Ledger, and the <b>Money</b> tab shows all three accounts side by side.</p>
    <div class="row"><button class="btn primary" data-act="introok">Got it</button><button class="btn" data-act="introskip">Got it, don't show this again</button></div>`)}
+
+// ======================= BUDGET OUTLOOK =======================
+// Keeping services the same costs more each year (police and fire pay, pensions, health care grow 2–3%) than revenue grows (~1.5%),
+// so a cost-to-continue budget drifts into deficit. The outlook makes that visible and lists ways to close the gap.
+function cashProjectSchedule(){const out=[];(S.projects||[]).forEach(P=>{if(P.fund!=='cash'||P.paused)return;const bud=P.budget??P.cost*P.scope;const left=Math.max(0,bud-P.spent);
+  if(P.stage==='build'){const mo=Math.max(1,Math.ceil((1-P.progress)*P.months));out.push({P,from:1,mo,per:left/mo})}else if(P.stage==='design'){out.push({P,from:2,mo:P.months,per:left/P.months})}});return out}
+function reserveForecast(adj){adj=adj||{};const pts=[];let r=S.reserve+(adj.now||0);let y=S.y,m=S.m,fy=S.fyIndex;
+  const nextBudget=S.pending||(S.stage==='submitted'?S.proposal:null)||defaultProposal(S);
+  let spendNow=annualSpend(S)-(adj.cut||0),revNow=annualRevenue(S);const sched=cashProjectSchedule();
+  for(let i=1;i<=12;i++){m++;if(m>12){m=1;y++}
+    if(m===7){fy++;const p=nextBudget;const divs=DIVS.reduce((a,d)=>a+p.divs[d.id],0);const raise=Math.max(0,(p.raise+(adj.raise||0)))*5;
+      spendNow=divs+raise+policyCost(S)+bondService(S)+maintCost(S)-(adj.cut||0);revNow=revenueFor(S,fy,p.tax+(adj.taxc||0)/100)}
+    r+=(revNow-spendNow)/12;sched.forEach(c=>{if(!adj.pause&&i>=c.from&&i<c.from+c.mo)r-=c.per});
+    pts.push({y,m,r,pct:r/spendNow*100,label:`${MONTHS[m-1]} ${y}`})}
+  return pts}
+function budgetCauses(){const rev=annualRevenue(S),spend=annualSpend(S),gap=rev-spend;const out=[];
+  const p=S.pending||defaultProposal(S);const nextDivs=DIVS.reduce((a,d)=>a+p.divs[d.id],0),nowDivs=DIVS.reduce((a,d)=>a+S.enacted[d.id],0);
+  const revNext=revenueFor(S,S.fyIndex+1,p.tax);
+  out.push({t:'City services cost more each year',v:-(nextDivs-nowDivs),d:`Keeping every division at today's service level costs ${fmtM(nextDivs-nowDivs)} more next fiscal year (police and fire pay, pensions, health care).`});
+  out.push({t:'Revenue growth next year',v:revNext-rev,d:`At the current tax rate revenue grows about ${fmtM(revNext-rev)}, less than costs grow.`});
+  if(S.raiseCost)out.push({t:`The ${S.raise}% raise for city workers`,v:-S.raiseCost,d:`About $5M a year for each percentage point.`});
+  const pc=policyCost(S);if(pc)out.push({t:'Programs you added',v:-pc,d:Object.keys(S.policies).filter(k=>S.policies[k]).map(k=>`${POLICIES[k].name} ${fmtM(POLICIES[k].cost)}`).join(', ')});
+  const bs=bondService(S);if(bs)out.push({t:'Bond payments on projects',v:-bs,d:'Debt service on bond-funded projects, for 15 years.'});
+  const mc=maintCost(S);if(mc)out.push({t:'Upkeep on finished projects',v:-mc,d:'Keeps finished projects working.'});
+  const cash=cashProjectSchedule().reduce((a,c)=>a+c.per*c.mo,0);if(cash)out.push({t:'Construction payments still to come',v:-cash,d:'One-time payments from the reserve for cash-funded projects underway.',once:true});
+  if(S.taxRate<3.39)out.push({t:'Your tax cut',v:-(3.39-S.taxRate)*150,d:'Each cent of the property tax rate is about $1.5M a year.'});
+  if(S.revBoost)out.push({t:S.revBoost>0?'New revenue from your decisions':'Revenue given up by your decisions',v:S.revBoost,d:'Data center taxes, fines and similar one-off changes.'});
+  return{gap,rev,spend,out:out.sort((a,b)=>a.v-b.v)}}
+function outlookAlert(){const F=reserveForecast();const low=F.find(p=>p.pct<8);return low?{low,F}:null}
+function forecastSvg(series){const W=320,H=90;const all=series.flatMap(s=>s.pts.map(p=>p.r)).concat([S.reserve]);const lo=Math.min(0,...all),hi=Math.max(...all)*1.05;const X=i=>i/12*W,Y=v=>H-6-(v-lo)/(hi-lo)*(H-12);
+  const tgt=annualSpend(S)*0.08;return`<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" style="width:100%;height:110px"><rect x="0" y="${Y(tgt)}" width="${W}" height="${Math.max(0,H-6-Y(tgt))}" fill="rgba(232,100,79,.10)"/><line x1="0" x2="${W}" y1="${Y(tgt)}" y2="${Y(tgt)}" stroke="var(--bad)" stroke-dasharray="3 3" stroke-width="1" vector-effect="non-scaling-stroke"/>
+   ${series.map(s=>`<polyline points="${[S.reserve].concat(s.pts.map(p=>p.r)).map((v,i)=>`${X(i).toFixed(1)},${Y(v).toFixed(1)}`).join(' ')}" fill="none" stroke="${s.c}" stroke-width="2" ${s.dash?'stroke-dasharray="4 3"':''} vector-effect="non-scaling-stroke"/>`).join('')}</svg>`}
+function openOutlook(){closePanel();const F=reserveForecast(),C=budgetCauses();const end=F[11],low=F.find(p=>p.pct<8);const minP=F.reduce((a,p)=>p.r<a.r?p:a,F[0]);
+  const gapNext=(()=>{const p=S.pending||defaultProposal(S);return revenueFor(S,S.fyIndex+1,p.tax)-(DIVS.reduce((a,d)=>a+p.divs[d.id],0)+p.raise*5+policyCost(S)+bondService(S)+maintCost(S))})();
+  const cents=Math.max(0,Math.ceil(-gapNext/1.5));
+  const opts=[];
+  if(cents>0)opts.push({t:`Raise the property tax ${cents}¢ in your next budget`,d:`Closes next year's operating gap (each cent ≈ $1.5M). Homeowners and business hate it; it can break a "no new taxes" promise. Needs 7 council votes.`,adj:{taxc:cents},act:S.stage==='draft'?'<button class="btn" data-act="budget">Open the budget</button>':`<span class="note">Set it in April's budget</span>`});
+  opts.push({t:'Hold next year\'s raise to 0%',d:`Saves about ${fmtM(Math.max(0,(S.pending||defaultProposal(S)).raise)*5)} a year. City workers and unions push back hard.`,adj:{raise:-(S.pending||defaultProposal(S)).raise},act:'<span class="note">Set it in the budget</span>'});
+  Object.keys(S.policies).filter(k=>S.policies[k]).forEach(k=>opts.push({t:`End ${POLICIES[k].name.toLowerCase()}`,d:`Saves ${fmtM(POLICIES[k].cost)} a year starting now. The people it served will notice.`,adj:{cut:POLICIES[k].cost},act:`<button class="btn" data-act="toggle" data-k="${k}">End it</button>`}));
+  if(!cdLeft('ex_freeze',ACT_CD.exec))opts.push({t:'Order a hiring freeze outside public safety',d:'About $3M back right away. Unions and residents waiting on services won\'t like it, and it can break deals or donor expectations.',adj:{now:3},act:'<button class="btn" data-act="exec" data-id="freeze">Sign the order</button>'});
+  const sch=cashProjectSchedule();if(sch.length)opts.push({t:'Pause cash-funded construction',d:`Defers ${fmtM(sch.reduce((a,c)=>a+c.per*c.mo,0))} in payments. Neighbors near paused sites get angry, and promises tied to them slip.`,adj:{pause:true},act:'<span class="note">Pause from each project\'s page</span>'});
+  opts.push({t:'Trim non-safety divisions in the budget',d:'Parks, libraries, public works and administration. Saves money and cuts services people can see.',adj:{cut:0},act:'<span class="note">In the budget office</span>',nofc:true});
+  opts.push({t:'Fund new projects with bonds instead of cash',d:'Spreads the cost over 15 years (about 9% of the cost each year) instead of draining the reserve now.',adj:{cut:0},nofc:true});
+  const fcFor=o=>o.nofc?'':(()=>{const f=reserveForecast(o.adj);const e=f[11];return`<b style="color:${e.pct<8?'var(--bad)':e.pct<12?'var(--warn)':'var(--good)'}">${fmtM(e.r)} in 12 months</b>`})();
+  openModal(`Reserve today ${fmtM(S.reserve)} (${(S.reserve/annualSpend(S)*100).toFixed(1)}% of spending)`,'Budget outlook',`
+   <p>${S.reserve/annualSpend(S)*100<8?`<b style="color:var(--bad)">The reserve is already below 8% of spending.</b> `:low?`<b style="color:var(--bad)">At this pace the reserve drops below 8% of spending in ${low.label}.</b> `:''}If nothing changes, the reserve is about <b>${fmtM(end.r)}</b> a year from now${minP!==end?`, with a low of ${fmtM(minP.r)} in ${minP.label}`:''}. Cities like Memphis aim to keep at least 8–10% of spending in reserve for emergencies and their credit rating.</p>
+   <div class="facts"><h4>12-month forecast</h4>${forecastSvg([{pts:F,c:'var(--amber)'}])}<div class="note" style="display:flex;justify-content:space-between"><span>Now</span><span>Shaded: below 8%</span><span>${end.label}</span></div></div>
+   <div class="facts"><h4>Why the reserve is falling</h4><div class="opl"><div><span>Operating balance this year</span><b style="color:${C.gap>=0?'var(--good)':'var(--bad)'}">${C.gap>=0?'+':'−'}${fmtM(Math.abs(C.gap))} a year</b></div></div>
+    <ul>${C.out.map(c=>`<li><b>${c.t}</b> <span style="color:${c.v>=0?'var(--good)':'var(--bad)'}">${c.v>=0?'+':'−'}${fmtM(Math.abs(c.v))}${c.once?' one-time':' a year'}</span><br><span class="note">${c.d}</span></li>`).join('')}</ul>
+    <p class="note">This is normal city math, not a mistake: keeping the same services costs more each year than revenue grows. Every budget is a choice about how to close that gap.</p></div>
+   <div class="facts"><h4>Ways to close the gap</h4><div class="dlist">${opts.map(o=>`<div class="drow" style="cursor:default;grid-template-columns:minmax(0,1fr) auto;align-items:start;padding:5px 0;border-bottom:1px solid var(--line)"><span><b>${o.t}</b><br><span class="note">${o.d}</span>${o.nofc?'':`<br><span class="note">Forecast with this: </span>${fcFor(o)}`}</span><span>${o.act||''}</span></div>`).join('')}</div></div>`,true)}
+openOutlook=navWrap('openOutlook',openOutlook);
 
 function openLedger(){const L=S.log||[];openPanel('Everything that has happened, newest first','Ledger',L.length?`<div class="logl">${L.map(x=>`<div><span>${x.d}</span><p style="margin:0">${x.t}</p></div>`).join('')}</div>`:'<p class="note">Nothing yet. Start the clock with Space or ▶.</p>','ledger')}
 function openPolicies(){const ks=Object.keys(POLICIES);
@@ -2933,6 +3034,8 @@ document.addEventListener('click',e=>{
   else if(a==='planFund')openPlanner(S._plan.type,S._plan.d,S._plan.si,b.dataset.f);
   else if(a==='sendproj')sendProject();
   else if(a==='openproj'){closeModal();deskGo('proj:'+b.dataset.id)}
+  else if(a==='projpause'){const P=projById(b.dataset.id);if(P){P.paused=!P.paused;plog(P,P.paused?'You paused construction to save money. Neighbors are not happy.':'Construction resumed.');logIt(`${P.paused?'Paused':'Resumed'} ${P.name}.`);save();refreshHUD();openProject(P.id)}}
+  else if(a==='outlook')openOutlook();
   else if(a==='projgo'){const P=projById(b.dataset.id);if(P)camFly({center:[P.site.lon,P.site.lat],zoom:15.4,speed:1.4})}
   else if(a==='actions'){navReset();onClose=null;if(modalOpen)closeModal();openActions()}
   else if(a==='propose'||a==='propwhip')openPropose(b.dataset.id);
@@ -2978,7 +3081,7 @@ document.addEventListener('click',e=>{
     if(S.policies[k]){const cf={recruit:{safety:5,fiscal:-3},libHours:{education:4,fiscal:-2},mata:{transit:6,fiscal:-3},mploy:{education:4,safety:3,fiscal:-2},crews:{blight:6,fiscal:-2},tutors:{education:6,fiscal:-2},air:{oversight:3}}[k];applyCouncil(S,cf,`Funded: ${POLICIES[k].name}`);S.mood+=1}
     else{S.mood-=1}
     toast(`${POLICIES[k].name}: ${S.policies[k]?'funded':'ended'}.`);save();refreshHUD();
-    if(panelFor==='policies')openPolicies();else openPlace(POLICIES[k].where)}
+    if(NAV.cur&&NAV.cur.name==='openOutlook')openOutlook();else if(panelFor==='policies')openPolicies();else openPlace(POLICIES[k].where)}
   else if(a==='countymeet'){S.county=clamp(S.county+6,0,100);S.countyMet=S.y*12+S.m;applyCouncil(S,{education:1},'Lobbied the county for schools');toast('Commissioners took the meeting. County relations improved.');save();openPlace('county')}
   else if(a==='submitBudget'){S.proposal=S.draft;S.stage='submitted';S.events=S.events.filter(e=>e.kind!=='budget');S.draft=null;save();closeModal();closePanel();toast('Budget submitted. The council votes in June.');refreshHUD()}
   else if(a==='resetBudget'){S.draft=defaultProposal(S);renderBudgetEditor()}
