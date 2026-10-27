@@ -356,13 +356,17 @@ button.seat:hover{border-color:var(--amber)}
 .lsel button.on{color:var(--amber);border-color:var(--amber)}
   .actions .btn.act{border-color:var(--amber);color:var(--amber)}
 .choices .choice small{white-space:normal}
+/* v12: keep the action bar clear of the map-mode bar */
+.actions{max-width:calc(100% - 470px);gap:6px}
+@media (max-width:1700px){.actions .btn{padding-left:11px;padding-right:11px}.actions .btn kbd{display:none}}
+@media (max-width:1180px){.actions{max-width:calc(100% - 32px)}}
 /* v11 */
 .lookgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px;margin:6px 0}
 .lookgrid label{display:flex;flex-direction:column;gap:3px;font-size:12.5px;color:var(--muted)}
 .lookgrid select{font:inherit;font-size:14px;background:var(--panel2);border:1px solid var(--line);border-radius:4px;padding:5px 7px;color:var(--text)}
 .lookgrid label.ck{flex-direction:row;align-items:center;gap:6px;color:var(--text);font-size:14px}
 .prom{padding:6px 0;border-bottom:1px solid var(--line)}.prom:last-child{border-bottom:0}
-.desk i.dk-promises{color:var(--amber)} .desk i.dk-deals{color:#f0a36b}
+.desk i.dk-promises{color:var(--amber)} .desk i.dk-campaign{color:#5cc28d} .desk i.dk-deals{color:#f0a36b}
 /* v10: projects, stories, desk */
 .projpin{position:relative;background:none;border:0;padding:0;cursor:pointer;display:flex;align-items:center;gap:4px}
 .projpin svg{display:block;filter:drop-shadow(0 2px 4px rgba(0,0,0,.5))}
@@ -416,6 +420,7 @@ button.seat:hover{border-color:var(--amber)}
   <nav class="actions">
     <button class="btn" data-act="layers" id="bLayers">Layers <kbd>L</kbd></button>
     <button class="btn act" data-act="actions">Actions <kbd>E</kbd></button>
+    <button class="btn" data-act="hq">Campaign <kbd>K</kbd></button>
     <button class="btn" data-act="budget">Budget <kbd>B</kbd></button>
     <button class="btn" data-act="council">Council <kbd>C</kbd></button>
     <button class="btn" data-act="opinion">Opinion <kbd>O</kbd></button>
@@ -424,7 +429,7 @@ button.seat:hover{border-color:var(--amber)}
     <button class="btn primary" data-act="pause" id="bPlay">▶ Resume <kbd>Space</kbd></button>
   </nav>
   <div class="status" id="status">Loading map…</div>
-  <div class="credit"><span class="ver" id="verTag">v11</span>Map data: City of Memphis GIS · Shelby County MPO</div>
+  <div class="credit"><span class="ver" id="verTag">v12</span>Map data: City of Memphis GIS · Shelby County MPO</div>
   <div class="tip" id="tip" hidden></div>
   <div class="toast" id="toast" role="status"></div>
   <section class="panel" id="panel" hidden aria-live="polite">
@@ -455,7 +460,7 @@ button.seat:hover{border-color:var(--amber)}
         <button class="btn primary" id="bNew">Create your mayor</button>
         <button class="btn" id="bLoad" hidden>Continue saved term</button>
       </div>
-      <p class="note startv">Version <b class="ver" id="verStart">v11</b></p>
+      <p class="note startv">Version <b class="ver" id="verStart">v12</b></p>
       <p class="note">Budget totals, tax rate, reserve, MPD staffing, school reading scores and the council's structure and charter powers come from city documents and local reporting (see Guide → Sources). Council members are fictional; seats and districts are real.</p>
     </div>
     <div class="startbox create" id="create" hidden>
@@ -1158,6 +1163,7 @@ function releaseQueued(all){if(!S.queue||!S.queue.length)return 0;const due=all?
   refreshHUD();return due.filter(q=>notifyOn(evCat(q.ev))).length}
 function dayTick(){S.day++;
   if(S.day>daysIn(S.y,S.m)){S.day=daysIn(S.y,S.m);endOfMonth();return}
+  if(checkCampaignDay())return;
   if(checkProposal())return;
   if(checkProjectVotes())return;
   const n=releaseQueued(false);if(n&&S.autoPause!==false)setPaused(true);
@@ -1172,7 +1178,9 @@ let tAcc=0;
 function timeStep(dt){if(!S||!S.started||S.paused||S.over||modalOpen||!$('start').hidden){tAcc=0;return}
   tAcc+=dt*SPEEDS[S.speed||2];let guard=0;while(tAcc>=1&&guard++<24){tAcc-=1;dayTick();if(S.paused||modalOpen){tAcc=0;break}}}
 // Skip ahead to the end of the month (N).
-function advance(){if(S.over){showEnd();return}releaseQueued(true);S.day=daysIn(S.y,S.m);if(checkProposal(()=>endOfMonth()))return;if(checkProjectVotes(()=>endOfMonth()))return;endOfMonth()}
+function advance(){if(S.over){showEnd();return}releaseQueued(true);
+  if(S.camp){const e=electionDate();if(S.y===e.y&&S.m===9){for(const n of [1,2])if(!S.camp.debates[n]){S.day=DEBATE_DAYS[n-1];openDebate(n);return}}if(S.y===e.y&&S.m===10&&!S.camp.voted){S.day=e.day;S.camp.voted=true;setPaused(true);electionV2(()=>{});return}}
+  S.day=daysIn(S.y,S.m);if(checkProposal(()=>endOfMonth()))return;if(checkProjectVotes(()=>endOfMonth()))return;endOfMonth()}
 function queueNewBusiness(report){const n0=S.events.length,spawnRep=[];maybeSpawn(S,spawnRep);const fresh=S.events.splice(n0);const dim=daysIn(S.y,S.m);
   S.queue=S.queue||[];fresh.forEach(ev=>S.queue.push({ev,due:Math.max(S.day+1,2+Math.floor(Math.random()*(dim-3)))}));
   spawnRep.filter(l=>!/^New: |has a request|confidential memo|lobbying Nashville|on your desk to sign/.test(l)).forEach(l=>report&&report.push(l))}
@@ -1191,11 +1199,10 @@ function endOfMonth(){
   if(S.m===6){if(S.stage==='submitted')queue.push(budgetVote);const r=readingUpdate(S);
     report.push(`TCAP results are out: MSCS reading proficiency went from ${r.before.toFixed(1)}% to ${r.after.toFixed(1)}%.`)}
   if(S.m===7&&S.pending){enact(S,S.pending);report.push(`FY${fyOf(S)} begins. The new budget is in effect.`);S.pending=null;S.stage='none'}
-  if(S.m===10&&(S.y===2027||S.y===2031))queue.push(election);
   if(S.m===12)suburbElections(report);
   // new business arrives on random days through the month
   queueNewBusiness(report);
-  projectsMonth(report);storiesMonth();upkeepMonth(report);dealsMonth(report);promisesMonth(report);
+  projectsMonth(report);storiesMonth();upkeepMonth(report);dealsMonth(report);promisesMonth(report);if(S.camp){campaignMonth(report);purseMonth(report)}
   prevMet=before;
   const head=`${MONTHS_L[(S.m+10)%12]} closed: approval ${Math.round(S.approval)}% (${S.approval>=before.approval?'+':'−'}${Math.abs(S.approval-before.approval).toFixed(1)}), reserve ${fmtM(S.reserve)}`;
   logIt(head);report.forEach(l=>logIt(l));
@@ -1212,7 +1219,7 @@ function enact(s,p){DIVS.forEach(d=>{s.enacted[d.id]=p.divs[d.id];s.ratio[d.id]=
 // Victoria 3-style voter groups. Each has a share of residents, turnout, home districts, concerns and an approval of you.
 // Citywide approval is the turnout-weighted average of the groups; each council district's approval comes from the groups that live there.
 // Shares, district mix and turnout are modeled, loosely grounded in Memphis demographics; they are not survey data.
-const VERSION='v11';
+const VERSION='v12';
 const GROUPS=[
  {id:'working',sh:'Working families',n:'Working families',ic:'⚒',c:'#f2a93b',share:24,turn:.5,start:56,w:{jobs:1,safety:.8,transit:.5},
   d:'Hourly workers in logistics, warehouses, health care and service jobs. The biggest bloc in the city.',dm:{1:1.1,2:.8,3:1.3,4:1.2,5:.6,6:1.2,7:1.1}},
@@ -1349,7 +1356,7 @@ function nextDeadline(){const m=S.m,y=S.y;
   if(S.stage==='submitted')return`Council budget vote in June ${m<=6?y:y+1}`;
   if(S.pending)return`New budget takes effect July`;
   const elY=S.term===1?2027:2031;
-  const cand=[{t:(m<4?y:y+1)*12+4,txt:`Budget due April ${m<4?y:y+1}`},{t:elY*12+10,txt:`City election October ${elY}`}];
+  const cand=[{t:(m<4?y:y+1)*12+4,txt:`Budget due April ${m<4?y:y+1}`},{t:elY*12+10,txt:S.camp?`Election Day Oct ${electionDate().day}, ${elY} · ${daysToElection()} days`:`City election October ${elY}`}];
   cand.sort((a,b)=>a.t-b.t);return cand[0].txt}
 let toastT;function toast(msg){const t=$('toast');t.textContent=msg;t.classList.add('show');clearTimeout(toastT);toastT=setTimeout(()=>t.classList.remove('show'),4200)}
 function setStatus(t){const s=$('status');if(!t){s.hidden=true;return}s.hidden=false;s.textContent=t}
@@ -1598,7 +1605,7 @@ function openMayor(){const M=S.mayor;if(!M)return;const now=S.y*12+S.m;const cd=
   openPanel(`Your character · term ${S.term}`,`Mayor ${M.name}`,`
    <div class="char"><div>${portrait(M,104)}</div><div class="charinfo"><div class="note">Age ${M.age+(S.y-2026)} · Mayor of Memphis</div><div class="traits">${mTraitChips()}</div>
      <div class="note">Lifestyle focus: <b style="color:var(--amber)">${skillName(M.focus)}</b></div>
-     <div class="row"><input id="mRename" maxlength="40" value="${M.name.replace(/"/g,'&quot;')}" aria-label="Your name" style="font:inherit;background:var(--panel2);border:1px solid var(--line);border-radius:4px;padding:4px 7px;color:var(--text);min-width:0;flex:1"><button class="btn" data-act="rename" style="padding:5px 10px">Rename</button></div><div class="row"><button class="btn" data-act="look">Change your look</button><button class="btn" data-act="promises">Your promises</button></div></div></div>
+     <div class="row"><input id="mRename" maxlength="40" value="${M.name.replace(/"/g,'&quot;')}" aria-label="Your name" style="font:inherit;background:var(--panel2);border:1px solid var(--line);border-radius:4px;padding:4px 7px;color:var(--text);min-width:0;flex:1"><button class="btn" data-act="rename" style="padding:5px 10px">Rename</button></div><div class="row"><button class="btn" data-act="look">Change your look</button><button class="btn" data-act="promises">Your promises</button><button class="btn" data-act="shop">Personal account${S.purse?` · $${Math.round(S.purse.cash).toLocaleString()}`:''}</button></div></div></div>
    <div class="facts"><h4>Skills</h4><div class="skills">${SKILLS.map(sk=>{const tb=traitSkill(sk.k,M.traits);return`<div class="skrow"><span class="skn">${sk.ic} ${sk.n}${M.focus===sk.k?' <span class="pill on">focus</span>':''}</span><b>${mskill(sk.k)}</b>
      <div class="xpbar" title="${Math.floor(M.xp[sk.k]||0)} of 100 experience to the next point"><i style="width:${Math.min(100,M.xp[sk.k]||0)}%"></i></div>
      <small>${sk.d} Base ${M.skills[sk.k]}${tb?`, ${tb>0?'+':''}${tb} from traits`:''} · ${Math.floor(M.xp[sk.k]||0)}/100 experience</small></div>`}).join('')}</div></div>
@@ -1651,8 +1658,8 @@ function openRegion(){recomputeAll(S);openPanel('Six neighboring cities','Region
 
 // ======================= BACK BUTTON & TABS =======================
 const NAV={stack:[],cur:null,busy:false,depth:0};const VIEWS={};
-const TABS=[['openDesk','Desk'],['openActions','Actions'],['openMayor','Mayor'],['openOpinion','Opinion'],['openCouncil','Council'],['openRegion','Region'],['openBudget','Budget'],['openPolicies','Programs'],['openLedger','Ledger']];
-const TAB_OF={openPromises:'openDesk',openDeal:'openActions',openLook:'openMayor',openDesk:'openDesk',openProject:'openDesk',openPlanner:'openActions',openActions:'openActions',openPropose:'openActions',openMayor:'openMayor',openOpinion:'openOpinion',openGroup:'openOpinion',openCouncil:'openCouncil',openWhip:'openCouncil',openCharacter:'openCouncil',openDistrict:'openCouncil',openRegion:'openRegion',openNeighbor:'openRegion',openBudget:'openBudget',openPolicies:'openPolicies',openLedger:'openLedger'};
+const TABS=[['openDesk','Desk'],['openActions','Actions'],['openHQ','Campaign'],['openMayor','Mayor'],['openOpinion','Opinion'],['openCouncil','Council'],['openRegion','Region'],['openBudget','Budget'],['openPolicies','Programs'],['openLedger','Ledger']];
+const TAB_OF={openHQ:'openHQ',openDonor:'openHQ',openShop:'openMayor',openPromises:'openDesk',openDeal:'openActions',openLook:'openMayor',openDesk:'openDesk',openProject:'openDesk',openPlanner:'openActions',openActions:'openActions',openPropose:'openActions',openMayor:'openMayor',openOpinion:'openOpinion',openGroup:'openOpinion',openCouncil:'openCouncil',openWhip:'openCouncil',openCharacter:'openCouncil',openDistrict:'openCouncil',openRegion:'openRegion',openNeighbor:'openRegion',openBudget:'openBudget',openPolicies:'openPolicies',openLedger:'openLedger'};
 function navWrap(name,fn){const w=function(...a){const sig=name+JSON.stringify(a);
     if(!NAV.busy&&NAV.cur&&NAV.cur.sig!==sig){NAV.stack.push(NAV.cur);if(NAV.stack.length>25)NAV.stack.shift()}
     NAV.cur={sig,name,a,title:''};NAV.depth++;let r;try{r=fn.apply(this,a)}finally{NAV.depth--}
@@ -1753,7 +1760,7 @@ function openActions(){closePanel();S.acts=S.acts||{};S.laws=S.laws||{};const sl
    <div class="facts"><h4>Hold a town hall</h4><p class="note">Uses a meeting slot. Lifts your standing in that district and with its council member, if it goes well. Charisma helps.</p><div class="row">${[1,2,3,4,5,6,7].map(d=>{const cd=cdLeft('th'+d,ACT_CD.townhall);return`<button class="btn" data-act="townhall" data-d="${d}" ${cd||slots<=0?'disabled':''} title="${cd?`Again in ${cd} mo`:`District ${d}: ${Math.round(dApp(d))}% approve`}">District ${d} <small style="color:${apColor(dApp(d))}">${Math.round(dApp(d))}%</small></button>`}).join('')}</div></div>
    <div class="facts"><h4>Meet with community leaders</h4><p class="note">Uses a meeting slot. Pastors, union heads, PTA presidents and Chamber executives speak for their groups.</p><div class="row">${GROUPS.map(g=>{const cd=cdLeft('g'+g.id,ACT_CD.group);return`<button class="btn" data-act="meetgroup" data-g="${g.id}" ${cd||slots<=0?'disabled':''} title="${cd?`Again in ${cd} mo`:g.n}">${g.ic} ${g.n} <small style="color:${apColor(S.groups[g.id].app)}">${Math.round(S.groups[g.id].app)}%</small></button>`}).join('')}</div></div>
    <div class="facts"><h4>Press conference</h4><p class="note">Once a month. Groups who care about the topic hear you; nobody else notices much.</p><div class="row">${['safety','education','streets','jobs','transit','blight','fiscal','labor','oversight'].map(p=>`<button class="btn" data-act="presser" data-p="${p}" ${cdLeft('presser',1)?'disabled':''}>${PRIO_LABEL[p]}</button>`).join('')}</div></div>
-   ${inCampaign()?`<div class="facts"><h4>Campaign</h4><p class="note">The election is less than a year away.</p><div class="choices"><button class="choice" data-act="rally" ${cdLeft('rally',ACT_CD.rally)||slots<=0?'disabled':''}><b>Hold a campaign rally</b><small>${cdLeft('rally',ACT_CD.rally)?'Again in '+cdLeft('rally',ACT_CD.rally)+' months':'Uses a meeting slot. Groups that already like you (45%+) get +3 and turn out.'}</small></button></div></div>`:''}`,true)}
+   ${inCampaign()?`<div class="facts"><h4>Campaign</h4><p class="note">The election is less than a year away. Fundraising, ads, staff, polls and endorsements are in <a href="#" data-act="hq">Campaign HQ</a>.</p><div class="choices"><button class="choice" data-act="rally" ${cdLeft('rally',ACT_CD.rally)||slots<=0?'disabled':''}><b>Hold a campaign rally</b><small>${cdLeft('rally',ACT_CD.rally)?'Again in '+cdLeft('rally',ACT_CD.rally)+' months':'Uses a meeting slot and $10K of campaign money. Groups that already like you (45%+) get +3 and turn out.'}</small></button></div></div>`:''}`,true)}
 function grpLine(grp){const up=GROUPS.filter(g=>(grp[g.id]||0)>0).map(g=>g.sh),dn=GROUPS.filter(g=>(grp[g.id]||0)<0).map(g=>g.sh);return[up.length?'Pleases '+up.join(', '):'',dn.length?'Angers '+dn.join(', '):''].filter(Boolean).join(' · ')}
 function propRows(p){recomputeAll(S);return S.council.map((m,k)=>{const pa=issueParts(m,p,true),c=S.commit[k]||(dealYes('ord:'+p.id,k)?'deal':null);const sc=50+pa.own+pa.vo+pa.bk+pa.mayor;const yes=c?true:sc>=50;
     const vs=voterStance(m,p.grp,p),bs=backerStance(m,p.grp);const against=!c&&((vs>=2&&!yes)||(vs<=-2&&yes));
@@ -1795,7 +1802,7 @@ function doMeetGroup(id){const g=GMAP[id];if(!g||cdLeft('g'+id,ACT_CD.group)||S.
   gainXP('dip',6);logIt(`Met with ${g.n.toLowerCase()} leaders.`);save();refreshHUD();toast(`You met with leaders of ${g.n.toLowerCase()}.`)}
 function doPresser(p){if(cdLeft('presser',1))return;markAct('presser');const cha=mskill('cha');GROUPS.forEach(g=>{if(g.w[p])addGroupMod(S.groups[g.id],`Spoke up on ${PRIO_LABEL[p].toLowerCase()}`,g.w[p]*(2+Math.max(0,cha-6)*0.25))});S.approval=cityApproval(S);
   gainXP('cha',5);logIt(`Press conference on ${PRIO_LABEL[p].toLowerCase()}.`);save();refreshHUD();toast(`Press conference on ${PRIO_LABEL[p].toLowerCase()}. ${GROUPS.filter(g=>g.w[p]).map(g=>g.n).join(', ')} took note.`)}
-function doRally(){if(cdLeft('rally',ACT_CD.rally)||S.slots<=0||!inCampaign())return;S.slots--;markAct('rally');GROUPS.forEach(g=>{if(S.groups[g.id].app>=45)addGroupMod(S.groups[g.id],'Fired up at your rally',3)});S.approval=cityApproval(S);gainXP('cha',8);logIt('Campaign rally.');save();refreshHUD();toast('Your supporters are fired up.')}
+function doRally(){if(cdLeft('rally',ACT_CD.rally)||S.slots<=0||!inCampaign()||(S.camp&&S.camp.cash<10))return;if(S.camp){S.camp.cash-=10;S.camp.spent+=10;clog('Campaign rally ($10K).')}S.slots--;markAct('rally');GROUPS.forEach(g=>{if(S.groups[g.id].app>=45)addGroupMod(S.groups[g.id],'Fired up at your rally',3)});S.approval=cityApproval(S);gainXP('cha',8);logIt('Campaign rally.');save();refreshHUD();toast('Your supporters are fired up.')}
 
 // ======================= CAPITAL PROJECTS =======================
 // Projects move through council approval, bidding, construction (with delays and monthly payments) and completion, and stay on the map.
@@ -2035,8 +2042,10 @@ function deskItems(){const now=nowM(),items=[];
   else S.promises.forEach(st=>{const P=PMAP[st.id],ps=promiseState(st.id);if(st.status!=='open'&&now-((st.whenM)||now)>3)return;items.push({cat:'promises',ic:st.status==='kept'?'✔':st.status==='broken'?'✕':'★',t:P.n,s:st.status==='open'?`${ps.label} · ${promiseDeadline()-now} months left`:(st.status==='kept'?'Kept':'Broken'),pct:st.status==='open'?ps.pct:null,go:'promises'})});
   (S.deals||[]).filter(D=>D.status==='open').forEach(D=>{const left=D.due-now;items.push({cat:left<=1?'urgent':'deals',ic:'⚑',t:`${D.text}`,s:`Owed to ${D.name} · ${left<=0?'due this month':left+' month'+(left===1?'':'s')+' left'}`,go:D.type==='road'?`plan:road:${D.d}`:D.type==='townhall'?'actions':'desk'})});
   (S.projects||[]).filter(p=>p.stage==='done'&&(p.maintCut||(p.sat!=null&&p.sat<50))).forEach(p=>items.push({cat:'projects',ic:'⚠',t:p.name,s:`Satisfaction ${Math.round(p.sat??75)}%${p.maintCut?' · upkeep cut':''}`,go:`proj:${p.id}`}));
+  if(S.camp&&!S.over){const dte=daysToElection();const C=S.camp;Object.entries(C.debates).forEach(([n,D])=>{if(D.round<3)items.unshift({cat:'urgent',ic:'🎙',t:`Finish debate ${n}`,s:'The cameras are still rolling',go:'debate:'+n})});
+    if(dte>0&&dte<=400)items.push({cat:'campaign',ic:'✪',t:`${dte} days to Election Day`,s:`${fmtK(C.cash)} campaign cash${C.polls.length?` · last poll ${C.polls[C.polls.length-1].you}–${C.polls[C.polls.length-1].rival}`:' · no poll yet'}`,go:'hq'})}
   return items}
-const DESK_CATS=[['urgent','Urgent'],['decide','Waiting on you'],['votes','Council votes'],['promises','Your promises'],['deals','Deals you owe'],['projects','Projects'],['stories','Developing stories']];
+const DESK_CATS=[['urgent','Urgent'],['decide','Waiting on you'],['votes','Council votes'],['promises','Your promises'],['deals','Deals you owe'],['projects','Projects'],['stories','Developing stories'],['campaign','Campaign']];
 function deskRow(it){return`<button data-desk="${it.go}" class="dk"><i class="dk-${it.cat}">${it.ic}</i><span>${it.t}<br><span class="note">${it.s}</span>${it.pct!=null&&it.pct<1?`<span class="mbar"><b style="width:${Math.round(it.pct*100)}%"></b></span>`:''}</span></button>`}
 function renderDesk(){const items=deskItems();$('deskN').textContent=items.filter(i=>i.cat==='urgent'||i.cat==='decide').length;
   const groups=DESK_CATS.map(([k,n])=>[k,n,items.filter(i=>i.cat===k)]).filter(g=>g[2].length);let shown=0;
@@ -2058,6 +2067,8 @@ function deskGo(go){const[k,v]=go.split(':');
   else if(k==='whip'){closePanel();openWhip()}
   else if(k==='desk')openDesk();
   else if(k==='promises')openPromises();
+  else if(k==='hq')openHQ();
+  else if(k==='debate')openDebate(+v);
   else if(k==='actions')openActions();
   else if(k==='plan'){const[,t,d]=go.split(':');openPlanner(t,+d)}}
 
@@ -2093,7 +2104,10 @@ function portraitLook(m,w){const h=Math.round(w*1.25),L=m.look;
   else if(H==='pixie')front=`<path d="M32 41 Q30 21 50 20 Q70 21 68 38 Q61 26 45 31 Q37 33 32 41Z" fill="${hair}"/>`;
   const neck=`<path d="M41.5 60 L58.5 60 L60.5 74 L39.5 74Z" fill="${skin}"/>`;
   const O=L.outfit;const shoulders=`<path d="M8 125 Q10 82 38 74 L50 84 L62 74 Q90 82 92 125Z" fill="${suit}"/>`;const lapels=`<path d="M38.5 74.5 L46 98 M61.5 74.5 L54 98" stroke="rgba(0,0,0,.35)" stroke-width="1.4" fill="none"/>`;
-  const pinS=L.pin&&['suit','open','bowtie','blazer'].includes(O)?`<circle cx="62" cy="88" r="1.8" fill="#d6b04c" stroke="#7a5f1d" stroke-width=".5"/>`:'';
+  const pocketS=L.pocket&&['suit','open','bowtie','blazer','threepiece'].includes(O)?`<path d="M28 92 L36 92 L34 88 L32 90.5 L30 87.5Z" fill="${ACCC[(L.accC+2)%ACCC.length]}" stroke="rgba(0,0,0,.3)" stroke-width=".5"/>`:'';
+  const stoleS=L.stole?`<path d="M37 74 L44 78 L42 125 L34 125Z" fill="#d4a017"/><path d="M63 74 L56 78 L58 125 L66 125Z" fill="#d4a017"/>${[86,96,106,116].map(y=>`<rect x="34.5" y="${y}" width="8" height="4" fill="#1f6b3a"/><rect x="57.5" y="${y}" width="8" height="4" fill="#1f6b3a"/><rect x="34.5" y="${y+4}" width="8" height="2" fill="#a32020"/><rect x="57.5" y="${y+4}" width="8" height="2" fill="#a32020"/>`).join('')}`:'';
+  const HT=L.hat;const hatS=HT==='fedora'?`<ellipse cx="50" cy="27" rx="25" ry="4.5" fill="#2a2420"/><path d="M36 27 Q36 12 50 11 Q64 12 64 27Z" fill="#3a322b"/><path d="M50 12 L48 18 L52 18Z" fill="#2a2420"/><rect x="36" y="22" width="28" height="3.5" fill="#16110d"/>`:HT==='churchhat'?`<ellipse cx="50" cy="27" rx="33" ry="6" fill="${suit}" stroke="rgba(0,0,0,.3)"/><path d="M37 27 Q37 10 50 9.5 Q63 10 63 27Z" fill="${suit}"/><rect x="37" y="21" width="26" height="4" fill="${acc}"/><circle cx="62" cy="22" r="3.5" fill="${acc}"/>`:HT==='cap'?`<path d="M33 31 Q33 15 50 14.5 Q67 15 67 31Z" fill="#5b8fc7"/><path d="M33 30 Q22 31 20 35 Q34 34 50 31Z" fill="#3e6fa3"/><circle cx="50" cy="15" r="1.6" fill="#3e6fa3"/>`:'';
+  const pinS=L.pin&&['suit','open','bowtie','blazer','threepiece'].includes(O)?`<circle cx="62" cy="88" r="1.8" fill="#d6b04c" stroke="#7a5f1d" stroke-width=".5"/>`:'';
   let body='';
   if(O==='suit')body=shoulders+`<path d="M40 73 L50 86 L60 73 L56 71 L50 80 L44 71Z" fill="#ecebe7"/><path d="M48.5 80 L51.5 80 L53 100 L50 104 L47 100Z" fill="${acc}"/>`+lapels;
   else if(O==='open')body=shoulders+`<path d="M40 73 L50 90 L60 73 L56 71 L50 82 L44 71Z" fill="${acc==='#16181c'?'#ecebe7':acc}"/><path d="M45 73.5 L50 81 L55 73.5Z" fill="${skin}"/>`+lapels;
@@ -2101,6 +2115,7 @@ function portraitLook(m,w){const h=Math.round(w*1.25),L=m.look;
   else if(O==='blazer')body=shoulders+`<path d="M38 74 L50 92 L62 74 L58 72 L50 84 L42 72Z" fill="${acc}"/>`+lapels;
   else if(O==='turtle')body=`<path d="M8 125 Q10 82 38 74 Q50 80 62 74 Q90 82 92 125Z" fill="${suit}"/><path d="M40 66 Q50 70 60 66 L61.5 76 Q50 80.5 38.5 76Z" fill="${suit}"/><path d="M40 68.5 Q50 72.5 60 68.5 M39.5 72 Q50 76 60.5 72" stroke="rgba(0,0,0,.25)" stroke-width="1" fill="none"/>`;
   else if(O==='cardigan')body=`<path d="M8 125 Q10 82 38 74 L50 84 L62 74 Q90 82 92 125Z" fill="${suit}"/><path d="M43 74 L50 78 L57 74 L56 125 L44 125Z" fill="${acc}"/><path d="M44 74 L44 125 M56 74 L56 125" stroke="rgba(0,0,0,.3)" stroke-width="1.2"/>${[90,100,110].map(y=>`<circle cx="45.8" cy="${y}" r="1" fill="rgba(255,255,255,.5)"/>`).join('')}`;
+  else if(O==='threepiece')body=shoulders+`<path d="M40 73 L50 86 L60 73 L56 71 L50 80 L44 71Z" fill="#ecebe7"/><path d="M42 76 L50 88 L58 76 L58 110 L42 110Z" fill="${suit}" stroke="rgba(0,0,0,.35)" stroke-width="1"/><path d="M48.5 80 L51.5 80 L52.5 92 L50 95 L47.5 92Z" fill="${acc}"/>${[96,101,106].map(y=>`<circle cx="50" cy="${y}" r="1" fill="rgba(255,255,255,.55)"/>`).join('')}`+lapels;
   else body=`<path d="M8 125 Q10 82 38 74 Q50 82 62 74 Q90 82 92 125Z" fill="${suit}"/><path d="M39 74.5 Q50 90 61 74.5" stroke="${acc}" stroke-width="3.2" fill="none"/><path d="M41 77 Q50 93 59 77" stroke="${acc}" stroke-width="1" fill="none" stroke-dasharray="1.5 1.5"/><path d="M50 88 L50 104" stroke="${acc}" stroke-width="2.2"/>`;
   const B=L.beard;let beard='';
   if(B==='stubble')beard=`<path d="M35.5 49 Q36 64 50 64.5 Q64 64 64.5 49 Q60 60 50 60 Q40 60 35.5 49Z" fill="${hair}" opacity=".32"/>`;
@@ -2116,15 +2131,15 @@ function portraitLook(m,w){const h=Math.round(w*1.25),L=m.look;
   const ear=L.ear==='studs'?`<circle cx="33.5" cy="50.5" r="1.3" fill="#e8d28a"/><circle cx="66.5" cy="50.5" r="1.3" fill="#e8d28a"/>`:L.ear==='hoops'?`<circle cx="33.5" cy="53.5" r="3" fill="none" stroke="#e0c46c" stroke-width="1.1"/><circle cx="66.5" cy="53.5" r="3" fill="none" stroke="#e0c46c" stroke-width="1.1"/>`:'';
   const G=L.glasses;const gl=G==='square'?`<g stroke="#20201f" stroke-width="1.2" fill="rgba(255,255,255,.08)"><rect x="38.5" y="41" width="10" height="7.5" rx="2"/><rect x="51.5" y="41" width="10" height="7.5" rx="2"/><path d="M48.5 44 L51.5 44"/></g>`:
     G==='round'?`<g stroke="#8a6a2a" stroke-width="1.1" fill="rgba(255,255,255,.08)"><circle cx="44" cy="45" r="4.6"/><circle cx="56" cy="45" r="4.6"/><path d="M48.6 44.5 L51.4 44.5"/></g>`:
-    G==='bold'?`<g stroke="#111" stroke-width="2.2" fill="rgba(255,255,255,.06)"><rect x="38" y="40.5" width="11" height="8.5" rx="1.5"/><rect x="51" y="40.5" width="11" height="8.5" rx="1.5"/><path d="M49 44 L51 44"/></g>`:'';
+    G==='designer'?`<g stroke="#7a4a22" stroke-width="1.8" fill="rgba(255,255,255,.06)"><rect x="38" y="40.5" width="10.5" height="8" rx="3.2"/><rect x="51.5" y="40.5" width="10.5" height="8" rx="3.2"/><path d="M48.5 43.5 Q50 42.5 51.5 43.5" stroke="#d6b04c" stroke-width="1.2"/></g>`:G==='bold'?`<g stroke="#111" stroke-width="2.2" fill="rgba(255,255,255,.06)"><rect x="38" y="40.5" width="11" height="8.5" rx="1.5"/><rect x="51" y="40.5" width="11" height="8.5" rx="1.5"/><path d="M49 44 L51 44"/></g>`:'';
   const id='bgL'+(m.name||'').length+w;
   return`<svg width="${w}" height="${h}" viewBox="0 0 100 125" role="img" aria-label="Portrait of ${m.name}" class="pt"><defs><radialGradient id="${id}" cx="50%" cy="35%" r="70%"><stop offset="0" stop-color="#2a3c4c"/><stop offset="1" stop-color="#101a23"/></radialGradient></defs>
-   <rect width="100" height="125" fill="url(#${id})"/>${back}${neck}${body}${pinS}${face}${beard}${mouth}${ear}${gl}${front}<rect x="1.5" y="1.5" width="97" height="122" rx="4" fill="none" stroke="${frame}" stroke-width="3"/></svg>`}
-function lookControls(o){const L=o.look;const sel=(k,opts,label)=>`<label>${label}<select data-look="${k}">${opts.map(([v,n])=>`<option value="${v}" ${L[k]===v?'selected':''}>${n}</option>`).join('')}</select></label>`;
+   <rect width="100" height="125" fill="url(#${id})"/>${back}${neck}${body}${stoleS}${pocketS}${pinS}${face}${beard}${mouth}${ear}${gl}${HT&&HT!=='none'&&['afro','bun','twists','locs'].includes(H)?'':front}${hatS}<rect x="1.5" y="1.5" width="97" height="122" rx="4" fill="none" stroke="${frame}" stroke-width="3"/></svg>`}
+function lookControls(o){const L=o.look;const own=(S&&o===S.mayor&&S.purse)?S.purse.owned:{};const HATS=[['none','None']].concat(own.cap?[['cap','Ball cap']]:[],own.fedora?[['fedora','Fedora']]:[],own.churchhat?[['churchhat','Church hat']]:[]);const sel=(k,opts,label)=>`<label>${label}<select data-look="${k}">${opts.map(([v,n])=>`<option value="${v}" ${L[k]===v?'selected':''}>${n}</option>`).join('')}</select></label>`;
   const sw=(k,cols,label)=>`<div class="swatches"><span class="note" style="min-width:70px">${label}</span>${cols.map((c,i)=>`<button type="button" class="sw ${L[k]===i?'on':''}" style="background:${c}" data-lookc="${k}" data-i="${i}" aria-label="${label} ${i+1}"></button>`).join('')}</div>`;
-  return`<div class="lookgrid">${sel('hair',HAIRSTYLES,'Hairstyle')}${sel('beard',BEARDS,'Facial hair')}${sel('outfit',OUTFITS,'Clothing')}${sel('glasses',GLASSES,'Glasses')}${sel('ear',EARRINGS,'Earrings')}<label class="ck"><input type="checkbox" data-look="pin" ${L.pin?'checked':''}> Lapel pin</label></div>
+  return`<div class="lookgrid">${sel('hair',HAIRSTYLES,'Hairstyle')}${sel('beard',BEARDS,'Facial hair')}${sel('outfit',OUTFITS.concat(own.threepiece?[['threepiece','Three-piece suit']]:[]),'Clothing')}${sel('glasses',GLASSES.concat(own.designer?[['designer','Designer frames']]:[]),'Glasses')}${sel('ear',EARRINGS,'Earrings')}${HATS.length>1?sel('hat',HATS,'Hat'):''}<label class="ck"><input type="checkbox" data-look="pin" ${L.pin?'checked':''}> Lapel pin</label>${own.pocket?`<label class="ck"><input type="checkbox" data-look="pocket" ${L.pocket?'checked':''}> Pocket square</label>`:''}${own.stole?`<label class="ck"><input type="checkbox" data-look="stole" ${L.stole?'checked':''}> Kente stole</label>`:''}</div>
    ${sw('suitC',SUITC,'Clothes')}${sw('accC',ACCC,O_ACC_LABEL[L.outfit]||'Accent')}`}
-const O_ACC_LABEL={suit:'Tie',open:'Shirt',bowtie:'Bow tie',blazer:'Blouse',turtle:'Accent',cardigan:'Shirt',tunic:'Trim'};
+const O_ACC_LABEL={threepiece:'Tie',suit:'Tie',open:'Shirt',bowtie:'Bow tie',blazer:'Blouse',turtle:'Accent',cardigan:'Shirt',tunic:'Trim'};
 function openLook(){const M=S.mayor;if(!M.look)M.look=lookFromLegacy(M);closePanel();
   openModal('Your character','Change your look',`<div class="cgrid"><div id="lkPt">${portrait(M,140)}</div><div class="cform"><div class="swatches" id="lkSkin"><span class="note" style="min-width:70px">Skin</span>${SKINS.map((c,i)=>`<button type="button" class="sw ${M.ptSkin===i?'on':''}" style="background:${c}" data-lskin="${i}"></button>`).join('')}</div>
    <div class="swatches"><span class="note" style="min-width:70px">Hair</span>${HAIRC.map((c,i)=>`<button type="button" class="sw ${M.ptHair===i?'on':''}" style="background:${c}" data-lhair="${i}"></button>`).join('')}</div>${lookControls(M)}</div></div>
@@ -2260,6 +2275,157 @@ function upkeepMonth(report){(S.projects||[]).filter(p=>p.stage==='done').forEac
     addRecord({t:ok?`${P.name} delivered a year later`:`${P.name} fell short a year later`,good:ok?Object.keys(T.done):[],bad:ok?[]:Object.keys(T.done),kind:'upkeep',camp:ok?{d:0.5,t:`Residents near ${P.name} appear in your ads.`}:{d:-0.5,t:`Your opponent asks what happened to ${P.name}.`}});report.push(`One year check: ${P.name} ${ok?'delivered':'fell short'} (satisfaction ${Math.round(P.sat)}%).`)}});
   const mc=maintCost(S);if(mc>0)report.push(`Upkeep on finished projects: ${fmtM(mc)} a year${(S.projects||[]).some(p=>p.maintCut)?`; you cut upkeep on ${(S.projects||[]).filter(p=>p.maintCut).map(p=>p.name).join(', ')}`:''}.`)}
 
+// ======================= THE CAMPAIGN =======================
+// Three separate accounts: the city treasury (S.reserve, $M), the campaign fund (S.camp.cash, $K) and your personal money (S.purse.cash, $).
+// Election Day: Memphis city elections fall on the first Thursday in October (Oct 5, 2023), so the 2027 race is Thursday, Oct 7.
+// Fundraising amounts, ad effects and the vote model are game mechanics. Donors, PACs and endorsing groups are fictional.
+const fmtK=k=>k>=1000?`$${(k/1000).toFixed(2)}M`:`$${Math.round(k)}K`;
+function electionDate(){const y=S.term===1?2027:2031;const d1=new Date(y,9,1).getDay();const day=1+((4-d1+7)%7);return{y,m:10,day}}
+function daysToElection(){const e=electionDate();const a=new Date(S.y,S.m-1,S.day),b=new Date(e.y,e.m-1,e.day);return Math.round((b-a)/864e5)}
+function monthsToElection(){return Math.max(0,daysToElection()/30.4)}
+function campInit(s){s.camp=s.camp||{cash:40,raised:40,spent:0,organizers:0,offices:{},ads:[],adUse:{},boost:{},polls:[],donors:{},endorse:{},seek:{},debate:0,debates:{},log:[],personal:0,attacks:[]};
+  s.purse=s.purse||{cash:0,owned:{},paid:0};if(s.rival&&!s.rival.camp)s.rival.camp={cash:60,raised:60,spent:0,ads:0,adPts:0,organizers:0,dmg:0}}
+function clog(t){S.camp.log.unshift({d:dateStr(),t});if(S.camp.log.length>40)S.camp.log.length=40}
+function campBurn(){return S.camp.organizers*4+Object.keys(S.camp.offices).length*6}
+function enthusiasm(){return GROUPS.reduce((a,g)=>a+g.share*Math.max(0,S.groups[g.id].app-45),0)/100}
+// ---------- donors (fictional) ----------
+const DONORS={
+ bizpac:{n:'Bluff City Business PAC',g:'business',amt:[60,110],exp:'Keep the property tax rate at $3.39 or lower',check:s=>s.taxRate<=3.39001},
+ builders:{n:'Midsouth Builders & Contractors PAC',g:'owners',amt:[40,80],exp:'Keep at least one capital project underway',check:s=>activeProjects().length>0||(s.projects||[]).some(p=>nowM()-p.started<=4)},
+ safety:{n:'Public Safety Workers PAC',g:'labor',amt:[40,80],exp:'No hiring freeze, and raises of at least 2%',check:s=>!(s.acts&&s.acts.ex_freeze>=(s.camp.donors.safety||{}).when)&&(s.raise==null||s.raise>=2)},
+ datacoal:{n:'Riverbend Data Coalition',g:'business',amt:[110,150],exp:'Don\'t pass the data-center air monitoring ordinance',check:s=>!(s.laws||{}).dc_air,taint:{young:-2,renters:-1.5,faith:-1}},
+ neighbors:{n:'Southwest Memphis Neighbors Fund',g:'renters',amt:[12,20],exp:'Don\'t fast-track more data centers',check:s=>!(s.laws||{}).dc_fast||((s.camp.donors.neighbors||{}).hadFast)},
+ realtors:{n:'Memphis Area Realtors PAC',g:'owners',amt:[35,60],exp:'Don\'t raise fines on out-of-town landlords',check:s=>!(s.laws||{}).landlord},
+ educators:{n:'Educators for Memphis Kids',g:'parents',amt:[25,45],exp:'Fund tutoring or extended library hours within 6 months',check:s=>!!(s.policies.tutors||s.policies.libHours)||nowM()-(s.camp.donors.educators||{}).when<6},
+};
+function openDonorOffer(){const pool=Object.entries(DONORS).filter(([id,D])=>{const st=S.camp.donors[id];return(!st||st.status==='given'&&nowM()-st.when>=6)&&S.groups[D.g].app>=42&&!(st&&st.status==='broken')});
+  if(!pool.length){toast('No major donors are interested right now. Raise your standing with their communities first.');return null}
+  const[id,D]=pool.sort((a,b)=>S.groups[b[1].g].app-S.groups[a[1].g].app)[Math.floor(Math.random()*Math.min(3,pool.length))];
+  const amt=Math.round(D.amt[0]+(D.amt[1]-D.amt[0])*clamp((S.groups[D.g].app-42)/25,0,1));S.camp.offer={id,amt};return S.camp.offer}
+function donorAccept(){const o=S.camp.offer;if(!o)return;const D=DONORS[o.id];S.camp.cash+=o.amt;S.camp.raised+=o.amt;S.camp.donors[o.id]={status:'given',amt:o.amt+((S.camp.donors[o.id]||{}).amt||0),when:nowM(),hadFast:!!(S.laws||{}).dc_fast};
+  if(D.taint){applyGroupReact(D.taint,`Took money from the ${D.n}`);addRecord({t:`Took ${fmtK(o.amt)} from the ${D.n}`,bad:Object.keys(D.taint),kind:'money',camp:{d:-0.4,t:`Your opponent says you're bankrolled by the ${D.n}.`}})}
+  clog(`${D.n} gave ${fmtK(o.amt)}. They expect: ${D.exp.toLowerCase()}. All contributions are publicly reported.`);delete S.camp.offer}
+function donorsMonth(report){for(const id in S.camp.donors){const st=S.camp.donors[id],D=DONORS[id];if(st.status!=='given')continue;if(!D.check(S)){st.status='broken';applyGroupReact({[D.g]:-3},`The ${D.n} feels betrayed`);
+    addRecord({t:`The ${D.n} pulled its support`,kind:'money',camp:{d:-0.3,t:`The ${D.n} is now funding your opponent.`}});if(S.rival)S.rival.camp.cash+=Math.round(st.amt*0.6);report.push(`The ${D.n} says you broke your word (${D.exp.toLowerCase()}) and is now backing your opponent.`);clog(`${D.n} switched to your opponent.`)}}}
+// ---------- ads ----------
+const AD_COST={std:50,big:120};
+function adTiming(){const mo=monthsToElection();return mo<=3?1:mo<=6?0.65:0.35}
+function adOptions(){const out=[];(S.record||[]).forEach((r,i)=>{if(r.camp&&r.camp.d>0||(r.good&&r.good.length&&r.kind!=='money'))out.push({kind:'promote',ref:'r'+i,title:`Promote: ${r.t}`,groups:r.good||[],r});
+    else if(r.camp&&r.camp.d<0&&!r.defended)out.push({kind:'defend',ref:'r'+i,title:`Defend: ${r.t}`,groups:r.bad||[],r})});
+  if(S.rival){const R=S.rival;const atk={'Collin Brandt':['Brandt\'s tax cuts would close fire stations and libraries','Brandt has never run anything bigger than a council committee'],'Morgan Pryor':['Pryor would pull officers off the street','Pryor voted against paving money for your neighborhood'],'Darnell Whitfield':['Whitfield\'s spending plans would mean a tax increase','Whitfield promised jobs he can\'t deliver']}[R.name]||['Your opponent has no plan'];
+    atk.forEach((t,i)=>out.push({kind:'attack',ref:'a'+i,title:`Attack: "${t}"`,groups:R.champs}))}
+  return out.slice(0,14)}
+function buyAd(ref,size){const opt=adOptions().find(o=>o.ref===ref);const cost=AD_COST[size];if(!opt||S.camp.cash<cost)return;S.camp.cash-=cost;S.camp.spent+=cost;
+  const uses=S.camp.adUse[ref]||0;S.camp.adUse[ref]=uses+1;const fresh=Math.pow(0.5,uses),pts=(size==='big'?3.2:1.8)*fresh*adTiming();
+  if(opt.kind==='promote'){GROUPS.forEach(g=>{const w=opt.groups.includes(g.id)?1:0.35;S.camp.boost[g.id]=Math.min(5,(S.camp.boost[g.id]||0)+pts*w)})}
+  else if(opt.kind==='defend'){opt.r.defended=true;opt.groups.forEach(g=>S.camp.boost[g]=Math.min(5,(S.camp.boost[g]||0)+pts*0.6))}
+  else{S.rival.camp.dmg=Math.min(6,(S.rival.camp.dmg||0)+pts);S.camp.attacks.push(nowM());if(S.camp.attacks.filter(t=>nowM()-t<=3).length>2){popHit(-0.6,'Too much negative campaigning');clog('Voters are tiring of your attack ads.')}}
+  S.camp.ads.push({title:opt.title,size,pts:Math.round(pts*10)/10,when:dateStr(),m:nowM()});clog(`Ad buy (${size==='big'?'TV and digital':'digital and mail'}, ${fmtK(cost)}): ${opt.title}${uses?` (run ${uses+1}; diminishing returns)`:''}.`);gainXP('cha',3)}
+// ---------- polling ----------
+function groupSupport(g){const G=S.groups[g.id],R=S.rival||{champs:[]},rc=R.camp||{};let b=G.app+(S.camp.boost[g.id]||0)+recordSwing()+(S.mayor?(mskill('cha')-8)*0.4:0)+S.camp.debate;
+  const champ=R.champs.includes(g.id);b-=(champ?6:0)+(rc.adPts||0)*(champ?1:0.5)-(rc.dmg||0)*0.6;const e=S.camp.endorse[ENDORSERS.find(x=>x.g===g.id)?.id];if(e==='you')b+=3;else if(e==='rival')b-=3;return clamp(b/100,0.05,0.95)}
+function groupTurnout(g,sup){let t=tEff(g,S.groups[g.id].app);if(sup>=0.5)t*=1+Math.min(10,S.camp.organizers)*0.015;else t*=1+Math.min(10,(S.rival&&S.rival.camp.organizers)||0)*0.015;
+  const e=S.camp.endorse[ENDORSERS.find(x=>x.g===g.id)?.id];if(e==='you'&&sup>=0.5)t*=1.1;if(e==='rival'&&sup<0.5)t*=1.1;return t}
+function headToHead(dist){let a=0,w=0;const mix=dist?dComp(dist):null;GROUPS.forEach(g=>{const sup=groupSupport(g);let t=groupTurnout(g,sup);let sh=mix?mix[g.id]*100:g.share;
+  if(dist&&S.camp.offices[dist])sup>=0.5&&(t*=1.06);a+=sh*t*sup;w+=sh*t});const p=a/w+(dist?(DLEAN[dist]+(S.pop.d[dist]||0))/100:0);return clamp(p,0.05,0.95)}
+function runPoll(kind){const cost=kind==='city'?20:60;if(S.camp.cash<cost)return;S.camp.cash-=cost;S.camp.spent+=cost;const n=()=>rnd(-3.5,3.5);const und=Math.max(4,18-12*(1-monthsToElection()/12));
+  const p=headToHead();const poll={when:dateStr(),m:nowM(),you:Math.round((p*(100-und)+n())*10)/10,und:Math.round(und)};poll.rival=Math.round((100-und-poll.you)*10)/10;
+  if(kind==='dist'){poll.d={};for(let d=1;d<=7;d++){const q=headToHead(d);poll.d[d]=Math.round((q*100+n()*1.4))}}
+  S.camp.polls.push(poll);clog(`${kind==='city'?'Citywide':'Citywide and district'} poll (${fmtK(cost)}): you ${poll.you}%, ${S.rival.name.split(' ').pop()} ${poll.rival}%, undecided ${poll.und}%.`)}
+// ---------- endorsements (fictional groups) ----------
+const ENDORSERS=[{id:'bizlead',n:'Greater Memphis business leaders',g:'business'},{id:'unions',n:'City workers\' union council',g:'labor'},{id:'ministers',n:'Interdenominational ministers\' alliance',g:'faith'},
+ {id:'teachers',n:'Memphis teachers\' association',g:'parents'},{id:'hoods',n:'Neighborhood associations coalition',g:'owners'},{id:'riders',n:'Transit riders\' union',g:'renters'},{id:'ypn',n:'Young professionals\' civic network',g:'young'}];
+function endorseScore(E){const g=E.g;let you=S.groups[g].app+(S.camp.seek[E.id]?6:0);(S.promises||[]).forEach(st=>{if(PMAP[st.id].grp.includes(g))you+=st.status==='kept'?3:st.status==='broken'?-4:0});
+  const rv=50+(S.rival&&S.rival.champs.includes(g)?8:0);return{you,rv}}
+function endorsementsMonth(report){const e=electionDate();if(S.y!==e.y||S.m<7||S.m>9)return;ENDORSERS.forEach(E=>{if(S.camp.endorse[E.id])return;if(Math.random()<(S.m===9?1:0.45)){const sc=endorseScore(E);const r=sc.you>sc.rv+2?'you':sc.rv>sc.you+2?'rival':'none';S.camp.endorse[E.id]=r;
+  if(r==='you'){addGroupMod(S.groups[E.g],`${E.n} endorsed you`,3)}const t=`${E.n}: ${r==='you'?'endorsed you':r==='rival'?`endorsed ${S.rival.name}`:'stayed neutral'}.`;report.push(t);clog(t)}})}
+// ---------- debates ----------
+const DEBATE_DAYS=[9,23];
+function debateTopics(){const R=S.rival,top=[];const neg=(S.record||[]).find(r=>r.camp&&r.camp.d<0&&!r.defended),pos=(S.record||[]).find(r=>r.camp&&r.camp.d>0);
+  top.push(neg?{t:`${R.name.split(' ').pop()} brings up: ${neg.t.toLowerCase()}`,good:'pivot',bad:'defend'}:{t:'The moderator asks what you have actually delivered',good:'defend',bad:'attack'});
+  top.push({t:`A question on ${PRIO_LABEL[R.plat[0]].toLowerCase()}, ${R.name.split(' ').pop()}'s signature issue`,good:'attack',bad:'pivot'});
+  top.push(pos?{t:`Closing statements. You can point to ${pos.t.toLowerCase()}`,good:'defend',bad:'attack'}:{t:'Closing statements',good:'pivot',bad:'attack'});return top}
+function openDebate(n){const top=debateTopics();S.camp.debates[n]=S.camp.debates[n]||{round:0,won:0,picks:[]};const D=S.camp.debates[n];
+  if(D.round>=3){const res=D.won>=2?'won':D.won===1?'lost narrowly':'lost';openModal(`Debate ${n} · ${MONTHS[8]} ${DEBATE_DAYS[n-1]}`,`Snap poll: you ${res}`,`<p>You took ${D.won} of 3 exchanges. ${D.won>=2?'Undecided voters in the snap poll leaned your way.':'The snap poll favored '+S.rival.name+'.'}</p><div class="row"><button class="btn primary" data-act="close">Back to the campaign</button></div>`);return}
+  const q=top[D.round];setPaused(true);
+  openModal(`Debate ${n} of 2 · round ${D.round+1} of 3 · ${S.rival.name} vs. you`,q.t,`<p class="note">Charisma helps every answer. A good answer fits the moment: own your wins, change the subject on your weak spots, and hit back where your opponent is exposed.</p>
+   <div class="choices"><button class="choice" data-act="debate" data-n="${n}" data-c="defend"><b>Defend your record</b><small>Strong when you have something to show</small></button><button class="choice" data-act="debate" data-n="${n}" data-c="pivot"><b>Pivot to your plan</b><small>Safer when the question is about a weakness</small></button><button class="choice" data-act="debate" data-n="${n}" data-c="attack"><b>Hit back at ${S.rival.name.split(' ').pop()}</b><small>Works on their signature issue; can look petty</small></button></div>`)}
+function debatePick(n,c){const D=S.camp.debates[n],q=debateTopics()[D.round];let sc=(mskill('cha')-8)*0.08+(c===q.good?0.35:c===q.bad?-0.3:0)+rnd(-0.35,0.35);const win=sc>0;D.won+=win?1:0;D.picks.push(c);D.round++;
+  toast(win?'That landed. The room reacted.':`${S.rival.name.split(' ').pop()} got the better of that exchange.`);gainXP('cha',4);
+  if(D.round>=3){S.camp.debate+=(D.won-1.5)*1.2;clog(`Debate ${n}: you took ${D.won} of 3 exchanges.`);logIt(`Debate ${n} with ${S.rival.name}: you took ${D.won} of 3 exchanges.`)}openDebate(n)}
+// ---------- rival campaign ----------
+function rivalMonth(report){const R=S.rival;if(!R)return;const rc=R.camp;const mo=monthsToElection();const champEnth=R.champs.reduce((a,g)=>a+Math.max(0,55-S.groups[g].app),0);
+  const inc=Math.round(26+champEnth*0.9+(R.plat.includes('fiscal')?12:0)+(monthsToElection()<=4?20:0));rc.cash+=inc;rc.raised+=inc;
+  if(mo<=8&&rc.cash>=60){const A=rivalAttacks();rc.cash-=60;rc.spent+=60;rc.ads++;rc.adPts=Math.min(6,(rc.adPts||0)+(A.length?1.2:0.5)*(mo<=3?1:0.6));const t=A.length?A[0].t:`${R.name} ran ads about ${PRIO_LABEL[R.plat[0]].toLowerCase()}.`;report.push(`Opponent ad: ${t}`);clog(`Opponent ad seen: ${t}`)}
+  if(mo<=5&&rc.cash>=30&&rc.organizers<8){rc.organizers+=2;rc.cash-=8;clog(`${R.name} hired field organizers.`)}rc.cash-=rc.organizers*4;rc.spent+=rc.organizers*4;rc.cash=Math.max(0,rc.cash);rc.adPts*=0.85;rc.dmg*=0.85}
+function campaignMonth(report){if(!S.camp)return;const C=S.camp;const small=Math.round(4+enthusiasm()*1.2);C.cash+=small;C.raised+=small;
+  const burn=campBurn();if(burn){if(C.cash>=burn){C.cash-=burn;C.spent+=burn}else{C.organizers=0;C.offices={};clog('You couldn\'t make campaign payroll. Organizers left and offices closed.');report.push('Campaign payroll missed: organizers left and field offices closed.')}}
+  for(const g in C.boost)C.boost[g]*=0.75;
+  donorsMonth(report);endorsementsMonth(report);rivalMonth(report);
+  report.push(`Campaign fund: ${fmtK(C.cash)} on hand (${fmtK(small)} in small donations${burn?`, ${fmtK(burn)} campaign payroll`:''}). Opponent estimated at ${fmtK(S.rival?S.rival.camp.cash:0)}.`);
+  const e=electionDate();if(S.y===e.y&&S.m===9)report.push(`Debates on September ${DEBATE_DAYS.join(' and ')}. Early voting starts mid-September. Election Day is Thursday, October ${e.day}.`)}
+// ---------- personal money ----------
+const SALARY=170817;const TAKEHOME=10000; // $170,817/yr (last confirmed); take-home after taxes and deductions is modeled
+const SHOP=[{id:'pocket',n:'Pocket square',p:45,d:'Shows with suits and blazers.'},{id:'cap',n:'Ball cap',p:35,d:'For neighborhood cleanups.'},{id:'fedora',n:'Fedora',p:160,d:'A classic felt fedora.'},{id:'churchhat',n:'Wide-brim church hat',p:220,d:'Sunday best.'},
+ {id:'stole',n:'Kente stole',p:120,d:'Worn over the shoulders.'},{id:'designer',n:'Designer frames',p:480,d:'Tortoiseshell with gold.'},{id:'threepiece',n:'Tailored three-piece suit',p:2400,d:'Vest, tie and a perfect fit.'}];
+function purseMonth(report){S.purse.cash+=TAKEHOME;S.purse.paid+=TAKEHOME}
+function openHQ(){campInit(S);const C=S.camp,R=S.rival,rc=R?R.camp:{};const e=electionDate(),dte=daysToElection(),poll=C.polls[C.polls.length-1];closePanel();const ads=adOptions();
+  const sp=(v,cls)=>`<b class="${cls||''}">${v}</b>`;
+  openModal(`Election Day: Thursday, October ${e.day}, ${e.y} · ${dte>0?dte+' days away':'today'}`,'Campaign HQ',`
+   <div class="tally"><span>${sp(fmtK(C.cash))} campaign cash</span><span>${sp(fmtK(C.raised))} raised</span><span>${sp(fmtK(C.spent))} spent</span><span class="note">Monthly payroll ${fmtK(campBurn())} · the city treasury and your personal money are separate</span></div>
+   <div class="facts"><h4>Latest poll</h4>${poll?`<div class="opl"><div><span>You</span><b>${poll.you}%</b></div><div><span>${R.name}</span><b>${poll.rival}%</b></div><div><span>Undecided</span><b>${poll.und}%</b></div><div><span>Taken</span><b>${poll.when}</b></div></div>
+     ${C.polls.length>1?`<div class="spark">${spark(C.polls.slice(-12).map(p=>p.you))}</div>`:''}${poll.d?`<div class="dlist" style="margin-top:6px">${[1,2,3,4,5,6,7].map(d=>`<div class="drow" style="cursor:default"><span>District ${d}</span><span class="gbar"><i style="width:${poll.d[d]}%;background:${apColor(poll.d[d])}"></i></span><b class="gv">${poll.d[d]}%</b></div>`).join('')}</div><p class="note">Your two-way share by district.</p>`:''}`:'<p class="note">No polling yet. Without a poll, you\'re guessing about the horse race.</p>'}
+    <div class="row"><button class="btn" data-act="poll" data-k="city" ${C.cash<20?'disabled':''}>Citywide poll · $20K</button><button class="btn" data-act="poll" data-k="dist" ${C.cash<60?'disabled':''}>Citywide + all 7 districts · $60K</button></div></div>
+   <div class="facts"><h4>Raise money</h4><div class="choices">
+    <button class="choice" data-act="fundraiser" ${S.slots<=0||cdLeft('fr_small',1)?'disabled':''}><b>Grassroots fundraiser</b><small>Uses a meeting slot · small donors give more when your supporters are fired up (about ${fmtK(Math.round(10+enthusiasm()*3))}) · once a month</small></button>
+    <button class="choice" data-act="donordinner" ${S.slots<=0||cdLeft('fr_big',2)?'disabled':''}><b>Major-donor dinner</b><small>Uses a meeting slot · a PAC or donor network offers a big check, with expectations attached · every 2 months</small></button>
+    <button class="choice" data-act="selffund" ${S.purse.cash<1000||C.personal>=25000?'disabled':''}><b>Put in your own money</b><small>Move up to $5,000 at a time from your personal account (${'$'+Math.round(S.purse.cash).toLocaleString()}). Game cap: $25,000 total (${'$'+C.personal.toLocaleString()} so far). It's on the public record.</small></button></div>
+    ${Object.keys(C.donors).length?`<div class="dlist" style="margin-top:6px">${Object.entries(C.donors).map(([id,st])=>`<div class="drow" style="cursor:default;grid-template-columns:minmax(0,1fr) auto"><span>${DONORS[id].n} <small>· ${fmtK(st.amt)} · expects: ${DONORS[id].exp.toLowerCase()}</small></span><b style="color:${st.status==='broken'?'var(--bad)':DONORS[id].check(S)?'var(--good)':'var(--warn)'}">${st.status==='broken'?'switched sides':st.status==='declined'?'declined':DONORS[id].check(S)?'satisfied':'unhappy'}</b></div>`).join('')}</div>`:''}</div>
+   <div class="facts"><h4>Ads</h4><p class="note">Ads amplify your record; they can't invent one. Promote things you've done, defend the attacks on you, or go after your opponent. Running the same ad again works half as well. Ads matter most in the last three months${adTiming()<1?` (right now they work at ${Math.round(adTiming()*100)}%)`:''}.</p>
+    ${ads.length?`<div class="dlist">${ads.map(o=>`<div class="drow" style="cursor:default;grid-template-columns:minmax(0,1fr) auto auto;gap:6px"><span>${o.title}${C.adUse[o.ref]?` <small>· run ${C.adUse[o.ref]}×</small>`:''}</span><button class="btn" data-act="ad" data-ref="${o.ref}" data-size="std" ${C.cash<50?'disabled':''} style="padding:2px 8px">Digital + mail $50K</button><button class="btn" data-act="ad" data-ref="${o.ref}" data-size="big" ${C.cash<120?'disabled':''} style="padding:2px 8px">TV + digital $120K</button></div>`).join('')}</div>`:'<p class="note">Nothing on your record to run on yet.</p>'}
+    ${C.ads.length?`<p class="note">Recent: ${C.ads.slice(-3).reverse().map(a=>`${a.title} (${a.when})`).join(' · ')}</p>`:''}</div>
+   <div class="facts"><h4>Staff and offices</h4><div class="opl"><div><span>Field organizers ($4K a month each)</span><b>${C.organizers}</b></div></div>
+    <div class="row"><button class="btn" data-act="org" data-d="-1" ${C.organizers<=0?'disabled':''}>−</button><button class="btn" data-act="org" data-d="1" ${C.organizers>=10?'disabled':''}>+ Hire an organizer</button></div>
+    <p class="note">Organizers raise turnout among voters who back you. Field offices ($6K a month) lift turnout and your numbers in their district.</p>
+    <div class="row">${[1,2,3,4,5,6,7].map(d=>`<button class="btn ${C.offices[d]?'primary':''}" data-act="office" data-d="${d}">D${d} office${C.offices[d]?' ✓':''}</button>`).join('')}</div></div>
+   <div class="facts"><h4>Endorsements · decided July to September ${e.y}</h4><div class="dlist">${ENDORSERS.map(E=>{const st=C.endorse[E.id];return`<div class="drow" style="cursor:default;grid-template-columns:minmax(0,1fr) auto"><span>${E.n} <small>· speaks for ${GMAP[E.g].n.toLowerCase()} (${Math.round(S.groups[E.g].app)}%)</small></span>${st?`<b style="color:${st==='you'?'var(--good)':st==='rival'?'var(--bad)':'var(--muted)'}">${st==='you'?'Endorsed you':st==='rival'?'Endorsed '+R.name.split(' ').pop():'Neutral'}</b>`:`<button class="btn" data-act="seek" data-id="${E.id}" ${C.seek[E.id]||S.slots<=0?'disabled':''} style="padding:2px 8px">${C.seek[E.id]?'Asked':'Ask for it (1 slot)'}</button>`}</div>`}).join('')}</div></div>
+   <div class="facts"><h4>Debates</h4><p class="note">Two televised debates, September ${DEBATE_DAYS[0]} and ${DEBATE_DAYS[1]}, ${e.y}. ${Object.keys(C.debates).length?Object.entries(C.debates).map(([n,D])=>`Debate ${n}: ${D.round>=3?`took ${D.won} of 3`:'in progress'}`).join(' · '):'They arrive on your desk on debate day.'}</p></div>
+   ${R?`<div class="facts"><h4>Your opponent: ${R.name}</h4><div class="opl"><div><span>Estimated cash on hand</span><b>${fmtK(rc.cash)}</b></div><div><span>Raised / spent so far</span><b>${fmtK(rc.raised)} / ${fmtK(rc.spent)}</b></div><div><span>Ad flights run</span><b>${rc.ads}</b></div><div><span>Field organizers</span><b>${rc.organizers}</b></div></div>
+     <p class="note">Estimates from public finance reports. ${R.name.split(' ').pop()} raises more when ${R.champs.map(g=>GMAP[g].n.toLowerCase()).join(' and ')} are unhappy with you, and starts running ads about eight months out.</p></div>`:''}
+   <div class="facts"><h4>Campaign log</h4><div class="logl">${C.log.slice(0,10).map(x=>`<div><span>${x.d}</span><p style="margin:0">${x.t}</p></div>`).join('')||'<p class="note">Nothing yet.</p>'}</div></div>`,true)}
+openHQ=navWrap('openHQ',openHQ);
+function openDonor(){const o=S.camp.offer;if(!o){openHQ();return}const D=DONORS[o.id];
+  openModal('Major-donor dinner',`${D.n} offers ${fmtK(o.amt)}`,`<p>Over dinner, the ${D.n} pledges ${fmtK(o.amt)} to your campaign. Nobody says it's a condition, but everyone at the table knows what they expect: <b>${D.exp.toLowerCase()}</b>.</p>
+   ${D.taint?`<p class="note" style="color:var(--warn)">This money is controversial. Taking it will cost you with ${Object.keys(D.taint).map(g=>GMAP[g].n.toLowerCase()).join(', ')}, and it goes on your record.</p>`:''}
+   <p class="note">Accepting isn't corruption, and it's all publicly reported. But if you cross them, they'll fund your opponent instead.</p>
+   <div class="choices"><button class="choice" data-act="donoryes"><b>Accept the ${fmtK(o.amt)}</b><small>Campaign cash now; expectations tracked in Campaign HQ</small></button><button class="choice" data-act="donorno"><b>Politely decline</b><small>No strings, no money</small></button></div>`)}
+openDonor=navWrap('openDonor',openDonor);
+function openShop(){const P=S.purse;closePanel();
+  openModal(`Personal account · ${'$'+Math.round(P.cash).toLocaleString()}`,'Your personal money',`<p>The Mayor of Memphis earns $${SALARY.toLocaleString()} a year (the last salary figure we could confirm). About $${TAKEHOME.toLocaleString()} a month lands in your account after taxes and deductions (modeled). This is your own money, not the city's and not the campaign's.</p>
+   <div class="opl"><div><span>Balance</span><b>${'$'+Math.round(P.cash).toLocaleString()}</b></div><div><span>Paid to you so far</span><b>${'$'+P.paid.toLocaleString()}</b></div><div><span>Given to your campaign</span><b>${'$'+(S.camp?S.camp.personal:0).toLocaleString()}</b></div></div>
+   <div class="facts"><h4>Optional wardrobe</h4><p class="note">Basic looks are always free. These extras show on your portrait once you buy them; choose them under Change your look.</p>
+    <div class="choices">${SHOP.map(it=>`<button class="choice" data-act="buy" data-id="${it.id}" ${P.owned[it.id]||P.cash<it.p?'disabled':''}><b>${it.n} · $${it.p.toLocaleString()}</b><small>${P.owned[it.id]?'Owned':it.d}</small></button>`).join('')}</div></div>
+   <div class="row"><button class="btn" data-act="look">Change your look</button></div>`,true)}
+openShop=navWrap('openShop',openShop);
+function electionV2(next){recomputeAll(S);const p=headToHead();const others=6+rnd(0,6);const swing=rnd(-2,2);let you=clamp(p*(100-others)+swing,5,90),rv=100-others-you;const won=you>rv;
+  const R=S.rival,atk=rivalAttacks();const turnout=Math.round(GROUPS.reduce((a,g)=>a+g.share*groupTurnout(g,groupSupport(g)),0));
+  const factors=[];const en=Object.entries(S.camp.endorse);factors.push(`Endorsements: ${en.filter(x=>x[1]==='you').length} for you, ${en.filter(x=>x[1]==='rival').length} for ${R.name.split(' ').pop()}`);
+  factors.push(`Money: you spent ${fmtK(S.camp.spent)}, ${R.name.split(' ').pop()} spent ${fmtK(R.camp.spent)}`);if(Object.keys(S.camp.debates).length)factors.push(`Debates: you took ${Object.values(S.camp.debates).reduce((a,D)=>a+D.won,0)} of ${Object.values(S.camp.debates).length*3} exchanges`);
+  factors.push(`Turnout: about ${turnout}% of registered voters (modeled)`);
+  const byG=GROUPS.map(g=>`<div class="drow" style="cursor:default"><span>${g.ic} ${g.n}</span><span class="gbar"><i style="width:${Math.round(groupSupport(g)*100)}%;background:${apColor(groupSupport(g)*100)}"></i></span><b class="gv">${Math.round(groupSupport(g)*100)}%</b></div>`).join('');
+  const body=`<p>You took ${you.toFixed(1)}% to ${rv.toFixed(1)}% for ${R.name}, with ${others.toFixed(1)}% for the rest of the field. Memphis elects its mayor by plurality, with no runoff since a 1991 federal court ruling.</p>
+   <div class="facts"><h4>Why it went this way</h4><ul>${factors.map(f=>`<li>${f}</li>`).join('')}</ul><p class="note">${R.name} ran on "${R.slogan}"${atk.length?` and hit you on: ${atk.slice(0,2).map(x=>x.t).join(' ')}`:''}</p></div>
+   <div class="facts"><h4>Your share of each group's vote</h4><div class="dlist">${byG}</div></div>${recordLines()}`;
+  logIt(`Election: you ${you.toFixed(1)}%, ${R.name} ${rv.toFixed(1)}%. ${won?'You won.':'You lost.'}`);
+  if(won&&S.term===1){S.term=2;S.termStart=S.y*12+S.m;S.promises=null;S.deals=(S.deals||[]).filter(d=>d.status==='open');S.council.forEach(m=>m.limited=false);S.council.forEach((m,k)=>{if(hash(k,S.y)<.4){m.mods=[{t:'Newly elected',v:Math.round(rnd(-8,8)),perm:true}]}});
+    const cash=S.camp.cash;S.camp=null;S.rival=null;pickRival();campInit(S);S.camp.cash=Math.round(cash);recomputeAll(S);
+    openModal(`City election · October ${S.y}`,'You won a second term',body+`<p>You can serve one more term; the next election is October 2031 and you are term-limited after it. Make new promises for your second term.</p><div class="row"><button class="btn primary" data-act="close">Start term two</button></div>`,true,next)}
+  else{S.over=true;openModal(`City election · October ${S.y}`,won?'Term-limited, with a win':'You lost the election',body+(won?'<p>The charter limits a mayor to two terms. Your time in office is done.</p>':'')+`${summary()}<div class="row"><button class="btn primary" data-act="newgame">Run again</button></div>`,true,next)}
+  save()}
+function checkCampaignDay(){if(!S.camp)return false;const e=electionDate();if(S.y!==e.y)return false;
+  if(S.m===9&&DEBATE_DAYS.includes(S.day)){const n=DEBATE_DAYS.indexOf(S.day)+1;if(!S.camp.debates[n]){openDebate(n);return true}}
+  if(S.m===10&&S.day===e.day&&!S.camp.voted){S.camp.voted=true;setPaused(true);electionV2(()=>{});return true}return false}
+
 function openLedger(){const L=S.log||[];openPanel('Everything that has happened, newest first','Ledger',L.length?`<div class="logl">${L.map(x=>`<div><span>${x.d}</span><p style="margin:0">${x.t}</p></div>`).join('')}</div>`:'<p class="note">Nothing yet. Start the clock with Space or ▶.</p>','ledger')}
 function openPolicies(){const ks=Object.keys(POLICIES);
   openPanel('Ongoing programs you control','Your initiatives',`<p>Mid-year, these are paid from the reserve fund. In April they go into the budget you send the council.</p>
@@ -2278,6 +2444,7 @@ function summary(){const M=S.met;return`<div class="facts"><h4>Your record</h4><
 function showEnd(){openModal('Game over','Your time in office is over',`${summary()}<div class="row"><button class="btn primary" data-act="newgame">Run again</button></div>`)}
 function openHelp(){closePanel();openModal('How to play','Guide',`
   <div class="facts"><h4>Controls</h4><ul><li>WASD or the arrow keys pan the map; hold Shift to pan faster. Moving the mouse to the edge of the screen scrolls too (turn it off under Layers). You can also drag.</li><li>Scroll or pinch to zoom toward the cursor. Zoomed out you get the political map, with each council district in its own color. Zoom in and the camera tilts down into the 3D city.</li><li>Click a landmark or amber pin to open it. Click a district or precinct when those layers are on.</li><li>Time runs day by day, like CK3. Space pauses and resumes; + and − (or the pips by the date) set speed 1–5. New business arrives on random days and pauses the game (turn that off under Layers). Each month closes on its last day and goes into the Ledger. N skips to the end of the month. B opens the budget, C the council, O public opinion, L the map layers. Keys 1–7 switch map modes: City, Political, Council opinion, Street condition, MPD precincts, Region, Public opinion.</li><li>Every menu has tabs along the top (Mayor, Opinion, Council, Region, Budget, Programs, Ledger) and a ← Back button that returns to the screen you came from. Backspace also goes back; Esc closes.</li></ul></div>
+  <div class="facts"><h4>The campaign and your money</h4><ul><li>You keep three separate accounts: the city treasury (the reserve fund, for services and projects), your campaign fund (for ads, staff, polls and rallies) and your personal money (your salary).</li><li>Campaign HQ (K): raise money from small donors and major donors (who expect things in return), buy ads that promote your record, defend it or attack your opponent, hire organizers, open field offices, poll the race and ask groups for endorsements. Your opponent raises and spends too.</li><li>Endorsements are decided July to September 2027, debates are September 9 and 23, and Election Day is Thursday, October 7, 2027. The vote comes from each population group's support and turnout, so money amplifies your record but can't replace it.</li><li>Your salary ($170,817 a year, the last figure we could confirm) pays into a personal account. Spend it on optional wardrobe items, or put up to $25,000 into your campaign.</li></ul></div>
   <div class="facts"><h4>Projects, stories and your desk</h4><ul><li>Start a capital project from Actions: repave a real poorly rated road, rehab vacant homes in a neighborhood, or renovate a park. It goes to the council, out to bid, then takes months to build, with delays you have to handle. Pay from reserves month by month or borrow with bonds. You'll see each project on the map, and finished roads turn green in the street condition map.</li><li>Some decisions start stories that come back months later: backing a data center deal, ordering hot-spot patrols, or deciding who gets rehabbed homes. How they end goes on your public record, and your opponent uses that record in the election.</li><li>The Mayor's Desk (left side, or press I) gathers urgent decisions, council votes, projects and developing stories. Click any item to go there. Choose what pauses the clock from the full desk.</li></ul></div>
   <div class="facts"><h4>Taking action</h4><ul><li>Press E or click Actions to make your own moves at any time: propose ordinances to the council, sign executive orders, hold town halls in a district, meet with community leaders, hold press conferences and, in election years, rally your supporters.</li><li>Before you send an ordinance, you see a projected vote. Each member weighs their own priorities, their voters, their backers and how they feel about you, so some will vote against what their district wants. Lock in votes with favors and hooks.</li></ul></div>
   <div class="facts"><h4>Public opinion</h4><ul><li>Like Victoria 3's pops, Memphis is split into eight population groups: working families, homeowners and seniors, renters and bus riders, MSCS parents, the church community, young professionals, the business community, and city workers. Each has a size, a turnout rate, home districts, concerns and its own approval of you.</li><li>Your approval is their average, weighted by size and turnout. Each council district's approval comes from the groups that live there, so the same decision lands differently in District 2 and District 6.</li><li>Council members and suburban mayors want to keep their jobs. They follow their own voters' view of you, more strongly in the year before an election.</li><li>City indicators are colored green (good), yellow (neutral) or red (bad).</li></ul></div>
@@ -2611,7 +2778,7 @@ window.addEventListener('keydown',e=>{
   if(e.key===' '||k==='spacebar'){e.preventDefault();setPaused(!S.paused);return}
   if(e.key==='+'||e.key==='='){setSpeed((S.speed||2)+1);return}
   if(e.key==='-'||e.key==='_'){setSpeed((S.speed||2)-1);return}
-  if(k==='n')advance();else if(k==='b')openBudget();else if(k==='c')openCouncil();else if(k==='h')openHelp();else if(k==='o')openOpinion();else if(k==='e')openActions();else if(k==='i')openDesk();else if(k==='l')toggleLayersBox();
+  if(k==='n')advance();else if(k==='b')openBudget();else if(k==='c')openCouncil();else if(k==='h')openHelp();else if(k==='o')openOpinion();else if(k==='e')openActions();else if(k==='i')openDesk();else if(k==='k')openHQ();else if(k==='l')toggleLayersBox();
 });
 function toggleLayersBox(){$('layers').hidden=!$('layers').hidden;$('bLayers').classList.toggle('on',!$('layers').hidden)}
 document.addEventListener('change',e=>{const t=e.target;if(!S)return;if(t.dataset&&t.dataset.notify){S.notify=S.notify||{...NOTIFY_DEF};S.notify[t.dataset.notify]=t.checked;save();return}if(t.id==='lyPause'){S.autoPause=t.checked;save();return}const map_={lySuper:'superd',lyBld:'bld',lyLabels:'labels',lyEdge:'edge'};
@@ -2638,6 +2805,20 @@ document.addEventListener('click',e=>{
   else if(a==='navback')navBack();
   else if(a==='desk'){openDesk()}
   else if(a==='look')openLook();
+  else if(a==='hq'){navReset();onClose=null;if(modalOpen)closeModal();openHQ()}
+  else if(a==='shop')openShop();
+  else if(a==='poll'){runPoll(b.dataset.k);save();openHQ()}
+  else if(a==='fundraiser'){if(S.slots>0&&!cdLeft('fr_small',1)){S.slots--;markAct('fr_small');const amt=Math.max(4,Math.round(10+enthusiasm()*3+(mskill('cha')-8)*1.5+rnd(-3,3)));S.camp.cash+=amt;S.camp.raised+=amt;clog(`Grassroots fundraiser raised ${fmtK(amt)} from small donors.`);gainXP('cha',4);save();refreshHUD()}openHQ()}
+  else if(a==='donordinner'){if(S.slots>0&&!cdLeft('fr_big',2)){const o=openDonorOffer();if(o){S.slots--;markAct('fr_big');gainXP('dip',4);save();openDonor()}}}
+  else if(a==='donoryes'){donorAccept();save();refreshHUD();openHQ()}
+  else if(a==='donorno'){const o=S.camp.offer;if(o){S.camp.donors[o.id]={status:'declined',when:nowM(),amt:0};clog(`You declined the ${DONORS[o.id].n}.`);delete S.camp.offer}save();openHQ()}
+  else if(a==='selffund'){const amt=Math.min(5000,Math.floor(S.purse.cash),25000-S.camp.personal);if(amt>0){S.purse.cash-=amt;S.camp.personal+=amt;S.camp.cash+=amt/1000;S.camp.raised+=amt/1000;clog(`You gave $${amt.toLocaleString()} of your own money to the campaign (publicly reported).`);logIt(`You put $${amt.toLocaleString()} of your own money into your campaign.`);save()}openHQ()}
+  else if(a==='ad'){buyAd(b.dataset.ref,b.dataset.size);save();refreshHUD();openHQ()}
+  else if(a==='org'){S.camp.organizers=clamp(S.camp.organizers+(+b.dataset.d),0,10);clog(`${+b.dataset.d>0?'Hired':'Let go'} a field organizer (${S.camp.organizers} on staff).`);save();openHQ()}
+  else if(a==='office'){const d=+b.dataset.d;if(S.camp.offices[d])delete S.camp.offices[d];else S.camp.offices[d]=nowM();clog(`${S.camp.offices[d]?'Opened':'Closed'} a field office in District ${d}.`);save();openHQ()}
+  else if(a==='seek'){if(S.slots>0){S.slots--;S.camp.seek[b.dataset.id]=true;clog(`You asked the ${ENDORSERS.find(x=>x.id===b.dataset.id).n} for their endorsement.`);gainXP('dip',4);save()}openHQ()}
+  else if(a==='debate')debatePick(+b.dataset.n,b.dataset.c);
+  else if(a==='buy'){const it=SHOP.find(x=>x.id===b.dataset.id);if(it&&!S.purse.owned[it.id]&&S.purse.cash>=it.p){S.purse.cash-=it.p;S.purse.owned[it.id]=true;logIt(`You bought a ${it.n.toLowerCase()} with your own money ($${it.p.toLocaleString()}).`);save();toast(`Bought: ${it.n}. Wear it under Change your look.`)}openShop()}
   else if(a==='promises')openPromises();
   else if(a==='pickpromise'){S._pp=S._pp||[];const id=b.dataset.id;if(S._pp.includes(id))S._pp=S._pp.filter(x=>x!==id);else if(S._pp.length<3)S._pp.push(id);openPromises()}
   else if(a==='savepromises'){if((S._pp||[]).length===3){choosePromises(S._pp);delete S._pp;save();refreshHUD();navReset();closeModal();toast('Your promises are public. Track them on the Mayor\'s Desk.')}}
@@ -2718,7 +2899,7 @@ function save(){if(!S||!S.started)return;try{localStorage.setItem(KEY,JSON.strin
 function load(){try{const t=localStorage.getItem(KEY);if(!t)return null;const s=JSON.parse(t);return s&&s.started?s:null}catch(e){return null}}
 
 // ======================= BOOT =======================
-function beginTerm(cr){S=newState();const c=cr||newCR();S.mayor={...c,look:{...(c.look||defaultLook(c.g))},name:(c.name||'Mayor').trim(),skills:{...c.skills},traits:[...c.traits],xp:{},trained:-99,frame:'#f2a93b'};$('start').classList.remove('creating');$('app').classList.remove('pre');assignHomes();initGroups(S);recomputeAll(S);S.started=true;spawn(S,EVENTS[0],{expires:99});queueNewBusiness(null);pickRival();save();$('start').hidden=true;prevMet=null;applyLayers();refreshHUD();
+function beginTerm(cr){S=newState();const c=cr||newCR();S.mayor={...c,look:{...(c.look||defaultLook(c.g))},name:(c.name||'Mayor').trim(),skills:{...c.skills},traits:[...c.traits],xp:{},trained:-99,frame:'#f2a93b'};$('start').classList.remove('creating');$('app').classList.remove('pre');assignHomes();initGroups(S);recomputeAll(S);S.started=true;spawn(S,EVENTS[0],{expires:99});queueNewBusiness(null);pickRival();campInit(S);save();$('start').hidden=true;prevMet=null;applyLayers();refreshHUD();
   camFly({center:[LM.cityhall.lon,LM.cityhall.lat],zoom:15.6,speed:0.9});setTimeout(()=>{if(!S.promises)openPromises()},900);
   setTimeout(()=>openPlace('cityhall'),2600);toast(`Sworn in, Mayor ${S.mayor.name.split(' ').pop()}. Time is paused: read your briefing, then press Space or ▶.`)}
 // ---- character creation ----
@@ -2765,7 +2946,7 @@ function migrate(s){if(!s)return s;if(!s.mayor)s.mayor=defaultMayor('Mayor');s.m
   s.council.forEach(m=>{if(m.limited==null)m.limited=TERM_LIMITED.includes(m.name)});
   s.projects=s.projects||[];s.stories=s.stories||{};s.record=s.record||[];s.notify=s.notify||{...NOTIFY_DEF};
   if(s.mayor&&!s.mayor.look)s.mayor.look=lookFromLegacy(s.mayor);
-  S=s;initGroups(s);recomputeAll(s);if(!s.rival)pickRival();return s}
+  S=s;initGroups(s);recomputeAll(s);if(!s.rival)pickRival();campInit(s);return s}
 function start(data){
   const saved=migrate((data&&data.S)||load());
   S=saved||newState();

@@ -16,7 +16,7 @@ A city-management game set in Memphis, Tennessee. You play the mayor. You handle
 | Space | Pause / resume time |
 | + / − | Change speed (1–5) |
 | N | Skip to the end of the month |
-| E / O / I | Mayor's actions / Public opinion / Mayor's Desk |
+| E / O / I / K | Mayor's actions / Public opinion / Mayor's Desk / Campaign HQ |
 | B / C / V / L / H | Budget office / Council chamber / Whip count / Map layers / Guide |
 | Backspace / Esc | Back to the previous menu / close it. Every menu also has tabs along the top |
 
@@ -41,6 +41,8 @@ A city-management game set in Memphis, Tennessee. You play the mayor. You handle
 **The Mayor's Desk** (press I) puts urgent decisions, council votes, projects and developing stories in one place. Click an item to go straight to it, and choose which kinds of news pause the clock.
 
 **Promises and political deals (v11).** When you take office you make three campaign promises (fix streets, bring homes back, no new taxes, better buses, more officers and so on), each with a measurable target and a September 2027 deadline, tracked on the Mayor's Desk. Council members who lean against you will name a price for their vote, such as "put my district's worst road on the repair list" or "cut the cost by a third." You can accept, counteroffer or refuse. Deals that promise future action get a deadline; members remember whether you kept them. One challenger runs against you on a consistent platform, championing particular communities and using your record of broken promises, broken deals and neglected projects. Finished projects need upkeep: cut it to save money and satisfaction falls, the benefits wear off, and it can become an attack ad. A one-year check records whether each project delivered. Your mayor can now pick sex, hairstyle, facial hair, clothing and colors, glasses, earrings and a lapel pin, and change their look later.
+
+**The campaign (v12).** Three separate accounts: the city treasury, your campaign fund and your personal money. Campaign HQ (K) handles fundraising: grassroots fundraisers, and major-donor dinners where fictional PACs give big checks with expectations attached (cross them and they fund your opponent). It also covers ads that promote your record, defend it or attack your opponent, with diminishing returns and the most effect in the last three months, plus field organizers, district field offices, and citywide or district polling. Your opponent raises and spends by visible rules. Endorsements are decided July–September 2027, debates are September 9 and 23, and Election Day is Thursday, October 7, 2027 (Memphis votes on the first Thursday in October). The result comes from each population group's support and turnout, so money amplifies your record but can't replace it. Your salary ($170,817 a year, the last confirmed figure) pays into a personal account. You can buy optional wardrobe items that show on your portrait (basic looks stay free), or put up to $25,000 into your campaign.
 
 **City indicators are color-coded:** green is good, yellow is neutral, red is bad. **The Pyramid** is drawn as a real 3D pyramid.
 
