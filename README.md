@@ -12,11 +12,13 @@ A city-management game set in Memphis, Tennessee. You play the mayor. You handle
 | Mouse at screen edge | Scroll the map (can be turned off under Layers) |
 | Scroll wheel | Zoom toward the cursor. Zoom out for the political map of council districts; zoom in and the city tilts into 3D |
 | Click | Open a landmark, an amber issue pin, a council district or a police precinct |
-| 1–6 | Map modes: City, Political, Council opinion, Street condition, MPD precincts, Region |
+| 1–7 | Map modes: City, Political, Council opinion, Street condition, MPD precincts, Region, Public opinion |
 | Space | Pause / resume time |
 | + / − | Change speed (1–5) |
 | N | Skip to the end of the month |
+| E / O | Mayor's actions / Public opinion |
 | B / C / V / L / H | Budget office / Council chamber / Whip count / Map layers / Guide |
+| Backspace / Esc | Back to the previous menu / close it. Every menu also has tabs along the top |
 
 **Your mayor is a character.** Start by naming your mayor and choosing their look, up to 3 traits (at most one background, such as Former Police Officer or Community Organizer) and 22 skill points across six skills: Diplomacy, Stewardship, Intrigue, Public Safety, Learning and Charisma. No skill can start above 14. Skills shape council opinion, revenue, crime, school results, approval and how often your hooks leak. Like CK3, they grow with experience: from the work you do, from a monthly lifestyle focus, and from training. Click your portrait at the top left to see them.
 
@@ -25,6 +27,14 @@ A city-management game set in Memphis, Tennessee. You play the mayor. You handle
 **Favors and hooks.** Members owe you favors when you grant their requests (blue pins in their home districts, often naming real poorly rated roads from the city's pavement data), fund their district projects, or quietly protect them. Your inspector general's confidential memos can give you a hook on a member. Before a vote, open the whip count (V) to see who's with you, who's leaning and who's against. You can call in a favor or use a hook to lock a vote. Hooks have a 30% chance to leak.
 
 **Neighboring cities.** Bartlett, Germantown, Collierville, Arlington, Lakeland and Millington are separate cities with their own governments, outlined on the map at their official boundaries. Like neighboring realms in CK3, each has a mayor (fictional) with traits and a relations score. You can meet them, co-host events, and handle shared issues: fire and EMS mutual aid, annexation reserves, the three Germantown schools still run by MSCS, a backup water connection, a bus line to Wolfchase, a corporate headquarters fight with Collierville, sewer capacity for Arlington, a retail site in Lakeland, and the Navy base in Millington. Good relations lift the regional economy. Bad relations can send the suburban mayors to Nashville against you.
+
+**Take action yourself.** Press E for the Mayor's actions. Propose ordinances to the council (such as fast-tracking data center permits like xAI's, or requiring air monitoring near them), sign executive orders, hold town halls in a district, meet with community leaders, hold press conferences, and rally supporters in an election year. Before you send an ordinance you get a projected vote, member by member.
+
+**Population groups and public opinion.** Like Victoria 3's pops, Memphis is split into eight groups: working families, homeowners and seniors, renters and bus riders, MSCS parents, the church community, young professionals, the business community, and city workers and unions. Each has a size, turnout, home districts, concerns and its own approval of you. Your approval is their turnout-weighted average, and each council district's approval comes from the groups that live there. Press O to see every group and why it feels the way it does, or use map mode 7 to see approval by district and suburb, or where each group lives.
+
+**Politicians want to stay in office, but don't always follow their voters.** Council members and suburban mayors react to how their own voters see you, more strongly in the year before their election. Bartlett, Germantown and Lakeland elect mayors in November 2026, and a suburban mayor can lose for being too friendly with Memphis. Each politician also has backers (business, unions, congregations and so on) and listens to their voters closely, mostly, somewhat or rarely. So some vote against what their district wants, the way many officials backed xAI's South Memphis site over neighbors' objections. Term-limited members barely care about their voters at all.
+
+**City indicators are color-coded:** green is good, yellow is neutral, red is bad. **The Pyramid** is drawn as a real 3D pyramid.
 
 **Real-time clock.** Like CK3, time runs day by day. Pause with Space and set the speed from 1 to 5. New business arrives on random days and pauses the game (you can turn that off). Budget season, the June budget vote and elections also pause the clock. Each month closes into the Ledger.
 
@@ -37,7 +47,7 @@ The fiscal year runs July–June. You write the next budget in April, the counci
 
 ## What's modeled
 
-Council members are fictional (the seats and districts are real). The division-by-division budget split uses FY2025 shares scaled to FY2027. Revenue per cent of tax, how spending moves the city's indicators, and the vote and election formulas are game mechanics.
+Council members and suburban mayors are fictional (the seats, districts and election calendars are real). The population groups, their sizes, where they live and how they react are modeled from Memphis's general makeup, not polling. The division-by-division budget split uses FY2025 shares scaled to FY2027. Revenue per cent of tax, how spending moves the city's indicators, and the vote and election formulas are game mechanics.
 
 ## Files
 
