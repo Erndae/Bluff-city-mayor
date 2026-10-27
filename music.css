@@ -1,0 +1,10 @@
+#musicSettings{color:var(--text,#e4e9ec);background:var(--panel,#101d29);border:1px solid var(--line,#36434d);border-radius:12px;padding:24px;width:min(420px,calc(100% - 32px));max-height:calc(100dvh - 32px);overflow:auto;box-sizing:border-box;box-shadow:0 20px 70px #0008}
+#musicSettings::backdrop{background:#050a0fbb}
+#musicSettings header{display:flex;justify-content:space-between;align-items:center;gap:12px}
+#musicSettings h2{margin:0}
+#musicSettings label{display:block;margin:20px 0 8px}
+#musicSettings .music-toggle{display:flex;align-items:center;gap:10px;min-height:44px}
+#musicSettings input[type=checkbox]{width:22px;height:22px;accent-color:var(--amber,#f2a93b)}
+#musicSettings input[type=range]{width:100%;min-height:44px;accent-color:var(--amber,#f2a93b)}
+#musicSettings output{float:right;font-variant-numeric:tabular-nums}
+#musicNow{color:var(--amber,#f2a93b);font-size:14px;min-height:2.5em}

@@ -1,0 +1,48 @@
+{
+  "game": "Bluff City Mayor",
+  "installed_in_game": true,
+  "generation": "AI-generated instrumental music",
+  "tracks": [
+    {
+      "title": "River City Resolve",
+      "file": "01-river-city-resolve.mp3",
+      "context": "Title and city management",
+      "duration_seconds": 164.81,
+      "task_id": "030dc943-9158-4471-a4e0-619cece5da8e",
+      "seamless_loop_verified": false
+    },
+    {
+      "title": "Behind the Chamber Doors",
+      "file": "02-behind-the-chamber-doors.mp3",
+      "context": "Council and budget decisions",
+      "duration_seconds": 156.03,
+      "task_id": "6b24902b-7b5e-48e1-bd7e-2886bb0e03c5",
+      "seamless_loop_verified": false
+    },
+    {
+      "title": "On Every Block",
+      "file": "03-on-every-block.mp3",
+      "context": "Campaign HQ and outreach",
+      "duration_seconds": 26.88,
+      "task_id": "d40541e9-d01e-4b0c-ac3c-b7d5cdba3184",
+      "seamless_loop_verified": false
+    },
+    {
+      "title": "The Last Precinct",
+      "file": "04-the-last-precinct.mp3",
+      "context": "Election suspense",
+      "duration_seconds": 30.77,
+      "task_id": "63a2de4e-59fc-4c6b-99ad-e169e43e7425",
+      "seamless_loop_verified": false
+    },
+    {
+      "title": "A Mandate for Memphis",
+      "file": "05-a-mandate-for-memphis.mp3",
+      "context": "Victory",
+      "duration_seconds": 146.73,
+      "task_id": "7b2d86c5-c2b7-4fc9-9e94-aa4881de42b0",
+      "seamless_loop_verified": false
+    }
+  ],
+  "version": "v17"
+}

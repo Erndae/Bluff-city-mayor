@@ -90,3 +90,11 @@ Then visit http://localhost:8000.
 ## Turn on GitHub Pages
 
 In this repository, go to **Settings → Pages**. Under **Build and deployment**, choose **Deploy from a branch**, select the `main` branch and the `/ (root)` folder, and save. The game will be live at https://erndae.github.io/Bluff-city-mayor/ within a minute or two.
+
+## Soundtrack (v17)
+
+Open **Music** in the bottom action bar or **Music & volume** on the title screen. Five instrumental soul/blues tracks follow the city, council and budget screens, Campaign HQ, debates, and election victories. The victory theme plays once, then returns to the main theme.
+
+Music starts after your first interaction, defaults to 22% volume, and remembers your music settings separately from game saves. Tracks crossfade over two seconds where Web Audio is available. Hidden tabs pause playback. Music settings temporarily stop game time without changing your pause preference. Audio failure does not block gameplay.
+
+Playback code is in `music.js`, settings styles in `music.css`, and the MP3 files and track listing in `assets/music/`. Music was AI-generated with Runway for this game. No third-party songs or artist recordings were supplied as references.
