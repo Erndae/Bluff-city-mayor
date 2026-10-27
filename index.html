@@ -95,7 +95,7 @@ a{color:var(--amber)}
 .desk button{display:grid;grid-template-columns:10px 1fr auto;gap:8px;align-items:center;text-align:left;background:none;border:0;border-radius:4px;padding:5px 4px;cursor:pointer;font-size:13px;line-height:1.25}
 .desk button:hover{background:var(--panel2)}
 .desk i{width:8px;height:8px;border-radius:50%;background:var(--amber)}
-.desk i.b{background:var(--good)} .desk i.o{background:#b98ee6}
+.desk i.b{background:var(--good)} .desk i.o{background:#b98ee6} .desk i.q{background:#5aa7d8} .desk i.x{background:#c9473a}
 .desk small{font-family:var(--f-mono);font-size:11px;color:var(--warn)}
 .desk .empty{font-size:12.5px;color:var(--muted)}
 
@@ -196,6 +196,26 @@ button.seat:hover{border-color:var(--amber)}
 .mini{display:flex;flex-direction:column;align-items:center;gap:3px;background:none;border:1px solid var(--line);border-radius:6px;padding:6px;cursor:pointer;width:88px;font-size:12px;line-height:1.2;text-align:center}
 .mini:hover{border-color:var(--amber)}
 .mini b{font-family:var(--f-mono);font-weight:500}
+/* Favors, hooks, whip */
+.card .who{display:flex;gap:12px;align-items:center}
+.card.rq{border-left-color:#5aa7d8}
+.card.memo{border-left-color:#c9473a}
+.ptbtn{background:none;border:0;padding:0;cursor:pointer}
+.badges{display:flex;gap:4px;flex-wrap:wrap}
+.badge{font-family:var(--f-mono);font-size:11px;padding:0 5px;border-radius:3px;border:1px solid var(--line);color:var(--text)}
+.badge.fav{border-color:#e6c547;color:#e6c547}
+.badge.hk{border-color:#c9473a;color:#ff9b8a}
+.badge.cm{border-color:var(--good);color:var(--good)}
+.whiprow{display:grid;grid-template-columns:auto 1fr auto;gap:10px;align-items:center;padding:8px 10px;border:1px solid var(--line);border-radius:6px;background:var(--panel2)}
+.whiprow .acts{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end}
+.whiprow .acts .btn{padding:5px 9px;font-size:13.5px}
+.whiprow .acts .btn[disabled]{opacity:.4;cursor:not-allowed}
+.stance{font-family:var(--f-label);font-weight:600;font-size:12.5px;letter-spacing:.05em;text-transform:uppercase;padding:1px 7px;border-radius:10px;border:1px solid}
+.st-yes{color:var(--good);border-color:var(--good)} .st-ly{color:#a6d98c;border-color:#5d8a4c} .st-ln{color:#f0a36b;border-color:#8a5a33} .st-no{color:var(--bad);border-color:var(--bad)} .st-c{color:var(--amber);border-color:var(--amber)}
+.tally{display:flex;gap:14px;flex-wrap:wrap;align-items:baseline}
+.tally b{font-family:var(--f-mono);font-size:26px;font-weight:500}
+.wlist{display:flex;flex-direction:column;gap:6px}
+@media (max-width:640px){.whiprow{grid-template-columns:auto 1fr}.whiprow .acts{grid-column:1/-1;justify-content:flex-start}}
 /* Map modes */
 .modes{position:absolute;left:max(16px,env(safe-area-inset-left,0px));bottom:calc(24px + env(safe-area-inset-bottom,0px));display:flex;gap:6px;z-index:5;background:rgba(13,24,34,.9);border:1px solid var(--line);border-radius:7px;padding:5px}
 .modes button{width:40px;height:40px;border:1px solid transparent;background:var(--panel2);border-radius:5px;cursor:pointer;font-size:17px;position:relative;display:flex;align-items:center;justify-content:center}
@@ -242,7 +262,7 @@ button.seat:hover{border-color:var(--amber)}
     <div class="stat"><label>Date</label><b id="hDate">Oct 2026</b><small id="hFY">FY2027</small></div>
     <div class="stat"><label>Reserve fund</label><b id="hRes">$96.0M</b><small id="hResPct"></small></div>
     <div class="stat"><label>Approval</label><b id="hApp">52%</b><div class="meter"><i id="hAppBar"></i></div></div>
-    <div class="stat"><label>Council</label><b id="hCouncil">–</b><small>members favorable</small></div>
+    <div class="stat"><label>Council</label><b id="hCouncil">–</b><small id="hCouncilS">members favorable</small></div>
     <div class="stat next"><label>Next on the calendar</label><b id="hNext">–</b></div>
   </div>
   <aside class="side">
@@ -291,7 +311,7 @@ button.seat:hover{border-color:var(--amber)}
         <kbd>Scroll</kbd><span>Zoom toward the cursor. Zoom out for the political map of council districts; zoom in and the city tilts into 3D</span>
         <kbd>Click</kbd><span>Open a landmark, an issue pin, or a district</span>
         <kbd>N</kbd><span>Advance one month</span>
-        <kbd>B · C · L</kbd><span>Budget office · Council chamber · Map layers</span>
+        <kbd>B · C · V · L</kbd><span>Budget office · Council chamber · Whip count · Map layers</span>
       </div>
       <div class="row">
         <button class="btn primary" id="bNew">Take the oath</button>
@@ -401,7 +421,7 @@ const TRAITS={
  stubborn:{n:'Stubborn',c:'#8a6524',ic:'■',base:-3,d:'Hard to move. Your lobbying on votes counts 40% less.'},
 };
 const has=(m,t)=>(m.traits||[]).includes(t);
-function initMember(c,k){const m={...c,mods:[{t:'First impressions',v:Math.round((hash(k,9)-.5)*16),perm:true}],met:-1,funded:-99,op:50,opinion:0};return m}
+function initMember(c,k){const m={...c,mods:[{t:'First impressions',v:Math.round((hash(k,9)-.5)*16),perm:true}],met:-1,funded:-99,op:50,opinion:0,favors:0,hook:null};return m}
 function weights(m){const w={};m.prio.forEach((p,k)=>w[p]=k?0.7:1);if(has(m,'frugal'))w.fiscal=(w.fiscal||0)+0.8;if(has(m,'reformer'))w.oversight=(w.oversight||0)+0.6;
   if(has(m,'pragmatic'))for(const k in w)w[k]*=0.7;return w}
 function addMod(m,t,v,perm){v=Math.round(v*10)/10;if(!v)return;if(v<0&&has(m,'loyal'))v*=0.6;const e=m.mods.find(x=>x.t===t);if(e)e.v+=v;else m.mods.push({t,v,perm:!!perm});
@@ -631,7 +651,7 @@ function newState(){
   return{y:2026,m:10,enacted,ratio,taxRate:3.39,raise:2,raiseCost:0,fyIndex:0,
     reserve:96,policies:{},met:{officers:1917,crime:88,reading:25.7,streets:46,blight:60,transit:40,jobs:55},
     approval:52,mood:0,jobsBoost:0,revBoost:0,county:35,eduBoost:0,
-    council:COUNCIL.map((c,k)=>initMember(c,k)),slots:3,mode:'real',
+    council:COUNCIL.map((c,k)=>initMember(c,k)),slots:3,mode:'real',commit:{},
     events:[],used:{},stage:'none',draft:null,proposal:null,pending:null,term:1,over:false,
     layers:{council:false,superd:false,precinct:false,bld:true,labels:true,edge:true},started:false}
 }
@@ -672,7 +692,7 @@ function budgetScore(s,m,p,c){
   if(c.reservePct<9)sc-=4;if(c.reservePct<6)sc-=10;
   return sc+8;
 }
-function whip(s,p){recomputeAll(s);const c=budgetCalc(s,p);return s.council.filter(m=>budgetScore(s,m,p,c)>=50).length}
+function whip(s,p){recomputeAll(s);const c=budgetCalc(s,p);return s.council.filter((m,k)=>(s.commit||{})[k]||budgetScore(s,m,p,c)>=50).length}
 
 // ======================= SIM =======================
 function snapshotMet(s){return{...s.met,approval:s.approval,reserve:s.reserve}}
@@ -709,14 +729,46 @@ function superAt(lon,lat){for(const f of GEO.superd)if(inPoly([lon,lat],f.parts)
 function precinctAt(lon,lat){for(const f of GEO.precincts)if(inPoly([lon,lat],f.parts))return f.v;return null}
 function memberFor(d){return S.council.find(m=>m.d===d)}
 
+// ======================= FAVORS & HOOKS =======================
+const HOOKS=['a nonprofit their spouse chairs received a $180,000 no-bid city contract',
+ 'they have missed two years of required financial disclosure filings',
+ 'a campaign donor\'s rezoning case moved through planning in record time after a call from their office',
+ 'a relative was hired into a city division without going through the posted interview process',
+ 'their campaign paid a consulting firm that turns out to be run out of their own home'];
+const REQUESTS={
+ streets:{t:d=>`Repave ${roadIn(d)} in District ${d}`,cost:2.5,fx:{streets:1.2},why:'Their constituents call about it every week.'},
+ safety:{t:d=>`Fund extra patrol overtime in District ${d}`,cost:1.2,fx:{crime:-0.4},why:'A string of break-ins has neighbors scared.'},
+ education:{t:d=>`Open the District ${d} branch library on Sundays`,cost:0.6,fx:{reading:0.2,mood:0.3},why:'Parents want somewhere for kids to study on weekends.'},
+ blight:{t:d=>`Demolish 15 condemned houses in District ${d}`,cost:0.9,fx:{blight:-0.7},why:'The houses have sat open for years.'},
+ transit:{t:d=>`Add bus shelters along District ${d} routes`,cost:0.5,fx:{transit:0.6},why:'Riders wait in the rain and the heat.'},
+ jobs:{t:d=>`Sponsor a District ${d} job fair and small-business grants`,cost:0.8,fx:{jobs:0.5},why:'They promised it on the campaign trail.'},
+ labor:{t:d=>`Approve weekend overtime for cleanup crews in District ${d}`,cost:0.7,fx:{blight:-0.3},why:'City workers in the district asked them to push for it.'},
+ fiscal:{t:d=>'Order an outside audit of city overtime spending',cost:0.25,fx:{},why:'They want proof the money goes where it should.'},
+ oversight:{t:d=>'Publish MPD use-of-force data every quarter',cost:0.1,fx:{mood:0.3},why:'Residents keep asking for it at community meetings.',side:{safety:-2}},
+};
+const POORROADS={};
+function titleCase(t){return t.toLowerCase().replace(/\b\w/g,c=>c.toUpperCase()).replace(/\bSt\b/,'St.').replace(/\bAve\b/,'Ave.').replace(/\bRd\b/,'Rd.').replace(/\bUs\b/,'US').replace(/\bDr Martin/,'Dr. Martin')}
+function roadIn(d){const l=POORROADS[d];return l&&l.length?l[Math.floor(Math.random()*Math.min(4,l.length))]:'the worst stretch of arterial'}
+function commitCount(){return Object.keys(S.commit||{}).length}
+function isCommitted(m){return!!(S.commit||{})[S.council.indexOf(m)]}
+function clearCommits(){S.commit={}}
+function callFavor(i){const m=S.council[i];if(!m||m.favors<1||S.commit[i])return;m.favors--;S.commit[i]='favor';addMod(m,'Called in a favor',-5);recompute(m);save();
+  toast(`${m.name} will vote with you on the next council vote. ${m.favors} favor${m.favors===1?'':'s'} left.`)}
+function useHook(i){const m=S.council[i];if(!m||!m.hook||S.commit[i])return;m.hook=null;S.commit[i]='hook';
+  if(Math.random()<0.3){S.mood-=3;S.approval=clamp(S.approval-2,5,95);addMod(m,'Blackmailed me',-40);S.council.forEach(o=>{if(o!==m&&has(o,'reformer'))addMod(o,'Strong-arm tactics',-10)});
+    toast(`It leaked. The press has the story of you leaning on ${m.name}. They'll still vote with you, but it cost you.`)}
+  else{addMod(m,'Forced my hand',-20);toast(`${m.name} got the message. They'll vote with you on the next council vote.`)}
+  recomputeAll(S);save()}
+
 // ======================= EVENTS RUNTIME =======================
 function placeOf(at){
+  if(at.startsWith('dist:')){const d=+at.slice(5),c=districtCenter(d)||[LM.cityhall.lon,LM.cityhall.lat];return{lat:c[1],lon:c[0],lmk:null,name:`District ${d}`}}
   if(at.startsWith('point:')){const p=POINTS[at.slice(6)];return{lat:p[0],lon:p[1],lmk:null,name:p[2]}}
   const L=LM[at];return{lat:L.lat,lon:L.lon,lmk:L.id,name:L.short||L.name}}
-function evAt(ev){if(ev.kind==='ordinance'||ev.kind==='budget')return'cityhall';return EVENTS.find(e=>e.id===ev.id).at}
+function evAt(ev){if(ev.kind==='request')return'dist:'+ev.d;if(ev.kind==='ordinance'||ev.kind==='budget'||ev.kind==='memo')return'cityhall';return EVENTS.find(e=>e.id===ev.id).at}
 function spawn(s,def,extra){const ev={id:def.id,kind:'event',expires:3,born:s.y*12+s.m,...(extra||{})};s.events.push(ev);s.used[def.id]=s.y*12+s.m;return ev}
-function evDef(ev){if(ev.kind==='ordinance')return ORDINANCES.find(o=>o.id===ev.id);if(ev.kind==='budget')return null;return EVENTS.find(e=>e.id===ev.id)}
-function evTitle(ev){if(ev.kind==='budget')return`Write the FY${fyOf(S)+1} budget`;if(ev.kind==='ordinance')return'Ordinance: '+evDef(ev).title;return evDef(ev).title}
+function evDef(ev){if(ev.kind==='ordinance')return ORDINANCES.find(o=>o.id===ev.id);if(ev.kind==='budget'||ev.kind==='request'||ev.kind==='memo')return null;return EVENTS.find(e=>e.id===ev.id)}
+function evTitle(ev){if(ev.kind==='request')return`${S.council[ev.mi].name.split(' ').pop()} asks: ${ev.text}`;if(ev.kind==='memo')return`Confidential memo: ${S.council[ev.mi].name}`;if(ev.kind==='budget')return`Write the FY${fyOf(S)+1} budget`;if(ev.kind==='ordinance')return'Ordinance: '+evDef(ev).title;return evDef(ev).title}
 function maybeSpawn(s,report){
   const now=s.y*12+s.m;const active=new Set(s.events.map(e=>e.id));
   const pool=EVENTS.filter(e=>!e.scripted&&!active.has(e.id)&&(!s.used[e.id]||now-s.used[e.id]>=12)&&(!e.months||e.months.includes(s.m))&&!(e.id==='mpd_staffing'&&s.policies.recruit));
@@ -729,6 +781,16 @@ function maybeSpawn(s,report){
       if(yes>=7){s.events.push({id:o.id,kind:'ordinance',expires:2,born:now,yes,votes:votes.map(v=>v.yes)});
         report.push(`Council passed "${o.title}" ${yes}–${13-yes}. It's on your desk to sign or veto.`)}
       else report.push(`Council voted down "${o.title}" ${yes}–${13-yes}.`)}}
+  // members bring you requests
+  const asking=new Set(s.events.filter(e=>e.kind==='request').map(e=>e.mi));
+  if(asking.size<2&&Math.random()<0.55){const cand=s.council.map((m,i)=>i).filter(i=>!asking.has(i)&&(!s.used['rq'+i]||now-s.used['rq'+i]>=4));
+    if(cand.length){const i=cand[Math.floor(Math.random()*cand.length)],m=s.council[i];const pk=Object.entries(weights(m)).sort((a,b)=>b[1]-a[1]).map(x=>x[0]);const pr=Math.random()<.7?pk[0]:pk[Math.min(1,pk.length-1)];
+      const d=homeOf(m),R=REQUESTS[pr]||REQUESTS.streets;s.events.push({kind:'request',id:'rq_'+i,mi:i,pr,d,text:R.t(d),born:now,expires:2});s.used['rq'+i]=now;
+      report.push(`${m.name} (${m.seat}) has a request for you. It's pinned in District ${d}.`)}}
+  // the inspector general turns up leverage
+  if(!s.events.some(e=>e.kind==='memo')&&now-(s.used.memo||-99)>=5&&Math.random()<0.18){const cand=s.council.map((m,i)=>i).filter(i=>!s.council[i].hook);
+    if(cand.length){const i=cand[Math.floor(Math.random()*cand.length)];s.events.push({kind:'memo',id:'memo_'+i,mi:i,hk:Math.floor(Math.random()*HOOKS.length),born:now,expires:2});s.used.memo=now;
+      report.push('Your inspector general sent a confidential memo to City Hall.')}}
 }
 function describe(c){const out=[];if(c.cost)out.push(`${fmtM(-c.cost)} reserves`);if(c.policy)out.push(`${fmtM(-POLICIES[c.policy].cost)}/yr ongoing`);
   const fx=c.fx||{};const nm={crime:'Violent crime',streets:'Streets',blight:'Blight',transit:'Transit',jobs:'Jobs',officers:'Officers',mood:'Public mood',county:'County relations',revenue:'Revenue',reading:'Reading'};
@@ -739,15 +801,25 @@ function describe(c){const out=[];if(c.cost)out.push(`${fmtM(-c.cost)} reserves`
   return out.join(' · ')}
 function resolve(ev,ci){
   const def=evDef(ev);let msg='';
+  if(ev.kind==='request'){const m=S.council[ev.mi],R=REQUESTS[ev.pr]||REQUESTS.streets;
+    if(ci===0){S.reserve-=R.cost;applyFx(S,R.fx);if(R.side)applyCouncil(S,R.side,'Gave in to '+m.name.split(' ').pop());m.favors=(m.favors||0)+1;addMod(m,'Granted my request',12);
+      if(R.cost>=1)S.council.forEach(o=>{if(o!==m&&has(o,'frugal'))addMod(o,'Pork-barrel spending',-3)});msg=`Done. ${m.name} owes you a favor (${m.favors} total).`}
+    else{addMod(m,'Refused my request',-12);msg=`You turned down ${m.name}. They won't forget it soon.`}
+    recomputeAll(S);S.events=S.events.filter(e=>e!==ev);save();toast(msg);refreshHUD();return msg}
+  if(ev.kind==='memo'){const m=S.council[ev.mi];
+    if(ci===0){m.hook={hk:ev.hk,since:S.y*12+S.m};msg=`The memo goes in your private files. You now hold a hook on ${m.name}.`}
+    else if(ci===1){m.favors=(m.favors||0)+1;addMod(m,'You protected me',14);msg=`You told ${m.name} you buried it. They owe you a favor.`}
+    else{addMod(m,'Referred me to the ethics commission',-35);S.council.forEach(o=>{if(o!==m&&has(o,'reformer'))addMod(o,'Cleaned up City Hall',6)});S.mood+=1;msg=`You referred ${m.name} to the ethics commission. Reformers approve; ${m.name.split(' ')[0]} does not.`}
+    recomputeAll(S);S.events=S.events.filter(e=>e!==ev);save();toast(msg);refreshHUD();return msg}
   if(ev.kind==='ordinance'){
     if(ci===0){applyFx(S,def.sign.fx);applyCouncil(S,def.sign.council,`Signed: ${def.title}`);msg=`You signed "${def.title}" into law.`}
-    else{const yesVoters=S.council.filter((m,k)=>ev.votes[k]);let stay=0;yesVoters.forEach(m=>{if(!(m.op>68&&Math.random()<.4))stay++});
+    else{const yesVoters=S.council.filter((m,k)=>ev.votes[k]);let stay=0;yesVoters.forEach(m=>{if(isCommitted(m))return;if(!(m.op>68&&Math.random()<.4))stay++});clearCommits();
       if(stay>=7){applyCouncil(S,{all:-1},'Vetoes the council');yesVoters.forEach(m=>addMod(m,`Vetoed their ordinance: ${def.title}`,-8));S.mood-=1;msg=`You vetoed "${def.title}". The council overrode you ${stay}–${13-stay}; under the charter a simple majority of 7 is enough.`}
       else{applyFx(S,def.veto.fx);applyCouncil(S,def.veto.council,`Vetoed: ${def.title}`);S.council.filter((m,k)=>ev.votes[k]).forEach(m=>addMod(m,`Vetoed their ordinance: ${def.title}`,-6));msg=`You vetoed "${def.title}". The override failed with ${stay} votes; it needed 7.`}}
   }else{
     const c=def.choices[ci];
     if(c.cost)S.reserve-=c.cost;if(c.policy)S.policies[c.policy]=true;applyFx(S,c.fx);applyCouncil(S,c.council,def.title);
-    if(c.vote){const res=rollVote(S,c.vote.lean,50);const yes=res.filter(r=>r.yes).length;const pass=yes>=7;
+    if(c.vote){const res=rollVote(S,c.vote.lean,50);res.forEach(r=>{if(isCommitted(r.m))r.yes=true});clearCommits();const yes=res.filter(r=>r.yes).length;const pass=yes>=7;
       applyFx(S,(pass?c.vote.pass:c.vote.fail).fx);msg=`Council ${pass?'confirmed':'rejected'} your nominee ${yes}–${13-yes}.`}
     else msg=def.id==='briefing'?'Amber pins on the map mark places that need you. Click one.':`Decision made: ${c.label}.`;
     // the district member notices when you show up for their district
@@ -756,6 +828,8 @@ function resolve(ev,ci){
   S.events=S.events.filter(e=>e!==ev);save();toast(msg);refreshHUD();return msg}
 function expire(s,report){const now=s.y*12+s.m;
   s.events=s.events.filter(ev=>{if(ev.kind==='budget'||ev.id==='briefing')return true;if(now-ev.born<ev.expires)return true;
+    if(ev.kind==='request'){const m=s.council[ev.mi];addMod(m,'Ignored my request',-8);report.push(`You never answered ${m.name}'s request.`);return false}
+    if(ev.kind==='memo')return false;
     const def=evDef(ev);if(ev.kind==='ordinance'){applyFx(s,def.sign.fx);report.push(`"${def.title}" became law without your signature.`)}
     else{const ig=def.ignore||{};applyFx(s,ig.fx);applyCouncil(s,ig.council,`Ignored: ${def.title}`);report.push(`Unanswered: ${def.title}. People noticed.`)}
     return false})}
@@ -792,7 +866,7 @@ function refreshHUD(){
   $('hDate').textContent=`${MONTHS[S.m-1]} ${S.y}`;$('hFY').textContent=`FY${fyOf(S)} · term ${S.term}`;
   $('hRes').textContent=fmtM(S.reserve);const pct=S.reserve/annualSpend(S)*100;$('hResPct').textContent=`${pct.toFixed(1)}% of budget${pct<10?' · below 10%':''}`;$('hResPct').style.color=pct<10?'var(--bad)':'';
   $('hApp').textContent=Math.round(S.approval)+'%';$('hAppBar').style.width=S.approval+'%';$('hAppBar').style.background=S.approval>=50?'var(--good)':S.approval>=40?'var(--warn)':'var(--bad)';
-  $('hCouncil').textContent=`${favorable(S)} / 13`;
+  $('hCouncil').textContent=`${favorable(S)} / 13`;$('hCouncilS').textContent=commitCount()?`favorable · ${commitCount()} committed`:'members favorable';
   $('hNext').textContent=nextDeadline();
   const M=S.met,p=prevMet||M;
   const tr=(a,b,inv,dig=1)=>{const d=a-b;if(Math.abs(d)<0.05*Math.pow(10,1-dig))return'<span class="tr flat">·</span>';const good=inv?d<0:d>0;return`<span class="tr ${good?'up':'down'}">${d>0?'+':'−'}${Math.abs(d).toFixed(dig)}</span>`};
@@ -808,7 +882,7 @@ function refreshHUD(){
   const now=S.y*12+S.m;
   $('deskN').textContent=S.events.length;
   $('desk').innerHTML=S.events.length?S.events.map((e,i)=>{const pl=placeOf(evAt(e));const left=e.expires-(now-e.born);
-    return`<button data-goev="${i}"><i class="${e.kind==='budget'?'b':e.kind==='ordinance'?'o':''}"></i><span>${evTitle(e)}<br><span class="note">${pl.name}</span></span>${e.kind!=='budget'&&e.id!=='briefing'?`<small>${left<=1?'now':left+' mo'}</small>`:''}</button>`}).join(''):'<div class="empty">Nothing waiting. Advance the month when you\'re ready.</div>';
+    return`<button data-goev="${i}"><i class="${e.kind==='budget'?'b':e.kind==='ordinance'?'o':e.kind==='request'?'q':e.kind==='memo'?'x':''}"></i><span>${evTitle(e)}<br><span class="note">${pl.name}</span></span>${e.kind!=='budget'&&e.id!=='briefing'?`<small>${left<=1?'now':left+' mo'}</small>`:''}</button>`}).join(''):'<div class="empty">Nothing waiting. Advance the month when you\'re ready.</div>';
   renderPins();
 }
 function nextDeadline(){const m=S.m,y=S.y;
@@ -833,11 +907,24 @@ function whereLine(lon,lat){const d=districtAt(lon,lat),sd=superAt(lon,lat),pc=p
   return[d?`Council District ${d}${m?` (${m.name})`:''}`:null,sd?`Super District ${sd}`:null,pc?`MPD ${pc} Precinct`:null].filter(Boolean).join(' · ')}
 function eventCard(ev,idx){
   if(ev.kind==='budget')return`<div class="card"><div class="ttl">Write the FY${fyOf(S)+1} budget</div><p>The charter requires you to send the council a budget. They have until the end of June to adopt it and set the tax rate.</p><div class="row"><button class="btn primary" data-act="budget">Open the budget office</button></div></div>`;
-  const def=evDef(ev);const left=ev.expires-((S.y*12+S.m)-ev.born);
+  const left=ev.expires-((S.y*12+S.m)-ev.born);
+  if(ev.kind==='request'){const m=S.council[ev.mi],R=REQUESTS[ev.pr]||REQUESTS.streets;recompute(m);
+    return`<div class="card rq"><div class="who"><button class="ptbtn" data-char="${ev.mi}">${portrait(m,58)}</button><div><div class="ttl">${m.name} has a request</div><div class="note">${m.seat} · opinion <b style="color:${opColor(m.opinion)}">${fmtOp(m.opinion)}</b>${m.favors?` · owes you ${m.favors}`:''}</div><div class="due">${left<=1?'Answer this month':`Answer within ${left} months`}</div></div></div>
+     <p>"${ev.text}." ${R.why}</p>
+     <div class="choices"><button class="choice" data-ev="${idx}" data-ci="0"><b>Grant it</b><small>${[R.cost?fmtM(-R.cost)+' reserves':'',describe({fx:R.fx}),'They owe you a favor','Opinion +12',R.cost>=1?'Frugal members see pork (−3)':'',R.side?'Annoys public-safety members':''].filter(Boolean).join(' · ')}</small></button>
+     <button class="choice" data-ev="${idx}" data-ci="1"><b>Turn it down</b><small>Opinion −12 · ignoring it costs −8</small></button></div></div>`}
+  if(ev.kind==='memo'){const m=S.council[ev.mi];recompute(m);
+    return`<div class="card memo"><div class="who"><button class="ptbtn" data-char="${ev.mi}">${portrait(m,58)}</button><div><div class="ttl">Confidential: ${m.name}</div><div class="note">${m.seat} · opinion <b style="color:${opColor(m.opinion)}">${fmtOp(m.opinion)}</b></div><div class="due">${left<=1?'Decide this month':`Decide within ${left} months`}</div></div></div>
+     <p>Your inspector general reports that ${HOOKS[ev.hk]}. Nothing has been made public. How you handle it decides what it's worth.</p>
+     <div class="choices"><button class="choice" data-ev="${idx}" data-ci="0"><b>Keep it in your private files</b><small>You hold a hook: force one vote later · 30% chance it leaks when you use it</small></button>
+     <button class="choice" data-ev="${idx}" data-ci="1"><b>Quietly tell them you buried it</b><small>They owe you a favor · Opinion +14</small></button>
+     <button class="choice" data-ev="${idx}" data-ci="2"><b>Refer it to the ethics commission</b><small>Opinion −35 · Reformers approve (+6) · Public mood ▲</small></button></div></div>`}
+  const def=evDef(ev);
   if(ev.kind==='ordinance'){return`<div class="card"><div class="ttl">Ordinance: ${def.title}</div><div class="due">Passed ${ev.yes}–${13-ev.yes} · becomes law without your signature in ${left} month${left===1?'':'s'}</div>
     <p>You can sign it or veto it. If you veto, the council can override with a simple majority: 7 of 13 votes, the same number it took to pass.</p>
     <div class="choices"><button class="choice" data-ev="${idx}" data-ci="0"><b>Sign it</b><small>${describe(def.sign)||'No major effects'}</small></button>
-    <button class="choice" data-ev="${idx}" data-ci="1"><b>Veto it</b><small>Override vote follows · ${describe(def.veto)}</small></button></div></div>`}
+    <button class="choice" data-ev="${idx}" data-ci="1"><b>Veto it</b><small>Override vote follows · ${describe(def.veto)}${commitCount()?` · ${commitCount()} vote${commitCount()===1?'':'s'} committed to you`:''}</small></button></div>
+    <div class="row"><button class="btn" data-act="whip">Whip the override vote first</button></div></div>`}
   const pl=placeOf(def.at);
   return`<div class="card"><div class="ttl">${def.title}</div>${ev.id!=='briefing'?`<div class="due">${left<=1?'Respond this month':`Respond within ${left} months`}</div>`:''}
    <div class="where">${whereLine(pl.lon,pl.lat)}</div>
@@ -935,12 +1022,12 @@ function renderBudgetEditor(){const p=S.draft,c=budgetCalc(S,p),w=whip(S,p);
    </div>
    ${budgetTable(p.divs,p.maint,true)}
    <div class="facts"><h4>Also in the budget</h4><ul><li>Employee raise: <span id="raiseLine">${fmtM(p.raise*5)}</span> (about $5M per point)</li>${Object.keys(S.policies).filter(k=>S.policies[k]).map(k=>`<li>${POLICIES[k].name}: ${fmtM(POLICIES[k].cost)}</li>`).join('')||'<li>No mayoral initiatives funded</li>'}</ul></div>
-   <div class="row"><button class="btn primary" data-act="submitBudget">Submit to the council</button><button class="btn" data-act="resetBudget">Reset to cost-to-continue</button><button class="btn" data-act="close">Keep drafting later</button></div>
+   <div class="row"><button class="btn primary" data-act="submitBudget">Submit to the council</button><button class="btn" data-act="whip">Whip the vote</button><button class="btn" data-act="resetBudget">Reset to cost-to-continue</button><button class="btn" data-act="close">Keep drafting later</button></div>
    <p class="note">Revenue model: each 1¢ of property tax ≈ $1.5M (game estimate). The council's own reaction to your choices decides the June vote; the whip count is your staff's best guess.</p>`,true);
 }
 function budgetVote(next){recomputeAll(S);const p=S.proposal,c=budgetCalc(S,p);
-  const res=S.council.map(m=>({m,yes:budgetScore(S,m,p,c)+rnd(-4,4)>=50}));const yes=res.filter(r=>r.yes).length;
-  const list=res.map(r=>`<div class="seat"><div class="sn">${r.m.seat}</div><div class="nm">${r.m.name}</div><div class="vote ${r.yes?'yes':'no'}">${r.yes?'YES':'NO'}</div></div>`).join('');
+  const res=S.council.map((m,k)=>({m,why:S.commit[k],yes:S.commit[k]?true:budgetScore(S,m,p,c)+rnd(-4,4)>=50}));const yes=res.filter(r=>r.yes).length;clearCommits();
+  const list=res.map(r=>`<div class="seat"><div class="sn">${r.m.seat}</div><div class="nm">${r.m.name}</div><div class="vote ${r.yes?'yes':'no'}">${r.yes?'YES':'NO'}${r.why?` · ${r.why==='hook'?'hook':'favor'}`:''}</div></div>`).join('');
   if(yes>=7){S.pending=p;S.stage='adopted';S.mood+=1;
     openModal('Council vote',`Budget adopted ${yes}–${13-yes}`,`<p>The council adopted your FY${fyOf(S)+1} budget and set the tax rate at $${p.tax.toFixed(2)}. It takes effect July 1.</p><div class="seats">${list}</div><div class="row"><button class="btn primary" data-act="close">Continue</button></div>`,true,next)}
   else{const am=amend(S,p),ac=budgetCalc(S,am);const ayes=S.council.filter(m=>budgetScore(S,m,am,ac)+6>=50).length;
@@ -955,7 +1042,7 @@ function amend(s,p){const am={divs:{...p.divs},maint:p.maint,tax:Math.min(p.tax,
 
 // ---- Council ----
 function traitChips(m,small){return(m.traits||[]).map(t=>`<span class="trait${small?' sm':''}" style="--tc:${TRAITS[t].c}" title="${TRAITS[t].n}: ${TRAITS[t].d}">${TRAITS[t].ic}${small?'':' '+TRAITS[t].n}</span>`).join('')}
-function seatCard(m){const i=S.council.indexOf(m);recompute(m);return`<button class="seat" data-char="${i}"><div class="seatrow">${portrait(m,52)}<div class="seatinfo"><div class="sn">${m.seat.replace('Super District','Super Dist.')}</div><div class="nm">${m.name}</div><div class="traits">${traitChips(m,true)}</div></div><div class="opn" style="color:${opColor(m.opinion)}" title="Opinion of you">${fmtOp(m.opinion)}</div></div></button>`}
+function seatCard(m){const i=S.council.indexOf(m);recompute(m);return`<button class="seat" data-char="${i}"><div class="seatrow">${portrait(m,52)}<div class="seatinfo"><div class="sn">${m.seat.replace('Super District','Super Dist.')}</div><div class="nm">${m.name}</div><div class="traits">${traitChips(m,true)}</div>${leverageBadges(m)}</div><div class="opn" style="color:${opColor(m.opinion)}" title="Opinion of you">${fmtOp(m.opinion)}</div></div></button>`}
 function miniCard(m){const i=S.council.indexOf(m);recompute(m);return`<button class="mini" data-char="${i}">${portrait(m,64)}<span>${m.name}</span><b style="color:${opColor(m.opinion)}">${fmtOp(m.opinion)}</b></button>`}
 function showedUp(at){const pl=placeOf(at);const d=districtAt(pl.lon,pl.lat);if(!d)return;S.council.forEach(m=>{if(homeOf(m)===d)addMod(m,`Showed up in District ${d}`,has(m,'wardboss')?8:4)});recomputeAll(S)}
 function assignHomes(){if(!S||!GEO.council.length)return;[8,9].forEach(sd=>{const ds=[1,2,3,4,5,6,7].filter(d=>superOfDistrict(d)===sd);if(!ds.length)return;
@@ -970,11 +1057,35 @@ function openCharacter(i){const m=S.council[i];if(!m)return;recompute(m);const n
    <div class="facts"><h4>Why they feel this way</h4><div class="opl">${parts.length?parts.map(x=>`<div><span>${x.t}</span><b class="${x.v>0?'up':'down'}">${fmtOp(x.v)}</b></div>`).join(''):'<div><span>No strong feelings yet</span><b>0</b></div>'}</div></div>
    <div class="facts"><h4>Cares about</h4><div class="row">${Object.entries(weights(m)).sort((a,b)=>b[1]-a[1]).map(([p])=>`<span class="pill">${PRIO_LABEL[p]}</span>`).join('')}</div>
      <p class="note">Decisions that touch these move their opinion. ${m.d<=7?'They vote on everything, but care most about District '+m.d+'.':'They answer to half the city, but live in District '+hd+'.'}</p></div>
+   <div class="facts"><h4>Leverage</h4><div class="opl"><div><span>Favors they owe you</span><b>${m.favors||0}</b></div><div><span>Hook</span><b>${m.hook?'Yes':'None'}</b></div></div>
+     ${m.hook?`<p class="note">You know that ${HOOKS[m.hook.hk]}.</p>`:''}${isCommitted(m)?'<p class="note"><span class="badge cm">✔ Committed</span> They will vote with you on the next council vote.</p>':''}
+     ${isCommitted(m)?'':`<div class="choices"><button class="choice" data-act="callfavor" data-i="${i}" ${m.favors?'':'disabled'}><b>Call in a favor</b><small>${m.favors?'They vote with you on the next council vote · Opinion −5':'They don\'t owe you anything yet. Grant a request or fund a project.'}</small></button>
+     ${m.hook?`<button class="choice" data-act="usehook" data-i="${i}"><b>Use your hook</b><small>Guaranteed vote · Opinion −20 · 30% chance it leaks: approval −2, their opinion −40, Reformers −10</small></button>`:''}</div>`}</div>
    <div class="choices">
     <button class="choice" data-act="meet" data-i="${i}" ${canMeet?'':'disabled'}><b>Meet privately</b><small>${m.met===now?'You already met this month':S.slots<=0?'No meetings left on your schedule this month':`Opinion +${has(m,'gregarious')?9:6} · uses 1 of ${S.slots} meetings left this month`}</small></button>
-    <button class="choice" data-act="fund" data-i="${i}" ${canFund?'':'disabled'}><b>Fund a project in District ${hd}</b><small>${now-m.funded<6?`Available again in ${6-(now-m.funded)} month${6-(now-m.funded)===1?'':'s'}`:S.reserve<1?'Not enough in reserves':`−$1.0M reserves · Opinion +${has(m,'wardboss')?30:18} · Frugal members see pork (−4)`}</small></button>
+    <button class="choice" data-act="fund" data-i="${i}" ${canFund?'':'disabled'}><b>Fund a project in District ${hd}</b><small>${now-m.funded<6?`Available again in ${6-(now-m.funded)} month${6-(now-m.funded)===1?'':'s'}`:S.reserve<1?'Not enough in reserves':`−$1.0M reserves · They owe you a favor · Opinion +${has(m,'wardboss')?30:18} · Frugal members see pork (−4)`}</small></button>
     <button class="choice" data-act="godist" data-d="${hd}"><b>Go to District ${hd}</b><small>Fly the map to their home district</small></button>
    </div>`,'char'+i)}
+function leverageBadges(m){const out=[];if(m.favors)out.push(`<span class="badge fav" title="Owes you ${m.favors} favor${m.favors===1?'':'s'}">★${m.favors}</span>`);if(m.hook)out.push('<span class="badge hk" title="You hold a hook on them">⚑ hook</span>');if(isCommitted(m))out.push('<span class="badge cm" title="Committed to vote with you on the next council vote">✔</span>');return out.length?`<div class="badges">${out.join('')}</div>`:''}
+function voteContext(){const ord=S.events.find(e=>e.kind==='ordinance');
+  if(S.stage==='draft'||S.stage==='submitted'){const p=S.stage==='submitted'?S.proposal:(S.draft||defaultProposal(S));return{kind:'budget',p,title:`FY${fyOf(S)+1} budget vote`,when:S.stage==='submitted'?'The council votes on your budget in June.':'You submit the budget this month; the council votes in June. Stances use your current draft.'}}
+  if(ord){const def=evDef(ord);return{kind:'override',ev:ord,title:`If you veto: ${def.title}`,when:'The council passed it, so they already have the votes. A veto holds only if 7 members side with you on the override.'}}
+  return{kind:'general',title:'The next council vote',when:'No vote is scheduled. Commitments you lock in now carry over to the next vote on the budget, an override or an appointment.'}}
+function stanceOf(m,k,ctx){if(S.commit[k])return{c:'st-c',t:S.commit[k]==='hook'?'Committed (hook)':'Committed (favor)',yes:true,sc:99};
+  let sc;if(ctx.kind==='budget')sc=budgetScore(S,m,ctx.p,ctx.c);else if(ctx.kind==='override')sc=ctx.ev.votes[k]?(m.op>68?51:m.op-12):60;else sc=m.op+4;
+  return{sc,...(sc>=56?{c:'st-yes',t:'With you',yes:true}:sc>=50?{c:'st-ly',t:'Leaning your way',yes:true}:sc>=44?{c:'st-ln',t:'Leaning against',yes:false}:{c:'st-no',t:'Against you',yes:false})}}
+function openWhip(){recomputeAll(S);const ctx=voteContext();if(ctx.kind==='budget')ctx.c=budgetCalc(S,ctx.p);const now=S.y*12+S.m;
+  const rows=S.council.map((m,k)=>({m,k,st:stanceOf(m,k,ctx)}));const yes=rows.filter(r=>r.st.yes).length;
+  const swing=rows.filter(r=>!S.commit[r.k]).sort((a,b)=>Math.abs(a.st.sc-50)-Math.abs(b.st.sc-50)).slice(0,3).map(r=>r.m.name.split(' ').pop());
+  openModal('Whip count · '+ctx.title,'Line up the votes',`
+   <p>${ctx.when}</p>
+   <div class="tally"><span><b class="${yes>=7?'up':'down'}">${yes}</b> with you</span><span><b>${13-yes}</b> against</span><span class="note">7 needed · ${commitCount()} locked in · ${S.slots} meeting${S.slots===1?'':'s'} left this month${swing.length?' · Closest calls: '+swing.join(', '):''}</span></div>
+   <div class="wlist">${rows.map(({m,k,st})=>`<div class="whiprow"><button class="ptbtn" data-char="${k}">${portrait(m,40)}</button>
+     <div><div><b>${m.name}</b> <span class="note">${m.seat} · opinion <span style="color:${opColor(m.opinion)}">${fmtOp(m.opinion)}</span></span></div>
+       <div class="row" style="gap:6px;margin-top:3px"><span class="stance ${st.c}">${st.t}</span>${leverageBadges(m)}<span class="note">Cares about ${Object.entries(weights(m)).sort((a,b)=>b[1]-a[1]).slice(0,2).map(([p])=>PRIO_LABEL[p].toLowerCase()).join(' and ')}</span></div></div>
+     <div class="acts">${S.commit[k]?'':`<button class="btn" data-act="callfavor" data-i="${k}" ${m.favors?'':'disabled'} title="They vote with you on the next council vote. Opinion −5.">Call favor${m.favors?` (${m.favors})`:''}</button><button class="btn" data-act="usehook" data-i="${k}" ${m.hook?'':'disabled'} title="Guaranteed vote. Opinion −20, and a 30% chance it leaks.">Use hook</button><button class="btn" data-act="wmeet" data-i="${k}" ${m.met!==now&&S.slots>0?'':'disabled'} title="Opinion +${has(m,'gregarious')?9:6}">Meet</button>`}</div></div>`).join('')}</div>
+   <p class="note">Favors come from granting members' requests, funding their district projects and protecting them. Hooks come from your inspector general's memos. Stances are your staff's estimate; a few points of chance remain on vote day. Committed members always vote with you.</p>
+   ${ctx.kind==='budget'&&S.stage==='draft'?'<div class="row"><button class="btn" data-act="budget">Back to the budget</button></div>':''}`,true)}
 function districtCenter(d){const f=GEO.council.find(x=>x.v===d);return f?polyCenter(f.parts):null}
 function openCouncil(){closePanel();
   recomputeAll(S);
@@ -985,7 +1096,7 @@ function openCouncil(){closePanel();
     <li>The council approves the budget, sets the property tax rate, and confirms the mayor's division directors and board appointees.</li>
     <li>The mayor can veto council actions; a simple majority, 7 of 13, overrides.</li></ul></div>
    <div class="seats">${S.council.map(seatCard).join('')}</div>
-   <div class="row"><button class="btn" data-act="showDistricts">Council opinion map</button></div>
+   <div class="row"><button class="btn primary" data-act="whip">Whip the next vote</button><button class="btn" data-act="showDistricts">Council opinion map</button></div>
    <p class="note">Click a member to see their traits, why they feel the way they do, and what you can do about it. Members are fictional; seats, district boundaries and powers are real.</p>`,true)}
 function openDistrict(d,isSuper){
   const ms=S.council.filter(m=>m.d===d);
@@ -1021,7 +1132,7 @@ function summary(){const M=S.met;return`<div class="facts"><h4>Your record</h4><
 function showEnd(){openModal('Game over','Your time in office is over',`${summary()}<div class="row"><button class="btn primary" data-act="newgame">Run again</button></div>`)}
 function openHelp(){closePanel();openModal('How to play','Guide',`
   <div class="facts"><h4>Controls</h4><ul><li>WASD or the arrow keys pan the map; hold Shift to pan faster. Moving the mouse to the edge of the screen scrolls too (turn it off under Layers). You can also drag.</li><li>Scroll or pinch to zoom toward the cursor. Zoomed out you get the political map, with each council district in its own color. Zoom in and the camera tilts down into the 3D city.</li><li>Click a landmark or amber pin to open it. Click a district or precinct when those layers are on.</li><li>N advances one month. B opens the budget, C the council, L the map layers. Keys 1–5 switch map modes: City, Political, Council opinion, Street condition, MPD precincts.</li></ul></div>
-  <div class="facts"><h4>The year</h4><ul><li>Council members are characters. Each has traits, a home district and an opinion of you from −100 to +100, built from the reasons listed on their page. Reasons fade over time. Each month you get 3 private meetings, and you can fund a $1M project in a member's district every 6 months. Frugal members resent that spending.</li><li>Fiscal year runs July–June. Write the next budget in April, the council votes in June, it takes effect July 1.</li><li>TCAP reading results arrive in June.</li><li>Unanswered problems expire and cost you approval and council goodwill. Handling an issue in a member's district earns a little goodwill from that member.</li><li>City elections: October 2027 and October 2031. Mayors are limited to two terms.</li></ul></div>
+  <div class="facts"><h4>The year</h4><ul><li>Council members are characters. Each has traits, a home district and an opinion of you from −100 to +100, built from the reasons listed on their page. Reasons fade over time. Each month you get 3 private meetings, and you can fund a $1M project in a member's district every 6 months. Frugal members resent that spending.</li><li>Favors and hooks: members owe you a favor when you grant their requests (blue pins in their home districts), fund their district projects or quietly protect them. Your inspector general's memos can hand you a hook. Spend a favor or a hook to lock a member's vote for the next council vote. Hooks can leak. Press V or open the Council to see the whip count.</li><li>Fiscal year runs July–June. Write the next budget in April, the council votes in June, it takes effect July 1.</li><li>TCAP reading results arrive in June.</li><li>Unanswered problems expire and cost you approval and council goodwill. Handling an issue in a member's district earns a little goodwill from that member.</li><li>City elections: October 2027 and October 2031. Mayors are limited to two terms.</li></ul></div>
   <div class="facts"><h4>The map</h4><ul><li>Streets, building footprints and heights, city limits, the Mississippi River, creeks, parks, railroads, council districts, super districts and MPD precincts all come from the City of Memphis's public GIS services (maps.memphistn.gov and gis.memphistn.gov), downloaded October 2026. Road classes come from the Memphis MPO's functional classification layer.</li><li>Landmark positions come from the city's facility records and address locator.</li></ul></div>
   <div class="facts"><h4>Real vs. modeled</h4><ul><li>Real: FY2027 operating budget ($906M adopted), $3.39 tax rate, 2% raises, $96M reserve, MATA $32M, xAI's $15M in taxes, the $13.6M Southwest Twin precinct, MPD's ~1,917 officers and ~2,500 authorized, MSCS 25.7% reading vs ~45% statewide, 2025's 26.4% drop in murders, and the council's structure and charter powers.</li><li>Modeled: the division split (FY2025 shares scaled to FY2027), revenue per tax cent, how spending moves indicators, the crime and street indexes, council members and their votes.</li></ul></div>
   <div class="facts"><h4>Sources</h4><ul>
@@ -1094,7 +1205,9 @@ async function loadBase(){
     assignHomes();
     try{const pv=await getJSON('data/pavement.json');RAW.pci=pv.layers.pci;const by={},all={w:0,s:0,poor:0,n:0};
       RAW.pci.a.forEach(([v,d,lm])=>{if(v==null)return;all.n++;all.w+=lm;all.s+=v*lm;if(v<40)all.poor+=lm;if(!d)return;const b=by[d]=by[d]||{w:0,s:0,poor:0};b.w+=lm;b.s+=v*lm;if(v<40)b.poor+=lm});
-      for(const d in by)PAVE[d]={avg:by[d].s/by[d].w,poor:by[d].poor/by[d].w*100};PAVE.all={avg:all.s/all.w,poor:all.poor/all.w*100,n:RAW.pci.a.length}}catch(e){console.warn('pavement data',e)}
+      for(const d in by)PAVE[d]={avg:by[d].s/by[d].w,poor:by[d].poor/by[d].w*100};
+      const worst={};RAW.pci.a.forEach(([v,d,lm,n])=>{if(v==null||v>=45||!d||!n||/ROUTE|^I-|^\s*$/.test(n))return;const k=titleCase(n);worst[d]=worst[d]||{};worst[d][k]=Math.min(worst[d][k]??999,v)});
+      for(const d in worst)POORROADS[d]=Object.entries(worst[d]).sort((a,b)=>a[1]-b[1]).map(x=>x[0]);PAVE.all={avg:all.s/all.w,poor:all.poor/all.w*100,n:RAW.pci.a.length}}catch(e){console.warn('pavement data',e)}
     const src=id=>map.addSource(id,{type:'geojson',data:'bcm://'+id,tolerance:0.3,buffer:64});
     ['muni','city','parks','airport','river','streams','creeks','rail','streets','fc','council','superd','precincts'].forEach(src);if(RAW.pci)src('pci');
     const W=(a)=>['interpolate',['exponential',1.6],['zoom'],...a];
@@ -1184,8 +1297,8 @@ function renderPins(){
   const counts={};
   S.events.forEach((e,i)=>{const at=evAt(e);const pl=placeOf(at);
     if(pl.lmk){counts[at]=(counts[at]||0)+1;return}
-    const el=document.createElement('button');el.className='pin';el.setAttribute('aria-label',evTitle(e));el.title=evTitle(e);
-    el.innerHTML=`<svg width="30" height="38" viewBox="0 0 30 38"><path d="M15 1C7.3 1 1.5 6.8 1.5 14.2 1.5 24 15 37 15 37s13.5-13 13.5-22.8C28.5 6.8 22.7 1 15 1z" fill="#f2a93b" stroke="#1b1206" stroke-width="1.5"/><rect x="13.4" y="6.5" width="3.2" height="10" rx="1" fill="#1b1206"/><rect x="13.4" y="19" width="3.2" height="3.2" rx="1" fill="#1b1206"/></svg>`;
+    const el=document.createElement('button');el.className='pin';el.setAttribute('aria-label',evTitle(e));el.title=evTitle(e);const rq=e.kind==='request';
+    el.innerHTML=rq?`<svg width="30" height="38" viewBox="0 0 30 38"><path d="M15 1C7.3 1 1.5 6.8 1.5 14.2 1.5 24 15 37 15 37s13.5-13 13.5-22.8C28.5 6.8 22.7 1 15 1z" fill="#5aa7d8" stroke="#0d1822" stroke-width="1.5"/><text x="15" y="20" text-anchor="middle" font-family="Barlow Condensed,Arial,sans-serif" font-weight="700" font-size="15" fill="#0d1822">${S.council[e.mi].name.split(' ').pop()[0]}</text></svg>`:`<svg width="30" height="38" viewBox="0 0 30 38"><path d="M15 1C7.3 1 1.5 6.8 1.5 14.2 1.5 24 15 37 15 37s13.5-13 13.5-22.8C28.5 6.8 22.7 1 15 1z" fill="#f2a93b" stroke="#1b1206" stroke-width="1.5"/><rect x="13.4" y="6.5" width="3.2" height="10" rx="1" fill="#1b1206"/><rect x="13.4" y="19" width="3.2" height="3.2" rx="1" fill="#1b1206"/></svg>`;
     el.addEventListener('click',ev=>{ev.stopPropagation();openPlace(at)});
     pinMarkers.push(new maplibregl.Marker({element:el,anchor:'bottom'}).setLngLat([pl.lon,pl.lat]).addTo(map))});
   Object.values(lmMarkers).forEach(o=>{const n=counts[o.L.id]||0;o.el.classList.toggle('busy',n>0);o.el.querySelector('.ct').textContent=n?String(n):'';o.el.style.zIndex=n?'3':'1'});
@@ -1292,6 +1405,7 @@ window.addEventListener('keydown',e=>{
   if(modalOpen){if(k==='escape')closeModal();return}
   if(PANKEYS.has(k)||k==='shift'){keysDown.add(k);if(k.startsWith('arrow'))e.preventDefault();return}
   if(k>='1'&&k<='5'){setMode(MODES[+k-1].id);return}
+  if(k==='v'){closePanel();openWhip();return}
   if(k==='escape'){closePanel();$('layers').hidden=true;return}
   if(k==='n')advance();else if(k==='b')openBudget();else if(k==='c')openCouncil();else if(k==='h')openHelp();else if(k==='l')toggleLayersBox();
 });
@@ -1320,8 +1434,12 @@ document.addEventListener('click',e=>{
   else if(a==='home')camFly({...HOME_VIEW,speed:1.6});
     else if(a==='gompd')flyTo('mpd',true);
   else if(a==='showDistricts'){closeModal();setMode('opinion');camFly({...HOME_VIEW,speed:1.6})}
+  else if(a==='whip'){if(modalOpen){onClose=null}closePanel();openWhip()}
+  else if(a==='callfavor'||a==='usehook'||a==='wmeet'){const i=+b.dataset.i,inWhip=modalOpen;
+    if(a==='callfavor')callFavor(i);else if(a==='usehook')useHook(i);else{const m=S.council[i],now=S.y*12+S.m;if(m.met!==now&&S.slots>0){m.met=now;S.slots--;addMod(m,'Private meeting',has(m,'gregarious')?9:6);recompute(m);save();toast(`You met with ${m.name}.`)}}
+    refreshHUD();if(inWhip)openWhip();else openCharacter(i)}
   else if(a==='meet'){const m=S.council[+b.dataset.i],now=S.y*12+S.m;if(!m||m.met===now||S.slots<=0)return;m.met=now;S.slots--;addMod(m,'Private meeting',has(m,'gregarious')?9:6);recompute(m);save();refreshHUD();toast(`You met with ${m.name}. Opinion is now ${fmtOp(m.opinion)}.`);openCharacter(+b.dataset.i)}
-  else if(a==='fund'){const m=S.council[+b.dataset.i],now=S.y*12+S.m;if(!m||now-m.funded<6||S.reserve<1)return;const hd=homeOf(m);S.reserve-=1;m.funded=now;addMod(m,`Funded a District ${hd} project`,has(m,'wardboss')?30:18);
+  else if(a==='fund'){const m=S.council[+b.dataset.i],now=S.y*12+S.m;if(!m||now-m.funded<6||S.reserve<1)return;const hd=homeOf(m);S.reserve-=1;m.funded=now;addMod(m,`Funded a District ${hd} project`,has(m,'wardboss')?30:18);m.favors=(m.favors||0)+1;
     S.council.forEach(o=>{if(o!==m&&has(o,'frugal'))addMod(o,'Pork-barrel spending',-4)});S.met.streets+=0.3;S.met.blight-=0.3;recomputeAll(S);save();refreshHUD();toast(`$1M project funded in District ${hd}. ${m.name}: ${fmtOp(m.opinion)}.`);openCharacter(+b.dataset.i)}
   else if(a==='godist'){const c=districtCenter(+b.dataset.d);if(c)camFly({center:c,zoom:12.4,speed:1.4})}
   else if(a==='advance'){if(modalOpen){onClose=null;closeModal()}advance()}
@@ -1334,7 +1452,7 @@ document.addEventListener('click',e=>{
   else if(a==='submitBudget'){S.proposal=S.draft;S.stage='submitted';S.events=S.events.filter(e=>e.kind!=='budget');S.draft=null;save();closeModal();closePanel();toast('Budget submitted. The council votes in June.');refreshHUD()}
   else if(a==='resetBudget'){S.draft=defaultProposal(S);renderBudgetEditor()}
   else if(a==='acceptAmend'){S.pending=S._amend.am;S.stage='adopted';delete S._amend;save();closeModal()}
-  else if(a==='vetoAmend'){const{am,ayes}=S._amend;delete S._amend;const keep=Math.round(ayes-rnd(0,2));
+  else if(a==='vetoAmend'){const{am,ayes}=S._amend;delete S._amend;const keep=Math.round(ayes-rnd(0,2))-commitCount();clearCommits();
     if(keep>=7){S.pending=am;S.stage='adopted';S.mood-=2;applyCouncil(S,{all:-3},'Vetoed the council\'s budget');openModal('Veto','The council overrode you',`<p>${keep}–${13-keep}. The council's budget takes effect July 1. Under the charter a simple majority overrides a mayoral veto.</p><div class="row"><button class="btn primary" data-act="close">Continue</button></div>`,false,onClose)}
     else{S.pending={divs:{...S.enacted},maint:maintFor(S),tax:S.taxRate,raise:0};S.stage='adopted';S.mood-=3;openModal('Veto','Your veto held',`<p>The override got ${keep} votes and needed 7. The city will run on this year's appropriations with no raise, while costs rise about 2–3%. Expect service to slip.</p><div class="row"><button class="btn primary" data-act="close">Continue</button></div>`,false,onClose)}
     save()}
@@ -1354,7 +1472,7 @@ function load(){try{const t=localStorage.getItem(KEY);if(!t)return null;const s=
 function beginTerm(){S=newState();assignHomes();recomputeAll(S);S.started=true;spawn(S,EVENTS[0],{expires:99});save();$('start').hidden=true;prevMet=null;applyLayers();refreshHUD();
   camFly({center:[LM.cityhall.lon,LM.cityhall.lat],zoom:15.6,speed:0.9});
   setTimeout(()=>openPlace('cityhall'),2600);toast('Sworn in. Your chief of staff is waiting at City Hall.')}
-function migrate(s){if(!s)return s;s.mode=s.mode||'real';if(s.slots==null)s.slots=3;
+function migrate(s){if(!s)return s;s.mode=s.mode||'real';if(s.slots==null)s.slots=3;s.commit=s.commit||{};s.council.forEach(m=>{if(m.favors==null)m.favors=0;if(m.hook===undefined)m.hook=null});
   s.council.forEach((m,k)=>{const c=COUNCIL.find(x=>x.seat===m.seat)||COUNCIL[k];Object.assign(m,{g:c.g,age:c.age,traits:c.traits,name:m.name||c.name});
     if(!m.mods){const old=m.op==null?50:m.op;m.mods=[{t:'First impressions',v:Math.round((hash(k,9)-.5)*16),perm:true}];if(Math.abs(old-50)>=1)m.mods.push({t:'Past dealings',v:Math.round((old-50)*2)});m.met=-1;m.funded=-99}});
   S=s;recomputeAll(s);return s}
