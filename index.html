@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="description" content="Govern Memphis on a real city map built from City of Memphis GIS data: handle issues at real places, win over 13 council members, deal with Bartlett and Germantown.">
+<meta name="description" content="Govern Memphis in real time on a map built from City of Memphis GIS data: win over 13 council members and deal with six neighboring suburbs.">
 <title>Bluff City Mayor</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -196,6 +196,24 @@ button.seat:hover{border-color:var(--amber)}
 .mini{display:flex;flex-direction:column;align-items:center;gap:3px;background:none;border:1px solid var(--line);border-radius:6px;padding:6px;cursor:pointer;width:88px;font-size:12px;line-height:1.2;text-align:center}
 .mini:hover{border-color:var(--amber)}
 .mini b{font-family:var(--f-mono);font-weight:500}
+/* Clock */
+.clock{pointer-events:auto;display:flex;align-items:center;gap:10px;background:rgba(19,33,45,.9);border:1px solid var(--line);border-radius:7px;padding:5px 10px 5px 6px;position:relative}
+.clock>button{width:34px;height:34px;border-radius:50%;border:1px solid var(--amber);background:#2a2416;color:var(--amber);font-size:14px;cursor:pointer;flex:none}
+.clock .cdate{display:flex;flex-direction:column;min-width:96px}
+.clock .cdate b{font-family:var(--f-mono);font-weight:500;font-size:16px;font-variant-numeric:tabular-nums;white-space:nowrap}
+.clock .cdate small{font-size:11.5px;color:var(--muted);white-space:nowrap}
+.cspeed{display:flex;align-items:center;gap:4px}
+.cspeed>button{width:22px;height:22px;border-radius:4px;border:1px solid var(--line);background:var(--panel2);cursor:pointer;font-family:var(--f-mono);font-size:13px;line-height:1;padding:0}
+.speeds{display:flex;gap:3px}
+.speeds button{width:9px;height:16px;border-radius:2px;border:1px solid var(--line);background:var(--panel2);cursor:pointer;padding:0}
+.speeds button.on{background:var(--amber);border-color:var(--amber)}
+.clock .ptag{display:none;position:absolute;left:50%;top:100%;transform:translate(-50%,4px);font-family:var(--f-label);font-weight:700;font-size:11px;letter-spacing:.2em;color:#1b1206;background:var(--amber);padding:1px 8px;border-radius:3px}
+.clock.paused{border-color:var(--amber)}
+.clock.paused .ptag{display:block}
+.clock.paused .speeds button.on{opacity:.45}
+.logl{display:flex;flex-direction:column;gap:2px;font-size:13.5px}
+.logl div{display:grid;grid-template-columns:96px 1fr;gap:10px;padding:5px 0;border-bottom:1px solid var(--line)}
+.logl span{font-family:var(--f-mono);font-size:12px;color:var(--muted)}
 /* Favors, hooks, whip */
 .card .who{display:flex;gap:12px;align-items:center}
 .card.rq{border-left-color:#5aa7d8}
@@ -259,7 +277,8 @@ button.seat:hover{border-color:var(--amber)}
   <div id="map" aria-label="Map of Memphis"></div>
   <div class="hud-top">
     <div class="brand">BLUFF CITY<span>MAYOR</span></div>
-    <div class="stat"><label>Date</label><b id="hDate">Oct 2026</b><small id="hFY">FY2027</small></div>
+    <div class="clock paused" id="clock"><button id="cPause" data-act="pause" aria-label="Resume time">▶</button><div class="cdate"><b id="hDate">1 Oct 2026</b><small id="hFY">FY2027</small></div>
+      <div class="cspeed"><button data-act="slower" aria-label="Slower" title="Slower (−)">−</button><div class="speeds" id="speeds"></div><button data-act="faster" aria-label="Faster" title="Faster (+)">+</button></div><span class="ptag">PAUSED</span></div>
     <div class="stat"><label>Reserve fund</label><b id="hRes">$96.0M</b><small id="hResPct"></small></div>
     <div class="stat"><label>Approval</label><b id="hApp">52%</b><div class="meter"><i id="hAppBar"></i></div></div>
     <div class="stat"><label>Council</label><b id="hCouncil">–</b><small id="hCouncilS">members favorable</small></div>
@@ -278,6 +297,7 @@ button.seat:hover{border-color:var(--amber)}
     <label><input type="checkbox" id="lyBld" checked> Buildings</label>
     <label><input type="checkbox" id="lyLabels" checked> Landmark labels</label>
     <label><input type="checkbox" id="lyEdge" checked> Scroll at screen edges</label>
+    <label><input type="checkbox" id="lyPause" checked> Pause when something new arrives</label>
     <p class="note">Map modes (bottom left, keys 1–6) switch between the city, the political map, council opinion, street condition, police precincts and the region.</p>
   </div>
   <nav class="actions">
@@ -285,7 +305,8 @@ button.seat:hover{border-color:var(--amber)}
     <button class="btn" data-act="budget">Budget <kbd>B</kbd></button>
     <button class="btn" data-act="council">Council <kbd>C</kbd></button>
     <button class="btn" data-act="help">Guide <kbd>H</kbd></button>
-    <button class="btn primary" data-act="advance">Advance month <kbd>N</kbd></button>
+    <button class="btn" data-act="ledger">Ledger</button>
+    <button class="btn primary" data-act="pause" id="bPlay">▶ Resume <kbd>Space</kbd></button>
   </nav>
   <div class="status" id="status">Loading map…</div>
   <div class="credit">Map data: City of Memphis GIS · Shelby County MPO</div>
@@ -310,7 +331,7 @@ button.seat:hover{border-color:var(--amber)}
         <kbd>WASD · arrows</kbd><span>Pan the map (hold Shift to go faster), or push the mouse to the screen edge</span>
         <kbd>Scroll</kbd><span>Zoom toward the cursor. Zoom out for the political map of council districts; zoom in and the city tilts into 3D</span>
         <kbd>Click</kbd><span>Open a landmark, an issue pin, or a district</span>
-        <kbd>N</kbd><span>Advance one month</span>
+        <kbd>Space · + −</kbd><span>Pause and resume time, change speed (1–5). N skips to the end of the month</span>
         <kbd>B · C · V · L</kbd><span>Budget office · Council chamber · Whip count · Map layers</span>
       </div>
       <div class="row">
@@ -358,7 +379,7 @@ const LMKS=[
 const LM=Object.fromEntries(LMKS.map(l=>[l.id,l]));
 const POINTS={frayser:[35.2232,-90.0302,'Frayser'],lamar:[35.0970,-89.9718,'Lamar Ave.'],southmem:[35.0990,-90.0430,'South Memphis'],orangemound:[35.1110,-89.9620,'Orange Mound']};
 const HOODS=[['Downtown',35.1462,-90.0455],['South Main',35.1305,-90.0585],['Uptown',35.1625,-90.0420],['Harbor Town',35.1660,-90.0585],['Medical District',35.1415,-90.0300],['Midtown',35.1395,-89.9990],['Cooper-Young',35.1185,-89.9900],['Orange Mound',35.1105,-89.9580],['Binghampton',35.1430,-89.9545],['East Memphis',35.1050,-89.8850],['Berclair',35.1660,-89.8960],['Raleigh',35.2140,-89.9100],['Frayser',35.2245,-90.0230],['North Memphis',35.1810,-90.0300],['Hollywood',35.1760,-89.9700],['Nutbush',35.1690,-89.9330],['South Memphis',35.1005,-90.0450],['Soulsville',35.1155,-90.0310],['Westwood',35.0360,-90.0820],['Whitehaven',35.0230,-90.0200],['Oakhaven',35.0300,-89.9650],['Parkway Village',35.0660,-89.9100],['Hickory Hill',35.0430,-89.8400],['Southwind',35.0380,-89.7900],['Cordova',35.1600,-89.7700],['Shelby Farms',35.1430,-89.8500],['Hyde Park',35.1880,-89.9950],['Castalia',35.0900,-89.9700],['Whitehaven South',35.0010,-90.0150]];
-const TOWNS=[['West Memphis, AR',35.1470,-90.1850],['Southaven, MS',34.9900,-90.0100],['Collierville',35.0600,-89.6950],['Lakeland',35.2420,-89.7350]];
+const TOWNS=[['West Memphis, AR',35.1470,-90.1850],['Southaven, MS',34.9900,-90.0100]];
 // Neighboring cities, CK3-style realms. Offices and facts are real; the mayors are fictional.
 const NEIGHBORS={
  bartlett:{city:'Bartlett',GIS:'BARTLETT',name:'Wade Pruitt',g:'m',age:58,traits:['pragmatic','wardboss'],col:'#4fb3a9',frame:'#4fb3a9',
@@ -367,6 +388,18 @@ const NEIGHBORS={
  germantown:{city:'Germantown',GIS:'GERMANTOWN',name:'Elaine Whitmore',g:'f',age:62,traits:['frugal','vengeful'],col:'#b98ee6',frame:'#b98ee6',
    facts:['Population 41,333 (2020 census).','Governed by a Board of Mayor and Aldermen: the mayor and 5 aldermen. The mayor votes only to break ties; a city administrator runs daily operations.','Runs the Germantown Municipal School District, formed in 2014. Germantown Elementary, Middle and High, inside city limits, are still run by Memphis-Shelby County Schools.','Runs its own water system. In July 2023 a diesel leak at a treatment plant left residents unable to drink tap water for days.'],
    start:[{t:'Lingering tension from the 2014 schools split',v:-10,perm:true}]},
+ collierville:{city:'Collierville',GIS:'COLLIERVILLE',name:'Grace Halloran',g:'f',age:57,traits:['ambitious','frugal'],col:'#d9a441',frame:'#d9a441',
+   facts:['Population 51,324 (2020 census), the third-largest municipality in Shelby County after Memphis and Bartlett.','Governed by a Board of Mayor and Aldermen: the mayor and 5 aldermen, elected to four-year terms.','Runs Collierville Schools, which took over from the county district in 2014.','Its historic town square is on the National Register of Historic Places. Major employers include FedEx and Carrier.'],
+   start:[{t:'Competes with Memphis for corporate jobs',v:-6,perm:true}]},
+ arlington:{city:'Arlington',GIS:'ARLINGTON',name:'Hollis Tate',g:'m',age:63,traits:['loyal','pragmatic'],col:'#6fae4f',frame:'#6fae4f',
+   facts:['Population 14,549 (2020 census), up 26% from 2010.','Governed by a Board of Mayor and Aldermen: the mayor and 6 aldermen, elected to four-year terms.','Runs Arlington Community Schools, formed in 2014. Arlington High also serves Lakeland\'s high schoolers.','Depot Square is the center of town life.'],
+   start:[{t:'Small-town goodwill',v:4,perm:true}]},
+ lakeland:{city:'Lakeland',GIS:'LAKELAND',name:'Nathan Rhee',g:'m',age:45,traits:['ambitious','gregarious'],col:'#5aa7d8',frame:'#5aa7d8',
+   facts:['Population 13,904 (2020 census).','Runs under a manager-commission charter: a 5-member Board of Commissioners, including the mayor and vice mayor, with a city manager.','Runs the Lakeland School System (Lakeland Elementary and Lakeland Preparatory). Its high schoolers attend Arlington High.','The Lakeland Factory Outlet Mall closed around 2011, and its I-40 site was targeted for redevelopment.'],
+   start:[{t:'Eager to make a name in the region',v:2,perm:true}]},
+ millington:{city:'Millington',GIS:'MILLINGTON',name:'Dale Burkett',g:'m',age:66,traits:['stubborn','loyal'],col:'#c97a5a',frame:'#c97a5a',
+   facts:['Population 10,582 (2020 census).','Governed by a mayor and 7 aldermen, elected to four-year terms, with a city manager.','Runs Millington Municipal Schools, formed in 2014.','Home to Naval Support Activity Mid-South, the former Naval Air Station Memphis. It is one of Tennessee\'s largest single employers, with more than 7,500 military, civilian and contractor staff, including the Bureau of Naval Personnel.'],
+   start:[{t:'Shares the US-51 corridor with Frayser',v:3,perm:true}]},
 };
 const NB_IDS=Object.keys(NEIGHBORS);
 const ROADS=[["I-40",35.1614,-90.01982,1],["I-40",35.18984,-89.94402,1],["I-40",35.15563,-89.88026,1],["I-240",35.07127,-90.01991,1],["I-240",35.07628,-89.99054,1],["I-240",35.07821,-89.90743,1],["I-240",35.08778,-89.87217,1],["I-55",35.0918,-90.07658,1],["I-55",35.07612,-90.04225,1],["Bill Morris Pkwy",35.05439,-89.82884,0],["Poplar Ave",35.12992,-89.9532,0],["Poplar Ave",35.10184,-89.86745,0],["Lamar Ave",35.09703,-89.97185,0],["Lamar Ave",35.04781,-89.92129,0],["Winchester Rd",35.05257,-89.97506,0],["Winchester Rd",35.0489,-89.8233,0],["Austin Peay Hwy",35.21636,-89.91386,0],["Jackson Ave",35.16008,-89.9626,0],["Airways Blvd",35.07554,-89.98571,0],["S. Third St",35.07374,-90.05789,0],["Shelby Dr",35.02092,-90.00756,0],["Shelby Dr",35.02038,-89.88493,0],["Germantown Rd",35.11092,-89.80261,0],["Union Ave",35.13724,-90.02061,0],["Summer Ave",35.14863,-89.89726,0],["Sam Cooper Blvd",35.14786,-89.94095,0],["Elvis Presley Blvd",35.08291,-90.01864,0],["Kirby Pkwy",35.0481,-89.84377,0],["Knight Arnold Rd",35.06265,-89.91738,0],["Walnut Grove Rd",35.13093,-89.86725,0],["Getwell Rd",35.0368,-89.93653,0],["Macon Rd",35.15031,-89.8052,0],["North Pkwy",35.15431,-90.02127,0],["Central Ave",35.12562,-89.97389,0],["Mt. Moriah Rd",35.08486,-89.89528,0],["Holmes Rd",35.00605,-89.93884,0],["Frayser Blvd",35.21712,-89.98947,0],["Thomas St",35.19269,-90.03513,0],["Madison Ave",35.1405,-90.0326,0],["Park Ave",35.10658,-89.89539,0],["Quince Rd",35.08444,-89.85291,0],["Perkins Rd",35.07808,-89.90692,0],["National St",35.16084,-89.94749,0],["N. Watkins St",35.20232,-90.00737,0],["Tchulahoma Rd",35.03774,-89.95485,0],["White Station Rd",35.108,-89.88926,0],["Danny Thomas Blvd",35.13522,-90.04629,0],["Chelsea Ave",35.17288,-90.01128,0]];
@@ -672,11 +705,37 @@ EVENTS.push(
    {label:'Run it only if Bartlett pays the full cost',fx:{transit:0.3},nb:{bartlett:-4}},
    {label:'No MATA service outside Memphis',nb:{bartlett:-10},council:{transit:-2}}],ignore:{nb:{bartlett:-4}}},
  {id:'suburb_lobby',title:'Suburban mayors lobby Nashville',at:'cityhall',tags:['jobs'],nbr:true,special:true,
-  body:s=>`Relations with the suburbs have soured. Mayors ${s.nb.bartlett.name} and ${s.nb.germantown.name} are backing a bill in the state legislature that would shift shared revenue away from Memphis.`,
+  body:s=>{const w=NB_IDS.map(id=>s.nb[id]).sort((a,b)=>a.opinion-b.opinion).slice(0,2);return`Relations with the suburbs have soured. Mayor ${w[0].name} of ${w[0].city} and Mayor ${w[1].name} of ${w[1].city} are backing a bill in the state legislature that would shift shared revenue away from Memphis.`},
   fact:'This is a game scenario. Memphis and its suburbs have clashed in Nashville before, most visibly over the 2012 law that let the suburbs form their own school districts.',
   choices:[{label:'Send your lobbyists to fight it',cost:0.3,fx:{revenue:-0.5,mood:0.5}},
-   {label:'Cut a deal with the suburban mayors',fx:{revenue:-1},nb:{bartlett:10,germantown:10}},
+   {label:'Cut a deal with the suburban mayors',fx:{revenue:-1},nb:{bartlett:8,germantown:8,collierville:8,arlington:8,lakeland:8,millington:8}},
    {label:'Ignore it',fx:{revenue:-2}}],ignore:{fx:{revenue:-2}}}
+);
+EVENTS.push(
+ {id:'collierville_hq',title:'A corporate headquarters is choosing: Collierville or Downtown',at:'town:collierville',tags:['jobs'],nbr:true,
+  body:s=>`A company with about 600 jobs has narrowed its headquarters search to a Collierville office park and a Downtown Memphis tower. Mayor ${s.nb.collierville.name} has asked you not to start a bidding war between neighbors.`,
+  fact:'Major employers in Collierville include FedEx and Carrier. The company in this event is a game scenario.',
+  choices:[{label:'Offer a tax break to win it for Downtown',cost:1.5,fx:{jobs:1.5},nb:{collierville:-15},council:{jobs:4,fiscal:-3}},
+   {label:'Step back and let Collierville land it',fx:{jobs:0.3},nb:{collierville:14}},
+   {label:'Pitch the region together and split the credit',fx:{jobs:0.7},nb:{collierville:6}}],ignore:{nb:{collierville:-3}}},
+ {id:'arlington_sewer',title:'Arlington wants to buy sewer capacity',at:'town:arlington',tags:['streets'],nbr:true,
+  body:s=>`Arlington has grown fast, and Mayor ${s.nb.arlington.name} says the town needs more wastewater treatment capacity than it can build alone. He's asking to send flow to Memphis's treatment system under a long-term contract.`,
+  fact:'Arlington grew from 2,569 residents in 2000 to 14,549 in 2020. The City of Memphis runs large wastewater treatment plants, including the T.E. Maxson plant. The contract request is a game scenario.',
+  choices:[{label:'Sell capacity at a fair rate',fx:{revenue:0.3},nb:{arlington:14}},
+   {label:'Sell it at a premium',fx:{revenue:0.6},nb:{arlington:-4}},
+   {label:'Refuse: Memphis needs the capacity',nb:{arlington:-14}}],ignore:{nb:{arlington:-4}}},
+ {id:'lakeland_retail',title:'A retailer is torn between Lakeland and Cordova',at:'town:lakeland',tags:['jobs'],nbr:true,
+  body:s=>`A big-box retailer is choosing between the old outlet-mall site on I-40 in Lakeland and a pad near Wolfchase in Cordova. Mayor ${s.nb.lakeland.name} has made the Lakeland site his signature project.`,
+  fact:'The Lakeland Factory Outlet Mall closed around 2011, and the site was later targeted for redevelopment. The retailer in this event is a game scenario.',
+  choices:[{label:'Offer incentives for the Cordova site',cost:1,fx:{jobs:0.6},nb:{lakeland:-12},council:{jobs:2}},
+   {label:'Let Lakeland have it',fx:{jobs:0.1},nb:{lakeland:12}},
+   {label:'Help Lakeland close the deal, ask for a hiring pact for Memphians',fx:{jobs:0.3},nb:{lakeland:7}}],ignore:{nb:{lakeland:-2}}},
+ {id:'millington_navy',title:'Millington wants help protecting the Navy base',at:'town:millington',tags:['jobs'],nbr:true,
+  body:s=>`Mayor ${s.nb.millington.name} wants Memphis to join a regional push in Washington to keep and grow Naval Support Activity Mid-South, whose thousands of jobs include many Memphis residents.`,
+  fact:'Naval Support Activity Mid-South in Millington is one of Tennessee\'s largest single employers, with more than 7,500 military, civilian and contractor staff.',
+  choices:[{label:'Fund a regional advocacy campaign',cost:0.3,fx:{jobs:0.5},nb:{millington:15}},
+   {label:'Sign a letter of support',nb:{millington:5}},
+   {label:'Decline: it\'s Millington\'s fight',nb:{millington:-10}}],ignore:{nb:{millington:-4}}}
 );
 const ORDINANCES=[
  {id:'str',title:'Short-term rental registration',lean:{blight:10,streets:4,jobs:-6,fiscal:-2},
@@ -699,7 +758,7 @@ function newState(){
   return{y:2026,m:10,enacted,ratio,taxRate:3.39,raise:2,raiseCost:0,fyIndex:0,
     reserve:96,policies:{},met:{officers:1917,crime:88,reading:25.7,streets:46,blight:60,transit:40,jobs:55},
     approval:52,mood:0,jobsBoost:0,revBoost:0,county:35,eduBoost:0,
-    council:COUNCIL.map((c,k)=>initMember(c,k)),slots:3,mode:'real',commit:{},nb:initNeighbors(),
+    council:COUNCIL.map((c,k)=>initMember(c,k)),slots:3,mode:'real',commit:{},day:1,speed:2,paused:true,autoPause:true,queue:[],log:[],nb:initNeighbors(),
     events:[],used:{},stage:'none',draft:null,proposal:null,pending:null,term:1,over:false,
     layers:{council:false,superd:false,precinct:false,bld:true,labels:true,edge:true},started:false}
 }
@@ -888,24 +947,58 @@ function expire(s,report){const now=s.y*12+s.m;
     return false})}
 
 // ======================= CALENDAR =======================
-function advance(){
+// ---- real-time clock: days tick by, events arrive mid-month, the month closes on its last day ----
+const SPEEDS=[0,1,2,4,8,16]; // days per real second at speeds 1-5
+function daysIn(y,m){return new Date(y,m,0).getDate()}
+function dateStr(){return`${S.day} ${MONTHS[S.m-1]} ${S.y}`}
+function logIt(t){S.log=S.log||[];S.log.unshift({d:dateStr(),t});if(S.log.length>120)S.log.length=120}
+function releaseQueued(all){if(!S.queue||!S.queue.length)return 0;const due=all?S.queue:S.queue.filter(q=>q.due<=S.day);if(!due.length)return 0;
+  S.queue=all?[]:S.queue.filter(q=>q.due>S.day);
+  due.forEach(q=>{S.events.push(q.ev);const t=evTitle(q.ev),pl=placeOf(evAt(q.ev));logIt(`New: ${t} (${pl.name})`);if(!all)toast(`New: ${t} · ${pl.name}`)});
+  refreshHUD();return due.length}
+function dayTick(){S.day++;
+  if(S.day>daysIn(S.y,S.m)){S.day=daysIn(S.y,S.m);endOfMonth();return}
+  const n=releaseQueued(false);if(n&&S.autoPause!==false)setPaused(true);
+  updateClock()}
+function setPaused(p,msg){S.paused=p;updateClock();if(msg)toast(msg)}
+function setSpeed(v){S.speed=clamp(v,1,5);updateClock();save()}
+function updateClock(){if(!S)return;$('hDate').textContent=dateStr();const c=$('clock');if(!c)return;c.classList.toggle('paused',!!S.paused);
+  $('cPause').textContent=S.paused?'▶':'⏸';$('cPause').setAttribute('aria-label',S.paused?'Resume time':'Pause time');
+  $('speeds').innerHTML=[1,2,3,4,5].map(v=>`<button data-speed="${v}" class="${v<=S.speed?'on':''}" aria-label="Speed ${v}" title="Speed ${v}"></button>`).join('');
+  const pb=$('bPlay');if(pb)pb.innerHTML=S.paused?'▶ Resume <kbd>Space</kbd>':'⏸ Pause <kbd>Space</kbd>'}
+let tAcc=0;
+function timeStep(dt){if(!S||!S.started||S.paused||S.over||modalOpen||!$('start').hidden){tAcc=0;return}
+  tAcc+=dt*SPEEDS[S.speed||2];let guard=0;while(tAcc>=1&&guard++<24){tAcc-=1;dayTick();if(S.paused||modalOpen){tAcc=0;break}}}
+// Skip ahead to the end of the month (N).
+function advance(){if(S.over){showEnd();return}releaseQueued(true);S.day=daysIn(S.y,S.m);endOfMonth()}
+function queueNewBusiness(report){const n0=S.events.length,spawnRep=[];maybeSpawn(S,spawnRep);const fresh=S.events.splice(n0);const dim=daysIn(S.y,S.m);
+  S.queue=S.queue||[];fresh.forEach(ev=>S.queue.push({ev,due:Math.max(S.day+1,2+Math.floor(Math.random()*(dim-3)))}));
+  spawnRep.filter(l=>!/^New: |has a request|confidential memo|lobbying Nashville|on your desk to sign/.test(l)).forEach(l=>report&&report.push(l))}
+function endOfMonth(){
   if(S.over){showEnd();return}
+  releaseQueued(true);
   const before=snapshotMet(S);const report=[];
   monthlySim(S);
-  S.m++;if(S.m>12){S.m=1;S.y++}
+  S.m++;if(S.m>12){S.m=1;S.y++}S.day=1;
   expire(S,report);
-  const queue=[];
+  const queue=[];let stop=false;
   if(S.m===4){S.stage='draft';S.draft=null;S.events.push({id:'budget',kind:'budget',expires:99,born:S.y*12+S.m});
-    report.push(`Budget season: write the FY${fyOf(S)+1} budget at City Hall and submit it this month.`)}
+    report.push(`Budget season: write the FY${fyOf(S)+1} budget at City Hall and submit it this month.`);stop=true}
   if(S.m===5&&S.stage==='draft'){const p=defaultProposal(S);S.proposal=p;S.stage='submitted';S.events=S.events.filter(e=>e.kind!=='budget');
     report.push(`You missed the April deadline. Finance submitted a cost-to-continue budget at $${S.taxRate.toFixed(2)} for you.`)}
   if(S.m===6){if(S.stage==='submitted')queue.push(budgetVote);const r=readingUpdate(S);
     report.push(`TCAP results are out: MSCS reading proficiency went from ${r.before.toFixed(1)}% to ${r.after.toFixed(1)}%.`)}
   if(S.m===7&&S.pending){enact(S,S.pending);report.push(`FY${fyOf(S)} begins. The new budget is in effect.`);S.pending=null;S.stage='none'}
   if(S.m===10&&(S.y===2027||S.y===2031))queue.push(election);
-  maybeSpawn(S,report);
-  save();refreshHUD();closePanel();
-  showReport(before,report,()=>runQueue(queue));
+  // new business arrives on random days through the month
+  queueNewBusiness(report);
+  prevMet=before;
+  const head=`${MONTHS_L[(S.m+10)%12]} closed: approval ${Math.round(S.approval)}% (${S.approval>=before.approval?'+':'−'}${Math.abs(S.approval-before.approval).toFixed(1)}), reserve ${fmtM(S.reserve)}`;
+  logIt(head);report.forEach(l=>logIt(l));
+  save();refreshHUD();
+  toast(report.length?`${head}. ${report.length} update${report.length===1?'':'s'} in the ledger.`:head+'.');
+  if(stop)setPaused(true,`Budget season: write the FY${fyOf(S)+1} budget and submit it this month.`);
+  if(queue.length){setPaused(true);closePanel();runQueue(queue)}
 }
 function runQueue(q){if(!q.length)return;const f=q.shift();f(()=>runQueue(q))}
 function defaultProposal(s){const maint=maintFor(s);return{divs:{...maint},maint,tax:s.taxRate,raise:2}}
@@ -916,7 +1009,7 @@ const $=id=>document.getElementById(id);
 let prevMet=null;
 function refreshHUD(){
   if(!S)return;recomputeAll(S);if(S.council.some(m=>m.d>7&&!m.home))assignHomes();
-  $('hDate').textContent=`${MONTHS[S.m-1]} ${S.y}`;$('hFY').textContent=`FY${fyOf(S)} · term ${S.term}`;
+  $('hFY').textContent=`FY${fyOf(S)} · term ${S.term}`;updateClock();
   $('hRes').textContent=fmtM(S.reserve);const pct=S.reserve/annualSpend(S)*100;$('hResPct').textContent=`${pct.toFixed(1)}% of budget${pct<10?' · below 10%':''}`;$('hResPct').style.color=pct<10?'var(--bad)':'';
   $('hApp').textContent=Math.round(S.approval)+'%';$('hAppBar').style.width=S.approval+'%';$('hAppBar').style.background=S.approval>=50?'var(--good)':S.approval>=40?'var(--warn)':'var(--bad)';
   $('hCouncil').textContent=`${favorable(S)} / 13`;$('hCouncilS').textContent=commitCount()?`favorable · ${commitCount()} committed`:'members favorable';
@@ -1177,12 +1270,13 @@ function openNeighbor(id){const n=S.nb[id],N=NEIGHBORS[id];if(!n)return;recomput
    <div class="facts"><h4>Why relations stand here</h4><div class="opl">${parts.length?parts.map(x=>`<div><span>${x.t}</span><b class="${x.v>0?'up':'down'}">${fmtOp(x.v)}</b></div>`).join(''):'<div><span>No strong feelings yet</span><b>0</b></div>'}</div></div>
    <div class="facts"><h4>About ${N.city}</h4><ul>${N.facts.map(f=>`<li>${f}</li>`).join('')}</ul>
      <p class="note">${N.city} is a separate city with its own government and budget. The Memphis mayor and council have no authority here, so you work with ${N.city} the way CK3 rulers deal with a neighboring realm. Mayor ${n.name} is fictional; the office and facts are real.</p></div>
-   <div class="facts"><h4>Why it matters</h4><p class="note">At +40 or better, regional cooperation slowly lifts Memphis's jobs climate. If either suburb falls to −30 or worse, the suburban mayors may lobby the state legislature against Memphis.</p></div>
+   <div class="facts"><h4>Why it matters</h4><p class="note">At +40 or better, regional cooperation slowly lifts Memphis's jobs climate. If any suburb falls to −30 or worse, the suburban mayors may lobby the state legislature against Memphis.</p></div>
    <div class="choices">
     <button class="choice" data-act="nbmeet" data-id="${id}" ${canMeet?'':'disabled'}><b>Meet with Mayor ${n.name.split(' ').pop()}</b><small>${n.met===now?'You already met this month':S.slots<=0?'No meetings left on your schedule this month':`Relations +8 · uses 1 of ${S.slots} meetings left this month`}</small></button>
     <button class="choice" data-act="nbgift" data-id="${id}" ${canGift?'':'disabled'}><b>Co-host a regional event</b><small>${now-n.gift<6?`Available again in ${6-(now-n.gift)} month${6-(now-n.gift)===1?'':'s'}`:`−$0.25M reserves · Relations +12`}</small></button>
     <button class="choice" data-act="nbgo" data-id="${id}"><b>Go to ${N.city}</b><small>Fly the map there</small></button>
    </div>`,'nb'+id)}
+function openLedger(){const L=S.log||[];openPanel('Everything that has happened, newest first','Ledger',L.length?`<div class="logl">${L.map(x=>`<div><span>${x.d}</span><p style="margin:0">${x.t}</p></div>`).join('')}</div>`:'<p class="note">Nothing yet. Start the clock with Space or ▶.</p>','ledger')}
 function openPolicies(){const ks=Object.keys(POLICIES);
   openPanel('Ongoing programs you control','Your initiatives',`<p>Mid-year, these are paid from the reserve fund. In April they go into the budget you send the council.</p>
    ${ks.map(k=>`<div class="row"><span class="pill ${S.policies[k]?'on':''}">${S.policies[k]?'Active':'Off'}</span><span style="flex:1;min-width:160px">${POLICIES[k].name} · ${fmtM(POLICIES[k].cost)}/yr</span>${S.policies[k]?`<button class="btn" data-act="toggle" data-k="${k}">End it</button>`:`<a href="#" data-go="${POLICIES[k].where}">Fund it at ${placeOf(POLICIES[k].where).name}</a>`}</div>`).join('')}`,'policies')}
@@ -1199,8 +1293,8 @@ function election(next){
 function summary(){const M=S.met;return`<div class="facts"><h4>Your record</h4><ul><li>Approval: ${Math.round(S.approval)}%</li><li>Sworn officers: ${Math.round(M.officers).toLocaleString()} (started at 1,917)</li><li>Violent crime index: ${M.crime.toFixed(0)} (started at 88)</li><li>MSCS reading proficiency: ${M.reading.toFixed(1)}% (started at 25.7%)</li><li>Reserve fund: ${fmtM(S.reserve)} (started at $96.0M)</li><li>Property tax: $${S.taxRate.toFixed(2)} (started at $3.39)</li></ul></div>`}
 function showEnd(){openModal('Game over','Your time in office is over',`${summary()}<div class="row"><button class="btn primary" data-act="newgame">Run again</button></div>`)}
 function openHelp(){closePanel();openModal('How to play','Guide',`
-  <div class="facts"><h4>Controls</h4><ul><li>WASD or the arrow keys pan the map; hold Shift to pan faster. Moving the mouse to the edge of the screen scrolls too (turn it off under Layers). You can also drag.</li><li>Scroll or pinch to zoom toward the cursor. Zoomed out you get the political map, with each council district in its own color. Zoom in and the camera tilts down into the 3D city.</li><li>Click a landmark or amber pin to open it. Click a district or precinct when those layers are on.</li><li>N advances one month. B opens the budget, C the council, L the map layers. Keys 1–6 switch map modes: City, Political, Council opinion, Street condition, MPD precincts, Region.</li></ul></div>
-  <div class="facts"><h4>The year</h4><ul><li>Council members are characters. Each has traits, a home district and an opinion of you from −100 to +100, built from the reasons listed on their page. Reasons fade over time. Each month you get 3 private meetings, and you can fund a $1M project in a member's district every 6 months. Frugal members resent that spending.</li><li>Favors and hooks: members owe you a favor when you grant their requests (blue pins in their home districts), fund their district projects or quietly protect them. Your inspector general's memos can hand you a hook. Spend a favor or a hook to lock a member's vote for the next council vote. Hooks can leak. Press V or open the Council to see the whip count.</li><li>Bartlett and Germantown are separate cities, outlined on the map. Their mayors are characters with their own relations score. Meet them, co-host events, and handle shared issues like mutual aid, annexation reserves, school buildings and water. Good relations help the regional economy; bad ones send the suburbs to Nashville against you.</li><li>Fiscal year runs July–June. Write the next budget in April, the council votes in June, it takes effect July 1.</li><li>TCAP reading results arrive in June.</li><li>Unanswered problems expire and cost you approval and council goodwill. Handling an issue in a member's district earns a little goodwill from that member.</li><li>City elections: October 2027 and October 2031. Mayors are limited to two terms.</li></ul></div>
+  <div class="facts"><h4>Controls</h4><ul><li>WASD or the arrow keys pan the map; hold Shift to pan faster. Moving the mouse to the edge of the screen scrolls too (turn it off under Layers). You can also drag.</li><li>Scroll or pinch to zoom toward the cursor. Zoomed out you get the political map, with each council district in its own color. Zoom in and the camera tilts down into the 3D city.</li><li>Click a landmark or amber pin to open it. Click a district or precinct when those layers are on.</li><li>Time runs day by day, like CK3. Space pauses and resumes; + and − (or the pips by the date) set speed 1–5. New business arrives on random days and pauses the game (turn that off under Layers). Each month closes on its last day and goes into the Ledger. N skips to the end of the month. B opens the budget, C the council, L the map layers. Keys 1–6 switch map modes: City, Political, Council opinion, Street condition, MPD precincts, Region.</li></ul></div>
+  <div class="facts"><h4>The year</h4><ul><li>Council members are characters. Each has traits, a home district and an opinion of you from −100 to +100, built from the reasons listed on their page. Reasons fade over time. Each month you get 3 private meetings, and you can fund a $1M project in a member's district every 6 months. Frugal members resent that spending.</li><li>Favors and hooks: members owe you a favor when you grant their requests (blue pins in their home districts), fund their district projects or quietly protect them. Your inspector general's memos can hand you a hook. Spend a favor or a hook to lock a member's vote for the next council vote. Hooks can leak. Press V or open the Council to see the whip count.</li><li>Bartlett, Germantown, Collierville, Arlington, Lakeland and Millington are separate cities, outlined on the map. Their mayors are characters with their own relations score. Meet them, co-host events, and handle shared issues like mutual aid, annexation reserves, school buildings and water. Good relations help the regional economy; bad ones send the suburbs to Nashville against you.</li><li>Budget season (April), the June budget vote and elections pause the clock for you.</li><li>Fiscal year runs July–June. Write the next budget in April, the council votes in June, it takes effect July 1.</li><li>TCAP reading results arrive in June.</li><li>Unanswered problems expire and cost you approval and council goodwill. Handling an issue in a member's district earns a little goodwill from that member.</li><li>City elections: October 2027 and October 2031. Mayors are limited to two terms.</li></ul></div>
   <div class="facts"><h4>The map</h4><ul><li>Streets, building footprints and heights, city limits, the Mississippi River, creeks, parks, railroads, council districts, super districts and MPD precincts all come from the City of Memphis's public GIS services (maps.memphistn.gov and gis.memphistn.gov), downloaded October 2026. Road classes come from the Memphis MPO's functional classification layer.</li><li>Landmark positions come from the city's facility records and address locator.</li></ul></div>
   <div class="facts"><h4>Real vs. modeled</h4><ul><li>Real: FY2027 operating budget ($906M adopted), $3.39 tax rate, 2% raises, $96M reserve, MATA $32M, xAI's $15M in taxes, the $13.6M Southwest Twin precinct, MPD's ~1,917 officers and ~2,500 authorized, MSCS 25.7% reading vs ~45% statewide, 2025's 26.4% drop in murders, and the council's structure and charter powers.</li><li>Modeled: the division split (FY2025 shares scaled to FY2027), revenue per tax cent, how spending moves indicators, the crime and street indexes, council members and their votes.</li></ul></div>
   <div class="facts"><h4>Sources</h4><ul>
@@ -1342,7 +1436,7 @@ function addLabels(){
   ROADS.forEach(r=>{const el=document.createElement('div');el.className=r[3]?'shield':'road';el.textContent=r[0];roadMarkers.push({m:mk(el,r[2],r[1]),el,sh:r[3]})});
   NB_IDS.forEach(id=>{const g=GEO.nb[id];if(!g)return;const N=NEIGHBORS[id];const el=document.createElement('button');el.className='lm nbchip';el.setAttribute('aria-label',`City of ${N.city}`);
     el.innerHTML=`<span class="dot" style="background:${N.col}"></span><span class="nm"></span><span class="ct"></span>`;el.addEventListener('click',e=>{e.stopPropagation();if(!S.started)return;openNeighbor(id)});
-    nbMarkers[id]={m:new maplibregl.Marker({element:el,anchor:'left',offset:[-6,0]}).setLngLat(g.c).addTo(map),el}});
+    const right=id==='lakeland';nbMarkers[id]={m:new maplibregl.Marker({element:el,anchor:right?'right':'left',offset:right?[6,-12]:[-6,0]}).setLngLat(g.c).addTo(map),el}});
   LMKS.forEach(L=>{const el=document.createElement('button');el.className='lm'+(L.planned?' planned':'');el.setAttribute('aria-label',L.name);
     el.innerHTML=`<span class="dot" style="background:${L.col}"></span><span class="nm">${L.short||L.name}</span><span class="ct"></span>`;
     el.addEventListener('click',e=>{e.stopPropagation();if(!S.started)return;openPlace(L.id)});
@@ -1391,7 +1485,7 @@ function applyLayers(){if(!mapReady)return;const L=S?S.layers:{superd:false,bld:
   vis('pci',mode==='streets');['streets','roads-c','roads-m','roads-p','roads-i','roads-i-case'].forEach(id=>{if(map.getLayer(id))map.setPaintProperty(id,'line-opacity',mode==='streets'?0.35:1)});
   renderModes();renderLegend();
   ['bmain-flat','bmain-3d','bhomes-flat','bhomes-3d'].forEach(id=>vis(id,L.bld));
-  $('lySuper').checked=L.superd;$('lyBld').checked=L.bld;$('lyLabels').checked=L.labels;$('lyEdge').checked=L.edge!==false;
+  $('lySuper').checked=L.superd;$('lyBld').checked=L.bld;$('lyLabels').checked=L.labels;$('lyEdge').checked=L.edge!==false;$('lyPause').checked=S?S.autoPause!==false:true;
   zoomClasses();if(L.bld&&homesState==='idle'&&map.getSource('bmain'))maybeLoadHomes()}
 let hoverState=null;
 function setupMapInteractions(){
@@ -1426,7 +1520,7 @@ const PANKEYS=new Set(['w','a','s','d','arrowup','arrowdown','arrowleft','arrowr
 const keysDown=new Set();const mouse={x:0,y:0,in:false,btn:false};let flying=false,lastT=0;
 const pitchFor=z=>z<=11.2?0:z>=16.2?56:(z-11.2)/5*56;
 function camFly(o){if(!map)return;flying=true;map.flyTo({center:o.center,zoom:o.zoom,pitch:pitchFor(o.zoom),bearing:0,speed:o.speed||1.3,curve:1.42,essential:true});map.once('moveend',()=>{flying=false})}
-function camLoop(t){const dt=Math.min(.05,lastT?(t-lastT)/1000:0);lastT=t;
+function camLoop(t){const dt=Math.min(.05,lastT?(t-lastT)/1000:0);lastT=t;timeStep(dt);
   if(map&&mapReady&&S&&S.started&&!modalOpen&&$('start').hidden){
     let dx=0,dy=0;
     if(keysDown.has('w')||keysDown.has('arrowup'))dy-=1;if(keysDown.has('s')||keysDown.has('arrowdown'))dy+=1;
@@ -1477,7 +1571,7 @@ function renderLegend(){const el=$('legend');if(!el||!S)return;const mode=S.mode
     <p>Pavement Condition Index on ${PAVE.all?PAVE.all.n.toLocaleString():'1,738'} segments of city-tracked highways and routes, lane-mile weighted. Source: City of Memphis GIS. Most neighborhood streets aren't in this layer.</p>`}
   else if(mode==='region'){recomputeAll(S);el.innerHTML=`<h3>Region</h3><div class="grad" style="background:linear-gradient(90deg,${opColor(-60)},${opColor(0)},${opColor(60)})"></div><div class="ticks"><span>−60</span><span>relations</span><span>+60</span></div>
     ${NB_IDS.map(id=>{const n=S.nb[id];return`<button class="lrow" data-nb="${id}"><i style="background:${opColor(n.opinion)}"></i><span>${NEIGHBORS[id].city} · Mayor ${n.name.split(' ').pop()}</span><b>${fmtOp(n.opinion)}</b></button>`}).join('')}
-    <p>City boundaries from City of Memphis GIS. Collierville, Arlington, Lakeland and Millington are separate cities too, not modeled yet.</p>`}
+    <p>City boundaries from City of Memphis GIS. Streets and buildings are mapped for Memphis and its edges; the outer towns show their boundaries.</p>`}
   else{el.innerHTML=`<h3>MPD precincts</h3>${GEO.precincts.map((f,k)=>`<button class="lrow" data-prec="${k}"><i style="background:${PCOL[k]}"></i><span>${f.v}</span><b></b></button>`).join('')}<p>Patrol precinct boundaries from City of Memphis GIS.</p>`}}
 // Political map: council districts are painted like realms when zoomed out, and fade as you zoom into the streets.
 function politicalPaint(on,suppress){if(!map.getLayer('council-fill'))return;const P=on?.2:0,L1=on?1:0,F=suppress?0:.52,FH=suppress?0:.66,LF=suppress?0:1;
@@ -1495,12 +1589,16 @@ window.addEventListener('keydown',e=>{
   if(k>='1'&&k<='6'){setMode(MODES[+k-1].id);return}
   if(k==='v'){closePanel();openWhip();return}
   if(k==='escape'){closePanel();$('layers').hidden=true;return}
+  if(e.key===' '||k==='spacebar'){e.preventDefault();setPaused(!S.paused);return}
+  if(e.key==='+'||e.key==='='){setSpeed((S.speed||2)+1);return}
+  if(e.key==='-'||e.key==='_'){setSpeed((S.speed||2)-1);return}
   if(k==='n')advance();else if(k==='b')openBudget();else if(k==='c')openCouncil();else if(k==='h')openHelp();else if(k==='l')toggleLayersBox();
 });
 function toggleLayersBox(){$('layers').hidden=!$('layers').hidden;$('bLayers').classList.toggle('on',!$('layers').hidden)}
-document.addEventListener('change',e=>{const t=e.target;if(!S)return;const map_={lySuper:'superd',lyBld:'bld',lyLabels:'labels',lyEdge:'edge'};
+document.addEventListener('change',e=>{const t=e.target;if(!S)return;if(t.id==='lyPause'){S.autoPause=t.checked;save();return}const map_={lySuper:'superd',lyBld:'bld',lyLabels:'labels',lyEdge:'edge'};
   if(map_[t.id]){S.layers[map_[t.id]]=t.checked;applyLayers();save()}});
 document.addEventListener('click',e=>{
+  const sp=e.target.closest('[data-speed]');if(sp){setSpeed(+sp.dataset.speed);if(S.paused)setPaused(false);return}
   const mo=e.target.closest('[data-mode]');if(mo){setMode(mo.dataset.mode);return}
   const chr=e.target.closest('[data-char]');if(chr){if(modalOpen){onClose=null;closeModal()}openCharacter(+chr.dataset.char);return}
   const nbr=e.target.closest('[data-nb]');if(nbr){const g=GEO.nb[nbr.dataset.nb];if(g)camFly({center:g.c,zoom:Math.max(map.getZoom(),11.2),speed:1.4});openNeighbor(nbr.dataset.nb);return}
@@ -1535,6 +1633,10 @@ document.addEventListener('click',e=>{
     S.council.forEach(o=>{if(o!==m&&has(o,'frugal'))addMod(o,'Pork-barrel spending',-4)});S.met.streets+=0.3;S.met.blight-=0.3;recomputeAll(S);save();refreshHUD();toast(`$1M project funded in District ${hd}. ${m.name}: ${fmtOp(m.opinion)}.`);openCharacter(+b.dataset.i)}
   else if(a==='godist'){const c=districtCenter(+b.dataset.d);if(c)camFly({center:c,zoom:12.4,speed:1.4})}
   else if(a==='advance'){if(modalOpen){onClose=null;closeModal()}advance()}
+  else if(a==='pause'){setPaused(!S.paused)}
+  else if(a==='faster'){setSpeed((S.speed||2)+1)}
+  else if(a==='slower'){setSpeed((S.speed||2)-1)}
+  else if(a==='ledger'){openLedger()}
   else if(a==='toggle'){const k=b.dataset.k;S.policies[k]=!S.policies[k];
     if(S.policies[k]){const cf={recruit:{safety:5,fiscal:-3},libHours:{education:4,fiscal:-2},mata:{transit:6,fiscal:-3},mploy:{education:4,safety:3,fiscal:-2},crews:{blight:6,fiscal:-2},tutors:{education:6,fiscal:-2},air:{oversight:3}}[k];applyCouncil(S,cf,`Funded: ${POLICIES[k].name}`);S.mood+=1}
     else{S.mood-=1}
@@ -1561,10 +1663,10 @@ function save(){if(!S||!S.started)return;try{localStorage.setItem(KEY,JSON.strin
 function load(){try{const t=localStorage.getItem(KEY);if(!t)return null;const s=JSON.parse(t);return s&&s.started?s:null}catch(e){return null}}
 
 // ======================= BOOT =======================
-function beginTerm(){S=newState();assignHomes();recomputeAll(S);S.started=true;spawn(S,EVENTS[0],{expires:99});save();$('start').hidden=true;prevMet=null;applyLayers();refreshHUD();
+function beginTerm(){S=newState();assignHomes();recomputeAll(S);S.started=true;spawn(S,EVENTS[0],{expires:99});queueNewBusiness(null);save();$('start').hidden=true;prevMet=null;applyLayers();refreshHUD();
   camFly({center:[LM.cityhall.lon,LM.cityhall.lat],zoom:15.6,speed:0.9});
-  setTimeout(()=>openPlace('cityhall'),2600);toast('Sworn in. Your chief of staff is waiting at City Hall.')}
-function migrate(s){if(!s)return s;s.mode=s.mode||'real';if(s.slots==null)s.slots=3;s.commit=s.commit||{};if(!s.nb)s.nb=initNeighbors();s.council.forEach(m=>{if(m.favors==null)m.favors=0;if(m.hook===undefined)m.hook=null});
+  setTimeout(()=>openPlace('cityhall'),2600);toast('Sworn in. Time is paused. Read your briefing, then press Space or ▶ to start the clock.')}
+function migrate(s){if(!s)return s;if(s.day==null)s.day=1;if(s.speed==null)s.speed=2;if(s.paused==null)s.paused=true;if(s.autoPause==null)s.autoPause=true;s.queue=s.queue||[];s.log=s.log||[];s.mode=s.mode||'real';if(s.slots==null)s.slots=3;s.commit=s.commit||{};{const fresh=initNeighbors();s.nb=s.nb||{};for(const id in fresh)if(!s.nb[id])s.nb[id]=fresh[id]}s.council.forEach(m=>{if(m.favors==null)m.favors=0;if(m.hook===undefined)m.hook=null});
   s.council.forEach((m,k)=>{const c=COUNCIL.find(x=>x.seat===m.seat)||COUNCIL[k];Object.assign(m,{g:c.g,age:c.age,traits:c.traits,name:m.name||c.name});
     if(!m.mods){const old=m.op==null?50:m.op;m.mods=[{t:'First impressions',v:Math.round((hash(k,9)-.5)*16),perm:true}];if(Math.abs(old-50)>=1)m.mods.push({t:'Past dealings',v:Math.round((old-50)*2)});m.met=-1;m.funded=-99}});
   S=s;recomputeAll(s);return s}
