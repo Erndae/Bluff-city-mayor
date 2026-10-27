@@ -356,6 +356,8 @@ button.seat:hover{border-color:var(--amber)}
 .lsel button.on{color:var(--amber);border-color:var(--amber)}
   .actions .btn.act{border-color:var(--amber);color:var(--amber)}
 .choices .choice small{white-space:normal}
+/* v15 */
+.homepin{background:#0d1822;border:2px solid var(--amber);border-radius:50%;width:30px;height:30px;display:grid;place-items:center;cursor:pointer;font-size:15px;box-shadow:0 2px 6px rgba(0,0,0,.5)}
 /* v14 */
 details.analysis{margin-top:6px}details.analysis summary{cursor:pointer;color:var(--muted);font-size:13px}
 /* v13 */
@@ -449,7 +451,7 @@ details.analysis{margin-top:6px}details.analysis summary{cursor:pointer;color:va
     <button class="btn primary" data-act="pause" id="bPlay">▶ Resume <kbd>Space</kbd></button>
   </nav>
   <div class="status" id="status">Loading map…</div>
-  <div class="credit"><span class="ver" id="verTag">v14</span>Map data: City of Memphis GIS · Shelby County MPO</div>
+  <div class="credit"><span class="ver" id="verTag">v15</span>Map data: City of Memphis GIS · Shelby County MPO</div>
   <div class="tip" id="tip" hidden></div>
   <div class="toast" id="toast" role="status"></div>
   <section class="panel" id="panel" hidden aria-live="polite">
@@ -480,7 +482,7 @@ details.analysis{margin-top:6px}details.analysis summary{cursor:pointer;color:va
         <button class="btn primary" id="bNew">Create your mayor</button>
         <button class="btn" id="bLoad" hidden>Continue saved term</button>
       </div>
-      <p class="note startv">Version <b class="ver" id="verStart">v14</b></p>
+      <p class="note startv">Version <b class="ver" id="verStart">v15</b></p>
       <p class="note">Budget totals, tax rate, reserve, MPD staffing, school reading scores and the council's structure and charter powers come from city documents and local reporting (see Guide → Sources). Council members are fictional; seats and districts are real.</p>
     </div>
     <div class="startbox create" id="create" hidden>
@@ -792,8 +794,8 @@ const EVENTS=[
   body:s=>`MLGW is the city-owned utility. You appoint its board, and the council confirms. Two names are on your desk: a consumer advocate who wants bill relief and faster outage response, and a retired utility engineer who wants to spend on grid hardening.`,
   fact:'The mayor appoints board members to agencies including MLGW and MATA; the council approves appointments.',
   choices:[
-   {label:'Nominate the consumer advocate',vote:{lean:{oversight:10,labor:8,fiscal:-6},pass:{fx:{mood:2}},fail:{fx:{mood:-1}}}},
-   {label:'Nominate the utility engineer',vote:{lean:{fiscal:8,streets:8,jobs:6,oversight:-4},pass:{fx:{streets:1}},fail:{fx:{mood:-1}}}}],
+   {label:'Nominate the consumer advocate',vote:{lean:{oversight:10,labor:8,fiscal:-6},pass:{fx:{mood:2,mlgw:-0.02}},fail:{fx:{mood:-1}}}},
+   {label:'Nominate the utility engineer',vote:{lean:{fiscal:8,streets:8,jobs:6,oversight:-4},pass:{fx:{streets:1,mlgw:0.03}},fail:{fx:{mood:-1}}}}],
   ignore:{fx:{mood:-0.5}}},
  {id:'winter',title:'Hard freeze: low water pressure',at:'mlgw',tags:['streets'],months:[12,1,2],
   body:s=>`A hard freeze has burst pipes across the system and MLGW is warning about low pressure. People are calling City Hall, not the utility.`,
@@ -1016,7 +1018,7 @@ function whip(s,p){recomputeAll(s);const c=budgetCalc(s,p);return s.council.filt
 
 // ======================= SIM =======================
 function snapshotMet(s){return{...s.met,approval:s.approval,reserve:s.reserve}}
-function applyFx(s,fx){if(!fx)return;for(const k in fx){const v=fx[k];
+function applyFx(s,fx){if(!fx)return;for(const k in fx){const v=fx[k];if(k==='mlgw'){s.mlgwAdj=(s.mlgwAdj||1)*(1+v);continue}if(k==='mlgwgw'){s.mlgwGW=(s.mlgwGW||1)*(1+v);continue}
   if(k==='mood')s.mood+=v;else if(k==='county')s.county=clamp(s.county+v,0,100);else if(k==='revenue')s.revBoost+=v;
   else if(k==='jobs')s.jobsBoost+=v,s.met.jobs+=v*0.5;else if(k==='reading')s.eduBoost+=v;
   else if(s.met[k]!==undefined)s.met[k]+=v}}
@@ -1222,7 +1224,8 @@ function endOfMonth(){
   if(S.m===12)suburbElections(report);
   // new business arrives on random days through the month
   queueNewBusiness(report);
-  const pout=projectsMonth(report);storiesMonth();upkeepMonth(report);dealsMonth(report);promisesMonth(report);if(S.camp){campaignMonth(report);purseMonth(report)}moneyMonth(report,pout&&pout.paid);
+  if(S.y===2026&&S.m===11&&!S.used.mlgw_rates){const def=EVENTS.find(e=>e.id==='mlgw_rates');S.used.mlgw_rates=nowM();S.queue=S.queue||[];S.queue.push({ev:{id:'mlgw_rates',kind:'event',expires:2,born:nowM()},due:5+Math.floor(Math.random()*10)})}
+  const pout=projectsMonth(report);storiesMonth();upkeepMonth(report);dealsMonth(report);promisesMonth(report);if(S.camp){campaignMonth(report);purseMonth(report);householdMonth(report)}moneyMonth(report,pout&&pout.paid);
   prevMet=before;
   const head=`${MONTHS_L[(S.m+10)%12]} closed: approval ${Math.round(S.approval)}% (${S.approval>=before.approval?'+':'−'}${Math.abs(S.approval-before.approval).toFixed(1)}), reserve ${fmtM(S.reserve)}`;
   logIt(head);report.forEach(l=>logIt(l));
@@ -1239,7 +1242,7 @@ function enact(s,p){DIVS.forEach(d=>{s.enacted[d.id]=p.divs[d.id];s.ratio[d.id]=
 // Victoria 3-style voter groups. Each has a share of residents, turnout, home districts, concerns and an approval of you.
 // Citywide approval is the turnout-weighted average of the groups; each council district's approval comes from the groups that live there.
 // Shares, district mix and turnout are modeled, loosely grounded in Memphis demographics; they are not survey data.
-const VERSION='v14';
+const VERSION='v15';
 const GROUPS=[
  {id:'working',sh:'Working families',n:'Working families',ic:'⚒',c:'#f2a93b',share:24,turn:.5,start:56,w:{jobs:1,safety:.8,transit:.5},
   d:'Hourly workers in logistics, warehouses, health care and service jobs. The biggest bloc in the city.',dm:{1:1.1,2:.8,3:1.3,4:1.2,5:.6,6:1.2,7:1.1}},
@@ -1626,7 +1629,7 @@ function openMayor(){const M=S.mayor;if(!M)return;const now=S.y*12+S.m;const cd=
   openPanel(`Your character · term ${S.term}`,`Mayor ${M.name}`,`
    <div class="char"><div>${portrait(M,104)}</div><div class="charinfo"><div class="note">Age ${M.age+(S.y-2026)} · Mayor of Memphis</div><div class="traits">${mTraitChips()}</div>
      <div class="note">Lifestyle focus: <b style="color:var(--amber)">${skillName(M.focus)}</b></div>
-     <div class="row"><input id="mRename" maxlength="40" value="${M.name.replace(/"/g,'&quot;')}" aria-label="Your name" style="font:inherit;background:var(--panel2);border:1px solid var(--line);border-radius:4px;padding:4px 7px;color:var(--text);min-width:0;flex:1"><button class="btn" data-act="rename" style="padding:5px 10px">Rename</button></div><div class="row"><button class="btn" data-act="look">Change your look</button><button class="btn" data-act="promises">Your promises</button><button class="btn" data-act="shop">Personal account${S.purse?` · $${Math.round(S.purse.cash).toLocaleString()}`:''}</button></div></div></div>
+     <div class="row"><input id="mRename" maxlength="40" value="${M.name.replace(/"/g,'&quot;')}" aria-label="Your name" style="font:inherit;background:var(--panel2);border:1px solid var(--line);border-radius:4px;padding:4px 7px;color:var(--text);min-width:0;flex:1"><button class="btn" data-act="rename" style="padding:5px 10px">Rename</button></div><div class="row"><button class="btn" data-act="look">Change your look</button><button class="btn" data-act="promises">Your promises</button><button class="btn" data-act="household">Household${S.home?` · ${LMAP[S.home.id].n}`:''}</button><button class="btn" data-act="shop">Wardrobe${S.purse?` · $${Math.round(S.purse.cash).toLocaleString()}`:''}</button></div></div></div>
    <div class="facts"><h4>Skills</h4><div class="skills">${SKILLS.map(sk=>{const tb=traitSkill(sk.k,M.traits);return`<div class="skrow"><span class="skn">${sk.ic} ${sk.n}${M.focus===sk.k?' <span class="pill on">focus</span>':''}</span><b>${mskill(sk.k)}</b>
      <div class="xpbar" title="${Math.floor(M.xp[sk.k]||0)} of 100 experience to the next point"><i style="width:${Math.min(100,M.xp[sk.k]||0)}%"></i></div>
      <small>${sk.d} Base ${M.skills[sk.k]}${tb?`, ${tb>0?'+':''}${tb} from traits`:''} · ${Math.floor(M.xp[sk.k]||0)}/100 experience</small></div>`}).join('')}</div></div>
@@ -1679,8 +1682,8 @@ function openRegion(){recomputeAll(S);openPanel('Six neighboring cities','Region
 
 // ======================= BACK BUTTON & TABS =======================
 const NAV={stack:[],cur:null,busy:false,depth:0};const VIEWS={};
-const TABS=[['openDesk','Desk'],['openActions','Actions'],['openHQ','Campaign'],['openFinances','Money'],['openMayor','Mayor'],['openOpinion','Opinion'],['openCouncil','Council'],['openRegion','Region'],['openBudget','Budget'],['openPolicies','Programs'],['openLedger','Ledger']];
-const TAB_OF={openFinances:'openFinances',openHQ:'openHQ',openDonor:'openHQ',openShop:'openMayor',openPromises:'openDesk',openDeal:'openActions',openLook:'openMayor',openDesk:'openDesk',openProject:'openDesk',openPlanner:'openActions',openActions:'openActions',openPropose:'openActions',openMayor:'openMayor',openOpinion:'openOpinion',openGroup:'openOpinion',openCouncil:'openCouncil',openWhip:'openCouncil',openCharacter:'openCouncil',openDistrict:'openCouncil',openRegion:'openRegion',openNeighbor:'openRegion',openBudget:'openBudget',openPolicies:'openPolicies',openLedger:'openLedger'};
+const TABS=[['openDesk','Desk'],['openActions','Actions'],['openHQ','Campaign'],['openFinances','Money'],['openHousehold','Home'],['openMayor','Mayor'],['openOpinion','Opinion'],['openCouncil','Council'],['openRegion','Region'],['openBudget','Budget'],['openPolicies','Programs'],['openLedger','Ledger']];
+const TAB_OF={openHousehold:'openHousehold',openMove:'openHousehold',openFinances:'openFinances',openHQ:'openHQ',openDonor:'openHQ',openShop:'openMayor',openPromises:'openDesk',openDeal:'openActions',openLook:'openMayor',openDesk:'openDesk',openProject:'openDesk',openPlanner:'openActions',openActions:'openActions',openPropose:'openActions',openMayor:'openMayor',openOpinion:'openOpinion',openGroup:'openOpinion',openCouncil:'openCouncil',openWhip:'openCouncil',openCharacter:'openCouncil',openDistrict:'openCouncil',openRegion:'openRegion',openNeighbor:'openRegion',openBudget:'openBudget',openPolicies:'openPolicies',openLedger:'openLedger'};
 function navWrap(name,fn){const w=function(...a){const sig=name+JSON.stringify(a);
     if(!NAV.busy&&NAV.cur&&NAV.cur.sig!==sig){NAV.stack.push(NAV.cur);if(NAV.stack.length>25)NAV.stack.shift()}
     NAV.cur={sig,name,a,title:''};NAV.depth++;let r;try{r=fn.apply(this,a)}finally{NAV.depth--}
@@ -1909,6 +1912,7 @@ function finishProject(P,out){const T=PTYPES[P.type];P.stage='done';P.progress=1
   plog(P,`Finished${P.delays?` after ${P.delays} delay${P.delays===1?'':'s'}`:' on schedule'}. Total cost ${fmtM(P.spent)}.`);addRecord({t:`Finished ${P.name} in District ${P.d}`,good:Object.keys(T.done),kind:'project'});
   out.lines.push(`${P.name} is finished${P.delays?` (${P.delays} delay${P.delays===1?'':'s'})`:''}. ${describe({fx})}.`);gainXP('stew',15);
   if(P.type==='road')markRoadFixed(P);
+  neighborhoodBoost(P);
   if(P.type==='housing')startStory('hs',{n:P.site.name,d:P.d,pid:P.id})}
 function markRoadFixed(P){if(!map||!map.getSource('pci'))return;RAW.pci.a.forEach((a,i)=>{if(a[1]===P.d&&a[3]&&titleCase(a[3])===P.site.name)map.setFeatureState({source:'pci',id:i+1},{fixed:true})})}
 function restoreFixedRoads(){(S.projects||[]).filter(p=>p.type==='road'&&p.stage==='done').forEach(markRoadFixed)}
@@ -2047,6 +2051,13 @@ EVENTS.push(
   choices:[{label:'Fund rent relief for longtime tenants',cost:1,local:2,grp:{renters:4,faith:2},end:{t:'Rent relief after the rehab',camp:{d:0,t:'Your opponent says you gentrified the block, then paid to patch it.'}}},
    {label:'Call it progress',local:-3,grp:{owners:3,business:2,renters:-5,faith:-3},end:{t:'Rents rose after the rehab',camp:{d:-1,t:'Your opponent says your housing program priced people out.'}}}]});
 
+EVENTS.push({id:'mlgw_rates',scripted:true,title:'MLGW rate increase heads to the council',at:'mlgw',tags:['streets'],
+  body:s=>`MLGW's board has approved a budget with a 12% increase for residential customers and 30% for data centers. Now it needs the City Council. MLGW says aging gas and water lines need the money; residents are still absorbing January's electric increase. Your position will carry weight with the council, and you pay MLGW too.`,
+  fact:'On Oct 21, 2026, MLGW\'s board approved a budget with a 12% residential increase and a 30% increase for data centers; it goes to the City Council for approval (Action News 5).',
+  choices:[{label:'Back the full increase: the pipes need it',fx:{mlgwgw:0.12,streets:1},council:{streets:4,fiscal:3,labor:-2},grp:{renters:-3,working:-2,owners:-2,business:1}},
+   {label:'Push for a smaller increase phased in over three years',fx:{mlgwgw:0.06,streets:0.5},council:{streets:2,fiscal:1},grp:{renters:-1,working:-1,owners:-1}},
+   {label:'Oppose it: residents can\'t take another increase',fx:{streets:-0.6,mood:0.5},council:{streets:-3,labor:2,fiscal:-1},grp:{renters:3,working:2,owners:1,business:-1}}],
+  ignore:{fx:{mlgwgw:0.12}}});
 // ======================= MAYOR'S DESK =======================
 const NOTIFY_DEF={problems:true,requests:false,stories:true,projects:true,votes:true};
 function notifyOn(k){return(S.notify||NOTIFY_DEF)[k]!==false&&S.autoPause!==false}
@@ -2063,6 +2074,7 @@ function deskItems(){const now=nowM(),items=[];
   else S.promises.forEach(st=>{const P=PMAP[st.id],ps=promiseState(st.id);if(st.status!=='open'&&now-((st.whenM)||now)>3)return;items.push({cat:'promises',ic:st.status==='kept'?'✔':st.status==='broken'?'✕':'★',t:P.n,s:st.status==='open'?`${ps.label} · ${promiseDeadline()-now} months left`:(st.status==='kept'?'Kept':'Broken'),pct:st.status==='open'?ps.pct:null,go:'promises'})});
   (S.deals||[]).filter(D=>D.status==='open').forEach(D=>{const left=D.due-now;items.push({cat:left<=1?'urgent':'deals',ic:'⚑',t:`${D.text}`,s:`Owed to ${D.name} · ${left<=0?'due this month':left+' month'+(left===1?'':'s')+' left'}`,go:D.type==='road'?`plan:road:${D.d}`:D.type==='townhall'?'actions':'desk'})});
   (S.projects||[]).filter(p=>p.stage==='done'&&(p.maintCut||(p.sat!=null&&p.sat<50))).forEach(p=>items.push({cat:'projects',ic:'⚠',t:p.name,s:`Satisfaction ${Math.round(p.sat??75)}%${p.maintCut?' · upkeep cut':''}`,go:`proj:${p.id}`}));
+  if(S.purse&&S.purse.cash<0)items.unshift({cat:'urgent',ic:'🏠',t:'Your personal account is overdrawn',s:`${$0(-S.purse.cash)} on credit cards at 22% APR`,go:'household'});
   {const al=outlookAlert();if(al)items.unshift({cat:'urgent',ic:'$',t:S.reserve/annualSpend(S)*100<8?'Reserve is below 8% of spending':`Reserve heading below 8% by ${al.low.label}`,s:`About ${fmtM(al.F[11].r)} in 12 months if nothing changes`,go:'outlook'})}
   if(S.camp&&!S.over){const dte=daysToElection();const C=S.camp;Object.entries(C.debates).forEach(([n,D])=>{if(D.round<3)items.unshift({cat:'urgent',ic:'🎙',t:`Finish debate ${n}`,s:'The cameras are still rolling',go:'debate:'+n})});
     if(dte>0&&dte<=400)items.push({cat:'campaign',ic:'✪',t:`${dte} days to Election Day`,s:`${fmtK(C.cash)} campaign cash${C.polls.length?` · last poll ${C.polls[C.polls.length-1].you}–${C.polls[C.polls.length-1].rival}`:' · no poll yet'}`,go:'hq'})}
@@ -2091,6 +2103,7 @@ function deskGo(go){const[k,v]=go.split(':');
   else if(k==='promises')openPromises();
   else if(k==='hq')openHQ();
   else if(k==='outlook')openOutlook();
+  else if(k==='household')openHousehold();
   else if(k==='debate')openDebate(+v);
   else if(k==='actions')openActions();
   else if(k==='plan'){const[,t,d]=go.split(':');openPlanner(t,+d)}}
@@ -2549,7 +2562,7 @@ function moneyMonth(report,paid){const m=S.mfOp||{rev:0,spend:0,bonds:0,upkeep:0
     purse:{end:S.purse.cash,...pf}};
   S.moneyHist=S.moneyHist||[];S.moneyHist.push(sum);if(S.moneyHist.length>24)S.moneyHist.shift();
   const campIn=(cf.small||0)+(cf.events||0)+(cf.donors||0)+(cf.self||0),campOut=(cf.ads||0)+(cf.org||0)+(cf.off||0)+(cf.polls||0)+(cf.rally||0);
-  report.push(`Money for ${sum.d}. City reserve ${total>=0?'+':'−'}${fmtM(Math.abs(total)).replace('$','$')}: operating ${operating>=0?'surplus':'gap'} ${fmtM(Math.abs(operating))}${construction?`, construction payments −${fmtM(construction)}`:''}${Math.abs(oneTime)>=0.05?`, one-time decisions ${oneTime>=0?'+':'−'}${fmtM(Math.abs(oneTime))}`:''}. Campaign ${campIn-campOut>=0?'+':'−'}${fmtK(Math.abs(campIn-campOut))} (raised ${fmtK(campIn)}, spent ${fmtK(campOut)}). Personal ${$0((pf.salary||0)-(pf.buy||0)-(pf.xfer||0))}.`);
+  const fMK=v=>Math.abs(v)<1?`$${Math.round(Math.abs(v)*1000)}K`:fmtM(Math.abs(v));report.push(`Money for ${sum.d}. City reserve ${total>=0?'+':'−'}${fMK(total)}: operating ${operating>=0?'surplus':'gap'} ${fMK(operating)}${construction?`, construction payments −${fMK(construction)}`:''}${Math.abs(oneTime)>=0.05?`, one-time decisions ${oneTime>=0?'+':'−'}${fMK(oneTime)}`:''}. Campaign ${campIn-campOut>=0?'+':'−'}${fmtK(Math.abs(campIn-campOut))} (raised ${fmtK(campIn)}, spent ${fmtK(campOut)}). Personal ${$0((pf.salary||0)-(pf.buy||0)-(pf.xfer||0)-(pf.bills||0)-(pf.move||0)-(pf.interest||0))} (pay ${$0(pf.salary||0)}, bills ${$0(pf.bills||0)}).`);
   S.mf={r0:S.reserve};if(S.camp)S.camp.mf={};S.purse.mf={}}
 function openFinances(){const H=S.moneyHist||[],L=H[H.length-1],st=payStub();closePanel();const row=(n,v,f)=>`<div><span>${n}</span><b style="color:${v>0.0001?'var(--good)':v<-0.0001?'var(--bad)':''}">${f(v)}</b></div>`;
   const sM=v=>Math.abs(v)<0.05?'$0.0M':(v>=0?'+':'−')+fmtM(Math.abs(v)),sK=v=>Math.abs(v)<0.5?'$0K':(v>=0?'+':'−')+fmtK(Math.abs(v));
@@ -2560,8 +2573,8 @@ function openFinances(){const H=S.moneyHist||[],L=H[H.length-1],st=payStub();clo
      ${L?`<div class="opl">${row('Revenue',L.city.rev,sM)}${row('Operating costs',-L.city.ops,sM)}${row('Bond payments',-L.city.bonds,sM)}${row('Project upkeep',-L.city.upkeep,sM)}${row('Construction payments',-L.city.construction,sM)}${row('One-time decisions',L.city.oneTime,sM)}${row('Change this month',L.city.total,sM)}</div>`:''}</div>
     <div class="facts"><h4>Campaign fund</h4><div class="big">${fmtK(S.camp?S.camp.cash:0)}</div><p class="note">Pays for ads, rallies, campaign staff, polling and outreach. Fed by donations, fundraisers and limited personal money.</p>
      ${L?`<div class="opl">${row('Small donations',L.camp.small||0,sK)}${row('Fundraisers',L.camp.events||0,sK)}${row('Major donors',L.camp.donors||0,sK)}${row('Your own money',L.camp.self||0,sK)}${row('Ads',-(L.camp.ads||0),sK)}${row('Organizers',-(L.camp.org||0),sK)}${row('Field offices',-(L.camp.off||0),sK)}${row('Polls',-(L.camp.polls||0),sK)}${row('Rallies',-(L.camp.rally||0),sK)}</div>`:''}</div>
-    <div class="facts"><h4>Personal money</h4><div class="big">${$0(S.purse.cash)}</div><p class="note">Your salary. For optional clothes and accessories, or a capped contribution to your campaign.</p>
-     ${L?`<div class="opl">${row('Take-home pay',L.purse.salary||0,$0)}${row('Purchases',-(L.purse.buy||0),$0)}${row('To your campaign',-(L.purse.xfer||0),$0)}</div>`:''}</div></div>
+    <div class="facts"><h4>Personal money</h4><div class="big">${$0(S.purse.cash)}</div><p class="note">Your salary, minus your own rent or mortgage, utilities, food and getting around. Also for optional clothes, or a capped contribution to your campaign.</p>
+     ${L?`<div class="opl">${row('Take-home pay',L.purse.salary||0,$0)}${row('Household bills',-(L.purse.bills||0),$0)}${row('Moving and closing costs',-(L.purse.move||0),$0)}${row('Credit card interest',-(L.purse.interest||0),$0)}${row('Purchases',-(L.purse.buy||0),$0)}${row('To your campaign',-(L.purse.xfer||0),$0)}</div>`:''}<p class="note"><a href="#" data-act="household">Your household: home, bills and where you live →</a></p></div></div>
    <div class="facts"><h4>Your paycheck, estimated</h4><div class="opl"><div><span>Salary: $170,817 a year, ÷ 12</span><b>${$$(st.g)}</b></div>${st.ded.map(x=>`<div><span>${x.n}</span><b>−${$$(x.v)}</b></div>`).join('')}<div><span><b>Estimated take-home each month</b></span><b>${$$(st.net)}</b></div></div>
     <p class="note">$170,817 is the last salary figure we could confirm. Tennessee has no state income tax on wages. The withholding, retirement and insurance amounts are game assumptions, not the city's actual deductions.</p></div>
    ${H.length>1?`<div class="facts"><h4>City reserve, month by month</h4><div class="spark">${spark(H.map(h=>h.city.end),'var(--amber)')}</div></div>`:''}`,true)}
@@ -2569,7 +2582,7 @@ openFinances=navWrap('openFinances',openFinances);
 function openMoneyIntro(){openModal('Before you start','Three kinds of money',`<div class="acct3">
    <div class="facts"><h4>🏛 City treasury</h4><p>Taxpayers' money. It runs the city: police, fire, streets, parks, projects. You see it at the top as the <b>Reserve fund</b>. Budgets, projects and one-time decisions move it.</p></div>
    <div class="facts"><h4>✪ Campaign fund</h4><p>Your re-election money, raised from donors and fundraisers. It pays for ads, organizers, field offices and polls in <b>Campaign HQ</b> (K). It can never pay for city business, and city money can never pay for your campaign.</p></div>
-   <div class="facts"><h4>👤 Personal money</h4><p>Your salary, about ${$0(payStub().net)} a month after estimated deductions. Spend it on optional wardrobe items, or put up to $25,000 per election into your campaign.</p></div></div>
+   <div class="facts"><h4>👤 Personal money</h4><p>Your salary, about ${$0(payStub().net)} a month after estimated deductions. It pays your own rent or mortgage, MLGW bills, food and getting around. You start out renting in Midtown; move or buy a home under <b>Home</b>. You can also buy optional wardrobe items, or put up to $25,000 per election into your campaign.</p></div></div>
    <p class="note">Every month closes with a one-line money summary in the Ledger, and the <b>Money</b> tab shows all three accounts side by side.</p>
    <div class="row"><button class="btn primary" data-act="introok">Got it</button><button class="btn" data-act="introskip">Got it, don't show this again</button></div>`)}
 
@@ -2624,6 +2637,117 @@ function openOutlook(){closePanel();const F=reserveForecast(),C=budgetCauses();c
     <p class="note">This is normal city math, not a mistake: keeping the same services costs more each year than revenue grows. Every budget is a choice about how to close that gap.</p></div>
    <div class="facts"><h4>Ways to close the gap</h4><div class="dlist">${opts.map(o=>`<div class="drow" style="cursor:default;grid-template-columns:minmax(0,1fr) auto;align-items:start;padding:5px 0;border-bottom:1px solid var(--line)"><span><b>${o.t}</b><br><span class="note">${o.d}</span>${o.nofc?'':`<br><span class="note">Forecast with this: </span>${fcFor(o)}`}</span><span>${o.act||''}</span></div>`).join('')}</div></div>`,true)}
 openOutlook=navWrap('openOutlook',openOutlook);
+
+// ======================= THE MAYOR'S HOUSEHOLD =======================
+// Real prices, fall 2026. Rents: RentCafe neighborhood averages (Sept 30, 2026). Home prices: Redfin medians or Zillow values (2026, dated below).
+// Mortgage: Freddie Mac 30-year average 7.32% (Oct 22, 2026). Property tax: 25% of appraised value × (city rate + Shelby County $2.69 in 2026, $2.702382 from 2027).
+// MLGW: Jan 2026 rate survey (1,000 kWh $139.97; 200 Ccf gas $140.12; 10 Ccf water $23.93). Food: USDA food plans, May 2026, +20% for one person living alone.
+// Car insurance: NerdWallet Memphis average $2,940/yr (Oct 2026). Gas: AAA Memphis metro $3.914/gal (Oct 26, 2026). Home insurance: Insurify Memphis $3,210/yr for $300K dwelling.
+// Anything marked "assumption" is a game estimate, not a published price.
+const LIVE=[
+ {id:'downtown',n:'Downtown',lat:35.1462,lon:-90.0455,rent:1417,buy:259910,sqft:1420,src:'Redfin median, 3 months ending June 2026 (mostly condos)'},
+ {id:'harbor',n:'Harbor Town (Mud Island)',lat:35.1660,lon:-90.0585,rent:1674,buy:366000,sqft:2000,src:'estimate: Downtown\'s $183/sq ft (Redfin) × 2,000 sq ft',est:true},
+ {id:'midtown',n:'Midtown',lat:35.1395,lon:-89.9990,rent:1196,buy:112077,sqft:1300,src:'Zillow typical home value, Sept 30, 2026'},
+ {id:'cooper',n:'Cooper-Young',lat:35.1185,lon:-89.9900,rent:1196,buy:287419,sqft:1900,src:'Redfin median, 3 months ending Sept 2026',rentSrc:'Midtown average'},
+ {id:'central',n:'Central Gardens',lat:35.1300,lon:-89.9960,rent:1444,buy:374870,sqft:2200,src:'Redfin median, 3 months ending June 2026'},
+ {id:'east',n:'East Memphis',lat:35.1050,lon:-89.8850,rent:1444,buy:339882,sqft:2100,src:'Redfin median, June 2026',rentSrc:'average of Chickasaw Gardens, Normal Station and River Oaks'},
+ {id:'cordova',n:'Cordova',lat:35.1600,lon:-89.7700,rent:1317,buy:277000,sqft:1700,src:'Redfin sale price, Alliance of Cordova Neighborhoods (2026)'},
+ {id:'hickory',n:'Hickory Hill',lat:35.0430,lon:-89.8400,rent:1025,buy:151794,sqft:1600,src:'Memphis typical home value (Zillow, Sept 2026), used as a stand-in',est:true},
+ {id:'raleigh',n:'Raleigh',lat:35.2140,lon:-89.9100,rent:878,buy:151794,sqft:1600,src:'Memphis typical home value (Zillow, Sept 2026), used as a stand-in',est:true},
+ {id:'whitehaven',n:'Whitehaven',lat:35.0230,lon:-90.0200,rent:831,buy:140000,sqft:1350,src:'Redfin median, Feb 2025 (latest found)'},
+ {id:'frayser',n:'Frayser',lat:35.2245,lon:-90.0230,rent:768,buy:75000,sqft:1200,src:'Redfin median, 3 months ending Aug 2026'},
+ {id:'orange',n:'Orange Mound',lat:35.1105,lon:-89.9580,rent:699,buy:null,sqft:1100,src:'no reliable 2026 sale price found; renting only'}];
+const LMAP={};LIVE.forEach(h=>LMAP[h.id]=h);
+const UNITS={'1br':{n:'1-bedroom apartment',m:1077/1141,sq:726},'2br':{n:'2-bedroom apartment',m:1151/1141,sq:1000},'3br':{n:'3-bedroom house',m:1338/1141,sq:1325}}; // RentCafe Memphis size averages
+const MORTGAGE_RATE=7.32,COUNTY_TAX=y=>y>=2027?2.702382:2.69;
+const FOOD={low:{n:'Low-cost',m:316.00,f:274.80},mod:{n:'Moderate',m:397.00,f:335.60},lib:{n:'Liberal (more eating out)',m:484.60,f:427.90}}; // USDA May 2026, ages 19-50
+const GAS=3.914,CAR_INS=2940/12;
+const SAVINGS_BY_BG={cop:25000,teacher:15000,business:120000,organizer:10000,attorney:80000}; // assumption: savings when you took office
+function pmt(P,ratePct,n){const r=ratePct/100/12;return r?P*r/(1-Math.pow(1+r,-n)):P/n}
+function homeInit(s){s.home=s.home||{mode:'rent',id:'midtown',unit:'2br',since:s.y*12+s.m,rentMult:1,food:'mod',car:'car'};
+  if(s.purse&&s.purse.savingsSet==null){const bg=((s.mayor&&s.mayor.traits)||[]).find(t=>SAVINGS_BY_BG[t]!=null);s.purse.cash=(s.purse.cash||0)+(bg?SAVINGS_BY_BG[bg]:35000);s.purse.savingsSet=true}
+  if(s.mlgwAdj==null)s.mlgwAdj=1}
+function homeValue(H){return H.value||H.price}
+function hoodDistrict(id){const h=LMAP[id];return h?districtAt(h.lon,h.lat):null}
+function rentPassThrough(){return 1+(S.taxRate-3.39)/3.39*0.08+((S.laws||{}).landlord?0.005:0)} // assumption: property tax is ~8% of rent; fines on landlords get partly passed on
+function seasonal(m){return{elec:[6,7,8,9].includes(m)?1.35:[12,1,2].includes(m)?1.05:0.8,gas:[12,1,2].includes(m)?0.075:[11,3].includes(m)?0.035:[4,10].includes(m)?0.015:0.006}}
+// Monthly bills, line by line, with where each number comes from.
+function householdBill(H,m){H=H||S.home;m=m||S.m;const L=[],h=LMAP[H.id];const own=H.mode==='own';const sq=own?h.sqft:UNITS[H.unit].sq;
+  if(own){const r=MORTGAGE_RATE/100/12;L.push({k:'housing',n:'Mortgage payment (principal and interest)',v:H.pmt,src:`${MORTGAGE_RATE}% 30-year fixed (Freddie Mac average, Oct 22, 2026) on a ${fmt$(H.loan0)} loan`});
+    if(H.pmi)L.push({k:'housing',n:'Mortgage insurance (PMI)',v:H.pmi,src:'assumption: 0.5% of the loan a year with less than 20% down'});
+    const tax=H.price*0.25*(S.taxRate+COUNTY_TAX(S.y))/100/12;L.push({k:'housing',n:'Property tax (city + county)',v:tax,src:`25% assessment × ($${S.taxRate.toFixed(2)} city + $${COUNTY_TAX(S.y).toFixed(2)} county) per $100`,policy:true});
+    L.push({k:'housing',n:'Homeowners insurance',v:Math.max(1100,3210*H.price/300000)/12,src:'Insurify Memphis average $3,210/yr for a $300K home, scaled'});
+    L.push({k:'housing',n:'Repairs and upkeep',v:homeValue(H)*0.01/12,src:'assumption: 1% of the home\'s value a year'})}
+  else{const base=h.rent*UNITS[H.unit].m*(H.rentMult||1);L.push({k:'housing',n:`Rent (${UNITS[H.unit].n})`,v:base*rentPassThrough(),src:`RentCafe ${h.rentSrc||h.n} average $${h.rent.toLocaleString()} (Sept 2026), adjusted for unit size${H.rentMult>1?`, +${((H.rentMult-1)*100).toFixed(1)}% in renewals`:''}`,policy:true});
+    L.push({k:'housing',n:'Renters insurance',v:15,src:'assumption'})}
+  const se=seasonal(m),adj=S.mlgwAdj||1;const kwh=sq*0.65*se.elec,ccf=sq*se.gas;
+  L.push({k:'utilities',n:`MLGW electric (~${Math.round(kwh)} kWh)`,v:kwh*0.13997*adj,src:'MLGW 2026 rate survey: $139.97 per 1,000 kWh',policy:true});
+  const gw=adj*(S.mlgwGW||1);
+  if(ccf>=1)L.push({k:'utilities',n:`MLGW gas (~${Math.round(ccf)} Ccf)`,v:Math.max(9,ccf*0.7006)*gw,src:'MLGW 2026 rate survey: $140.12 per 200 Ccf',policy:true});
+  L.push({k:'utilities',n:'MLGW water',v:23.93*gw*(own||H.unit==='3br'?1.2:1),src:'MLGW 2026 rate survey: $23.93 for 10 Ccf',policy:true});
+  if(own||H.unit==='3br'){L.push({k:'utilities',n:'City sewer fee',v:22*(S.sewerAdj||1),src:'assumption: about $22 a month; we couldn\'t confirm the current rate (the sewer fund sought a 35% first-step increase in 2026)',policy:true});
+    L.push({k:'utilities',n:'City solid waste fee',v:37,src:'assumption: about $37 a month (about $30 since 2020, plus a 2024 increase of roughly $6.89); current amount not confirmed',policy:true})}
+  L.push({k:'utilities',n:'Internet and phone',v:140,src:'assumption: about $65 internet + $75 phone'});
+  const F=FOOD[H.food||'mod'];const fv=(S.mayor&&S.mayor.g==='f'?F.f:F.m)*1.2;L.push({k:'food',n:`Food (${F.n} plan)`,v:fv,src:'USDA food plans, May 2026, +20% for one person'});
+  if(H.car==='car'){L.push({k:'transport',n:'Car insurance',v:CAR_INS*(1+(S.met.crime-88)*0.004),src:'NerdWallet Memphis average $2,940/yr (Oct 2026); moves with the crime rate',policy:true});
+    L.push({k:'transport',n:'Gas (~1,000 miles)',v:40*GAS,src:'AAA Memphis average $3.914/gal (Oct 26, 2026), 25 mpg'});L.push({k:'transport',n:'Car maintenance',v:100,src:'assumption'})}
+  else L.push({k:'transport',n:'MATA day passes (22 workdays)',v:44,src:'MATA $2 daily pass ($1 base fare). A zero-fare pilot was running in fall 2026.',policy:true});
+  return L}
+const fmt$=v=>'$'+Math.round(v).toLocaleString();
+function billTotal(L){return L.reduce((a,x)=>a+x.v,0)}
+function householdMonth(report){homeInit(S);const H=S.home;const L=householdBill(H,S.m);const tot=billTotal(L);S.purse.cash-=tot;flowP('bills',tot);S.purse.lastBill={m:S.m,lines:L,tot};
+  if(H.mode==='own'){const r=MORTGAGE_RATE/100/12;const int=H.bal*r;H.bal=Math.max(0,H.bal-(H.pmt-int))}
+  // leases renew every 12 months at +2.5% (assumption) plus anything you did to the neighborhood
+  if(H.mode==='rent'&&nowM()-H.since>0&&(nowM()-H.since)%12===0){const bump=1.025+(H.hoodBoost||0)*0.5;H.rentMult=(H.rentMult||1)*bump;H.hoodBoost=0;report.push(`Your lease renewed. Rent went up ${((bump-1)*100).toFixed(1)}%.`)}
+  if(H.mode==='own'&&S.m===7){const g=1.01+(H.hoodBoost||0);H.value=homeValue(H)*g;H.hoodBoost=0;report.push(`Your home in ${LMAP[H.id].n} is now worth about ${fmt$(H.value)}.`)}
+  if(S.purse.cash<0){const debt=-S.purse.cash;const int=debt*0.22/12;S.purse.cash-=int;flowP('interest',int);report.push(`You're ${fmt$(debt)} in the red on your personal account. Credit card interest: ${fmt$(int)} this month.`)}}
+function neighborhoodBoost(P){if(!S.home)return;const d=hoodDistrict(S.home.id);if(d&&P.d===d){S.home.hoodBoost=(S.home.hoodBoost||0)+0.02;logIt(`Finished work near your home raised values in ${LMAP[S.home.id].n}.`)}}
+function quoteBuy(id,downPct){const h=LMAP[id];if(!h||!h.buy)return null;const price=h.buy,down=price*downPct/100,loan=price-down,pm=pmt(loan,MORTGAGE_RATE,360),pmi=downPct<20?loan*0.005/12:0,closing=price*0.03;
+  const H={mode:'own',id,price,loan0:loan,bal:loan,pmt:pm,pmi,down:downPct,food:S.home.food,car:S.home.car};const L=householdBill(H,S.m);return{H,L,tot:billTotal(L),cash:down+closing+1500,closing,down}}
+function quoteRent(id,unit){const h=LMAP[id];const H={mode:'rent',id,unit,rentMult:1,food:S.home.food,car:S.home.car};const L=householdBill(H,S.m);const rent=L[0].v;return{H,L,tot:billTotal(L),cash:rent+1200,rent}}
+function sellProceeds(){const H=S.home;if(H.mode!=='own')return 0;return homeValue(H)*0.94-H.bal} // assumption: 6% selling costs
+function grossMonthly(){return SALARY/12}
+function openHousehold(){homeInit(S);closePanel();const H=S.home,h=LMAP[H.id],L=householdBill(H,S.m),tot=billTotal(L),net=payStub().net;const grp={housing:'Housing',utilities:'Utilities',food:'Food',transport:'Getting around'};
+  const sum=k=>L.filter(x=>x.k===k).reduce((a,x)=>a+x.v,0);
+  openModal(`Personal account ${$0(S.purse.cash)} · take-home ${$$(net)} a month`,'Your household',`
+   <div class="facts"><h4>Where you live</h4><p style="margin:0"><b>${H.mode==='own'?'You own a home':'You rent a '+UNITS[H.unit].n}</b> in <b>${h.n}</b> (Council District ${hoodDistrict(H.id)||'?'}).${H.mode==='own'?` Bought for ${fmt$(H.price)}; worth about ${fmt$(homeValue(H))}; you owe ${fmt$(H.bal)}. If you sold today you'd clear about ${fmt$(sellProceeds())} after selling costs.`:''}</p>
+    <p class="note">The city charter requires the mayor to live inside Memphis, so the suburbs aren't an option.</p></div>
+   <div class="facts"><h4>This month's bills · ${$0(tot)}</h4><div class="opl">${Object.keys(grp).map(k=>`<div><span><b>${grp[k]}</b></span><b>${$0(sum(k))}</b></div>${L.filter(x=>x.k===k).map(x=>`<div><span style="padding-left:10px">${x.n}${x.policy?' <span class="pill" title="City policy can move this">policy</span>':''}<br><small class="note">${x.src}</small></span><b>${$$(x.v)}</b></div>`).join('')}`).join('')}
+    <div><span><b>Left over from take-home pay</b></span><b style="color:${net-tot>=0?'var(--good)':'var(--bad)'}">${net-tot>=0?'+':'−'}${$0(Math.abs(net-tot))}</b></div></div>
+    <p class="note">Bills change with the seasons: MLGW gas peaks in winter, electricity in summer.</p></div>
+   <div class="facts"><h4>How city policy touches your bills</h4><ul>
+    <li><b>Property tax.</b> At $${S.taxRate.toFixed(2)}, ${H.mode==='own'?`your city tax is ${$0(H.price*0.25*S.taxRate/100)} a year. Each cent you add costs you about ${$0(H.price*0.25*0.01/100)} a year.`:'landlords pass part of any increase on in rent (about 8% of rent is property tax, a game assumption).'}</li>
+    <li><b>MLGW.</b> Your utility board appointments and your stand on MLGW's proposed 12% residential increase move your gas and water bills${(S.mlgwAdj||1)*(S.mlgwGW||1)!==1?`; right now gas and water run ${(((S.mlgwAdj||1)*(S.mlgwGW||1)-1)*100).toFixed(1)}% ${(S.mlgwAdj||1)*(S.mlgwGW||1)>1?'above':'below'} the 2026 survey`:''}.</li>
+    <li><b>City fees.</b> The solid waste and sewer fees on your MLGW bill are set by the city.</li>
+    <li><b>Your neighborhood.</b> Finished projects in District ${hoodDistrict(H.id)||'?'} raise ${H.mode==='own'?'your home\'s value':'your rent at renewal'}.</li>
+    <li><b>Crime.</b> Car insurance follows the violent crime index.</li>
+    <li><b>Transit.</b> Better MATA service makes going car-free more realistic.</li></ul></div>
+   <div class="facts"><h4>Choices</h4><div class="lookgrid"><label>Food<select data-hh="food">${Object.entries(FOOD).map(([k,f])=>`<option value="${k}" ${H.food===k?'selected':''}>${f.n}</option>`).join('')}</select></label>
+    <label>Getting around<select data-hh="car"><option value="car" ${H.car==='car'?'selected':''}>Your own car (paid off)</option><option value="transit" ${H.car==='transit'?'selected':''}>MATA buses</option></select></label></div></div>
+   <div class="facts"><h4>Move</h4><p class="note">Prices are real fall-2026 figures for each neighborhood. Lenders generally want your housing payment under 28% of gross pay (${$0(grossMonthly()*0.28)} a month for you). Moving costs about $1,200 (assumption), and buying needs your down payment plus about 3% in closing costs (assumption).</p>
+    <div class="dlist">${LIVE.map(L2=>{const q2=quoteRent(L2.id,'2br'),qb=L2.buy?quoteBuy(L2.id,10):null;const here=H.id===L2.id;return`<div class="drow" style="cursor:default;grid-template-columns:minmax(0,1fr) auto;align-items:start;padding:5px 0;border-bottom:1px solid var(--line)"><span><b>${L2.n}</b>${here?' <span class="pill on">you live here</span>':''} <small class="note">District ${hoodDistrict(L2.id)||'?'}</small><br>
+       <small class="note">Rent: 1BR ${fmt$(L2.rent*UNITS['1br'].m)}, 2BR ${fmt$(L2.rent*UNITS['2br'].m)}, 3BR house ${fmt$(L2.rent*UNITS['3br'].m)} · ${L2.buy?`Buy: ${fmt$(L2.buy)}${L2.est?' (estimate)':''}, about ${fmt$(qb.tot-billTotal(qb.L.filter(x=>x.k!=='housing')))} a month for housing with 10% down`:'Buying: no reliable price'}</small><br><small class="note">${L2.buy?L2.src:''}</small></span>
+       <span class="row" style="gap:4px;justify-content:flex-end"><button class="btn" data-act="hhmove" data-id="${L2.id}" style="padding:3px 9px">Look here</button></span></div>`}).join('')}</div></div>`,true)}
+openHousehold=navWrap('openHousehold',openHousehold);
+function openMove(id,mode,opt){const h=LMAP[id];closePanel();const qs=[];
+  ['1br','2br','3br'].forEach(u=>qs.push({mode:'rent',opt:u,q:quoteRent(id,u),t:`Rent a ${UNITS[u].n}`}));
+  if(h.buy)[3.5,10,20].forEach(d=>qs.push({mode:'own',opt:d,q:quoteBuy(id,d),t:`Buy with ${d}% down${d===3.5?' (FHA minimum)':''}`}));
+  const cashNow=S.purse.cash+(S.home.mode==='own'?sellProceeds():0);
+  openModal(`${h.n} · District ${hoodDistrict(id)||'?'}`,'Find a place',`<p class="note">Cash you could put toward a move: ${$0(cashNow)}${S.home.mode==='own'?` (including about ${$0(sellProceeds())} from selling your current home)`:''}.</p>
+   <div class="dlist">${qs.map(x=>{const housing=billTotal(x.q.L.filter(l=>l.k==='housing'));const ok=x.q.cash<=cashNow;const ratio=housing/grossMonthly();
+     return`<div class="drow" style="cursor:default;grid-template-columns:minmax(0,1fr) auto;align-items:start;padding:6px 0;border-bottom:1px solid var(--line)"><span><b>${x.t}</b><br><small class="note">${x.mode==='own'?`Price ${fmt$(x.q.H.price)} · loan ${fmt$(x.q.H.loan0)} at ${MORTGAGE_RATE}% · `:''}Housing ${fmt$(housing)}/mo (${Math.round(ratio*100)}% of gross pay${ratio>0.28?', over the 28% guideline':''}) · all bills about ${fmt$(x.q.tot)}/mo · cash needed now ${fmt$(x.q.cash)}</small></span>
+      <button class="btn ${ok&&ratio<=0.36?'primary':''}" data-act="hhgo" data-id="${id}" data-mode="${x.mode}" data-opt="${x.opt}" ${ok?'':'disabled title="Not enough cash"'} style="padding:3px 10px">${x.mode==='own'?'Buy':'Rent'}</button></div>`}).join('')}</div>
+   <p class="note">${h.buy?`Home price: ${h.src}. `:''}Rent: RentCafe ${h.rentSrc||h.n} average, Sept 2026, adjusted by unit size.</p>`,true)}
+openMove=navWrap('openMove',openMove);
+function doMove(id,mode,opt){const h=LMAP[id];const old=S.home;let cash=S.purse.cash;if(old.mode==='own'){cash+=sellProceeds();logIt(`You sold your home in ${LMAP[old.id].n} and cleared ${fmt$(sellProceeds())}.`)}
+  const q=mode==='own'?quoteBuy(id,+opt):quoteRent(id,opt);if(q.cash>cash){toast('Not enough cash for that move.');return}
+  S.purse.cash=cash-q.cash;flowP('move',q.cash);S.home={...q.H,since:nowM(),value:q.H.price,food:old.food,car:old.car};
+  const pricey=(mode==='own'?h.buy>=330000:h.rent>=1400),modest=(mode==='own'?h.buy<160000:h.rent<1000);
+  const d=hoodDistrict(id);if(d){S.pop.d[d]=clamp((S.pop.d[d]||0)+2,-20,20)}
+  if(pricey)applyGroupReact({business:1,owners:0.5,renters:-1,working:-0.5},`The mayor moved to ${h.n}`);if(modest)applyGroupReact({working:1,renters:1,faith:0.5},`The mayor moved to ${h.n}`);
+  logIt(`You ${mode==='own'?`bought a home in ${h.n} for ${fmt$(q.H.price)} (${opt}% down)`:`rented a ${UNITS[opt].n} in ${h.n}`}. It's public record where the mayor lives.`);save();refreshHUD();navReset();closeModal();openHousehold();toast(`Welcome to ${h.n}.`)}
+let homeMarker=null;
+function renderHomeMarker(){if(!mapReady||!S||!S.home)return;const h=LMAP[S.home.id];if(!h)return;if(!homeMarker){const el=document.createElement('button');el.className='homepin';el.title='Your home';el.innerHTML='<span>🏠</span>';el.addEventListener('click',e=>{e.stopPropagation();openHousehold()});homeMarker=new maplibregl.Marker({element:el,anchor:'center'}).setLngLat([h.lon,h.lat]).addTo(map)}else homeMarker.setLngLat([h.lon,h.lat])}
 
 function openLedger(){const L=S.log||[];openPanel('Everything that has happened, newest first','Ledger',L.length?`<div class="logl">${L.map(x=>`<div><span>${x.d}</span><p style="margin:0">${x.t}</p></div>`).join('')}</div>`:'<p class="note">Nothing yet. Start the clock with Space or ▶.</p>','ledger')}
 function openPolicies(){const ks=Object.keys(POLICIES);
@@ -2845,6 +2969,7 @@ function renderPins(){
     o.el.innerHTML=S.mode==='public'?((S.popView||'all')==='all'?`<span style="color:${apColor(dApp(o.d))}">${Math.round(dApp(o.d))}%</span><small>D${o.d} · approve of you</small>`:`${Math.round(dComp(o.d)[S.popView]*100)}%<small>D${o.d} · ${GMAP[S.popView].n}</small>`):S.mode==='opinion'&&m?`<span style="color:${opColor(m.opinion)}">${fmtOp(m.opinion)}</span><small>D${o.d} · ${m.name}</small>`:S.mode==='streets'&&PAVE[o.d]?`PCI ${PAVE[o.d].avg.toFixed(0)}<small>D${o.d} · ${PAVE[o.d].poor.toFixed(0)}% poor</small>`:`D${o.d}<small>${m?m.name:''}</small>`});
   if(S.mode==='opinion'||S.mode==='public'){paintCouncil();paintNb()}renderLegend();
   try{renderProjects()}catch(e){console.warn('projects',e)}
+  try{renderHomeMarker()}catch(e){console.warn('home',e)}
   zoomClasses();
 }
 function applyLayers(){if(!mapReady)return;const L=S?S.layers:{superd:false,bld:true,labels:true};const mode=S?S.mode||'real':'real';
@@ -2980,7 +3105,7 @@ window.addEventListener('keydown',e=>{
   if(k==='n')advance();else if(k==='b')openBudget();else if(k==='c')openCouncil();else if(k==='h')openHelp();else if(k==='o')openOpinion();else if(k==='e')openActions();else if(k==='i')openDesk();else if(k==='k')openHQ();else if(k==='m')openFinances();else if(k==='l')toggleLayersBox();
 });
 function toggleLayersBox(){$('layers').hidden=!$('layers').hidden;$('bLayers').classList.toggle('on',!$('layers').hidden)}
-document.addEventListener('change',e=>{const t=e.target;if(!S)return;if(t.dataset&&t.dataset.notify){S.notify=S.notify||{...NOTIFY_DEF};S.notify[t.dataset.notify]=t.checked;save();return}if(t.id==='lyPause'){S.autoPause=t.checked;save();return}const map_={lySuper:'superd',lyBld:'bld',lyLabels:'labels',lyEdge:'edge'};
+document.addEventListener('change',e=>{const t=e.target;if(!S)return;if(t.dataset&&t.dataset.hh){S.home[t.dataset.hh]=t.value;save();openHousehold();return}if(t.dataset&&t.dataset.notify){S.notify=S.notify||{...NOTIFY_DEF};S.notify[t.dataset.notify]=t.checked;save();return}if(t.id==='lyPause'){S.autoPause=t.checked;save();return}const map_={lySuper:'superd',lyBld:'bld',lyLabels:'labels',lyEdge:'edge'};
   if(map_[t.id]){S.layers[map_[t.id]]=t.checked;applyLayers();save()}});
 document.addEventListener('click',e=>{
   const sp=e.target.closest('[data-speed]');if(sp){setSpeed(+sp.dataset.speed);if(S.paused)setPaused(false);return}
@@ -3006,6 +3131,9 @@ document.addEventListener('click',e=>{
   else if(a==='look')openLook();
   else if(a==='hq'){navReset();onClose=null;if(modalOpen)closeModal();openHQ()}
   else if(a==='shop')openShop();
+  else if(a==='household')openHousehold();
+  else if(a==='hhmove')openMove(b.dataset.id);
+  else if(a==='hhgo')doMove(b.dataset.id,b.dataset.mode,b.dataset.mode==='own'?+b.dataset.opt:b.dataset.opt);
   else if(a==='introok'||a==='introskip'){S.seenMoneyIntro=true;if(a==='introskip'){try{localStorage.setItem('bcm-nomoneyintro','1')}catch(e){}}save();closeModal()}
   else if(a==='finances')openFinances();
   else if(a==='moneyintro')openMoneyIntro();
@@ -3103,7 +3231,7 @@ function save(){if(!S||!S.started)return;try{localStorage.setItem(KEY,JSON.strin
 function load(){try{const t=localStorage.getItem(KEY);if(!t)return null;const s=JSON.parse(t);return s&&s.started?s:null}catch(e){return null}}
 
 // ======================= BOOT =======================
-function beginTerm(cr){S=newState();const c=cr||newCR();S.mayor={...c,look:{...(c.look||defaultLook(c.g))},name:(c.name||'Mayor').trim(),skills:{...c.skills},traits:[...c.traits],xp:{},trained:-99,frame:'#f2a93b'};$('start').classList.remove('creating');$('app').classList.remove('pre');assignHomes();initGroups(S);recomputeAll(S);S.started=true;spawn(S,EVENTS[0],{expires:99});queueNewBusiness(null);pickRival();campInit(S);S.mf={r0:S.reserve};save();$('start').hidden=true;prevMet=null;applyLayers();refreshHUD();
+function beginTerm(cr){S=newState();const c=cr||newCR();S.mayor={...c,look:{...(c.look||defaultLook(c.g))},name:(c.name||'Mayor').trim(),skills:{...c.skills},traits:[...c.traits],xp:{},trained:-99,frame:'#f2a93b'};$('start').classList.remove('creating');$('app').classList.remove('pre');assignHomes();initGroups(S);recomputeAll(S);S.started=true;spawn(S,EVENTS[0],{expires:99});queueNewBusiness(null);pickRival();campInit(S);homeInit(S);S.mf={r0:S.reserve};save();$('start').hidden=true;prevMet=null;applyLayers();refreshHUD();
   camFly({center:[LM.cityhall.lon,LM.cityhall.lat],zoom:15.6,speed:0.9});setTimeout(()=>{if(!S.promises)openPromises()},900);
   setTimeout(()=>openPlace('cityhall'),2600);toast(`Sworn in, Mayor ${S.mayor.name.split(' ').pop()}. Time is paused: read your briefing, then press Space or ▶.`)}
 // ---- character creation ----
@@ -3150,7 +3278,7 @@ function migrate(s){if(!s)return s;if(!s.mayor)s.mayor=defaultMayor('Mayor');s.m
   s.council.forEach(m=>{if(m.limited==null)m.limited=TERM_LIMITED.includes(m.name)});
   s.projects=s.projects||[];s.stories=s.stories||{};s.record=s.record||[];s.notify=s.notify||{...NOTIFY_DEF};
   if(s.mayor&&!s.mayor.look)s.mayor.look=lookFromLegacy(s.mayor);
-  S=s;initGroups(s);recomputeAll(s);if(!s.rival)pickRival();campInit(s);if(!s.mf)s.mf={r0:s.reserve};return s}
+  S=s;initGroups(s);recomputeAll(s);if(!s.rival)pickRival();campInit(s);homeInit(s);if(!s.mf)s.mf={r0:s.reserve};return s}
 function start(data){
   const saved=migrate((data&&data.S)||load());
   S=saved||newState();
