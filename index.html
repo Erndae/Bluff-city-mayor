@@ -487,7 +487,7 @@ details.analysis{margin-top:6px}details.analysis summary{cursor:pointer;color:va
 .card.story{border-left:3px solid #5aa7d8}.storytag{font-family:var(--f-label);font-weight:600;font-size:11.5px;letter-spacing:.1em;text-transform:uppercase;color:#5aa7d8;margin-bottom:2px}
 @media (max-width:640px){.grow{grid-template-columns:30px minmax(0,1fr) 44px;}.grow .gbar,.grow .gst{display:none}}
 </style>
-<link rel="stylesheet" href="city-design.css?v=25">
+<link rel="stylesheet" href="city-design.css?v=25.5">
 <link rel="stylesheet" href="city-life.css?v=25">
 
 <div id="splash" role="status" aria-live="polite">
@@ -549,7 +549,7 @@ details.analysis{margin-top:6px}details.analysis summary{cursor:pointer;color:va
     <button class="btn primary" data-act="pause" id="bPlay">▶ Resume <kbd>Space</kbd></button>
   </nav>
   <div class="status" id="status">Loading map…</div>
-  <div class="credit"><span class="ver" id="verTag">v25</span></div>
+  <div class="credit"><span class="ver" id="verTag">v25.5</span></div>
   <div class="tip" id="tip" hidden></div>
   <div class="toast" id="toast" role="status"></div>
   <section class="panel" id="panel" hidden aria-live="polite">
@@ -584,7 +584,7 @@ details.analysis{margin-top:6px}details.analysis summary{cursor:pointer;color:va
         <button class="btn" id="bLoad" hidden>Continue saved term</button>
       </div>
       <div id="slotList" hidden></div>
-      <p class="note startv">Version <b class="ver" id="verStart">v25</b></p>
+      <p class="note startv">Version <b class="ver" id="verStart">v25.5</b></p>
     </div>
     <div class="startbox create" id="create" hidden>
       <h2>Create your mayor</h2>
@@ -619,7 +619,7 @@ details.analysis{margin-top:6px}details.analysis summary{cursor:pointer;color:va
 (function(){const urls=['https://cdn.jsdelivr.net/npm/maplibre-gl@4.7.1/dist/maplibre-gl.js','https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js'];let k=0;
   function next(){if(k>=urls.length){window.__mlFail=true;window.dispatchEvent(new Event('mlready'));return}const s=document.createElement('script');s.src=urls[k++];s.onload=()=>window.dispatchEvent(new Event('mlready'));s.onerror=next;document.head.appendChild(s)}next()})();
 </script>
-<script src="city-buildings.js?v=25"></script>
+<script src="city-buildings.js?v=25.5"></script>
 <script>
 "use strict";
 // ======================= LOADING SCREEN =======================
@@ -1372,7 +1372,7 @@ function enact(s,p){DIVS.forEach(d=>{s.enacted[d.id]=p.divs[d.id];s.ratio[d.id]=
 // Voter groups. Each has a share of residents, turnout, home districts, concerns and an approval of you.
 // Citywide approval is the turnout-weighted average of the groups; each council district's approval comes from the groups that live there.
 // Shares, district mix and turnout are modeled, loosely grounded in Memphis demographics; they are not survey data.
-const VERSION='v25';
+const VERSION='v25.5';
 const GROUPS=[
  {id:'working',sh:'Working families',n:'Working families',ic:'⚒',c:'#f2a93b',share:24,turn:.5,start:56,w:{jobs:1,safety:.8,transit:.5},
   d:'Hourly workers in logistics, warehouses, health care and service jobs. The biggest bloc in the city.',dm:{1:1.1,2:.8,3:1.3,4:1.2,5:.6,6:1.2,7:1.1}},
@@ -4346,6 +4346,7 @@ function openHelp(){closePanel();openModal('How to play','Guide',`<div class="ro
   <div class="facts"><h4>Taking action</h4><ul><li>Press E or click Actions to make your own moves at any time: propose ordinances to the council, sign executive orders, hold town halls in a district, meet with community leaders, hold press conferences and, in election years, rally your supporters.</li><li>Before you send an ordinance, you see a projected vote. Each member weighs their own priorities, their voters, their backers and how they feel about you, so some will vote against what their district wants. Lock in votes with favors and hooks.</li></ul></div>
   <div class="facts"><h4>Public opinion</h4><ul><li>Memphis is split into eight population groups: working families, homeowners and seniors, renters and bus riders, MSCS parents, the church community, young professionals, the business community, and city workers. Each has a size, a turnout rate, home districts, concerns and its own approval of you.</li><li>Your approval is their average, weighted by size and turnout. Each council district's approval comes from the groups that live there, so the same decision lands differently in District 2 and District 6.</li><li>Council members and suburban mayors want to keep their jobs. They follow their own voters' view of you, more strongly in the year before an election.</li><li>City indicators are colored green (good), yellow (neutral) or red (bad).</li></ul></div>
   <div class="facts"><h4>The year</h4><ul><li>Council members are characters. Each has traits, a home district and an opinion of you from −100 to +100, built from the reasons listed on their page. Reasons fade over time. Each month you get 3 private meetings, and you can fund a $1M project in a member's district every 6 months. Frugal members resent that spending.</li><li>Favors and hooks: members owe you a favor when you grant their requests (blue pins in their home districts), fund their district projects or quietly protect them. Your inspector general's memos can hand you a hook. Spend a favor or a hook to lock a member's vote for the next council vote. Hooks can leak. Press V or open the Council to see the whip count.</li><li>Your mayor is a character too. You choose a name, look, up to 3 traits (one background) and spend 22 skill points at the start. Six skills (Diplomacy, Stewardship, Intrigue, Public Safety, Learning, Charisma) shape opinion, revenue, crime, schools, approval and hooks. They grow with experience from the work you do, a monthly lifestyle focus and training. Click your portrait at the top left.</li><li>Bartlett, Germantown, Collierville, Arlington, Lakeland and Millington are separate cities, outlined on the map. Their mayors are characters with their own relations score. Meet them, co-host events, and handle shared issues like mutual aid, annexation reserves, school buildings and water. Good relations help the regional economy; bad ones send the suburbs to Nashville against you.</li><li>Budget season (April), the June budget vote and elections pause the clock for you.</li><li>Fiscal year runs July–June. Write the next budget in April, the council votes in June, it takes effect July 1.</li><li>TCAP reading results arrive in June.</li><li>Unanswered problems expire and cost you approval and council goodwill. Handling an issue in a member's district earns a little goodwill from that member.</li><li>City elections are every four years in October. Mayors are limited to two terms.</li></ul></div>
+  <div class="facts"><h4>Map credits</h4><p>City of Memphis GIS. xAI outline: © <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap contributors</a>, ODbL. Station outlines reviewed against Esri World Imagery (Esri, Vantor and contributors), O.T. Marshall Architects and the Fire Museum of Memphis. Supplemental roof outlines, heights and facade details are approximate game representations.</p></div>
   <div class="row"><button class="btn" data-act="newgame">Start over</button></div>`)}
 
 // ======================= MAP =======================
@@ -4365,6 +4366,7 @@ function initMap(){splashSet(18,'Opening the map of Memphis…');
   const wide=window.innerWidth>860&&!$('start').hidden;
   map=new maplibregl.Map({container:'map',style:styleBase(),center:wide?[-90.085,35.13]:HOME_VIEW.center,zoom:wide?10.45:HOME_VIEW.zoom,pitch:0,bearing:0,maxPitch:60,minZoom:9.2,maxZoom:18.5,
     maxBounds:[[-90.45,34.85],[-89.45,35.45]],attributionControl:false,dragRotate:false,pitchWithRotate:false,touchPitch:false,keyboard:false,fadeDuration:0});
+  map.addControl(new maplibregl.AttributionControl({compact:true,customAttribution:'City of Memphis GIS · © <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap contributors</a> · Esri, Vantor'}),'bottom-right');
   map.touchZoomRotate.disableRotation();
   try{map.scrollZoom.setWheelZoomRate(1/55);map.scrollZoom.setZoomRate(1/22)}catch(e){}
   map.on('load',loadBase);
@@ -4390,10 +4392,10 @@ const BUILD={
   council:()=>fcPoly(GEO.council.map(f=>f.parts),i=>({d:GEO.council[i].v})),
   superd:()=>fcPoly(GEO.superd.map(f=>f.parts),i=>({d:GEO.superd[i].v})),
   precincts:()=>fcPoly(GEO.precincts.map(f=>f.parts),i=>({n:GEO.precincts[i].v,k:i})),
-  bmain:()=>{const feats=[],hs=[];for(const k of ['bldBig','bldCore']){const f=decodeLayer(RAW[k].g),a=RAW[k].a;for(let i=0;i<f.length;i++){if(isPyramid(f[i]))continue;feats.push(f[i]);hs.push(a[i]||0)}}
+  bmain:()=>{const feats=[],hs=[];for(const k of ['bldBig','bldCore']){const f=decodeLayer(RAW[k].g),a=RAW[k].a;for(let i=0;i<f.length;i++){if(isPyramid(f[i])||window.BCBuildings?.isSuperseded(k,i))continue;feats.push(f[i]);hs.push(a[i]||0)}}
     delete RAW.bldBig;delete RAW.bldCore;return fcPoly(feats,i=>({h:Math.max(3,Math.round(hs[i]*0.3048))}))},
   pyramid:()=>pyramidFC(),
-  bhomes:()=>{const r=fcPoly(decodeLayer(RAW.bldRest.g));delete RAW.bldRest;return r},
+  bhomes:()=>{const r=fcPoly(decodeLayer(RAW.bldRest.g));r.features=r.features.filter(f=>!window.BCBuildings?.isSuperseded('bldRest',f.id-1));delete RAW.bldRest;return r},
 };
 // The Pyramid (Bass Pro Shops, 1 Bass Pro Dr.): the city footprint is a flat box, so it is drawn as a real stepped pyramid instead.
 // About 98 m (321 ft) tall on a square base about 178 m on a side, turned to match the footprint in the city's GIS.
@@ -4456,6 +4458,8 @@ async function loadBase(){
 async function loadBuildings(){
   try{setStatus('Loading downtown and commercial buildings…');
     const d=await getJSON('data/buildings-main.json');Object.assign(RAW,d.layers);
+    // Resolve replacement footprints before decoding either base building source.
+    try{await window.BCBuildings?.prepare()}catch(e){console.warn('Building corrections unavailable',e)}
     map.addSource('bmain',{type:'geojson',data:'bcm://bmain',tolerance:0.2,buffer:32});
     map.addLayer({id:'bmain-flat',type:'fill',source:'bmain',maxzoom:13.5,paint:{'fill-color':'#d4ad89','fill-opacity':['interpolate',['linear'],['zoom'],11,.5,13.5,.9]}},'council-fill');
     map.addLayer({id:'bmain-3d',type:'fill-extrusion',source:'bmain',minzoom:13.5,paint:{'fill-extrusion-color':['interpolate',['linear'],['get','h'],0,'#dca57e',20,'#e7ceaa',60,'#8dbcc8',140,'#d4e5e7'],'fill-extrusion-height':['interpolate',['linear'],['zoom'],13.5,0,14.2,['get','h']],'fill-extrusion-base':0,'fill-extrusion-opacity':1,'fill-extrusion-vertical-gradient':true}},'council-fill');

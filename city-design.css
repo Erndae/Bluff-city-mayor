@@ -14,3 +14,7 @@
 .maplibregl-popup-close-button{position:absolute;right:0;top:0;background:none;border:0;cursor:pointer}
 .building-choices{display:grid;gap:8px;padding-top:10px}
 .building-choices button{background:var(--panel2);border:1px solid var(--line);border-radius:6px;padding:8px;cursor:pointer}
+
+/* Keep map-data credit available above the action bar on phones and desktop. */
+.maplibregl-ctrl-bottom-right{bottom:calc(74px + env(safe-area-inset-bottom,0px));right:8px}
+.maplibregl-ctrl-attrib{font-size:10px;max-width:min(400px,calc(100vw - 32px))}

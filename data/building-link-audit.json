@@ -1,5 +1,11 @@
 {
-  "method": "Address points contained by municipal footprints, or footprints wholly contained by the address parcel. Multi-building parcels require matching street numbers. Nearby buildings are never automatically substituted.",
+  "method": "Address points contained by municipal footprints, or footprints wholly contained by the address parcel. Multi-building parcels require matching street numbers. Reviewed OSM and imagery outlines supplement buildings absent from the 2011 survey. Nearby buildings are never automatically substituted.",
+  "superseded": [
+    "bldBig:11927",
+    "bldBig:11982",
+    "bldBig:11997",
+    "bldRest:134191"
+  ],
   "matched": [
     {
       "key": "landmark:cityhall",
@@ -111,6 +117,15 @@
       "source": "https://gis.memphistn.gov/server/rest/services/Geocode/Locator_MemphisCityLimits/GeocodeServer/findAddressCandidates?f=json&SingleLine=3764%20Elvis%20Presley%20Blvd.%2C%20Memphis%2C%20TN&outSR=4326&outFields=*&locationType=rooftop"
     },
     {
+      "key": "landmark:xai",
+      "name": "xAI Colossus Data Center",
+      "buildings": [
+        "osm:way/1381264361"
+      ],
+      "method": "named-osm-footprint",
+      "source": "https://www.openstreetmap.org/way/1381264361"
+    },
+    {
       "key": "landmark:oem",
       "name": "911 Emergency Communications Center",
       "buildings": [
@@ -163,6 +178,16 @@
       ],
       "method": "point-in-building",
       "source": "https://gis.memphistn.gov/server/rest/services/Geocode/Locator_MemphisCityLimits/GeocodeServer/findAddressCandidates?f=json&SingleLine=6850%20Appling%20Farms%20Pkwy.%2C%20Memphis%2C%20TN&outSR=4326&outFields=*&locationType=rooftop"
+    },
+    {
+      "key": "civic:p5",
+      "name": "Austin Peay Station",
+      "buildings": [
+        "reviewed:austin-peay-main",
+        "reviewed:austin-peay-workshop"
+      ],
+      "method": "reviewed-imagery-outline",
+      "source": "https://otma.com/project/traffic-and-special-operations-station-austin-peay-police-station/"
     },
     {
       "key": "civic:p6",
@@ -678,6 +703,15 @@
       "source": "https://gis.memphistn.gov/server/rest/services/Geocode/Locator_MemphisCityLimits/GeocodeServer/findAddressCandidates?f=json&SingleLine=2203%20Lamar%20Ave.%2C%20Memphis%2C%20TN&outSR=4326&outFields=*&locationType=rooftop"
     },
     {
+      "key": "civic:f54",
+      "name": "Fire Station 1",
+      "buildings": [
+        "reviewed:fire-station-1"
+      ],
+      "method": "reviewed-imagery-outline",
+      "source": "https://firemuseum.com/firehouses/fire-station-no-1-235-chelsea-avenue-at-n-fourth-street/"
+    },
+    {
       "key": "civic:f55",
       "name": "Fire Station 5",
       "buildings": [
@@ -789,33 +823,5 @@
       "source": "https://gis.memphistn.gov/server/rest/services/Geocode/Locator_MemphisCityLimits/GeocodeServer/findAddressCandidates?f=json&SingleLine=3000%20Getwell%20Rd.%2C%20Memphis%2C%20TN&outSR=4326&outFields=*&locationType=rooftop"
     }
   ],
-  "unresolved": [
-    {
-      "key": "landmark:xai",
-      "name": "xAI Colossus Data Center",
-      "address": "3231 Paul R. Lowry Rd.",
-      "coordinates": [
-        -90.1551323897,
-        35.06055441455
-      ]
-    },
-    {
-      "key": "civic:p5",
-      "name": "Austin Peay Station",
-      "address": "3430 Austin Peay Hwy.",
-      "coordinates": [
-        -89.90964991502,
-        35.21740601641
-      ]
-    },
-    {
-      "key": "civic:f54",
-      "name": "Fire Station 1",
-      "address": "235 Chelsea Ave.",
-      "coordinates": [
-        -90.04103842659,
-        35.163086548058
-      ]
-    }
-  ]
+  "unresolved": []
 }

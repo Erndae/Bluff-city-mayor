@@ -28,6 +28,8 @@ function decode(g) {
 }
 function inside(p,ring){let yes=false;for(let i=0,j=ring.length-1;i<ring.length;j=i++){const a=ring[i],b=ring[j];if((a[1]>p[1])!==(b[1]>p[1])&&p[0]<(b[0]-a[0])*(p[1]-a[1])/(b[1]-a[1])+a[0])yes=!yes;}return yes;}
 const matches = new Map(), features=[];
+const supplements=JSON.parse(fs.readFileSync('data/building-supplements.json'));
+const superseded=[];
 const parcelRecords=fs.existsSync('data/site-parcels.json')?JSON.parse(fs.readFileSync('data/site-parcels.json')):[];
 const parcels=parcelRecords.flatMap(p=>(p.features||[]).map(f=>({...p,parcel:f,candidates:[],bounds:f.geometry.rings.flat().reduce((b,[x,y])=>[Math.min(b[0],x),Math.min(b[1],y),Math.max(b[2],x),Math.max(b[3],y)],[Infinity,Infinity,-Infinity,-Infinity])})));
 const palettes={landmark:'#f5c462',police:'#689fe8',fire:'#ef896c',hospital:'#67caba'};
@@ -37,6 +39,8 @@ for(const file of ['buildings-main.json','buildings-homes.json']) {
     if(!d.g)continue;
     decode(d.g).forEach((rings,index)=>{
       if(!rings[0]?.length)return;
+      const center=rings[0].reduce((s,v)=>[s[0]+v[0]/rings[0].length,s[1]+v[1]/rings[0].length],[0,0]);
+      if(supplements.replacementAreas.some(p=>p.geometry.coordinates.reduce((yes,r)=>inside(center,r)?!yes:yes,false))){superseded.push(`${layer}:${index}`);return;}
       let xmin=Infinity,xmax=-Infinity,ymin=Infinity,ymax=-Infinity;
       for(const [x,y] of rings[0]){xmin=Math.min(xmin,x);xmax=Math.max(xmax,x);ymin=Math.min(ymin,y);ymax=Math.max(ymax,y);}
       const found=sites.filter(p=>p.lon>=xmin&&p.lon<=xmax&&p.lat>=ymin&&p.lat<=ymax&&inside([p.lon,p.lat],rings[0])&&!rings.slice(1).some(r=>inside([p.lon,p.lat],r)));
@@ -70,9 +74,23 @@ for(const p of parcels){
   if(!anchor)for(const v of r){const a=[v[0]*.99+center[0]*.01,v[1]*.99+center[1]*.01];if(inside(a,r)){anchor=a;break;}}
   if(anchor){site.original=site.original||[site.lon,site.lat];[site.lon,site.lat]=anchor;}
 }
-const report={method:'Address points contained by municipal footprints, or footprints wholly contained by the address parcel. Multi-building parcels require matching street numbers. Nearby buildings are never automatically substituted.',matched:sites.filter(p=>matches.has(p.key)).map(p=>({key:p.key,name:p.name,buildings:matches.get(p.key),method:p.parcel?'address-parcel':'point-in-building',source:p.source||'Existing city GIS point',parcel:p.parcel})),unresolved:sites.filter(p=>!matches.has(p.key)).map(p=>({key:p.key,name:p.name,address:p.addr,coordinates:[p.lon,p.lat]}))};
+// Reviewed supplementary outlines are explicit, source-backed exceptions to the
+// municipal containment pass, never automatic nearest-building substitutions.
+for(const extra of supplements.features){
+  const p=extra.properties,site=sites.find(s=>s.key===p.key);
+  if(!site)throw new Error('Unknown supplemental site '+p.key);
+  const ring=extra.geometry.coordinates[0];
+  if(ring.length<4||JSON.stringify(ring[0])!==JSON.stringify(ring.at(-1)))throw new Error('Unclosed outline '+p.buildingId);
+  const anchor=p.anchor;
+  if(anchor&&!inside(anchor,ring))throw new Error('Anchor outside '+p.buildingId);
+  features.push({type:'Feature',id:features.length+1,properties:{buildingId:p.buildingId,keys:JSON.stringify([site.key]),name:site.name,address:site.addr,kind:site.kind,color:palettes[site.kind],height:p.height,method:p.method,source:p.source},geometry:extra.geometry});
+  matches.set(site.key,[...(matches.get(site.key)||[]),p.buildingId]);
+  site.source=p.source;site.method=p.method;
+  if(anchor){site.original=site.original||[site.lon,site.lat];[site.lon,site.lat]=anchor;}
+}
+const report={method:'Address points contained by municipal footprints, or footprints wholly contained by the address parcel. Multi-building parcels require matching street numbers. Reviewed OSM and imagery outlines supplement buildings absent from the 2011 survey. Nearby buildings are never automatically substituted.',superseded,matched:sites.filter(p=>matches.has(p.key)).map(p=>({key:p.key,name:p.name,buildings:matches.get(p.key),method:p.method||(p.parcel?'address-parcel':'point-in-building'),source:p.source||'Existing city GIS point',parcel:p.parcel})),unresolved:sites.filter(p=>!matches.has(p.key)).map(p=>({key:p.key,name:p.name,address:p.addr,coordinates:[p.lon,p.lat]}))};
 const anchors=sites.filter(p=>p.original&&matches.has(p.key)).map(p=>({key:p.key,coordinates:[p.lon,p.lat],source:p.source}));
-fs.writeFileSync('data/named-buildings.json',JSON.stringify({type:'FeatureCollection',features,anchors}));
+fs.writeFileSync('data/named-buildings.json',JSON.stringify({type:'FeatureCollection',features,anchors,superseded}));
 // Stylized facade windows follow real exterior edges. These are decorative,
 // not a claim about a building's real window or entrance positions.
 const details=[];
@@ -95,4 +113,4 @@ for(const f of features){
 }
 fs.writeFileSync('data/building-details.json',JSON.stringify({type:'FeatureCollection',features:details}));
 fs.writeFileSync('data/building-link-audit.json',JSON.stringify(report,null,2)+'\n');
-console.log(`${report.matched.length}/${sites.length} locations contained by ${features.length} footprints; ${report.unresolved.length} require coordinate/address review.`);
+console.log(`${report.matched.length}/${sites.length} locations linked to ${features.length} footprints; ${report.unresolved.length} require coordinate/address review.`);

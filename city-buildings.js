@@ -1,6 +1,18 @@
 /* Named locations share the same footprint for rendering, hover and selection. */
 window.BCBuildings = (() => {
   let map, state, openPlace, openCivic, byKey = new Map(), hoverId, selectedIds=[];
+  let prepared, superseded=new Set();
+  async function prepare() {
+    if(!prepared)prepared=(async()=>{
+      const response=await fetch('data/named-buildings.json?v=25.5');
+      if(!response.ok)throw new Error('Named buildings '+response.status);
+      const data=await response.json();
+      superseded=new Set(data.superseded||[]);
+      return data;
+    })().catch(error=>{prepared=null;throw error;});
+    return prepared;
+  }
+  const isSuperseded=(layer,index)=>superseded.has(`${layer}:${index}`);
   const ids = ['places-flat', 'places-3d', 'places-outline', 'places-windows'];
   const allowed = () => map && state()?.layers.bld && (state()?.mode || 'real') === 'real';
   const color = ['case', ['boolean',['feature-state','selected'],false], '#ffe27b', ['boolean',['feature-state','hover'],false], '#fff0ba', ['boolean',['feature-state','worn'],false], '#937966', ['boolean',['feature-state','renewed'],false], '#8ed4bd', ['get','color']];
@@ -43,9 +55,7 @@ window.BCBuildings = (() => {
   }
   async function install(options) {
     ({map,state,openPlace,openCivic}=options);
-    const response=await fetch('data/named-buildings.json?v=18');
-    if(!response.ok)throw new Error('Named buildings '+response.status);
-    const data=await response.json();
+    const data=await prepare();
     options.onAnchors?.(data.anchors || []);
     for(const f of data.features)for(const key of JSON.parse(f.properties.keys))byKey.set(key,[...(byKey.get(key)||[]),f]);
     map.addSource('named-buildings',{type:'geojson',data,tolerance:0.1});
@@ -55,12 +65,12 @@ window.BCBuildings = (() => {
     sync();window.BCLife?.sync();
     // Facade decoration is optional: failure leaves the clickable footprints intact.
     try {
-      const r=await fetch('data/building-details.json?v=18');if(!r.ok)throw new Error(r.status);
+      const r=await fetch('data/building-details.json?v=25.5');if(!r.ok)throw new Error(r.status);
       map.addSource('building-details',{type:'geojson',data:await r.json(),tolerance:0});
       map.addLayer({id:'places-windows',type:'fill-extrusion',source:'building-details',minzoom:15.2,paint:{'fill-extrusion-color':['get','color'],'fill-extrusion-base':['get','base'],'fill-extrusion-height':['get','top'],'fill-extrusion-opacity':1}});
       sync();
     }catch(e){console.warn('Facade details unavailable',e);}
   }
   function conditions(values){for(const [key,v] of Object.entries(values))for(const f of byKey.get(key)||[])for(const [prop,value] of Object.entries(v))set(f.id,prop,value);}
-  return {install,sync,hit,hover,click,select,conditions};
+  return {prepare,isSuperseded,install,sync,hit,hover,click,select,conditions};
 })();
