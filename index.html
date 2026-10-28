@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="description" content="Create your mayor and govern Memphis in real time on a map with a real map of the city.">
 <title>Bluff City Mayor</title>
-<link rel="stylesheet" href="music.css?v=21">
+<link rel="stylesheet" href="music.css?v=23">
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -358,16 +358,20 @@ button.seat:hover{border-color:var(--amber)}
   .actions .btn.act{border-color:var(--amber);color:var(--amber)}
 .choices .choice small{white-space:normal}
 /* v15 */
+.slotlist{display:flex;flex-direction:column;gap:6px}.slotc{display:flex;justify-content:space-between;align-items:center;gap:10px;border:1px solid var(--line);border-radius:6px;padding:8px 10px;background:rgba(255,255,255,.02)}
+.slotc.cur{border-color:var(--amber)}.slotc.empty{opacity:.75}.slotc b{display:block;font-size:13px;color:var(--amber);text-transform:uppercase;letter-spacing:.05em}.slotc span{display:block;font-size:15px}.slotc small{display:block;font-size:12px;color:var(--muted)}
+.btn.danger{border-color:var(--bad);color:var(--bad)}#slotList{display:flex;flex-direction:column;gap:8px}
 .guidebox{border:1px solid var(--amber);border-radius:6px;padding:8px 10px;margin-bottom:10px;background:rgba(242,169,59,.06)}
 .gb-h{display:flex;align-items:center;gap:8px}.gb-h b{flex:1;color:var(--amber);font-size:13px;text-transform:uppercase;letter-spacing:.06em}.gb-h span{font-size:12px;color:var(--muted)}.gb-x{background:none;border:0;color:var(--muted);cursor:pointer;font-size:15px}
 .guidebox .gbar{height:4px;background:var(--line);border-radius:2px;margin:6px 0;overflow:hidden}.guidebox .gbar i{display:block;height:100%}
 .gb-q{display:flex;flex-direction:column;gap:5px;align-items:flex-start;padding:4px 0}.gb-q>div{min-width:0}.gb-q b{font-size:13.5px;display:block}.gb-q small{font-size:12px;color:var(--muted);display:block;line-height:1.35;font-family:var(--f-body)}.gb-q.later b{font-weight:500;color:var(--muted);font-size:12.5px}.gb-q .btn{padding:3px 9px;white-space:nowrap}
-#notes{position:fixed;right:max(16px,env(safe-area-inset-right,0px));bottom:calc(74px + env(safe-area-inset-bottom,0px));width:330px;max-width:calc(100vw - 32px);display:flex;flex-direction:column;gap:6px;z-index:60;pointer-events:none}
+#notes{position:fixed;right:max(16px,env(safe-area-inset-right,0px));bottom:calc(122px + env(safe-area-inset-bottom,0px));width:330px;max-width:calc(100vw - 32px);display:flex;flex-direction:column;gap:6px;z-index:60;pointer-events:none}
 .note-card{pointer-events:auto;display:grid;grid-template-columns:28px 1fr auto;gap:8px;align-items:start;background:linear-gradient(180deg,#1c3042,#13212d);border:1px solid var(--line);border-left:4px solid var(--nc);border-radius:6px;padding:8px 8px 8px 10px;box-shadow:0 6px 20px rgba(0,0,0,.5);cursor:pointer;opacity:0;transform:translateX(30px);transition:opacity .25s,transform .25s}
 .note-card.in{opacity:1;transform:none}.note-card.out{opacity:0;transform:translateX(30px)}.note-card:hover{border-color:var(--nc)}
 .nc-ic{width:26px;height:26px;border-radius:50%;display:grid;place-items:center;background:var(--nc);color:#0d1822;font-weight:700;font-size:13px}
 .nc-tx{display:flex;flex-direction:column;gap:2px;min-width:0}.nc-tx b{font-size:13.5px;line-height:1.25}.nc-tx small{font-size:12px;color:var(--muted);line-height:1.3}.nc-tx em{font-style:normal;font-size:10.5px;color:var(--amber);text-transform:uppercase;letter-spacing:.06em}
 .nc-x{background:none;border:0;color:var(--muted);font-size:16px;cursor:pointer;padding:0 2px;line-height:1}
+body.mopen #notes{z-index:3}
 .mny-up{color:var(--good);font-weight:600}.mny-dn{color:var(--bad);font-weight:600}
 @media (max-width:760px){#notes{bottom:calc(64px + env(safe-area-inset-bottom,0px));width:auto;left:12px;right:12px}.note-card:nth-child(n+3){display:none}}
 .evwho{display:flex;flex-direction:row;align-items:center;gap:10px;margin:0 0 8px;padding:6px 8px;background:rgba(255,255,255,.03);border:1px solid var(--line);border-radius:6px}
@@ -451,8 +455,8 @@ details.analysis{margin-top:6px}details.analysis summary{cursor:pointer;color:va
 .card.story{border-left:3px solid #5aa7d8}.storytag{font-family:var(--f-label);font-weight:600;font-size:11.5px;letter-spacing:.1em;text-transform:uppercase;color:#5aa7d8;margin-bottom:2px}
 @media (max-width:640px){.grow{grid-template-columns:30px minmax(0,1fr) 44px;}.grow .gbar,.grow .gst{display:none}}
 </style>
-<link rel="stylesheet" href="city-design.css?v=22">
-<link rel="stylesheet" href="city-life.css?v=22">
+<link rel="stylesheet" href="city-design.css?v=23">
+<link rel="stylesheet" href="city-life.css?v=23">
 
 <div id="app">
   <div id="map" aria-label="Map of Memphis"></div>
@@ -481,6 +485,7 @@ details.analysis{margin-top:6px}details.analysis summary{cursor:pointer;color:va
     <label><input type="checkbox" id="lyCivic" checked> Police, fire stations and hospitals</label>
     <label><input type="checkbox" id="lyEdge" checked> Scroll at screen edges</label>
     <label><input type="checkbox" id="lyPause" checked> Pause when something new arrives</label>
+    <button class="btn" data-slotopen="1" style="margin:4px 0">Save and load <kbd>G</kbd></button>
     <label><input type="checkbox" id="sfxOn" checked> Sound effects</label>
     <label style="display:flex;align-items:center;gap:6px">Effects volume <input type="range" id="sfxVol" min="0" max="100" value="50" style="flex:1"></label>
     <p class="note">Map modes (bottom left, keys 1–7) switch between the city, the political map, council opinion, street condition, police precincts, the region and public opinion.</p>
@@ -499,7 +504,7 @@ details.analysis{margin-top:6px}details.analysis summary{cursor:pointer;color:va
     <button class="btn primary" data-act="pause" id="bPlay">▶ Resume <kbd>Space</kbd></button>
   </nav>
   <div class="status" id="status">Loading map…</div>
-  <div class="credit"><span class="ver" id="verTag">v21</span></div>
+  <div class="credit"><span class="ver" id="verTag">v23</span></div>
   <div class="tip" id="tip" hidden></div>
   <div class="toast" id="toast" role="status"></div>
   <section class="panel" id="panel" hidden aria-live="polite">
@@ -533,7 +538,8 @@ details.analysis{margin-top:6px}details.analysis summary{cursor:pointer;color:va
         <button class="btn" data-music-open>Music &amp; volume</button>
         <button class="btn" id="bLoad" hidden>Continue saved term</button>
       </div>
-      <p class="note startv">Version <b class="ver" id="verStart">v21</b></p>
+      <div id="slotList" hidden></div>
+      <p class="note startv">Version <b class="ver" id="verStart">v23</b></p>
     </div>
     <div class="startbox create" id="create" hidden>
       <h2>Create your mayor</h2>
@@ -568,7 +574,7 @@ details.analysis{margin-top:6px}details.analysis summary{cursor:pointer;color:va
 (function(){const urls=['https://cdn.jsdelivr.net/npm/maplibre-gl@4.7.1/dist/maplibre-gl.js','https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js'];let k=0;
   function next(){if(k>=urls.length){window.__mlFail=true;window.dispatchEvent(new Event('mlready'));return}const s=document.createElement('script');s.src=urls[k++];s.onload=()=>window.dispatchEvent(new Event('mlready'));s.onerror=next;document.head.appendChild(s)}next()})();
 </script>
-<script src="city-buildings.js?v=22"></script>
+<script src="city-buildings.js?v=23"></script>
 <script>
 "use strict";
 // ======================= PLACES =======================
@@ -1037,7 +1043,7 @@ const fmtM=v=>(v<0?'−$':'$')+Math.abs(v).toFixed(1)+'M';
 function policyCost(s){return Object.keys(s.policies).filter(k=>s.policies[k]).reduce((a,k)=>a+POLICIES[k].cost,0)}
 function enactedTotal(s){return DIVS.reduce((a,d)=>a+s.enacted[d.id],0)+s.raiseCost}
 function annualSpend(s){return enactedTotal(s)+policyCost(s)+bondService(s)+maintCost(s)}
-function revenueFor(s,fyIndex,tax){return 906*Math.pow(1.015,fyIndex)+(tax-3.39)*150+(s.met.jobs-55)*0.8+s.revBoost+(s.mayor?(mskill('stew')-8)*0.8:0)}
+function revenueFor(s,fyIndex,tax){return 906*Math.pow(1.021,fyIndex)+(tax-3.39)*150+(s.met.jobs-55)*0.8+s.revBoost+(s.mayor?(mskill('stew')-8)*0.8:0)}
 function annualRevenue(s){return revenueFor(s,s.fyIndex,s.taxRate)}
 function safetyScore(s){return clamp(50+(100-s.met.crime)*1.5,0,100)}
 
@@ -1081,19 +1087,20 @@ function monthlySim(s){
   M.officers=clamp(M.officers+16+(P.recruit?7:0)+(r('police')-1)*140-17+rnd(-3,3),1500,2650);
   const crimeT=86-(M.officers-1917)/35-(P.mploy?2.5:0)-(r('parks')-1)*20-(60-M.blight)*0.12-(s.mayor?(mskill('safe')-8)*0.3:0);
   M.crime=clamp(M.crime+(crimeT-M.crime)*0.12+rnd(-0.6,0.6),40,140);
-  M.streets=clamp(M.streets+(r('pw')-1)*8+(r('eng')-1)*4-0.12+rnd(-.15,.15),0,100);
-  M.blight=clamp(M.blight+0.12-(r('hcd')-1)*5-(r('gs')-1)*2-(P.crews?0.5:0)+rnd(-.1,.1),0,100);
+  M.streets=clamp(M.streets+(r('pw')-1)*8+(r('eng')-1)*4-0.12*Math.max(0.3,M.streets/50)+rnd(-.15,.15),0,100);
+  M.blight=clamp(M.blight+0.12+(55-M.blight)*0.004-(r('hcd')-1)*5-(r('gs')-1)*2-(P.crews?0.5:0)+rnd(-.1,.1),0,100);
   const trT=40+(P.mata?9:0)+(r('grants')-1)*40;M.transit=clamp(M.transit+(trT-M.transit)*0.15,0,100);
-  M.jobs=clamp(M.jobs+(55+s.jobsBoost-M.jobs)*0.06+rnd(-.2,.2),0,100);
+  s.jobsBoost*=0.98;M.jobs=clamp(M.jobs+(55+30*Math.tanh(s.jobsBoost/30)-M.jobs)*0.06+rnd(-.2,.2),0,100);
   const tax=(s.taxRate-3.39)*100*0.25;
   const target=0.30*safetyScore(s)+0.15*M.streets+0.15*(100-M.blight)+0.10*M.transit+0.10*M.jobs+0.10*(M.reading*2)+5-tax+s.mood+(s.mayor?(mskill('cha')-8)*0.5:0);
   if(s.groups)groupsMonth(s);else s.approval=clamp(s.approval+(target-s.approval)*0.22+rnd(-.5,.5),5,95);
   s.mood*=0.85;
+  if(s.reserve<0){s.reserve-=Math.abs(s.reserve)*0.065/12;s.mood-=0.4}
   s.council.forEach(decayMods);if(s.nb)for(const id in s.nb)decayMods(s.nb[id]);s.slots=3;recomputeAll(s);
   if(s.nb)for(const id in s.nb){const n=s.nb[id];if(n.opinion>=40)s.met.jobs+=0.08}
 }
 function readingUpdate(s){const r=id=>s.ratio[id]||1,P=s.policies;
-  const d=(s.mayor?(mskill('learn')-8)*0.07:0)+0.8+(r('lib')-1)*10+(P.tutors?1.2:0)+(P.libHours?0.6:0)+(P.mploy?0.3:0)+s.county/100*1.2+s.eduBoost+rnd(-0.4,0.4);
+  const d=(s.mayor?(mskill('learn')-8)*0.07:0)+0.8+(r('lib')-1)*10+(P.tutors?1.2:0)+(P.libHours?0.6:0)+(P.mploy?0.3:0)+s.county/100*1.2+s.eduBoost+rnd(-0.4,0.4)-(s.met.reading-27)*0.3;
   s.eduBoost=0;const before=s.met.reading;s.met.reading=clamp(s.met.reading+d,10,60);return{before,after:s.met.reading}}
 
 // ======================= GEO HELPERS =======================
@@ -1298,7 +1305,7 @@ function enact(s,p){DIVS.forEach(d=>{s.enacted[d.id]=p.divs[d.id];s.ratio[d.id]=
 // Voter groups. Each has a share of residents, turnout, home districts, concerns and an approval of you.
 // Citywide approval is the turnout-weighted average of the groups; each council district's approval comes from the groups that live there.
 // Shares, district mix and turnout are modeled, loosely grounded in Memphis demographics; they are not survey data.
-const VERSION='v22';
+const VERSION='v23';
 const GROUPS=[
  {id:'working',sh:'Working families',n:'Working families',ic:'⚒',c:'#f2a93b',share:24,turn:.5,start:56,w:{jobs:1,safety:.8,transit:.5},
   d:'Hourly workers in logistics, warehouses, health care and service jobs. The biggest bloc in the city.',dm:{1:1.1,2:.8,3:1.3,4:1.2,5:.6,6:1.2,7:1.1}},
@@ -1443,7 +1450,7 @@ function setStatus(t){const s=$('status');if(!t){s.hidden=true;return}s.hidden=f
 // ======================= PANEL & MODALS =======================
 let modalOpen=false,onClose=null,panelFor=null;
 function openModal(sub,title,html,wide,cb){if(!NAV.depth&&!NAV.busy){NAV.stack=[];NAV.cur=null}$('mSub').textContent=sub;$('mTitle').textContent=title;$('mBody').innerHTML=html;$('sheet').classList.toggle('wide',!!wide);$('modal').hidden=false;modalOpen=true;onClose=cb||null;$('mBody').scrollTop=0;renderNav()}
-function closeModal(){$('modal').hidden=true;modalOpen=false;navCheckLater();const f=onClose;onClose=null;if(f)f()}
+function closeModal(){document.body.classList.remove('mopen');$('modal').hidden=true;modalOpen=false;navCheckLater();const f=onClose;onClose=null;if(f)f()}
 function openPanel(sub,title,html,key){if(!NAV.depth&&!NAV.busy){NAV.stack=[];NAV.cur=null}$('pSub').textContent=sub;$('pTitle').textContent=title;$('pBody').innerHTML=html;$('panel').hidden=false;$('pBody').scrollTop=0;panelFor=key||null;$('layers').hidden=true;renderNav()}
 function closePanel(){$('panel').hidden=true;panelFor=null;navCheckLater()}
 function whereLine(lon,lat){const d=districtAt(lon,lat),sd=superAt(lon,lat),pc=precinctAt(lon,lat);
@@ -2048,8 +2055,8 @@ function storyChoice(def,c,ev){const st=S.stories&&S.stories[def.story];if(!st)r
   if(c.next)queueStory(def.story,c.next,c.delay||2);
   else{const end=c.end||{t:'Let it drift',camp:{d:-0.5,t:'Your opponent says you went missing when it mattered.'}};st.ended={t:end.t,d:dateStr(),camp:end.camp};st.endedM=nowM();
     addRecord({t:`${STORY_NAMES[def.story]}: ${end.t}`,good:Object.keys(c.grp||{}).filter(k=>c.grp[k]>0),bad:Object.keys(c.grp||{}).filter(k=>c.grp[k]<0),kind:'story',camp:end.camp});logIt(`Story ended: ${STORY_NAMES[def.story]}. ${end.t}.`)}}
-function addRecord(r){S.record=S.record||[];S.record.unshift({d:dateStr(),...r});if(S.record.length>60)S.record.length=60}
-function recordSwing(){return(S.record||[]).reduce((a,r)=>a+((r.camp&&r.camp.d)||0),0)}
+function addRecord(r){S.record=S.record||[];S.record.unshift({d:dateStr(),m:nowM(),...r});if(S.record.length>60)S.record.length=60}
+function recordSwing(){const now=nowM();const raw=(S.record||[]).reduce((a,r)=>a+((r.camp&&r.camp.d)||0)*Math.pow(0.5,Math.max(0,now-(r.m??now-6))/14),0);return 8*Math.tanh(raw/8)} // old news fades (half-life about 14 months) and the total is capped near ±8 points
 function recordLines(){const L=(S.record||[]).filter(r=>r.camp&&r.camp.t);return L.length?`<div class="facts"><h4>Your record on the campaign trail</h4><ul>${L.slice(0,6).map(r=>`<li>${r.camp.t} <span class="note">(${r.camp.d>0?'+':r.camp.d<0?'−':'±'}${Math.abs(r.camp.d)} pts)</span></li>`).join('')}</ul></div>`:''}
 const LOC_SW='xai';
 EVENTS.push(
@@ -2612,7 +2619,7 @@ function campaignWindDown(){const C=S.camp,out=[];const orgs=C.organizers,offs=O
 
 function checkCampaignDay(){if(!S.camp)return false;const e=electionDate();if(S.y!==e.y)return false;
   if(S.m===9&&DEBATE_DAYS.includes(S.day)){const n=DEBATE_DAYS.indexOf(S.day)+1;if(!S.camp.debates[n]){openDebate(n);return true}}
-  if(S.m===10&&S.day===e.day&&!S.camp.voted){S.camp.voted=true;setPaused(true);if(isCand())candElection();else electionV2(()=>{});return true}return false}
+  if(S.m===10&&S.day>=e.day&&!S.camp.voted){S.camp.voted=true;setPaused(true);if(isCand())candElection();else electionV2(()=>{});return true}return false}
 
 // ---------- money: three accounts, monthly summaries ----------
 // Salary: $170,817 a year = $14,234.75 a month before deductions. Take-home is an estimate under stated assumptions.
@@ -2890,13 +2897,19 @@ const CIV_PROBLEMS={police:['The station\'s air conditioning failed. Officers ar
  fire:['The station\'s engine is out of service with a pump failure. Neighboring stations are covering its calls.','The ladder truck failed inspection.','The bay door motor broke; crews are opening it by hand.'],
  hospital:['The emergency department is on diversion most nights, short on nurses.','A spike in uninsured patients is straining the budget.']};
 function civicMonth(report){S.civic=S.civic||{};
-  for(const t in CIV)CIV[t].list.forEach(p=>{const c=civState(p.id);if(t!=='hospital')c.lvl=clamp(c.lvl-(c.out?2.5:0.8),0,100);else c.lvl=clamp(c.lvl-0.5,0,100)});
+  for(const t in CIV)CIV[t].list.forEach(p=>{const c=civState(p.id);if(t!=='hospital')c.lvl=clamp(c.lvl-(c.out?2.5:0.8)+(45-c.lvl)*0.035,0,100);else c.lvl=clamp(c.lvl-0.5+(30-c.lvl)*0.02,0,100)});
   // one new problem most months, somewhere on the map
-  if(Math.random()<0.55){const t=Math.random()<0.45?'fire':Math.random()<0.7?'police':'hospital';const L=CIV[t].list.filter(p=>!civState(p.id).out);if(L.length){
-    const p=L.slice().sort((a,b)=>civState(a.id).lvl-civState(b.id).lvl)[Math.floor(Math.random()*Math.min(6,L.length))];const c=civState(p.id);const msgs=CIV_PROBLEMS[t];c.out=msgs[Math.floor(Math.random()*msgs.length)];c.lvl=clamp(c.lvl-(t==='hospital'?0:10),0,100);c.outM=nowM();
+  if(Object.values(S.civic).filter(c=>c.out).length<6&&Math.random()<0.55){const t=Math.random()<0.45?'fire':Math.random()<0.7?'police':'hospital';const L=CIV[t].list.filter(p=>!civState(p.id).out);if(L.length){
+    const p=L.slice().sort((a,b)=>civState(a.id).lvl-civState(b.id).lvl)[Math.floor(Math.random()*Math.min(6,L.length))];const c=civState(p.id);const msgs=CIV_PROBLEMS[t];c.out=msgs[Math.floor(Math.random()*msgs.length)];c.outSince=nowM();c.lvl=clamp(c.lvl-(t==='hospital'?0:10),0,100);c.outM=nowM();
     report.push(`${p.name}: ${c.out}`);logIt(`${p.name}: ${c.out}`);try{notify('alert',p.name,c.out,()=>openCivic(p.id))}catch(e){}}}
   // problems left alone cost you
-  for(const id in S.civic){const c=S.civic[id];if(c.out&&nowM()-(c.outM||nowM())>=2){const p=CIVMAP[id];if(!p)continue;const d=districtAt(p.lon,p.lat);if(d){S.pop.d[d]=clamp(S.pop.d[d]-1.5,-20,20);const m=memberFor(d);if(m)addMod(m,`${p.name} left in disrepair`,-3)}addMod(staffOf(p.type==='police'?'police':p.type==='fire'?'fire':'cos'),`${p.name} left broken`,-3);c.outM=nowM()-1;if(p.type==='hospital'){c.out=false;continue}}}
+  {const byD={},byChief={};for(const id in S.civic){const c=S.civic[id];if(!c.out)continue;const p=CIVMAP[id];if(!p)continue;const age=nowM()-(c.outSince??c.outM??nowM());
+    if(age>=6&&p.type!=='hospital'){c.out=false;c.lvl=clamp(c.lvl+8,0,100);S.reserve-=0.3;report.push(`${p.name}: the department finally fixed it on its own (−$0.3M), months late.`);continue}
+    if(p.type==='hospital'&&age>=2){c.out=false;continue}
+    if(age>=2){const d=districtAt(p.lon,p.lat);if(d){byD[d]=(byD[d]||0)+1;S.pop.d[d]=clamp(S.pop.d[d]-0.8,-20,20)}const ch=p.type==='police'?'police':p.type==='fire'?'fire':'cos';byChief[ch]=(byChief[ch]||0)+1}}
+    const setMod=(m,t,v)=>{if(!m)return;m.mods=m.mods.filter(x=>x.t!==t);if(v)m.mods.push({t,v})};
+    for(let d=1;d<=7;d++){const m=memberFor(d);setMod(m,'Broken stations in my district',byD[d]?-Math.min(12,3*byD[d]):0)}
+    ['police','fire','cos'].forEach(ch=>setMod(staffOf(ch),'Stations left broken',byChief[ch]?-Math.min(15,3*byChief[ch]):0))}
   const pm=civAvg('police'),fr=civAvg('fire');S.met.crime=clamp(S.met.crime-(pm-55)*0.02,40,140);S.met.officers+=Math.round((pm-55)*0.15);
   if(fr>=65){addGroupMod(S.groups.owners,'Fire stations in good shape',0.3)}else if(fr<45){addGroupMod(S.groups.owners,'Run-down fire stations',-0.4);addGroupMod(S.groups.working,'Run-down fire stations',-0.3)}
   renderCivic()}
@@ -3263,7 +3276,7 @@ toast=function(msg){if(!msg)return;if(!S||!S.started){_toast(msg);return}const k
 // Any amount written with a sign is colored: +$ green (money in), −$ red (money out).
 const MONEY_RE=/([+−-])\s?\$[\d,]+(?:\.\d+)?(?:[MK])?(?:\s?(?:\/yr|\/mo|a year|a month))?/g;
 function moneyColor(html){if(!html||typeof html!=='string')return html;return html.replace(/(^|>)([^<]+)/g,(m,a,t)=>a+t.replace(MONEY_RE,(x,sg)=>`<span class="${sg==='+'?'mny-up':'mny-dn'}">${x}</span>`))}
-const _openModal=openModal;openModal=function(sub,title,html,wide,cb){const was=modalOpen;_openModal(sub,title,moneyColor(html),wide,cb);const tx=sub+' '+title;if(/won a second term|with a win/i.test(tx))sfx('good');else if(/lost the election/i.test(tx))sfx('bad');else if(/vote|veto|override/i.test(tx))sfx('gavel');else if(!was)sfx('open')};
+const _openModal=openModal;openModal=function(sub,title,html,wide,cb){const was=modalOpen;document.body.classList.add('mopen');_openModal(sub,title,moneyColor(html),wide,cb);const tx=sub+' '+title;if(/won a second term|with a win/i.test(tx))sfx('good');else if(/lost the election/i.test(tx))sfx('bad');else if(/vote|veto|override/i.test(tx))sfx('gavel');else if(!was)sfx('open')};
 const _openPanel=openPanel;openPanel=function(sub,title,html,key){const was=!$('panel').hidden;_openPanel(sub,title,moneyColor(html),key);if(!was)sfx('open')};
 
 if($('sfxOn')){$('sfxOn').checked=SFX.on;$('sfxVol').value=Math.round(SFX.vol*100)}
@@ -3290,8 +3303,11 @@ function incRival(ch){const pk=a=>a[Math.floor(Math.random()*a.length)];const pl
   return{k:-1,inc:true,name:ch.name,ch,slogan:ch.slogan||pk(SLOGANS),plat:pl,champs:ch.champs||GROUPS.slice().sort((a,b)=>(S.groups[b.id].app)-(S.groups[a.id].app)).slice(0,3).map(g=>g.id),
     atk:[`${ch.name.split(' ').pop()}'s Memphis still can't fix a pothole`,`${ch.name.split(' ').pop()} promised safer streets and didn't deliver`]}}
 // The city keeps running while you aren't mayor: a month of the incumbent's government.
+function aiBudget(s){const p=defaultProposal(s);const cost=DIVS.reduce((a,d)=>a+p.divs[d.id],0)+policyCost(s)+bondService(s)+maintCost(s);const pct=s.reserve/annualSpend(s)*100;let gap=revenueFor(s,s.fyIndex+1,p.tax)-cost-p.raise*5;
+  const spend=annualSpend(s),need=Math.max(0,(0.10*spend-s.reserve)/3); // refill the reserve to 10% over about three years
+  if(gap<need&&pct<12){p.raise=1;gap+=5;if(gap<need)p.tax=+(p.tax+Math.min(0.25,Math.ceil((need-gap)/1.5)/100)).toFixed(2)}else if(gap>25&&pct>14)p.tax=+Math.max(3.0,p.tax-0.05).toFixed(2);return p}
 function aiMonth(){monthlySim(S);S.m++;if(S.m>12){S.m=1;S.y++}S.day=1;
-  if(S.m===4){S.pending=defaultProposal(S);S.stage='adopted'}if(S.m===6)readingUpdate(S);if(S.m===7&&S.pending){enact(S,S.pending);S.pending=null;S.stage='none'}
+  if(S.m===4){S.pending=aiBudget(S);S.stage='adopted'}if(S.m===6)readingUpdate(S);if(S.m===7&&S.pending){enact(S,S.pending);S.pending=null;S.stage='none'}
   S.events=[];S.queue=[];if(S.m===12)try{suburbElections([])}catch(e){}}
 function prioOnly(s,g){const sw=Object.values(g.w).reduce((a,b)=>a+b,0);let v=0;for(const p in g.w)v+=g.w[p]*(prioScore(s,p)-50)/sw*0.8;return v}
 function incTarget(g){return clamp(50+(S.incBase[g.id]||0)+prioOnly(S,g),5,95)}
@@ -3306,7 +3322,7 @@ function candBump(gid,v,t){const G=S.groups[gid];addGroupMod(G,t,v);G.app=clamp(
 function recUp(v){S.cand.rec=clamp(S.cand.rec+v,0,1)}
 function candEndOfMonth(){releaseQueued(true);const before=snapshotMet(S);const report=[];
   monthlySim(S);if(S.mayor)gainXP(S.mayor.focus,12);S.m++;if(S.m>12){S.m=1;S.y++}S.day=1;expire(S,report);
-  if(S.m===4){S.pending=defaultProposal(S);S.stage='adopted';report.push(`Mayor ${S.rival.name} sent the council a cost-to-continue budget.`)}
+  if(S.m===4){S.pending=aiBudget(S);S.stage='adopted';report.push(`Mayor ${S.rival.name} sent the council a budget${S.pending.tax>S.taxRate?` with a ${Math.round((S.pending.tax-S.taxRate)*100)}¢ tax increase`:''}.`)}
   if(S.m===6){const r=readingUpdate(S);report.push(`TCAP results: MSCS reading went from ${r.before.toFixed(1)}% to ${r.after.toFixed(1)}%. Mayor ${S.rival.name.split(' ').pop()} owns that number, for better or worse.`)}
   if(S.m===7&&S.pending){enact(S,S.pending);S.pending=null;S.stage='none'}
   recUp(0.012);candSpawn(report);
@@ -3417,6 +3433,7 @@ function newCouncilFace(k){const m=S.council[k];if(!m)return;const g=Math.random
 function becomeMayor(ch,how){if(!isCand())histAdd(S.mayor,how);S.promises=null;S._pp=null;S.inc=null;const pk=a=>a[Math.floor(Math.random()*a.length)];
   if(ch.k!=null&&ch.k>=0)newCouncilFace(ch.k);if(ch.staff){replaceStaff(ch.staff,true)}
   const sk={};['dip','stew','intr','safe','learn','cha'].forEach(k=>sk[k]=5+Math.floor(Math.random()*6));
+  S.purse={cash:30000+Math.round(Math.random()*30000),owned:{},paid:0,subs:{},bcd:{}};S.home=null;homeInit(S);
   S.mayor={name:ch.name,g:ch.g||'m',age:ch.age||50,ptSkin:Math.floor(Math.random()*8),ptHair:Math.floor(Math.random()*5),ptStyle:0,ptGlasses:Math.random()<.3,look:defaultLook(ch.g||'m'),frame:'#f2a93b',traits:[],skills:sk,xp:{},trained:-99,focus:pk(['dip','stew','cha','safe'])};
   GROUPS.forEach(g=>{const G=S.groups[g.id];G.app=clamp(G.app*0.5+26,25,75)});freshTerm(how);onClose=null;closeModal();
   openModal(`January 1, ${S.y}`,`Mayor ${S.mayor.name}`,`<p>You now play as <b>${S.mayor.name}</b>, Memphis's new mayor. The term runs to ${S.elY+1}; the next election is October ${S.elY}.</p>
@@ -3451,7 +3468,7 @@ function succElection(next){recomputeAll(S);if(!S.succ){const c=succCandidates()
   save()}
 function charWhoX(kind,id){if(kind==='me'){const m=S.mayor;return{who:m,role:isCand()?`Candidate · ${OCCS[S.cand.occ].n}`:'You',attr:'data-act="mayor"',o:null}}
   if(kind==='inc'){const c=S.rival.ch||{name:S.rival.name,g:'m',age:58};return{who:{...c,frame:c.frame||'#8a96a3'},role:'Mayor of Memphis, running for re-election',attr:'',o:null}}return null}
-document.addEventListener('click',e=>{const b=e.target.closest('[data-act]');if(!b||!S)return;const a=b.dataset.act;const map_={cdoors:()=>candDoors(+b.dataset.d),cmeet:()=>candMeet(b.dataset.g),cspeak:()=>candSpeak(b.dataset.p),takeoffice:()=>takeOffice(),
+document.addEventListener('click',e=>{const b=e.target.closest('[data-act]');if(!b||!S)return;const a=b.dataset.act;const map_={cabinet:()=>{closePanel();openCabinet()},cdoors:()=>candDoors(+b.dataset.d),cmeet:()=>candMeet(b.dataset.g),cspeak:()=>candSpeak(b.dataset.p),takeoffice:()=>takeOffice(),
   playwinner:()=>{const w=S._winner;if(w)becomeMayor(w,S.lastElection&&S.lastElection.succ?'term-limited':'lost re-election')},runagain:()=>runAgain(),playsucc:()=>{const c=S.succ;becomeMayor({...c,k:c.kind==='char'?c.k:null,staff:c.kind==='staff'?c.staff:null},'term-limited')}};
   if(map_[a]){e.preventDefault();e.stopImmediatePropagation();map_[a]()}},true);
 // Things only the mayor can do
@@ -3512,7 +3529,7 @@ function election(next){
   save()}
 function summary(){const M=S.met;return`<div class="facts"><h4>Your record</h4><ul><li>Approval: ${Math.round(S.approval)}%</li><li>Sworn officers: ${Math.round(M.officers).toLocaleString()} (started at 1,917)</li><li>Violent crime index: ${M.crime.toFixed(0)} (started at 88)</li><li>MSCS reading proficiency: ${M.reading.toFixed(1)}% (started at 25.7%)</li><li>Reserve fund: ${fmtM(S.reserve)} (started at $96.0M)</li><li>Property tax: $${S.taxRate.toFixed(2)} (started at $3.39)</li></ul></div>`}
 function showEnd(){openModal('Game over','Your time in office is over',`${summary()}<div class="row"><button class="btn primary" data-act="newgame">Run again</button></div>`)}
-function openHelp(){closePanel();openModal('How to play','Guide',`
+function openHelp(){closePanel();openModal('How to play','Guide',`<div class="row" style="margin-bottom:6px"><button class="btn" data-slotopen="1">Save and load (G)</button></div>
   <div class="facts"><h4>Controls</h4><ul><li>WASD or the arrow keys pan the map; hold Shift to pan faster. Moving the mouse to the edge of the screen scrolls too (turn it off under Layers). You can also drag.</li><li>Scroll or pinch to zoom toward the cursor; Q and Z (or the + and − buttons on the right) zoom too, and Home shows the whole city. F, or the ◉ button, finds your mayor: the gold marker is at City Hall on weekdays, home on weekends, and wherever you go to act.</li><li>Hover any face or name (council members, suburban mayors, your cabinet, your own portrait) for a quick character card with their opinion of you and why. Click for the full page. News comes to you from a person: your cabinet for their departments, the local council member for neighborhood problems, a suburban mayor for regional ones.</li><li>People act on their own. Council members have allies and rivals (shown on their cards): allies vote together, so locking in one with a favor or a hook pulls their allies your way, and how an ally feels about you rubs off. Feuds, voting pacts, your opponent courting members, endorsement requests, cabinet requests and scandals arrive as ♟ People events. Ignoring them costs you, and some end up in your opponent's ads. An ambitious cabinet member may quietly build support for their own run; if you don't catch it, they quit and back your opponent.</li><li>Your cabinet (Cabinet tab) runs the city: chief of staff, police and fire chiefs, finance, public works, housing, economic development, MLGW, MATA and communications. Meet them, praise them or replace them. Unhappy ones leak to reporters; very unhappy ones quit.</li><li>Police stations (★), fire stations (▲) and hospitals (✚) are on the map. Click one to visit, fund equipment or programs, or fix problems there. Turn them off under Layers.</li><li>Scroll or pinch to zoom toward the cursor. Zoomed out you get the political map, with each council district in its own color. Zoom in and the camera tilts down into the 3D city.</li><li>Click a landmark or amber pin to open it. Click a district or precinct when those layers are on.</li><li>Time runs day by day. Space pauses and resumes; + and − (or the pips by the date) set speed 1–5. New business arrives on random days and pauses the game (turn that off under Layers). Each month closes on its last day and goes into the Ledger. N skips to the end of the month. B opens the budget, C the council, O public opinion, L the map layers. Keys 1–7 switch map modes: City, Political, Council opinion, Street condition, MPD precincts, Region, Public opinion.</li><li>Every menu has tabs along the top (Mayor, Opinion, Council, Region, Budget, Programs, Ledger) and a ← Back button that returns to the screen you came from. Backspace also goes back; Esc closes.</li></ul></div>
   <div class="facts"><h4>Two ways to start</h4><ul><li><b>Start as mayor</b>: you take office in October 2026 with a year to go before the election.</li><li><b>Run for mayor</b>: you're a Memphian with a day job (pastor, nurse, teacher, small business owner and more) in March 2027. Pick three platform planks, knock doors, meet community leaders, speak out, raise money, run ads, win forums and debates, and take on the sitting mayor in October. Name recognition starts low; voters who don't know you won't vote for you. If you win, you're sworn in on January 1 and your platform becomes your promise list.</li></ul></div>
   <div class="facts"><h4>After your term</h4><ul><li>The game goes on. Mayors can serve two terms. In your second term, a few months into the election year, you choose whom to endorse: a council ally, someone from your cabinet, or a newcomer. Your approval and your campaign carry them. If they win, you keep playing as the new mayor.</li><li>If you lose an election, or your successor does, you can keep playing as the winner, skip ahead and run again as a new candidate, or start over. The Mayors of Memphis in your game are listed as you go.</li></ul></div>
@@ -3847,7 +3864,7 @@ window.addEventListener('keydown',e=>{
   if(e.key===' '||k==='spacebar'){e.preventDefault();setPaused(!S.paused);return}
   if(e.key==='+'||e.key==='='){setSpeed((S.speed||2)+1);return}
   if(e.key==='-'||e.key==='_'){setSpeed((S.speed||2)-1);return}
-  if(k==='f'){findMayor();return}if(k==='home'){e.preventDefault();camFly({...HOME_VIEW,speed:1.6});return}
+  if(k==='f'){findMayor();return}if(k==='g'){openSlots();return}if(k==='home'){e.preventDefault();camFly({...HOME_VIEW,speed:1.6});return}
   if(k==='n')advance();else if(k==='b')openBudget();else if(k==='c')openCouncil();else if(k==='h')openHelp();else if(k==='o')openOpinion();else if(k==='e')openActions();else if(k==='i')openDesk();else if(k==='k')openHQ();else if(k==='m')openFinances();else if(k==='l')toggleLayersBox();
 });
 function toggleLayersBox(){$('layers').hidden=!$('layers').hidden;$('bLayers').classList.toggle('on',!$('layers').hidden)}
@@ -3965,7 +3982,7 @@ document.addEventListener('click',e=>{
     if(keep>=7){S.pending=am;S.stage='adopted';S.mood-=2;applyCouncil(S,{all:-3},'Vetoed the council\'s budget');openModal('Veto',`The council overrode you ${keep}–${13-keep}`,`<p>${keep}–${13-keep}. The council's budget takes effect July 1. Under the charter a simple majority overrides a mayoral veto.</p>${roll}<div class="row"><button class="btn primary" data-act="close">Continue</button></div>`,false,onClose)}
     else{S.pending={divs:{...S.enacted},maint:maintFor(S),tax:S.taxRate,raise:0};S.stage='adopted';S.mood-=3;openModal('Veto','Your veto held',`<p>The override got ${keep} votes and needed 7. The city will run on this year's appropriations with no raise, while costs rise about 2–3%. Expect service to slip.</p>${roll}<div class="row"><button class="btn primary" data-act="close">Continue</button></div>`,false,onClose)}
     save()}
-  else if(a==='newgame'){onClose=null;closeModal();closePanel();beginTerm()}
+  else if(a==='newgame'){onClose=null;closeModal();closePanel();pendingSlot=S&&S.slot||null;S.slot=null;$('start').hidden=false;$('intro').hidden=false;$('create').hidden=true;$('app').classList.add('pre');refreshStartButtons();renderStartSlots('start')}
 });
 document.addEventListener('input',e=>{if(!S||!S.draft)return;const t=e.target;
   if(t.dataset.div){S.draft.divs[t.dataset.div]=+(S.draft.maint[t.dataset.div]*(1+t.value/100)).toFixed(1);updateBudgetView()}
@@ -3976,6 +3993,57 @@ document.addEventListener('input',e=>{if(!S||!S.draft)return;const t=e.target;
 const KEY='bluffcity-save-v2';
 function save(){if(!S||!S.started)return;try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
 function load(){try{const t=localStorage.getItem(KEY);if(!t)return null;const s=JSON.parse(t);return s&&s.started?s:null}catch(e){return null}}
+// ======================= SAVE SLOTS =======================
+// Four games side by side. Each autosaves to its own slot; a small index lists them without parsing every save.
+const SLOTS=4,SLOT_KEY=n=>`bluffcity-slot-${n}`,SLOT_META='bluffcity-slots';
+let pendingSlot=null;
+function slotMeta(){try{return JSON.parse(localStorage.getItem(SLOT_META)||'{}')||{}}catch(e){return{}}}
+function slotMetaSet(n,m){try{const all=slotMeta();if(m)all[n]=m;else delete all[n];localStorage.setItem(SLOT_META,JSON.stringify(all))}catch(e){}}
+function metaOf(s){const M=s.mayor||{};return{name:M.name||'Mayor',phase:s.phase||'mayor',date:`${MONTHS[s.m-1]} ${s.y}`,term:s.term||0,app:Math.round(s.approval||0),saved:Date.now(),over:!!s.over,mayors:(s.history||[]).length+1}}
+function slotsUsed(){const m=slotMeta();return Object.keys(m).map(Number).filter(n=>n>=1&&n<=SLOTS)}
+function firstEmptySlot(){const u=slotsUsed();for(let n=1;n<=SLOTS;n++)if(!u.includes(n))return n;return null}
+function latestSlot(){const m=slotMeta();let best=null;for(const n in m)if(!best||m[n].saved>m[best].saved)best=n;return best?+best:null}
+// Older single-slot saves move into slot 1.
+(function migrateOldSave(){try{const old=localStorage.getItem('bluffcity-save-v2');if(old&&!localStorage.getItem(SLOT_KEY(1))){const s=JSON.parse(old);if(s&&s.started){s.slot=1;localStorage.setItem(SLOT_KEY(1),JSON.stringify(s));slotMetaSet(1,metaOf(s))}}if(old)localStorage.removeItem('bluffcity-save-v2')}catch(e){}})();
+function trimForSave(s){if(s.log&&s.log.length>80)s.log.length=80;if(s.moneyHist&&s.moneyHist.length>24)s.moneyHist.splice(0,s.moneyHist.length-24);if(s.record&&s.record.length>40)s.record.length=40;if(s.camp&&s.camp.log&&s.camp.log.length>30)s.camp.log.length=30}
+save=function(){if(!S||!S.started)return;if(!S.slot){S.slot=pendingSlot||firstEmptySlot()||latestSlot()||1;pendingSlot=null}trimForSave(S);
+  const txt=JSON.stringify(S);try{localStorage.setItem(SLOT_KEY(S.slot),txt);slotMetaSet(S.slot,metaOf(S));S._saveFail=0}
+  catch(e){S._saveFail=(S._saveFail||0)+1;if(S._saveFail===1||S._saveFail%30===0)try{notify('alert','Couldn\'t save your game','Browser storage is full. Delete an old save slot (G) to make room.',()=>openSlots())}catch(e2){}}};
+function loadSlot(n){try{const t=localStorage.getItem(SLOT_KEY(n));if(!t)return null;const s=JSON.parse(t);if(!s||!s.started)return null;s.slot=n;return s}catch(e){return null}}
+load=function(){const n=latestSlot();return n?loadSlot(n):null};
+function deleteSlot(n){try{localStorage.removeItem(SLOT_KEY(n))}catch(e){}slotMetaSet(n,null)}
+function slotSize(n){try{return(localStorage.getItem(SLOT_KEY(n))||'').length}catch(e){return 0}}
+function enterLoaded(s){S=migrate(s);assignHomes();S.started=true;S.paused=true;$('app').classList.remove('pre');$('start').hidden=true;$('start').classList.remove('creating');
+  document.querySelectorAll('.note-card').forEach(n=>n.remove());try{if(mayorMarker){mayorMarker.remove();mayorMarker=null}}catch(e){}
+  applyLayers();refreshHUD();try{renderCivic();renderHomeMarker();renderMayor(false);renderProjects();renderPins()}catch(e){}
+  camFly({center:[-90.02,35.135],zoom:12.4,speed:1.2});notify('info',`Loaded slot ${S.slot}`,`${S.mayor.name} · ${MONTHS_L[S.m-1]} ${S.y}`,null,{silent:true})}
+function slotCard(n,mode){const m=slotMeta()[n];const cur=S&&S.started&&S.slot===n;
+  if(!m)return`<div class="slotc empty"><div><b>Slot ${n}</b><small>Empty</small></div>${mode==='new'?`<button class="btn primary" data-slotnew="${n}">Use this slot</button>`:mode==='copy'?`<button class="btn" data-slotcopy="${n}">Save a copy here</button>`:''}</div>`;
+  const kb=Math.round(slotSize(n)/1024);
+  return`<div class="slotc${cur?' cur':''}"><div><b>Slot ${n}${cur?' · playing now':''}</b><span>${m.phase==='cand'?'Candidate':'Mayor'} ${m.name}</span><small>${m.date}${m.phase==='cand'?'':` · term ${m.term}`} · ${m.phase==='cand'?'support':'approval'} ${m.app}%${m.mayors>1?` · ${m.mayors} mayors so far`:''}${m.over?' · game over':''} · saved ${new Date(m.saved).toLocaleString([], {month:'short',day:'numeric',hour:'numeric',minute:'2-digit'})} · ${kb} KB</small></div>
+   <div class="row" style="gap:4px;flex-wrap:nowrap">${mode==='new'?`<button class="btn" data-slotnew="${n}" data-confirm="0">Replace</button>`:mode==='copy'?(cur?'':`<button class="btn" data-slotcopy="${n}" data-confirm="0">Overwrite</button>`):`${cur?'':`<button class="btn primary" data-slotload="${n}">Load</button>`}<button class="btn" data-slotdel="${n}" data-confirm="0" title="Delete this save">Delete</button>`}</div></div>`}
+function slotsHTML(mode){return`<div class="slotlist">${[1,2,3,4].map(n=>slotCard(n,mode)).join('')}</div>`}
+function openSlots(mode){mode=mode||'manage';if(!$('start').hidden){renderStartSlots(mode);return}closePanel();
+  openModal(S&&S.started?`Playing in slot ${S.slot} · saves automatically every month`:'Saved games','Save and load',`
+   <div class="facts"><h4>Your saves</h4>${slotsHTML('manage')}</div>
+   <div class="facts"><h4>Keep a copy</h4><p class="note">Copy this game into another slot, then keep playing here. Good before a big decision.</p>${slotsHTML('copy')}</div>
+   <div class="row"><button class="btn primary" data-slotsave="1">Save now</button><button class="btn" data-slotmenu="1">Save and go to the main menu</button></div>`,true)}
+openSlots=navWrap('openSlots',openSlots);
+function renderStartSlots(mode){const el=$('slotList');if(!el)return;const any=slotsUsed().length;el.hidden=!any&&mode!=='new';
+  el.innerHTML=mode==='new'?`<p class="note"><b>All ${SLOTS} save slots are full.</b> Pick one to replace for your new game.</p>${slotsHTML('new')}<div class="row"><button class="btn" data-slotcancel="1">Cancel</button></div>`:any?`<h3 style="margin:0">Saved games</h3>${slotsHTML('start')}`:''}
+function startNew(run){const n=firstEmptySlot();if(n==null&&pendingSlot==null){window.__runPending=run;renderStartSlots('new');$('slotList').scrollIntoView({block:'nearest'});return}pendingSlot=pendingSlot||n;CR=newCR();if(run)CR.run=true;openCreate()}
+document.addEventListener('click',e=>{const b=e.target.closest('[data-slotload],[data-slotdel],[data-slotnew],[data-slotcopy],[data-slotsave],[data-slotmenu],[data-slotcancel],[data-slotopen]');if(!b)return;e.preventDefault();e.stopImmediatePropagation();const d=b.dataset;
+  if(d.slotopen){$('layers').hidden=true;if(modalOpen){onClose=null;closeModal()}openSlots();return}
+  const twoStep=()=>{if(d.confirm==='0'){b.dataset.confirm='1';b.textContent='Click again to confirm';b.classList.add('danger');setTimeout(()=>{if(b.isConnected){b.dataset.confirm='0';b.textContent=b.dataset.slotdel?'Delete':b.dataset.slotnew?'Replace':'Overwrite';b.classList.remove('danger')}},3500);return true}return false};
+  if(d.slotload){const s=loadSlot(+d.slotload);if(!s)return;if(S&&S.started&&!S.over)save();if(modalOpen){onClose=null;closeModal()}navReset();enterLoaded(s);return}
+  if(d.slotdel){if(twoStep())return;const n=+d.slotdel;deleteSlot(n);if(S&&S.slot===n&&S.started){/* the game in progress keeps running and will save into this slot again */}if(!$('start').hidden)renderStartSlots('start');else openSlots();toast(`Slot ${n} deleted.`);return}
+  if(d.slotnew){if(d.confirm==='0'&&twoStep())return;pendingSlot=+d.slotnew;deleteSlot(pendingSlot);$('slotList').innerHTML='';const run=!!window.__runPending;CR=newCR();if(run)CR.run=true;openCreate();return}
+  if(d.slotcopy){if(d.confirm==='0'&&twoStep())return;const n=+d.slotcopy;const c=JSON.parse(JSON.stringify(S));c.slot=n;trimForSave(c);try{localStorage.setItem(SLOT_KEY(n),JSON.stringify(c));slotMetaSet(n,metaOf(c));toast(`Saved a copy in slot ${n}. You're still playing in slot ${S.slot}.`)}catch(err){notify('alert','Not enough room to copy','Delete an old save first.')}openSlots();return}
+  if(d.slotsave){save();toast(`Saved in slot ${S.slot}.`);openSlots();return}
+  if(d.slotmenu){save();onClose=null;closeModal();closePanel();S.paused=true;updateClock();$('start').hidden=false;$('intro').hidden=false;$('create').hidden=true;$('app').classList.add('pre');renderStartSlots('start');refreshStartButtons();return}
+  if(d.slotcancel){window.__runPending=null;renderStartSlots('start');return}},true);
+function refreshStartButtons(){const n=latestSlot(),m=n?slotMeta()[n]:null;const b=$('bLoad');if(!b)return;b.hidden=!m;if(m)b.textContent=`Continue: ${m.name}, ${m.date}`}
+
 
 // ======================= BOOT =======================
 function beginTerm(cr,quiet){S=newState();const c=cr||newCR();S.mayor={...c,look:{...(c.look||defaultLook(c.g))},name:(c.name||'Mayor').trim(),skills:{...c.skills},traits:[...c.traits],xp:{},trained:-99,frame:'#f2a93b'};$('start').classList.remove('creating');$('app').classList.remove('pre');assignHomes();initGroups(S);recomputeAll(S);S.started=true;spawn(S,EVENTS[0],{expires:99});queueNewBusiness(null);pickRival();campInit(S);homeInit(S);S.mf={r0:S.reserve};save();$('start').hidden=true;prevMet=null;applyLayers();refreshHUD();
@@ -4030,11 +4098,11 @@ function migrate(s){if(!s)return s;if(!s.phase)s.phase='mayor';if(!s.mayor)s.may
 function start(data){
   const saved=migrate((data&&data.S)||load());
   S=saved||newState();
-  if(saved)$('bLoad').hidden=false;
+  refreshStartButtons();renderStartSlots('start');
   if(data&&data.S&&data.S.started)$('start').hidden=true;else $('app').classList.add('pre');
   refreshHUD();
-  $('bNew').onclick=()=>{CR=newCR();openCreate()};$('bRun').onclick=()=>{CR=newCR();CR.run=true;openCreate()};
-  $('bLoad').onclick=()=>{S=migrate(load())||S;assignHomes();S.started=true;$('app').classList.remove('pre');$('start').hidden=true;applyLayers();refreshHUD();camFly({center:[-90.02,35.135],zoom:12.4,speed:1.2})};
+  $('bNew').onclick=()=>{pendingSlot=null;startNew(false)};$('bRun').onclick=()=>{pendingSlot=null;startNew(true)};
+  $('bLoad').onclick=()=>{const s=load();if(s)enterLoaded(s)};
   if(window.maplibregl)initMap();else window.addEventListener('mlready',initMap,{once:true});
 }
 // Soundtrack routing reads UI state only; it never modifies game state or saves.
@@ -4057,7 +4125,7 @@ window.bluffMusicContext = () => {
 window.claude?.hot?.snapshot?.(()=>({S}));
 window.claude?.hot?.ready?window.claude.hot.ready(start):start(window.claude?.hot?.data??{});
 </script>
-<script src="city-life.js?v=22"></script>
-<script src="music.js?v=21"></script>
+<script src="city-life.js?v=23"></script>
+<script src="music.js?v=23"></script>
 </body>
 </html>
