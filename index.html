@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="description" content="Create your mayor and govern Memphis in real time on a map with a real map of the city.">
 <title>Bluff City Mayor</title>
-<link rel="stylesheet" href="music.css?v=19">
+<link rel="stylesheet" href="music.css?v=20">
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -358,6 +358,14 @@ button.seat:hover{border-color:var(--amber)}
   .actions .btn.act{border-color:var(--amber);color:var(--amber)}
 .choices .choice small{white-space:normal}
 /* v15 */
+#notes{position:fixed;right:max(16px,env(safe-area-inset-right,0px));bottom:calc(74px + env(safe-area-inset-bottom,0px));width:330px;max-width:calc(100vw - 32px);display:flex;flex-direction:column;gap:6px;z-index:60;pointer-events:none}
+.note-card{pointer-events:auto;display:grid;grid-template-columns:28px 1fr auto;gap:8px;align-items:start;background:linear-gradient(180deg,#1c3042,#13212d);border:1px solid var(--line);border-left:4px solid var(--nc);border-radius:6px;padding:8px 8px 8px 10px;box-shadow:0 6px 20px rgba(0,0,0,.5);cursor:pointer;opacity:0;transform:translateX(30px);transition:opacity .25s,transform .25s}
+.note-card.in{opacity:1;transform:none}.note-card.out{opacity:0;transform:translateX(30px)}.note-card:hover{border-color:var(--nc)}
+.nc-ic{width:26px;height:26px;border-radius:50%;display:grid;place-items:center;background:var(--nc);color:#0d1822;font-weight:700;font-size:13px}
+.nc-tx{display:flex;flex-direction:column;gap:2px;min-width:0}.nc-tx b{font-size:13.5px;line-height:1.25}.nc-tx small{font-size:12px;color:var(--muted);line-height:1.3}.nc-tx em{font-style:normal;font-size:10.5px;color:var(--amber);text-transform:uppercase;letter-spacing:.06em}
+.nc-x{background:none;border:0;color:var(--muted);font-size:16px;cursor:pointer;padding:0 2px;line-height:1}
+.mny-up{color:var(--good);font-weight:600}.mny-dn{color:var(--bad);font-weight:600}
+@media (max-width:760px){#notes{bottom:calc(64px + env(safe-area-inset-bottom,0px));width:auto;left:12px;right:12px}.note-card:nth-child(n+3){display:none}}
 .evwho{display:flex;flex-direction:row;align-items:center;gap:10px;margin:0 0 8px;padding:6px 8px;background:rgba(255,255,255,.03);border:1px solid var(--line);border-radius:6px}
 .evwho-n{display:flex;flex-direction:column;line-height:1.2}.evwho-n b{font-size:14px}.evwho-n small{font-size:11px;color:var(--muted)}
 #hovercard{position:fixed;z-index:200;width:290px;max-width:calc(100vw - 16px);background:linear-gradient(180deg,#1c3042,#13212d);border:1px solid var(--amber);border-radius:8px;padding:10px 12px;box-shadow:0 10px 30px rgba(0,0,0,.6);pointer-events:none;font-size:13px}
@@ -467,6 +475,8 @@ details.analysis{margin-top:6px}details.analysis summary{cursor:pointer;color:va
     <label><input type="checkbox" id="lyCivic" checked> Police, fire stations and hospitals</label>
     <label><input type="checkbox" id="lyEdge" checked> Scroll at screen edges</label>
     <label><input type="checkbox" id="lyPause" checked> Pause when something new arrives</label>
+    <label><input type="checkbox" id="sfxOn" checked> Sound effects</label>
+    <label style="display:flex;align-items:center;gap:6px">Effects volume <input type="range" id="sfxVol" min="0" max="100" value="50" style="flex:1"></label>
     <p class="note">Map modes (bottom left, keys 1–7) switch between the city, the political map, council opinion, street condition, police precincts, the region and public opinion.</p>
   </div>
   <nav class="actions">
@@ -483,7 +493,7 @@ details.analysis{margin-top:6px}details.analysis summary{cursor:pointer;color:va
     <button class="btn primary" data-act="pause" id="bPlay">▶ Resume <kbd>Space</kbd></button>
   </nav>
   <div class="status" id="status">Loading map…</div>
-  <div class="credit"><span class="ver" id="verTag">v19</span></div>
+  <div class="credit"><span class="ver" id="verTag">v20</span></div>
   <div class="tip" id="tip" hidden></div>
   <div class="toast" id="toast" role="status"></div>
   <section class="panel" id="panel" hidden aria-live="polite">
@@ -516,7 +526,7 @@ details.analysis{margin-top:6px}details.analysis summary{cursor:pointer;color:va
         <button class="btn" data-music-open>Music &amp; volume</button>
         <button class="btn" id="bLoad" hidden>Continue saved term</button>
       </div>
-      <p class="note startv">Version <b class="ver" id="verStart">v19</b></p>
+      <p class="note startv">Version <b class="ver" id="verStart">v20</b></p>
     </div>
     <div class="startbox create" id="create" hidden>
       <h2>Create your mayor</h2>
@@ -1161,7 +1171,7 @@ function maybeSpawn(s,report){
 function applyNb(nb,label){if(!nb||!S.nb)return;for(const id in nb){const n=S.nb[id];if(n)addMod(n,label,nb[id])}recomputeAll(S)}
 function describe(c){const out=[];if(c.cost)out.push(`${fmtM(-c.cost)} reserves`);if(c.policy)out.push(`${fmtM(-POLICIES[c.policy].cost)}/yr ongoing`);
   const fx=c.fx||{};const nm={crime:'Violent crime',streets:'Streets',blight:'Blight',transit:'Transit',jobs:'Jobs',officers:'Officers',mood:'Public mood',county:'County relations',revenue:'Revenue',reading:'Reading'};
-  for(const k in fx){if(!fx[k]||!nm[k])continue;const good=(k==='crime'||k==='blight')?fx[k]<0:fx[k]>0;out.push(`${nm[k]} ${good?'▲':'▼'}`)}
+  for(const k in fx){if(!fx[k]||!nm[k])continue;if(k==='revenue'){out.push(`${fx[k]>0?'+':'−'}${fmtM(Math.abs(fx[k]))}/yr revenue`);continue}const good=(k==='crime'||k==='blight')?fx[k]<0:fx[k]>0;out.push(`${nm[k]} ${good?'▲':'▼'}`)}
   if(c.vote)out.push('Needs 7 council votes to confirm');
   if(c.grp)out.push(grpLine(c.grp));if(c.next)out.push('The story continues');if(c.end)out.push('Ends the story · goes on your record');if(c.story)out.push('Starts a story');
   for(const id in (c.nb||{}))out.push(`${NEIGHBORS[id].city} relations ${c.nb[id]>0?'+':'−'}${Math.abs(c.nb[id])}`);
@@ -1216,7 +1226,7 @@ function dateStr(){return`${S.day} ${MONTHS[S.m-1]} ${S.y}`}
 function logIt(t){S.log=S.log||[];S.log.unshift({d:dateStr(),t});if(S.log.length>120)S.log.length=120}
 function releaseQueued(all){if(!S.queue||!S.queue.length)return 0;const due=all?S.queue:S.queue.filter(q=>q.due<=S.day);if(!due.length)return 0;
   S.queue=all?[]:S.queue.filter(q=>q.due>S.day);
-  due.forEach(q=>{S.events.push(q.ev);const t=evTitle(q.ev),pl=placeOf(evAt(q.ev));logIt(`New: ${t} (${pl.name})`);if(!all)toast(`New: ${t} · ${pl.name}`)});
+  due.forEach(q=>{S.events.push(q.ev);const t=evTitle(q.ev),pl=placeOf(evAt(q.ev));logIt(`New: ${t} (${pl.name})`);if(!all){const ev=q.ev;notify(ev.kind==='char'?'people':(ev.kind==='request'||ev.kind==='memo')?'people':'event',t,pl.name,()=>openPlace(evAt(ev)))}});
   refreshHUD();return due.filter(q=>notifyOn(evCat(q.ev))).length}
 function dayTick(){S.day++;
   if(S.day>daysIn(S.y,S.m)){S.day=daysIn(S.y,S.m);endOfMonth();return}
@@ -1266,7 +1276,7 @@ function endOfMonth(){
   const head=`${MONTHS_L[(S.m+10)%12]} closed: approval ${Math.round(S.approval)}% (${S.approval>=before.approval?'+':'−'}${Math.abs(S.approval-before.approval).toFixed(1)}), reserve ${fmtM(S.reserve)}`;
   logIt(head);report.forEach(l=>logIt(l));
   save();refreshHUD();
-  toast(report.length?`${head}. ${report.length} update${report.length===1?'':'s'} in the ledger.`:head+'.');
+  {const dr=S.reserve-before.reserve;notify('month',`${MONTHS_L[(S.m+10)%12]} closed`,`Approval ${Math.round(S.approval)}% (${S.approval>=before.approval?'+':'−'}${Math.abs(S.approval-before.approval).toFixed(1)}) · reserve ${dr>=0?'+':'−'}${fmtM(Math.abs(dr))} → ${fmtM(S.reserve)}${report.length?` · ${report.length} update${report.length===1?'':'s'} in the ledger`:''}`,()=>openLedger())}
   if(stop)setPaused(true,`Budget season: write the FY${fyOf(S)+1} budget and submit it this month.`);
   if(queue.length){setPaused(true);closePanel();runQueue(queue)}
 }
@@ -1278,7 +1288,7 @@ function enact(s,p){DIVS.forEach(d=>{s.enacted[d.id]=p.divs[d.id];s.ratio[d.id]=
 // Voter groups. Each has a share of residents, turnout, home districts, concerns and an approval of you.
 // Citywide approval is the turnout-weighted average of the groups; each council district's approval comes from the groups that live there.
 // Shares, district mix and turnout are modeled, loosely grounded in Memphis demographics; they are not survey data.
-const VERSION='v19';
+const VERSION='v20';
 const GROUPS=[
  {id:'working',sh:'Working families',n:'Working families',ic:'⚒',c:'#f2a93b',share:24,turn:.5,start:56,w:{jobs:1,safety:.8,transit:.5},
   d:'Hourly workers in logistics, warehouses, health care and service jobs. The biggest bloc in the city.',dm:{1:1.1,2:.8,3:1.3,4:1.2,5:.6,6:1.2,7:1.1}},
@@ -1812,7 +1822,7 @@ function openActions(){closePanel();S.acts=S.acts||{};S.laws=S.laws||{};const sl
    <div class="facts"><h4>Police, fire and hospitals</h4><p class="note">Visit stations, fund equipment and patrols, and partner with hospitals. Click any ★ police station, ▲ fire station or ✚ hospital on the map, or pick from a list.${(()=>{const n=Object.values(S.civic||{}).filter(c=>c.out).length;return n?` <b style="color:var(--bad)">${n} need${n===1?'s':''} attention.</b>`:''})()}</p>
     <div class="row"><button class="btn" data-civlist="police">★ Police stations</button><button class="btn" data-civlist="fire">▲ Fire stations</button><button class="btn" data-civlist="hospital">✚ Hospitals</button></div></div>
    <div class="facts"><h4>Start a capital project</h4><p class="note">Projects go to the council, out to bid, then take months to build. You'll see them on the map the whole way. Up to 4 at a time.</p>
-    <div class="choices">${Object.entries(PTYPES).map(([k,t])=>`<button class="choice" data-act="plan" data-type="${k}" ${activeProjects().length>=4?'disabled':''}><b>${t.ic} ${t.n}</b><small>About ${fmtM(t.cost)} · ${t.months} months to build · ${describe({fx:t.fx})}</small></button>`).join('')}</div>
+    <div class="choices">${Object.entries(PTYPES).map(([k,t])=>`<button class="choice" data-act="plan" data-type="${k}" ${activeProjects().length>=4?'disabled':''}><b>${t.ic} ${t.n}</b><small>About ${fmtM(-t.cost)} · ${t.months} months to build · ${describe({fx:t.fx})}</small></button>`).join('')}</div>
     ${activeProjects().length?`<p class="note">Underway: ${activeProjects().map(p=>`<a href="#" data-desk="proj:${p.id}">${p.name}</a> (${projStageLabel(p)})`).join(' · ')}</p>`:''}</div>
    <div class="facts"><h4>Propose an ordinance</h4>
     ${pend?`<p><b>${pend.title}</b> is before the council. They vote around ${S.pendingOrd.when}. <button class="btn" data-act="propwhip" data-id="${pend.id}">See the whip count</button></p>`:''}
@@ -1820,7 +1830,7 @@ function openActions(){closePanel();S.acts=S.acts||{};S.laws=S.laws||{};const sl
       return`<button class="choice" data-act="propose" data-id="${p.id}" ${pend||cd?'disabled':''}><b>${p.title}</b><small>${pend?'One ordinance at a time':cd?`Failed recently · again in ${cd} month${cd===1?'':'s'}`:`For: ${sup||'nobody much'} · Against: ${opp||'nobody much'}`}</small></button>`}).join('')}
     ${Object.keys(S.laws).length?`<p class="note">Passed: ${Object.keys(S.laws).map(id=>PROPOSALS.find(p=>p.id===id).title).join('; ')}.</p>`:''}</div></div>
    <div class="facts"><h4>Executive orders</h4><p class="note">No council vote needed. Each can be used once every ${ACT_CD.exec} months.</p><div class="choices">${EXEC_ORDERS.map(x=>{const cd=cdLeft('ex_'+x.id,ACT_CD.exec),poor=x.cost&&S.reserve<x.cost;
-      const nf=x.id==='freeze'&&(S.deals||[]).find(D=>D.status==='open'&&D.type==='nofreeze');return`<button class="choice" data-act="exec" data-id="${x.id}" ${cd||poor?'disabled':''}><b>${x.title}</b><small>${nf?`<b style="color:var(--bad)">Breaks your deal with ${nf.name}.</b> `:''}${cd?`Available again in ${cd} month${cd===1?'':'s'}`:poor?'Not enough in reserves':x.d+' '+grpLine(x.grp)}</small></button>`}).join('')}</div></div>
+      const nf=x.id==='freeze'&&(S.deals||[]).find(D=>D.status==='open'&&D.type==='nofreeze');return`<button class="choice" data-act="exec" data-id="${x.id}" ${cd||poor?'disabled':''}><b>${x.title}</b><small>${nf?`<b style="color:var(--bad)">Breaks your deal with ${nf.name}.</b> `:''}${cd?`Available again in ${cd} month${cd===1?'':'s'}`:poor?'Not enough in reserves':(x.cost?fmtM(-x.cost)+' · ':'')+(x.reserve?'+'+fmtM(x.reserve)+' · ':'')+x.d+' '+grpLine(x.grp)}</small></button>`}).join('')}</div></div>
    <div class="facts"><h4>Hold a town hall</h4><p class="note">Uses a meeting slot. Lifts your standing in that district and with its council member, if it goes well. Charisma helps.</p><div class="row">${[1,2,3,4,5,6,7].map(d=>{const cd=cdLeft('th'+d,ACT_CD.townhall);return`<button class="btn" data-act="townhall" data-d="${d}" ${cd||slots<=0?'disabled':''} title="${cd?`Again in ${cd} mo`:`District ${d}: ${Math.round(dApp(d))}% approve`}">District ${d} <small style="color:${apColor(dApp(d))}">${Math.round(dApp(d))}%</small></button>`}).join('')}</div></div>
    <div class="facts"><h4>Meet with community leaders</h4><p class="note">Uses a meeting slot. Pastors, union heads, PTA presidents and Chamber executives speak for their groups.</p><div class="row">${GROUPS.map(g=>{const cd=cdLeft('g'+g.id,ACT_CD.group);return`<button class="btn" data-act="meetgroup" data-g="${g.id}" ${cd||slots<=0?'disabled':''} title="${cd?`Again in ${cd} mo`:g.n}">${g.ic} ${g.n} <small style="color:${apColor(S.groups[g.id].app)}">${Math.round(S.groups[g.id].app)}%</small></button>`}).join('')}</div></div>
    <div class="facts"><h4>Press conference</h4><p class="note">Once a month. Groups who care about the topic hear you; nobody else notices much.</p><div class="row">${['safety','education','streets','jobs','transit','blight','fiscal','labor','oversight'].map(p=>`<button class="btn" data-act="presser" data-p="${p}" ${cdLeft('presser',1)?'disabled':''}>${PRIO_LABEL[p]}</button>`).join('')}</div></div>
@@ -1909,12 +1919,12 @@ function openPlanner(type,d,si,fund){type=type||'road';const T=PTYPES[type];clos
   openModal('Capital projects · council approval, bidding, construction, completion','Plan a project',`
    <div class="row" style="margin-bottom:8px">${Object.entries(PTYPES).map(([k,t])=>`<button class="btn ${k===type?'primary':''}" data-act="plantype" data-type="${k}">${t.ic} ${t.n}</button>`).join('')}</div>
    <p>${T.d}</p>
-   <div class="opl" style="margin-bottom:8px"><div><span>Estimated cost</span><b>${fmtM(cost)}</b></div><div><span>Construction time</span><b>${T.months} months after bidding</b></div><div><span>When finished</span><b>${describe({fx:T.fx})}</b></div><div><span>Who it pleases</span><b>${grpLine(T.done).replace('Pleases ','')}</b></div></div>
+   <div class="opl" style="margin-bottom:8px"><div><span>Estimated cost</span><b>${fmtM(-cost)}</b></div><div><span>Construction time</span><b>${T.months} months after bidding</b></div><div><span>When finished</span><b>${describe({fx:T.fx})}</b></div><div><span>Who it pleases</span><b>${grpLine(T.done).replace('Pleases ','')}</b></div></div>
    <div class="facts"><h4>1. Where</h4><div class="row">${[1,2,3,4,5,6,7].map(x=>`<button class="btn ${pl.d===x?'primary':''}" data-act="planD" data-d="${x}">District ${x} <small style="color:${pl.d===x?'#0d1822':apColor(dApp(x))}">${Math.round(dApp(x))}%</small></button>`).join('')}</div>
     ${pl.d?(sites.length?`<div class="choices" style="margin-top:8px">${sites.map((s2,i)=>`<button class="choice ${i===pl.si?'on':''}" data-act="planSite" data-i="${i}" style="${i===pl.si?'border-color:var(--amber)':''}"><b>${s2.name}</b><small>${s2.note}${i===pl.si?' · selected':''}</small></button>`).join('')}</div>`:'<p class="note">No more sites of this kind in this district right now.</p>'):'<p class="note">Pick a district to see sites there.</p>'}</div>
    <div class="facts"><h4>2. How to pay</h4><div class="choices">
     <button class="choice" data-act="planFund" data-f="cash" style="${pl.fund==='cash'?'border-color:var(--amber)':''}"><b>Cash from the reserve fund</b><small>Paid month by month as work gets done. No debt. Reserve now ${fmtM(S.reserve)}.</small></button>
-    <button class="choice" data-act="planFund" data-f="bond" style="${pl.fund==='bond'?'border-color:var(--amber)':''}"><b>General obligation bonds</b><small>Nothing up front. Adds about ${fmtM(cost*0.09)} a year in debt service for 15 years. Frugal members dislike borrowing.</small></button></div></div>
+    <button class="choice" data-act="planFund" data-f="bond" style="${pl.fund==='bond'?'border-color:var(--amber)':''}"><b>General obligation bonds</b><small>Nothing up front. Adds about −${fmtM(cost*0.09)} a year in debt service for 15 years. Frugal members dislike borrowing.</small></button></div></div>
    ${vote}
    <div class="row"><button class="btn primary" data-act="sendproj" ${site&&!full?'':'disabled'}>${full?'You already have 4 projects underway':'Send it to the council'}</button><button class="btn" data-act="actions">Back to actions</button></div>`,true)}
 openPlanner=navWrap('openPlanner',openPlanner);
@@ -2501,18 +2511,18 @@ function openHQ(){campInit(S);const C=S.camp,R=S.rival,rc=R?R.camp:{};const e=el
    <div class="tally"><span>${sp(fmtK(C.cash))} campaign cash</span><span>${sp(fmtK(C.raised))} raised</span><span>${sp(fmtK(C.spent))} spent</span><span class="note">Monthly payroll ${fmtK(campBurn())} · the city treasury and your personal money are separate (<a href="#" data-act="finances">Money</a>)</span></div>
    <div class="facts"><h4>Latest poll</h4>${poll?`<div class="opl"><div><span>You</span><b>${poll.you}%</b></div><div><span>${R.name}</span><b>${poll.rival}%</b></div><div><span>Undecided</span><b>${poll.und}%</b></div><div><span>Taken</span><b>${poll.when}</b></div></div>
      ${C.polls.length>1?`<div class="spark">${spark(C.polls.slice(-12).map(p=>p.you))}</div>`:''}${poll.d?`<div class="dlist" style="margin-top:6px">${[1,2,3,4,5,6,7].map(d=>`<div class="drow" style="cursor:default"><span>District ${d}</span><span class="gbar"><i style="width:${poll.d[d]}%;background:${apColor(poll.d[d])}"></i></span><b class="gv">${poll.d[d]}%</b></div>`).join('')}</div><p class="note">Your two-way share by district.</p>`:''}`:'<p class="note">No polling yet. Without a poll, you\'re guessing about the horse race.</p>'}
-    <div class="row"><button class="btn" data-act="poll" data-k="city" ${C.cash<20?'disabled':''}>Citywide poll · $20K</button><button class="btn" data-act="poll" data-k="dist" ${C.cash<60?'disabled':''}>Citywide + all 7 districts · $60K</button></div></div>
+    <div class="row"><button class="btn" data-act="poll" data-k="city" ${C.cash<20?'disabled':''}>Citywide poll · −$20K</button><button class="btn" data-act="poll" data-k="dist" ${C.cash<60?'disabled':''}>Citywide + all 7 districts · −$60K</button></div></div>
    <div class="facts"><h4>Raise money</h4><div class="choices">
-    <button class="choice" data-act="fundraiser" ${S.slots<=0||cdLeft('fr_small',1)?'disabled':''}><b>Grassroots fundraiser</b><small>Uses a meeting slot · small donors give more when your supporters are fired up (about ${fmtK(Math.round(10+enthusiasm()*3))}) · once a month</small></button>
+    <button class="choice" data-act="fundraiser" ${S.slots<=0||cdLeft('fr_small',1)?'disabled':''}><b>Grassroots fundraiser</b><small>Uses a meeting slot · small donors give more when your supporters are fired up (about +${fmtK(Math.round(10+enthusiasm()*3))}) · once a month</small></button>
     <button class="choice" data-act="donordinner" ${S.slots<=0||cdLeft('fr_big',2)?'disabled':''}><b>Major-donor dinner</b><small>Uses a meeting slot · a PAC or donor network offers a big check, with expectations attached · every 2 months</small></button>
     <button class="choice" data-act="selffund" ${S.purse.cash<1000||C.personal>=25000?'disabled':''}><b>Put in your own money</b><small>Move up to $5,000 at a time from your personal account (${'$'+Math.round(S.purse.cash).toLocaleString()}). Limit: $25,000 total (${'$'+C.personal.toLocaleString()} so far). It's on the public record.</small></button></div>
-    ${Object.keys(C.donors).length?`<div class="dlist" style="margin-top:6px">${Object.entries(C.donors).map(([id,st])=>`<div class="drow" style="cursor:default;grid-template-columns:minmax(0,1fr) auto"><span>${DONORS[id].n} <small>· ${fmtK(st.amt)} · expects: ${DONORS[id].exp.toLowerCase()}</small></span><b style="color:${st.status==='broken'?'var(--bad)':DONORS[id].check(S)?'var(--good)':'var(--warn)'}">${st.status==='broken'?'switched sides':st.status==='declined'?'declined':DONORS[id].check(S)?'satisfied':'unhappy'}</b></div>`).join('')}</div>`:''}</div>
+    ${Object.keys(C.donors).length?`<div class="dlist" style="margin-top:6px">${Object.entries(C.donors).map(([id,st])=>`<div class="drow" style="cursor:default;grid-template-columns:minmax(0,1fr) auto"><span>${DONORS[id].n} <small>· +${fmtK(st.amt)} · expects: ${DONORS[id].exp.toLowerCase()}</small></span><b style="color:${st.status==='broken'?'var(--bad)':DONORS[id].check(S)?'var(--good)':'var(--warn)'}">${st.status==='broken'?'switched sides':st.status==='declined'?'declined':DONORS[id].check(S)?'satisfied':'unhappy'}</b></div>`).join('')}</div>`:''}</div>
    <div class="facts"><h4>Ads</h4><p class="note">Ads amplify your record; they can't invent one. Promote things you've done, defend the attacks on you, or go after your opponent. Running the same ad again works half as well. Ads matter most in the last three months${adTiming()<1?` (right now they work at ${Math.round(adTiming()*100)}%)`:''}.</p>
-    ${ads.length?`<div class="dlist">${ads.map(o=>`<div class="drow" style="cursor:default;grid-template-columns:minmax(0,1fr) auto auto;gap:6px"><span>${o.title}${C.adUse[o.ref]?` <small>· run ${C.adUse[o.ref]}×</small>`:''}</span><button class="btn" data-act="ad" data-ref="${o.ref}" data-size="std" ${C.cash<50?'disabled':''} style="padding:2px 8px">Digital + mail $50K</button><button class="btn" data-act="ad" data-ref="${o.ref}" data-size="big" ${C.cash<120?'disabled':''} style="padding:2px 8px">TV + digital $120K</button></div>`).join('')}</div>`:'<p class="note">Nothing on your record to run on yet.</p>'}
+    ${ads.length?`<div class="dlist">${ads.map(o=>`<div class="drow" style="cursor:default;grid-template-columns:minmax(0,1fr) auto auto;gap:6px"><span>${o.title}${C.adUse[o.ref]?` <small>· run ${C.adUse[o.ref]}×</small>`:''}</span><button class="btn" data-act="ad" data-ref="${o.ref}" data-size="std" ${C.cash<50?'disabled':''} style="padding:2px 8px">Digital + mail −$50K</button><button class="btn" data-act="ad" data-ref="${o.ref}" data-size="big" ${C.cash<120?'disabled':''} style="padding:2px 8px">TV + digital −$120K</button></div>`).join('')}</div>`:'<p class="note">Nothing on your record to run on yet.</p>'}
     ${C.ads.length?`<p class="note">Recent: ${C.ads.slice(-3).reverse().map(a=>`${a.title} (${a.when})`).join(' · ')}</p>`:''}</div>
-   <div class="facts"><h4>Staff and offices</h4><div class="opl"><div><span>Field organizers ($4K a month each)</span><b>${C.organizers}</b></div></div>
+   <div class="facts"><h4>Staff and offices</h4><div class="opl"><div><span>Field organizers (−$4K a month each)</span><b>${C.organizers}</b></div></div>
     <div class="row"><button class="btn" data-act="org" data-d="-1" ${C.organizers<=0?'disabled':''}>−</button><button class="btn" data-act="org" data-d="1" ${C.organizers>=10?'disabled':''}>+ Hire an organizer</button></div>
-    <p class="note">Organizers raise turnout among your supporters, most of all in groups that usually stay home (renters, young professionals, working families). Field offices ($6K a month) persuade and turn out voters in their district, and pay off most where the race is close; in a district you're winning or losing big, one does little.</p>
+    <p class="note">Organizers raise turnout among your supporters, most of all in groups that usually stay home (renters, young professionals, working families). Field offices (−$6K a month) persuade and turn out voters in their district, and pay off most where the race is close; in a district you're winning or losing big, one does little.</p>
     <div class="row">${[1,2,3,4,5,6,7].map(d=>{const cl=districtCloseness(d);return`<button class="btn ${C.offices[d]?'primary':''}" data-act="office" data-d="${d}" title="${cl>=0.7?'Close race here: an office pays off':cl>=0.4?'Somewhat competitive':'Not competitive: an office does little'}">D${d}${C.offices[d]?' ✓':''} <small>${cl>=0.7?'close':cl>=0.4?'lean':'safe'}</small></button>`}).join('')}</div></div>
    <div class="facts"><h4>Endorsements · decided July to September ${e.y}</h4><div class="dlist">${ENDORSERS.map(E=>{const st=C.endorse[E.id];return`<div class="drow" style="cursor:default;grid-template-columns:minmax(0,1fr) auto"><span>${E.n} <small>· speaks for ${GMAP[E.g].n.toLowerCase()} (${Math.round(S.groups[E.g].app)}%)</small></span>${st?`<b style="color:${st==='you'?'var(--good)':st==='rival'?'var(--bad)':'var(--muted)'}">${st==='you'?'Endorsed you':st==='rival'?'Endorsed '+R.name.split(' ').pop():'Neutral'}</b>`:`<button class="btn" data-act="seek" data-id="${E.id}" ${C.seek[E.id]||S.slots<=0?'disabled':''} style="padding:2px 8px">${C.seek[E.id]?'Asked':'Ask for it (1 slot)'}</button>`}</div>`}).join('')}</div></div>
    <div class="facts"><h4>Debates</h4><p class="note">Two televised debates, September ${DEBATE_DAYS[0]} and ${DEBATE_DAYS[1]}, ${e.y}. ${Object.keys(C.debates).length?Object.entries(C.debates).map(([n,D])=>`Debate ${n}: ${D.round>=3?`took ${D.won} of 3`:'in progress'}`).join(' · '):'They arrive on your desk on debate day.'}</p></div>
@@ -2524,13 +2534,13 @@ function openDonor(){const o=S.camp.offer;if(!o){openHQ();return}const D=DONORS[
   openModal('Major-donor dinner',`${D.n} offers ${fmtK(o.amt)}`,`<p>Over dinner, the ${D.n} pledges ${fmtK(o.amt)} to your campaign. Nobody says it's a condition, but everyone at the table knows what they expect: <b>${D.exp.toLowerCase()}</b>.</p>
    ${D.taint?`<p class="note" style="color:var(--warn)">This money is controversial. Taking it will cost you with ${Object.keys(D.taint).map(g=>GMAP[g].n.toLowerCase()).join(', ')}, and it goes on your record.</p>`:''}
    <p class="note">Accepting isn't corruption, and it's all publicly reported. But if you cross them, they'll fund your opponent instead.</p>
-   <div class="choices"><button class="choice" data-act="donoryes"><b>Accept the ${fmtK(o.amt)}</b><small>Campaign cash now; expectations tracked in Campaign HQ</small></button><button class="choice" data-act="donorno"><b>Politely decline</b><small>No strings, no money</small></button></div>`)}
+   <div class="choices"><button class="choice" data-act="donoryes"><b>Accept the +${fmtK(o.amt)}</b><small>Campaign cash now; expectations tracked in Campaign HQ</small></button><button class="choice" data-act="donorno"><b>Politely decline</b><small>No strings, no money</small></button></div>`)}
 openDonor=navWrap('openDonor',openDonor);
 function openShop(){const P=S.purse;closePanel();
   openModal(`Personal account · ${'$'+Math.round(P.cash).toLocaleString()}`,'Your personal money',`<p>The Mayor of Memphis earns $${SALARY.toLocaleString()} a year. That's $14,234.75 a month before deductions; about ${$$(payStub().net)} lands in your account after deductions (see the Money tab). This is your own money, not the city's and not the campaign's.</p>
    <div class="opl"><div><span>Balance</span><b>${'$'+Math.round(P.cash).toLocaleString()}</b></div><div><span>Paid to you so far</span><b>${'$'+P.paid.toLocaleString()}</b></div><div><span>Given to your campaign</span><b>${'$'+(S.camp?S.camp.personal:0).toLocaleString()}</b></div></div>
    <div class="facts"><h4>Optional wardrobe</h4><p class="note">Basic looks are always free. These extras show on your portrait once you buy them; choose them under Change your look.</p>
-    <div class="choices">${SHOP.map(it=>`<button class="choice" data-act="buy" data-id="${it.id}" ${P.owned[it.id]||P.cash<it.p?'disabled':''}><b>${it.n} · $${it.p.toLocaleString()}</b><small>${P.owned[it.id]?'Owned':it.d}</small></button>`).join('')}</div></div>
+    <div class="choices">${SHOP.map(it=>`<button class="choice" data-act="buy" data-id="${it.id}" ${P.owned[it.id]||P.cash<it.p?'disabled':''}><b>${it.n} · −$${it.p.toLocaleString()}</b><small>${P.owned[it.id]?'Owned':it.d}</small></button>`).join('')}</div></div>
    <div class="row"><button class="btn" data-act="look">Change your look</button><button class="btn primary" data-store="home">More to buy: home, car, tickets, giving</button></div>`,true)}
 openShop=navWrap('openShop',openShop);
 function electionV2(next){recomputeAll(S);const p=headToHead();const others=6+rnd(0,6);const swing=rnd(-2,2);let you=clamp(p*(100-others)+swing,5,90),rv=100-others-you;const won=you>rv;
@@ -2614,7 +2624,7 @@ function openFinances(){const H=S.moneyHist||[],L=H[H.length-1],st=payStub();clo
      ${L?`<div class="opl">${row('Small donations',L.camp.small||0,sK)}${row('Fundraisers',L.camp.events||0,sK)}${row('Major donors',L.camp.donors||0,sK)}${row('Your own money',L.camp.self||0,sK)}${row('Ads',-(L.camp.ads||0),sK)}${row('Organizers',-(L.camp.org||0),sK)}${row('Field offices',-(L.camp.off||0),sK)}${row('Polls',-(L.camp.polls||0),sK)}${row('Rallies',-(L.camp.rally||0),sK)}</div>`:''}</div>
     <div class="facts"><h4>Personal money</h4><div class="big">${$0(S.purse.cash)}</div><p class="note">Your salary, minus your own rent or mortgage, utilities, food and getting around. Also for optional clothes, or a capped contribution to your campaign.</p>
      ${L?`<div class="opl">${row('Take-home pay',L.purse.salary||0,$0)}${row('Household bills',-(L.purse.bills||0),$0)}${row('Moving and closing costs',-(L.purse.move||0),$0)}${row('Credit card interest',-(L.purse.interest||0),$0)}${row('Purchases',-(L.purse.buy||0),$0)}${row('To your campaign',-(L.purse.xfer||0),$0)}</div>`:''}<p class="note"><a href="#" data-act="household">Your household: home, bills and where you live →</a></p></div></div>
-   <div class="facts"><h4>Your paycheck</h4><div class="opl"><div><span>Salary: $170,817 a year, ÷ 12</span><b>${$$(st.g)}</b></div>${st.ded.map(x=>`<div><span>${x.n}</span><b>−${$$(x.v)}</b></div>`).join('')}<div><span><b>Take-home each month</b></span><b>${$$(st.net)}</b></div></div>
+   <div class="facts"><h4>Your paycheck</h4><div class="opl"><div><span>Salary: $170,817 a year, ÷ 12</span><b>${$$(st.g)}</b></div>${st.ded.map(x=>`<div><span>${x.n}</span><b>−${$$(x.v)}</b></div>`).join('')}<div><span><b>Take-home each month</b></span><b>+${$$(st.net)}</b></div></div>
     <p class="note">Tennessee has no state income tax on wages.</p></div>
    ${H.length>1?`<div class="facts"><h4>City reserve, month by month</h4><div class="spark">${spark(H.map(h=>h.city.end),'var(--amber)')}</div></div>`:''}`,true)}
 openFinances=navWrap('openFinances',openFinances);
@@ -2750,7 +2760,7 @@ function openHousehold(){homeInit(S);closePanel();const H=S.home,h=LMAP[H.id],L=
   openModal(`Personal account ${$0(S.purse.cash)} · take-home ${$$(net)} a month`,'Your household',`
    <div class="facts"><h4>Where you live</h4><p style="margin:0"><b>${H.mode==='own'?'You own a home':'You rent a '+UNITS[H.unit].n}</b> in <b>${h.n}</b> (Council District ${hoodDistrict(H.id)||'?'}).${H.mode==='own'?` Bought for ${fmt$(H.price)}; worth about ${fmt$(homeValue(H))}; you owe ${fmt$(H.bal)}. If you sold today you'd clear about ${fmt$(sellProceeds())} after selling costs.`:''}</p>
     <p class="note">The city charter requires the mayor to live inside Memphis, so the suburbs aren't an option.</p></div>
-   <div class="facts"><h4>This month's bills · ${$0(tot)}</h4><div class="opl">${Object.keys(grp).map(k=>`<div><span><b>${grp[k]}</b></span><b>${$0(sum(k))}</b></div>${L.filter(x=>x.k===k).map(x=>`<div><span style="padding-left:10px">${x.n}${x.policy?' <span class="pill" title="City policy can move this">policy</span>':''}</span><b>${$$(x.v)}</b></div>`).join('')}`).join('')}
+   <div class="facts"><h4>This month's bills · ${$0(tot)}</h4><div class="opl">${Object.keys(grp).map(k=>`<div><span><b>${grp[k]}</b></span><b>${$0(sum(k))}</b></div>${L.filter(x=>x.k===k).map(x=>`<div><span style="padding-left:10px">${x.n}${x.policy?' <span class="pill" title="City policy can move this">policy</span>':''}</span><b>−${$$(x.v)}</b></div>`).join('')}`).join('')}
     <div><span><b>Left over from take-home pay</b></span><b style="color:${net-tot>=0?'var(--good)':'var(--bad)'}">${net-tot>=0?'+':'−'}${$0(Math.abs(net-tot))}</b></div></div>
     <p class="note">Bills change with the seasons: MLGW gas peaks in winter, electricity in summer.</p></div>
    <div class="facts"><h4>How city policy touches your bills</h4><ul>
@@ -2846,7 +2856,7 @@ function openCivic(id){const p=CIVMAP[id];if(!p)return;const T=CIV[p.type],c=civ
     ${pr?`<div><span>MPD precinct</span><b>${pr}</b></div>`:''}
     <div><span>Meetings left this month</span><b>${S.slots}</b></div><div><span>Reserve fund</span><b>${fmtM(S.reserve)}</b></div></div>
     <p class="note">${p.type==='police'?'Morale across stations moves the crime rate a little each month and how many officers stay.':p.type==='fire'?'Readiness across stations shapes how homeowners and working families feel about city services. Equipment wears out, so stations drift down without attention.':'Hospitals are partners, not city departments. The city can fund programs there and help with hiring.'}</p></div>
-   <div class="facts"><h4>What you can do here</h4><div class="choices">${CIV_ACTS[p.type].map(a=>{const why=civCan(p,a);return`<button class="choice" data-civ="${id}" data-ca="${a.id}" ${why?'disabled':''}><b>${a.n}${a.cost?` · ${fmtM(a.cost)}`:''}</b><small>${why||a.d}</small></button>`}).join('')}</div></div>
+   <div class="facts"><h4>What you can do here</h4><div class="choices">${CIV_ACTS[p.type].map(a=>{const why=civCan(p,a);return`<button class="choice" data-civ="${id}" data-ca="${a.id}" ${why?'disabled':''}><b>${a.n}${a.cost?` · ${fmtM(-a.cost)}`:''}</b><small>${why||a.d}</small></button>`}).join('')}</div></div>
    <div class="row"><button class="btn" data-civfly="${id}">Show on map</button><button class="btn" data-civlist="${p.type}">All ${T.n.toLowerCase()}s</button></div>`,true)}
 openCivic=navWrap('openCivic',openCivic);
 function openCivicList(type){type=type||'police';closePanel();const T=CIV[type];
@@ -2864,7 +2874,7 @@ function civicMonth(report){S.civic=S.civic||{};
   // one new problem most months, somewhere on the map
   if(Math.random()<0.55){const t=Math.random()<0.45?'fire':Math.random()<0.7?'police':'hospital';const L=CIV[t].list.filter(p=>!civState(p.id).out);if(L.length){
     const p=L.slice().sort((a,b)=>civState(a.id).lvl-civState(b.id).lvl)[Math.floor(Math.random()*Math.min(6,L.length))];const c=civState(p.id);const msgs=CIV_PROBLEMS[t];c.out=msgs[Math.floor(Math.random()*msgs.length)];c.lvl=clamp(c.lvl-(t==='hospital'?0:10),0,100);c.outM=nowM();
-    report.push(`${p.name}: ${c.out}`);logIt(`${p.name}: ${c.out}`)}}
+    report.push(`${p.name}: ${c.out}`);logIt(`${p.name}: ${c.out}`);try{notify('alert',p.name,c.out,()=>openCivic(p.id))}catch(e){}}}
   // problems left alone cost you
   for(const id in S.civic){const c=S.civic[id];if(c.out&&nowM()-(c.outM||nowM())>=2){const p=CIVMAP[id];if(!p)continue;const d=districtAt(p.lon,p.lat);if(d){S.pop.d[d]=clamp(S.pop.d[d]-1.5,-20,20);const m=memberFor(d);if(m)addMod(m,`${p.name} left in disrepair`,-3)}addMod(staffOf(p.type==='police'?'police':p.type==='fire'?'fire':'cos'),`${p.name} left broken`,-3);c.outM=nowM()-1;if(p.type==='hospital'){c.out=false;continue}}}
   const pm=civAvg('police'),fr=civAvg('fire');S.met.crime=clamp(S.met.crime-(pm-55)*0.02,40,140);S.met.officers+=Math.round((pm-55)*0.15);
@@ -2955,7 +2965,7 @@ function applyUpgrades(L,H){const up=(H&&H.up)||{},P=S.purse||{},subs=P.subs||{}
 function storeMonth(){storeInit();if(S.purse.subs.gym)gainXP('cha',2)}
 function openStore(cat){storeInit();cat=cat||'home';closePanel();const P=S.purse;
   openModal(`Personal account · ${fmt$(P.cash)}`,'Shop',`<div class="lsel" style="margin-bottom:8px">${Object.keys(BUYCAT).map(k=>`<button data-store="${k}" class="${k===cat?'on':''}">${BUYCAT[k]}</button>`).join('')}<button data-act="shop">Wardrobe</button></div>
-   <div class="choices">${BUYS.filter(b=>b.cat===cat).map(b=>{const st=buyState(b);return`<button class="choice${st.owned?' on':''}" data-buy="${b.id}" ${st.no||(st.owned&&!st.sub)?'disabled':''} style="${st.owned?'border-color:var(--good)':''}"><b>${b.n}${b.p?` · ${fmt$(b.p)}`:''}${b.mo&&!b.p?` · $${b.mo}/mo`:''}</b><small>${st.t||st.no||b.d}</small></button>`}).join('')}</div>
+   <div class="choices">${BUYS.filter(b=>b.cat===cat).map(b=>{const st=buyState(b);return`<button class="choice${st.owned?' on':''}" data-buy="${b.id}" ${st.no||(st.owned&&!st.sub)?'disabled':''} style="${st.owned?'border-color:var(--good)':''}"><b>${b.n}${b.p?` · −${fmt$(b.p)}`:''}${b.mo&&!b.p?` · −$${b.mo}/mo`:''}</b><small>${st.t||st.no||b.d}</small></button>`}).join('')}</div>
    <p class="note">${cat==='home'?`Upgrades stay with the home: if you move or sell, they stay behind. ${S.home.mode==='own'?'':'You rent, so bigger upgrades need a home you own.'}`:cat==='ride'?`Right now you ${S.home.car==='car'?'drive your own car':'ride MATA'}${P.veh?` (${BUYMAP[P.veh].n.toLowerCase()})`:''}. Change that under Home.`:cat==='sub'?'Billed with your household bills each month.':cat==='give'?'Gifts go on your public record.':'Good for a full year.'} <a href="#" data-act="household">Your household bills →</a></p>`,true)}
 openStore=navWrap('openStore',openStore);
 document.addEventListener('click',e=>{const b=e.target.closest('[data-buy],[data-store]');if(!b||!S)return;e.preventDefault();if(b.dataset.buy)doBuy(b.dataset.buy);else openStore(b.dataset.store)});
@@ -3133,7 +3143,7 @@ const CHAR_TYPES={
   gen(){if(!S.rival||monthsToElection()>12||monthsToElection()<0)return null;const C=S.council.map((m,k)=>({m,k})).filter(x=>x.k!==S.rival.k&&Math.abs(x.m.opinion)<30);if(!C.length)return null;const x=C[Math.floor(Math.random()*C.length)];return{a:x.k,at:'cityhall'}},
   body:ev=>`${S.rival.name} took ${S.council[ev.a].name} to lunch and asked for an endorsement. ${S.council[ev.a].name.split(' ')[0]} hasn't said yes yet.`,
   who:ev=>[['char',ev.a],['char',S.rival.k]],
-  choices:[{l:()=>'Fund a project in their district',s:()=>'$1.0M reserve · they +12 and owe you a favor · frugal members −3',need:()=>S.reserve>=6,do:ev=>{const m=S.council[ev.a];S.reserve-=1;addMod(m,'Mayor delivered for my district',12);m.favors=(m.favors||0)+1;S.council.forEach(o=>{if(o!==m&&has(o,'frugal'))addMod(o,'Pork-barrel spending',-3)});return`${m.name} stays with you, and owes you one.`}},
+  choices:[{l:()=>'Fund a project in their district',s:()=>'−$1.0M reserve · they +12 and owe you a favor · frugal members −3',need:()=>S.reserve>=6,do:ev=>{const m=S.council[ev.a];S.reserve-=1;addMod(m,'Mayor delivered for my district',12);m.favors=(m.favors||0)+1;S.council.forEach(o=>{if(o!==m&&has(o,'frugal'))addMod(o,'Pork-barrel spending',-3)});return`${m.name} stays with you, and owes you one.`}},
    {l:()=>'Remind them who has the votes',s:()=>'Intrigue decides it · works: +4 · fails: −10',do:ev=>{const m=S.council[ev.a];gainXP('intr',6);if(Math.random()<0.3+mskill('intr')*0.03){addMod(m,'Knows where power is',4);return`${m.name} decided not to cross you.`}addMod(m,'Mayor threatened me',-10);return`${m.name} didn't like being leaned on.`}},
    {l:()=>'Let it go',s:()=>'They −8 · their allies −3',do:ev=>{charLost(ev.a);return`${S.council[ev.a].name} is leaning toward your opponent.`}}],
   ignore:ev=>charLost(ev.a)},
@@ -3157,7 +3167,7 @@ const CHAR_TYPES={
   body:ev=>ev.k==='staff'?`The Commercial Appeal is reporting on ${ev.what} involving ${staffOf(ev.sid).name}, your ${STAFFMAP[ev.sid].role.toLowerCase()}. Reporters want to know if you stand by them.`:`Reporters are digging into ${ev.what} involving ${S.council[ev.a].name}, one of your friendlier votes on the council. You're being asked whether you still work with them.`,
   who:ev=>ev.k==='staff'?[['staff',ev.sid]]:[['char',ev.a]],
   choices:[{l:()=>'Stand by them',s:ev=>`They +20 · public mood ▼${ev.k==='char'?' · reformers −4':''}`,do:ev=>{if(ev.k==='staff')addMod(staffOf(ev.sid),'Stood by me',20);else{addMod(S.council[ev.a],'Stood by me',20);S.council.forEach(o=>{if(has(o,'reformer'))addMod(o,'Covered for a colleague',-4)})}S.mood-=1.2;addRecord({t:`Stood by ${ev.k==='staff'?staffOf(ev.sid).name:S.council[ev.a].name} during ${ev.what}`,good:[],bad:['young'],kind:'char',camp:{d:-0.4,t:`Your opponent asks why you defended ${ev.k==='staff'?staffOf(ev.sid).name:S.council[ev.a].name}.`}});return'You stood by them. Some voters wonder why.'}},
-   {l:ev=>ev.k==='staff'?'Order an independent review':'Keep your distance until it\'s settled',s:ev=>ev.k==='staff'?'$0.15M · cleared: they +10, mood ▲ · not cleared: they resign':'They −10 · public mood ▲',do:ev=>{if(ev.k==='staff'){S.reserve-=0.15;if(Math.random()<0.6){addMod(staffOf(ev.sid),'Cleared by the review',10);S.mood+=0.5;return'The review cleared them.'}const n=staffOf(ev.sid).name;replaceStaff(ev.sid,true);S.mood+=0.3;return`The review found problems. ${n} resigned.`}addMod(S.council[ev.a],'Kept me at arm\'s length',-10);S.mood+=0.5;return'You kept your distance.'}},
+   {l:ev=>ev.k==='staff'?'Order an independent review':'Keep your distance until it\'s settled',s:ev=>ev.k==='staff'?'−$0.15M · cleared: they +10, mood ▲ · not cleared: they resign':'They −10 · public mood ▲',do:ev=>{if(ev.k==='staff'){S.reserve-=0.15;if(Math.random()<0.6){addMod(staffOf(ev.sid),'Cleared by the review',10);S.mood+=0.5;return'The review cleared them.'}const n=staffOf(ev.sid).name;replaceStaff(ev.sid,true);S.mood+=0.3;return`The review found problems. ${n} resigned.`}addMod(S.council[ev.a],'Kept me at arm\'s length',-10);S.mood+=0.5;return'You kept your distance.'}},
    {l:ev=>ev.k==='staff'?'Ask them to resign':'Call for them to step down',s:ev=>ev.k==='staff'?'Replace them now · reformers +3':'They −30 · their allies −6 · reformers +6 · mood ▲',do:ev=>{S.council.forEach(o=>{if(has(o,'reformer'))addMod(o,'Cleaned house',ev.k==='staff'?3:6)});if(ev.k==='staff'){const n=staffOf(ev.sid).name;replaceStaff(ev.sid,false);return`${n} is out.`}const m=S.council[ev.a];addMod(m,'Called for my resignation',-30);relList(ev.a,'ally').forEach(k=>addMod(S.council[k],`Turned on my ally ${m.name}`,-6));S.mood+=1;return`You called on ${m.name} to step down. They won't.`}}],
   ignore:ev=>{S.mood-=1.2;addRecord({t:`Said nothing about ${ev.what}`,kind:'char',bad:[],camp:{d:-0.4,t:`Your opponent says you dodged questions about ${ev.what}.`}})}},
  scheme:{w:0,title:ev=>`${staffOf(ev.sid).name} is building support for a run`,
@@ -3180,10 +3190,67 @@ function charEventCard(ev,idx){const T=CHAR_TYPES[ev.type];if(!T)return'';const 
    <p>${T.body(ev)}</p><div class="choices">${T.choices.map((c,ci)=>{const ok=!c.need||c.need(ev);return`<button class="choice" data-ev="${idx}" data-ci="${ci}" ${ok?'':'disabled'}><b>${c.l(ev)}</b><small>${c.s(ev)}${ok?'':' · not possible right now'}</small></button>`}).join('')}</div></div>`}
 function resolveChar(ev,ci){const T=CHAR_TYPES[ev.type],c=T&&T.choices[ci];if(!c||(c.need&&!c.need(ev)))return'';const msg=c.do(ev)||'';S.events=S.events.filter(e=>e!==ev);recomputeAll(S);S.approval=cityApproval(S);logIt(`${T.title(ev)}: ${msg}`);save();toast(msg);refreshHUD();return msg}
 
+// ======================= SOUND EFFECTS =======================
+// Synthesized in the browser (no files). Settings live outside the save.
+const SFX={on:true,vol:0.5,ctx:null,last:{}};
+try{const p=JSON.parse(localStorage.getItem('bcm-sfx')||'null');if(p){SFX.on=p.on!==false;if(Number.isFinite(p.vol))SFX.vol=clamp(p.vol,0,1)}}catch(e){}
+function sfxSave(){try{localStorage.setItem('bcm-sfx',JSON.stringify({on:SFX.on,vol:SFX.vol}))}catch(e){}}
+function sfxCtx(){if(SFX.ctx)return SFX.ctx;const AC=window.AudioContext||window.webkitAudioContext;if(!AC)return null;try{SFX.ctx=new AC();SFX.out=SFX.ctx.createGain();SFX.out.connect(SFX.ctx.destination)}catch(e){SFX.ctx=null}return SFX.ctx}
+function tone(f,t0,dur,type,g,f2){const c=SFX.ctx,o=c.createOscillator(),a=c.createGain();o.type=type||'sine';o.frequency.setValueAtTime(f,t0);if(f2)o.frequency.exponentialRampToValueAtTime(f2,t0+dur);
+  a.gain.setValueAtTime(0.0001,t0);a.gain.exponentialRampToValueAtTime(g,t0+0.008);a.gain.exponentialRampToValueAtTime(0.0001,t0+dur);o.connect(a);a.connect(SFX.out);o.start(t0);o.stop(t0+dur+0.02)}
+function noise(t0,dur,g,lo,hi){const c=SFX.ctx,n=Math.floor(c.sampleRate*dur),b=c.createBuffer(1,n,c.sampleRate),d=b.getChannelData(0);for(let i=0;i<n;i++)d[i]=(Math.random()*2-1)*(1-i/n);
+  const s=c.createBufferSource();s.buffer=b;const f=c.createBiquadFilter();f.type='bandpass';f.frequency.setValueAtTime(lo,t0);if(hi)f.frequency.exponentialRampToValueAtTime(hi,t0+dur);f.Q.value=1.2;const a=c.createGain();a.gain.value=g;s.connect(f);f.connect(a);a.connect(SFX.out);s.start(t0)}
+const SOUNDS={
+ click:t=>{noise(t,0.025,0.5,2400);tone(1800,t,0.03,'triangle',0.08)},
+ open:t=>{noise(t,0.14,0.18,600,2400)},
+ close:t=>{noise(t,0.1,0.12,2000,500)},
+ event:t=>{tone(659,t,0.35,'sine',0.22);tone(880,t+0.09,0.45,'sine',0.18)},
+ good:t=>{tone(523,t,0.25,'triangle',0.18);tone(659,t+0.08,0.25,'triangle',0.18);tone(784,t+0.16,0.4,'triangle',0.2)},
+ bad:t=>{tone(392,t,0.3,'triangle',0.2);tone(311,t+0.14,0.45,'triangle',0.2)},
+ coin:t=>{tone(988,t,0.09,'square',0.07);tone(1319,t+0.07,0.28,'square',0.07)},
+ spend:t=>{tone(220,t,0.12,'triangle',0.22,140);noise(t,0.05,0.15,900)},
+ alert:t=>{tone(440,t,0.6,'triangle',0.2);tone(440,t+0.22,0.7,'triangle',0.16);tone(880,t,0.4,'sine',0.05)},
+ month:t=>{noise(t,0.18,0.14,1500,700);tone(587,t+0.05,0.4,'sine',0.12)},
+ gavel:t=>{tone(160,t,0.12,'square',0.15,90);noise(t,0.04,0.4,700);tone(160,t+0.18,0.14,'square',0.15,90);noise(t+0.18,0.04,0.4,700)},
+ people:t=>{tone(494,t,0.3,'sine',0.16);tone(587,t+0.1,0.3,'sine',0.14);tone(740,t+0.2,0.45,'sine',0.14)}};
+function sfx(name){if(!SFX.on||!SOUNDS[name])return;const now=performance.now();if(SFX.last[name]&&now-SFX.last[name]<60)return;SFX.last[name]=now;const c=sfxCtx();if(!c)return;if(c.state==='suspended')c.resume();SFX.out.gain.value=SFX.vol*0.9;try{SOUNDS[name](c.currentTime+0.005)}catch(e){}}
+document.addEventListener('pointerdown',e=>{const b=e.target.closest('button,a,.choice,select,input[type=checkbox],input[type=range]');if(b&&!b.disabled)sfx('click')},true);
+document.addEventListener('change',e=>{const t=e.target;if(t.id==='sfxOn'){SFX.on=t.checked;sfxSave();if(SFX.on)sfx('good')}});
+document.addEventListener('input',e=>{const t=e.target;if(t.id==='sfxVol'){SFX.vol=(+t.value)/100;sfxSave()}});
+document.addEventListener('pointerup',e=>{if(e.target.id==='sfxVol')sfx('coin')});
+
+// ======================= NOTIFICATIONS (lower right) =======================
+// Cards stack in the lower right. Click one to go there; they fade on their own.
+const NOTE_KIND={event:{ic:'❗',c:'var(--amber)',snd:'event',ttl:9},people:{ic:'♟',c:'#b98ee6',snd:'people',ttl:10},good:{ic:'▲',c:'var(--good)',snd:'good',ttl:7},bad:{ic:'▼',c:'var(--bad)',snd:'bad',ttl:8},
+ money:{ic:'$',c:'var(--good)',snd:'coin',ttl:6},spend:{ic:'$',c:'var(--bad)',snd:'spend',ttl:6},alert:{ic:'⚠',c:'var(--bad)',snd:'alert',ttl:14},month:{ic:'☰',c:'#5aa7d8',snd:'month',ttl:9},vote:{ic:'⚖',c:'#e6c547',snd:'gavel',ttl:10},info:{ic:'•',c:'var(--muted)',snd:null,ttl:6}};
+let noteSeq=0;const noteActs={};
+function notify(kind,title,text,act,opts){opts=opts||{};const K=NOTE_KIND[kind]||NOTE_KIND.info;let box=$('notes');if(!box){box=document.createElement('div');box.id='notes';box.setAttribute('aria-live','polite');document.body.appendChild(box)}
+  const id='n'+(++noteSeq);if(act)noteActs[id]=act;const el=document.createElement('div');el.className='note-card';el.id=id;el.style.setProperty('--nc',K.c);
+  el.innerHTML=`<span class="nc-ic">${K.ic}</span><div class="nc-tx"><b>${moneyColor(title)}</b>${text?`<small>${moneyColor(text)}</small>`:''}${act?'<em>Click to open</em>':''}</div><button class="nc-x" aria-label="Dismiss">×</button>`;
+  box.prepend(el);while(box.children.length>5)box.lastChild.remove();requestAnimationFrame(()=>el.classList.add('in'));
+  if(!opts.silent&&K.snd)sfx(K.snd);const ttl=(opts.ttl||K.ttl)*1000;let tm=setTimeout(()=>noteGone(el),ttl);el.addEventListener('mouseenter',()=>clearTimeout(tm));el.addEventListener('mouseleave',()=>{tm=setTimeout(()=>noteGone(el),2500)});return el}
+function noteGone(el){if(!el||!el.parentNode)return;el.classList.remove('in');el.classList.add('out');setTimeout(()=>{el.remove();delete noteActs[el.id]},300)}
+document.addEventListener('click',e=>{const x=e.target.closest('.nc-x');if(x){e.stopPropagation();noteGone(x.closest('.note-card'));return}const c=e.target.closest('.note-card');if(!c)return;const f=noteActs[c.id];noteGone(c);if(f&&S&&S.started){try{if(modalOpen){onClose=null;closeModal()}f()}catch(err){}}});
+// Short feedback messages become notifications too, sorted by what they say.
+function classifyMsg(m){if(/^New: /.test(m))return'event';if(/\+\$[\d.,]+/.test(m)&&!/−\$/.test(m))return'money';if(/−\$[\d.,]+/.test(m))return'spend';
+  if(/\b(fail|lost|refus|angry|resign|quit|broke|leak|rough|badly|won't|denied|against you|not happy|turned down|shouted)/i.test(m))return'bad';
+  if(/\b(passed|won|done|signed|funded|approve|appreciated|went well|packed house|endorsed you|cleared|owes you|stays with you|allies)/i.test(m))return'good';return'info'}
+const _toast=toast;
+toast=function(msg){if(!msg)return;if(!S||!S.started){_toast(msg);return}const k=classifyMsg(String(msg));const s=String(msg);const cut=s.indexOf('. ');const title=cut>0&&cut<90?s.slice(0,cut+1):s.length>110?s.slice(0,107)+'…':s;const rest=title.length<s.length?s.slice(title.length).trim():'';notify(k,title,rest)};
+
+// ======================= MONEY IN RED AND GREEN =======================
+// Any amount written with a sign is colored: +$ green (money in), −$ red (money out).
+const MONEY_RE=/([+−-])\s?\$[\d,]+(?:\.\d+)?(?:[MK])?(?:\s?(?:\/yr|\/mo|a year|a month))?/g;
+function moneyColor(html){if(!html||typeof html!=='string')return html;return html.replace(/(^|>)([^<]+)/g,(m,a,t)=>a+t.replace(MONEY_RE,(x,sg)=>`<span class="${sg==='+'?'mny-up':'mny-dn'}">${x}</span>`))}
+const _openModal=openModal;openModal=function(sub,title,html,wide,cb){const was=modalOpen;_openModal(sub,title,moneyColor(html),wide,cb);const tx=sub+' '+title;if(/won a second term|with a win/i.test(tx))sfx('good');else if(/lost the election/i.test(tx))sfx('bad');else if(/vote|veto|override/i.test(tx))sfx('gavel');else if(!was)sfx('open')};
+const _openPanel=openPanel;openPanel=function(sub,title,html,key){const was=!$('panel').hidden;_openPanel(sub,title,moneyColor(html),key);if(!was)sfx('open')};
+
+if($('sfxOn')){$('sfxOn').checked=SFX.on;$('sfxVol').value=Math.round(SFX.vol*100)}
+
 function openLedger(){const L=S.log||[];openPanel('Everything that has happened, newest first','Ledger',L.length?`<div class="logl">${L.map(x=>`<div><span>${x.d}</span><p style="margin:0">${x.t}</p></div>`).join('')}</div>`:'<p class="note">Nothing yet. Start the clock with Space or ▶.</p>','ledger')}
 function openPolicies(){const ks=Object.keys(POLICIES);
   openPanel('Ongoing programs you control','Your initiatives',`<p>Mid-year, these are paid from the reserve fund. In April they go into the budget you send the council.</p>
-   ${ks.map(k=>`<div class="row"><span class="pill ${S.policies[k]?'on':''}">${S.policies[k]?'Active':'Off'}</span><span style="flex:1;min-width:160px">${POLICIES[k].name} · ${fmtM(POLICIES[k].cost)}/yr</span>${S.policies[k]?`<button class="btn" data-act="toggle" data-k="${k}">End it</button>`:`<a href="#" data-go="${POLICIES[k].where}">Fund it at ${placeOf(POLICIES[k].where).name}</a>`}</div>`).join('')}`,'policies')}
+   ${ks.map(k=>`<div class="row"><span class="pill ${S.policies[k]?'on':''}">${S.policies[k]?'Active':'Off'}</span><span style="flex:1;min-width:160px">${POLICIES[k].name} · −${fmtM(POLICIES[k].cost)}/yr</span>${S.policies[k]?`<button class="btn" data-act="toggle" data-k="${k}">End it</button>`:`<a href="#" data-go="${POLICIES[k].where}">Fund it at ${placeOf(POLICIES[k].where).name}</a>`}</div>`).join('')}`,'policies')}
 function election(next){
   recomputeAll(S);const amb=S.rival?S.council[S.rival.k]:S.council.filter(m=>has(m,'ambitious')).sort((a,b)=>a.opinion-b.opinion)[0];const atk=rivalAttacks();
   const share=clamp(20+S.approval*0.6+(mskill('cha')-8)*0.4+recordSwing()+rnd(-4,4),10,80),rival=clamp(60-S.approval*0.5+(amb?Math.max(0,-amb.opinion)/8:0)+rivalStrength()+rnd(-4,4),10,70);const won=share>rival;
@@ -3223,7 +3290,7 @@ function initMap(){
   map=new maplibregl.Map({container:'map',style:styleBase(),center:wide?[-90.085,35.13]:HOME_VIEW.center,zoom:wide?10.45:HOME_VIEW.zoom,pitch:0,bearing:0,maxPitch:60,minZoom:9.2,maxZoom:18.5,
     maxBounds:[[-90.45,34.85],[-89.45,35.45]],attributionControl:false,dragRotate:false,pitchWithRotate:false,touchPitch:false,keyboard:false,fadeDuration:0});
   map.touchZoomRotate.disableRotation();
-  try{map.scrollZoom.setWheelZoomRate(1/170);map.scrollZoom.setZoomRate(1/45)}catch(e){}
+  try{map.scrollZoom.setWheelZoomRate(1/55);map.scrollZoom.setZoomRate(1/22)}catch(e){}
   map.on('load',loadBase);
   map.on('zoom',zoomClasses);
   window.addEventListener('resize',()=>map&&map.resize());
@@ -3440,7 +3507,7 @@ function camLoop(t){const dt=Math.min(.05,lastT?(t-lastT)/1000:0);lastT=t;timeSt
       if(mouse.x<=m)dx-=1;else if(mouse.x>=W-m)dx+=1;if(mouse.y<=m)dy-=1;else if(mouse.y>=H-m)dy+=1}
     if(dx||dy){panHeld=Math.min(1.2,panHeld+dt);const n=Math.hypot(dx,dy),z=map.getZoom(),zs=z<12?1.35:z<14?1.15:1,sp=(keysDown.has('shift')?2600:1300)*zs*(0.75+panHeld*0.6)*dt;if(flying){map.stop();flying=false}map.panBy([dx/n*sp,dy/n*sp],{duration:0})}else panHeld=0;
     let dz=0;if(keysDown.has('q')||keysDown.has('pagedown'))dz-=1;if(keysDown.has('z')||keysDown.has('pageup'))dz+=1;
-    if(dz){if(flying){map.stop();flying=false}map.setZoom(clamp(map.getZoom()+dz*(keysDown.has('shift')?4.5:2.6)*dt,map.getMinZoom(),map.getMaxZoom()))}
+    if(dz){if(flying){map.stop();flying=false}map.setZoom(clamp(map.getZoom()+dz*(keysDown.has('shift')?8:4.8)*dt,map.getMinZoom(),map.getMaxZoom()))}
     if(!flying){const want=pitchFor(map.getZoom()),p=map.getPitch();if(Math.abs(p-want)>0.15)map.setPitch(p+(want-p)*Math.min(1,dt*9));if(Math.abs(map.getBearing())>0.01)map.setBearing(0)}
   }
   requestAnimationFrame(camLoop)}
@@ -3602,8 +3669,8 @@ document.addEventListener('click',e=>{
   else if(a==='policies')openPolicies();
   else if(a==='help')openHelp();
   else if(a==='layers')toggleLayersBox();
-  else if(a==='zin')map&&map.easeTo({zoom:Math.min(18.5,map.getZoom()+1.2),duration:300});
-  else if(a==='zout')map&&map.easeTo({zoom:Math.max(9.2,map.getZoom()-1.8),duration:300});
+  else if(a==='zin')map&&map.easeTo({zoom:Math.min(18.5,map.getZoom()+1.6),duration:250});
+  else if(a==='zout')map&&map.easeTo({zoom:Math.max(9.2,map.getZoom()-2.6),duration:250});
   else if(a==='home')camFly({...HOME_VIEW,speed:1.6});
     else if(a==='gompd')flyTo('mpd',true);
   else if(a==='showDistricts'){closeModal();setMode('opinion');camFly({...HOME_VIEW,speed:1.6})}
@@ -3731,6 +3798,6 @@ window.bluffMusicContext = () => {
 window.claude?.hot?.snapshot?.(()=>({S}));
 window.claude?.hot?.ready?window.claude.hot.ready(start):start(window.claude?.hot?.data??{});
 </script>
-<script src="music.js?v=19"></script>
+<script src="music.js?v=20"></script>
 </body>
 </html>
