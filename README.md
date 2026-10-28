@@ -4,6 +4,14 @@ A city-management game set in Memphis, Tennessee. You play the mayor. You handle
 
 **Play it:** https://erndae.github.io/Bluff-city-mayor/ (once GitHub Pages is turned on, see below)
 
+## v25.6: Houses with roofs and color
+
+Neighborhood homes now have pitched roofs, contrasting roof colors, and ten exterior colors. Closer zoom adds doors, window frames, and one- or two-story facades. This covers both central Memphis and the surrounding residential footprint layer. Named landmarks and civic facilities retain their own designs.
+
+Roofs appear at neighborhood zoom (15+); doors and windows appear at 16+. The Buildings layer switch controls them. Geometry follows existing footprints, with stylized architecture rather than a survey of individual homes. Nearby roof meshes are built in small batches and capped at 8,000 homes to limit memory and interaction delays. Existing saves remain compatible.
+
+Validation: `node tools/check-houses.cjs` checks convex and concave roof coverage, deterministic colors, real city footprints, renderer lifecycle, and inline script syntax. `node tools/check-building-links.cjs` verifies all 90 named destinations. The automated browser environment cannot initialize WebGL; geometry was visually reviewed with a software projection, while full map rendering still requires a WebGL-capable browser.
+
 ## v22: A city that responds
 
 Projects show crews, paused work, finished improvements, and wear when satisfaction falls. Completed roads get fresh pavement markings; rehab projects recolor small sets of nearby real footprints as simulated homes. Those selections do not identify real vacant properties.

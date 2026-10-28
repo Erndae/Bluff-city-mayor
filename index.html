@@ -554,7 +554,7 @@ details.analysis{margin-top:6px}details.analysis summary{cursor:pointer;color:va
     <button class="btn primary" data-act="pause" id="bPlay"><svg class="ico" viewBox="0 0 12 12" aria-hidden="true"><path d="M3.2 1.6v8.8l7.2-4.4z" fill="currentColor"/></svg> Resume <kbd>Space</kbd></button>
   </nav>
   <div class="status" id="status">Loading map…</div>
-  <div class="credit"><span class="ver" id="verTag">v25.5</span></div>
+  <div class="credit"><span class="ver" id="verTag">v25.6</span></div>
   <div class="tip" id="tip" hidden></div>
   <div class="toast" id="toast" role="status"></div>
   <section class="panel" id="panel" hidden aria-live="polite">
@@ -589,7 +589,7 @@ details.analysis{margin-top:6px}details.analysis summary{cursor:pointer;color:va
         <button class="btn" id="bLoad" hidden>Continue saved term</button>
       </div>
       <div id="slotList" hidden></div>
-      <p class="note startv">Version <b class="ver" id="verStart">v25.5</b></p>
+      <p class="note startv">Version <b class="ver" id="verStart">v25.6</b></p>
     </div>
     <div class="startbox create" id="create" hidden>
       <h2>Create your mayor</h2>
@@ -624,7 +624,8 @@ details.analysis{margin-top:6px}details.analysis summary{cursor:pointer;color:va
 (function(){const urls=['https://cdn.jsdelivr.net/npm/maplibre-gl@4.7.1/dist/maplibre-gl.js','https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js'];let k=0;
   function next(){if(k>=urls.length){window.__mlFail=true;window.dispatchEvent(new Event('mlready'));return}const s=document.createElement('script');s.src=urls[k++];s.onload=()=>window.dispatchEvent(new Event('mlready'));s.onerror=next;document.head.appendChild(s)}next()})();
 </script>
-<script src="city-buildings.js?v=25.5"></script>
+<script src="city-buildings.js?v=25.6"></script>
+<script src="city-houses.js?v=25.6"></script>
 <script>
 "use strict";
 // ======================= LOADING SCREEN =======================
@@ -1378,7 +1379,7 @@ function enact(s,p){DIVS.forEach(d=>{s.enacted[d.id]=p.divs[d.id];s.ratio[d.id]=
 // Voter groups. Each has a share of residents, turnout, home districts, concerns and an approval of you.
 // Citywide approval is the turnout-weighted average of the groups; each council district's approval comes from the groups that live there.
 // Shares, district mix and turnout are modeled, loosely grounded in Memphis demographics; they are not survey data.
-const VERSION='v25.5';
+const VERSION='v25.6';
 const GROUPS=[
  {id:'working',sh:'Working families',n:'Working families',ic:'⚒︎',c:'#f2a93b',share:24,turn:.5,start:56,w:{jobs:1,safety:.8,transit:.5},
   d:'Hourly workers in logistics, warehouses, health care and service jobs. The biggest bloc in the city.',dm:{1:1.1,2:.8,3:1.3,4:1.2,5:.6,6:1.2,7:1.1}},
@@ -4398,10 +4399,15 @@ const BUILD={
   council:()=>fcPoly(GEO.council.map(f=>f.parts),i=>({d:GEO.council[i].v})),
   superd:()=>fcPoly(GEO.superd.map(f=>f.parts),i=>({d:GEO.superd[i].v})),
   precincts:()=>fcPoly(GEO.precincts.map(f=>f.parts),i=>({n:GEO.precincts[i].v,k:i})),
-  bmain:()=>{const feats=[],hs=[];for(const k of ['bldBig','bldCore']){const f=decodeLayer(RAW[k].g),a=RAW[k].a;for(let i=0;i<f.length;i++){if(isPyramid(f[i])||window.BCBuildings?.isSuperseded(k,i))continue;feats.push(f[i]);hs.push(a[i]||0)}}
-    delete RAW.bldBig;delete RAW.bldCore;return fcPoly(feats,i=>({h:Math.max(3,Math.round(hs[i]*0.3048))}))},
+  bmain:()=>{const feats=[],props=[],houses=[];for(const k of ['bldBig','bldCore']){const f=decodeLayer(RAW[k].g),a=RAW[k].a;for(let i=0;i<f.length;i++){
+    if(isPyramid(f[i])||window.BCBuildings?.isSuperseded(k,i))continue;
+    const h=Math.max(3,Math.round((a[i]||0)*.3048)),houseId=(k==='bldCore'?1000000:2000000)+i;
+    const house=!window.BCBuildings?.isNamed(k,i)&&window.BCHouses?.isHouse(f[i],h),look=house?window.BCHouses.style(houseId):null;
+    feats.push(f[i]);props.push(look?{h:look.height,wall:look.wall,houseId}:{h});}}
+    const data=fcPoly(feats,i=>props[i]);for(const f of data.features)if(f.properties.houseId)houses.push(f);
+    window.BCHouses?.ingest(houses);delete RAW.bldBig;delete RAW.bldCore;return data},
   pyramid:()=>pyramidFC(),
-  bhomes:()=>{const r=fcPoly(decodeLayer(RAW.bldRest.g));r.features=r.features.filter(f=>!window.BCBuildings?.isSuperseded('bldRest',f.id-1));delete RAW.bldRest;return r},
+  bhomes:()=>{const r=fcPoly(decodeLayer(RAW.bldRest.g),i=>window.BCHouses?.style(i+1)||{wall:'#d3b49b',height:4.5});r.features=r.features.filter(f=>!window.BCBuildings?.isSuperseded('bldRest',f.id-1));window.BCHouses?.ingest(r.features.filter(f=>!window.BCBuildings?.isNamed('bldRest',f.id-1)));delete RAW.bldRest;return r},
 };
 // The Pyramid (Bass Pro Shops, 1 Bass Pro Dr.): the city footprint is a flat box, so it is drawn as a real stepped pyramid instead.
 // About 98 m (321 ft) tall on a square base about 178 m on a side, turned to match the footprint in the city's GIS.
@@ -4467,8 +4473,8 @@ async function loadBuildings(){
     // Resolve replacement footprints before decoding either base building source.
     try{await window.BCBuildings?.prepare()}catch(e){console.warn('Building corrections unavailable',e)}
     map.addSource('bmain',{type:'geojson',data:'bcm://bmain',tolerance:0.2,buffer:32});
-    map.addLayer({id:'bmain-flat',type:'fill',source:'bmain',maxzoom:13.5,paint:{'fill-color':'#d4ad89','fill-opacity':['interpolate',['linear'],['zoom'],11,.5,13.5,.9]}},'council-fill');
-    map.addLayer({id:'bmain-3d',type:'fill-extrusion',source:'bmain',minzoom:13.5,paint:{'fill-extrusion-color':['interpolate',['linear'],['get','h'],0,'#dca57e',20,'#e7ceaa',60,'#8dbcc8',140,'#d4e5e7'],'fill-extrusion-height':['interpolate',['linear'],['zoom'],13.5,0,14.2,['get','h']],'fill-extrusion-base':0,'fill-extrusion-opacity':1,'fill-extrusion-vertical-gradient':true}},'council-fill');
+    map.addLayer({id:'bmain-flat',type:'fill',source:'bmain',maxzoom:13.5,paint:{'fill-color':['coalesce',['get','wall'],'#d4ad89'],'fill-opacity':['interpolate',['linear'],['zoom'],11,.5,13.5,.9]}},'council-fill');
+    map.addLayer({id:'bmain-3d',type:'fill-extrusion',source:'bmain',minzoom:13.5,paint:{'fill-extrusion-color':['case',['has','wall'],['get','wall'],['interpolate',['linear'],['get','h'],0,'#dca57e',20,'#e7ceaa',60,'#8dbcc8',140,'#d4e5e7']],'fill-extrusion-height':['interpolate',['linear'],['zoom'],13.5,0,14.2,['get','h']],'fill-extrusion-base':0,'fill-extrusion-opacity':1,'fill-extrusion-vertical-gradient':true}},'council-fill');
     map.addSource('pyramid',{type:'geojson',data:'bcm://pyramid'});
     map.addLayer({id:'pyramid-flat',type:'fill',source:'pyramid',maxzoom:13.5,filter:['==',['get','i'],0],paint:{'fill-color':'#5d6f80','fill-opacity':['interpolate',['linear'],['zoom'],11,.5,13.5,.9]}},'council-fill');
     map.addLayer({id:'pyramid-3d',type:'fill-extrusion',source:'pyramid',minzoom:13.5,paint:{'fill-extrusion-color':['interpolate',['linear'],['get','i'],0,'#7f909f',16,'#a7b6c3',31,'#d7e0e7'],
@@ -4478,6 +4484,7 @@ async function loadBuildings(){
         const marker=kind==='civic'?civMarkers.find(o=>o.p.id===id)?.m:lmMarkers[id]?.m;marker?.setLngLat(a.coordinates);}
       if(S?.started){renderPins();if(!S.mayorAt?.until){S.mayorAt={...mayorDefault(),until:0};renderMayor(false)}}
     }})}catch(e){console.warn('Named building links unavailable',e)}
+    try{window.BCHouses?.install({map,state:()=>S})}catch(e){console.warn('House roof detail unavailable',e)}
     applyLayers();setStatus(null);
     map.on('moveend',maybeLoadHomes);maybeLoadHomes();
   }catch(e){console.error(e);setStatus(null);toast('Some building data could not load. Streets and districts still work.')}
@@ -4489,8 +4496,8 @@ async function maybeLoadHomes(){
   try{setStatus('Loading 250,970 homes and small buildings…');
     const d=await getJSON('data/buildings-homes.json');Object.assign(RAW,d.layers);
     map.addSource('bhomes',{type:'geojson',data:'bcm://bhomes',tolerance:0.25,buffer:32,maxzoom:15});
-    map.addLayer({id:'bhomes-flat',type:'fill',source:'bhomes',minzoom:13,maxzoom:15,paint:{'fill-color':'#c99b7b','fill-opacity':['interpolate',['linear'],['zoom'],13,0,13.6,.85]}},'bmain-flat');
-    map.addLayer({id:'bhomes-3d',type:'fill-extrusion',source:'bhomes',minzoom:15,paint:{'fill-extrusion-color':['match',['%', ['id'],5],0,'#d89979',1,'#e6c48f',2,'#a0c3ab',3,'#b4bdd5','#d3b49b'],'fill-extrusion-height':4.5,'fill-extrusion-opacity':1}},'bmain-3d');
+    map.addLayer({id:'bhomes-flat',type:'fill',source:'bhomes',minzoom:13,maxzoom:15,paint:{'fill-color':['get','wall'],'fill-opacity':['interpolate',['linear'],['zoom'],13,0,13.6,.85]}},'bmain-flat');
+    map.addLayer({id:'bhomes-3d',type:'fill-extrusion',source:'bhomes',minzoom:15,paint:{'fill-extrusion-color':['get','wall'],'fill-extrusion-height':['get','height'],'fill-extrusion-opacity':1}},'bmain-3d');
     homesState='done';applyLayers();setStatus(null);
   }catch(e){console.error(e);homesState='idle';setStatus(null)}
 }
@@ -4555,7 +4562,7 @@ function applyLayers(){if(!mapReady)return;const L=S?S.layers:{superd:false,bld:
   renderModes();renderLegend();
   ['bmain-flat','bmain-3d','bhomes-flat','bhomes-3d','pyramid-flat','pyramid-3d'].forEach(id=>vis(id,L.bld));
   $('lySuper').checked=L.superd;$('lyBld').checked=L.bld;$('lyLabels').checked=L.labels;$('lyEdge').checked=L.edge!==false;if($('lyCivic'))$('lyCivic').checked=L.civic!==false;if($('lySchools'))$('lySchools').checked=L.schools!==false;$('lyPause').checked=S?S.autoPause!==false:true;
-  window.BCBuildings?.sync();
+  window.BCBuildings?.sync();window.BCHouses?.sync();
   zoomClasses();if(L.bld&&homesState==='idle'&&map.getSource('bmain'))maybeLoadHomes()}
 let hoverState=null;
 function setupMapInteractions(){
@@ -4942,7 +4949,7 @@ window.bluffMusicContext = () => {
 window.claude?.hot?.snapshot?.(()=>({S}));
 window.claude?.hot?.ready?window.claude.hot.ready(start):start(window.claude?.hot?.data??{});
 </script>
-<script src="city-life.js?v=25b"></script>
+<script src="city-life.js?v=25.6"></script>
 <script src="music.js?v=25"></script>
 </body>
 </html>

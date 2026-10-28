@@ -1,13 +1,14 @@
 /* Named locations share the same footprint for rendering, hover and selection. */
 window.BCBuildings = (() => {
   let map, state, openPlace, openCivic, byKey = new Map(), hoverId, selectedIds=[];
-  let prepared, superseded=new Set();
+  let prepared, superseded=new Set(), namedIds=new Set();
   async function prepare() {
     if(!prepared)prepared=(async()=>{
       const response=await fetch('data/named-buildings.json?v=25.5');
       if(!response.ok)throw new Error('Named buildings '+response.status);
       const data=await response.json();
       superseded=new Set(data.superseded||[]);
+      namedIds=new Set(data.features.map(f=>f.properties.buildingId));
       return data;
     })().catch(error=>{prepared=null;throw error;});
     return prepared;
@@ -72,5 +73,5 @@ window.BCBuildings = (() => {
     }catch(e){console.warn('Facade details unavailable',e);}
   }
   function conditions(values){for(const [key,v] of Object.entries(values))for(const f of byKey.get(key)||[])for(const [prop,value] of Object.entries(v))set(f.id,prop,value);}
-  return {prepare,isSuperseded,install,sync,hit,hover,click,select,conditions};
+  return {prepare,isSuperseded,isNamed:(layer,index)=>namedIds.has(`${layer}:${index}`),install,sync,hit,hover,click,select,conditions};
 })();
