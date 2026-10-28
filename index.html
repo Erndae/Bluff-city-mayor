@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="description" content="Create your mayor and govern Memphis in real time on a map with a real map of the city.">
 <title>Bluff City Mayor</title>
-<link rel="stylesheet" href="music.css?v=20">
+<link rel="stylesheet" href="music.css?v=21">
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -358,6 +358,10 @@ button.seat:hover{border-color:var(--amber)}
   .actions .btn.act{border-color:var(--amber);color:var(--amber)}
 .choices .choice small{white-space:normal}
 /* v15 */
+.guidebox{border:1px solid var(--amber);border-radius:6px;padding:8px 10px;margin-bottom:10px;background:rgba(242,169,59,.06)}
+.gb-h{display:flex;align-items:center;gap:8px}.gb-h b{flex:1;color:var(--amber);font-size:13px;text-transform:uppercase;letter-spacing:.06em}.gb-h span{font-size:12px;color:var(--muted)}.gb-x{background:none;border:0;color:var(--muted);cursor:pointer;font-size:15px}
+.guidebox .gbar{height:4px;background:var(--line);border-radius:2px;margin:6px 0;overflow:hidden}.guidebox .gbar i{display:block;height:100%}
+.gb-q{display:flex;flex-direction:column;gap:5px;align-items:flex-start;padding:4px 0}.gb-q>div{min-width:0}.gb-q b{font-size:13.5px;display:block}.gb-q small{font-size:12px;color:var(--muted);display:block;line-height:1.35;font-family:var(--f-body)}.gb-q.later b{font-weight:500;color:var(--muted);font-size:12.5px}.gb-q .btn{padding:3px 9px;white-space:nowrap}
 #notes{position:fixed;right:max(16px,env(safe-area-inset-right,0px));bottom:calc(74px + env(safe-area-inset-bottom,0px));width:330px;max-width:calc(100vw - 32px);display:flex;flex-direction:column;gap:6px;z-index:60;pointer-events:none}
 .note-card{pointer-events:auto;display:grid;grid-template-columns:28px 1fr auto;gap:8px;align-items:start;background:linear-gradient(180deg,#1c3042,#13212d);border:1px solid var(--line);border-left:4px solid var(--nc);border-radius:6px;padding:8px 8px 8px 10px;box-shadow:0 6px 20px rgba(0,0,0,.5);cursor:pointer;opacity:0;transform:translateX(30px);transition:opacity .25s,transform .25s}
 .note-card.in{opacity:1;transform:none}.note-card.out{opacity:0;transform:translateX(30px)}.note-card:hover{border-color:var(--nc)}
@@ -493,7 +497,7 @@ details.analysis{margin-top:6px}details.analysis summary{cursor:pointer;color:va
     <button class="btn primary" data-act="pause" id="bPlay">▶ Resume <kbd>Space</kbd></button>
   </nav>
   <div class="status" id="status">Loading map…</div>
-  <div class="credit"><span class="ver" id="verTag">v20</span></div>
+  <div class="credit"><span class="ver" id="verTag">v21</span></div>
   <div class="tip" id="tip" hidden></div>
   <div class="toast" id="toast" role="status"></div>
   <section class="panel" id="panel" hidden aria-live="polite">
@@ -522,11 +526,12 @@ details.analysis{margin-top:6px}details.analysis summary{cursor:pointer;color:va
         <kbd>B · C · V · L</kbd><span>Budget office · Council chamber · Whip count · Map layers</span>
       </div>
       <div class="row">
-        <button class="btn primary" id="bNew">Create your mayor</button>
+        <button class="btn primary" id="bRun">Run for mayor</button>
+        <button class="btn" id="bNew">Start as mayor</button>
         <button class="btn" data-music-open>Music &amp; volume</button>
         <button class="btn" id="bLoad" hidden>Continue saved term</button>
       </div>
-      <p class="note startv">Version <b class="ver" id="verStart">v20</b></p>
+      <p class="note startv">Version <b class="ver" id="verStart">v21</b></p>
     </div>
     <div class="startbox create" id="create" hidden>
       <h2>Create your mayor</h2>
@@ -539,6 +544,7 @@ details.analysis{margin-top:6px}details.analysis summary{cursor:pointer;color:va
             <label for="cG" style="flex:1">Sex<select id="cG"><option value="f">Female</option><option value="m" selected>Male</option></select></label>
             <label for="cFocus" style="flex:1">Lifestyle focus<select id="cFocus"></select></label>
           </div>
+          <label for="cOcc" id="cOccL" hidden>Your job<select id="cOcc"></select></label>
           <div class="swatches" id="cSkin" aria-label="Skin tone"></div>
           <div class="swatches" id="cHair" aria-label="Hair color"></div>
           <div id="cLook"></div>
@@ -1178,7 +1184,7 @@ function describe(c){const out=[];if(c.cost)out.push(`${fmtM(-c.cost)} reserves`
   const cf=c.council||{};const ups=[],downs=[];for(const k in cf){if(k==='all'){(cf[k]>0?ups:downs).push('everyone');continue}(cf[k]>0?ups:downs).push(PRIO_LABEL[k].toLowerCase())}
   if(ups.length)out.push('Pleases '+ups.join(', '));if(downs.length)out.push('Annoys '+downs.join(', '));
   return out.join(' · ')}
-function resolve(ev,ci){try{const pl=placeOf(evAt(ev));if(pl&&pl.lon)goTo(pl.lon,pl.lat,pl.name,2)}catch(e){}
+function resolve(ev,ci){S.stats=S.stats||{};if(ev.id!=='briefing')S.stats.resolved=(S.stats.resolved||0)+1;try{const pl=placeOf(evAt(ev));if(pl&&pl.lon)goTo(pl.lon,pl.lat,pl.name,2)}catch(e){}
   if(ev.kind==='projx')return resolveProjIssue(ev,ci);
   if(ev.kind==='char')return resolveChar(ev,ci);
   const def=evDef(ev);let msg='';
@@ -1271,7 +1277,7 @@ function endOfMonth(){
   // new business arrives on random days through the month
   queueNewBusiness(report);
   if(S.y===2026&&S.m===11&&!S.used.mlgw_rates){const def=EVENTS.find(e=>e.id==='mlgw_rates');S.used.mlgw_rates=nowM();S.queue=S.queue||[];S.queue.push({ev:{id:'mlgw_rates',kind:'event',expires:2,born:nowM()},due:5+Math.floor(Math.random()*10)})}
-  const pout=projectsMonth(report);storiesMonth();try{civicMonth(report)}catch(e){console.warn('civic',e)}try{staffMonth(report)}catch(e){console.warn('staff',e)}try{charLifeMonth(report)}catch(e){console.warn('life',e)}upkeepMonth(report);dealsMonth(report);promisesMonth(report);if(S.camp){campaignMonth(report);purseMonth(report);householdMonth(report);storeMonth()}moneyMonth(report,pout&&pout.paid);
+  const pout=projectsMonth(report);storiesMonth();try{civicMonth(report)}catch(e){console.warn('civic',e)}try{staffMonth(report)}catch(e){console.warn('staff',e)}try{charLifeMonth(report)}catch(e){console.warn('life',e)}try{succCheck()}catch(e){console.warn('succ',e)}upkeepMonth(report);dealsMonth(report);promisesMonth(report);if(S.camp){campaignMonth(report);purseMonth(report);householdMonth(report);storeMonth()}moneyMonth(report,pout&&pout.paid);
   prevMet=before;
   const head=`${MONTHS_L[(S.m+10)%12]} closed: approval ${Math.round(S.approval)}% (${S.approval>=before.approval?'+':'−'}${Math.abs(S.approval-before.approval).toFixed(1)}), reserve ${fmtM(S.reserve)}`;
   logIt(head);report.forEach(l=>logIt(l));
@@ -1288,7 +1294,7 @@ function enact(s,p){DIVS.forEach(d=>{s.enacted[d.id]=p.divs[d.id];s.ratio[d.id]=
 // Voter groups. Each has a share of residents, turnout, home districts, concerns and an approval of you.
 // Citywide approval is the turnout-weighted average of the groups; each council district's approval comes from the groups that live there.
 // Shares, district mix and turnout are modeled, loosely grounded in Memphis demographics; they are not survey data.
-const VERSION='v20';
+const VERSION='v21';
 const GROUPS=[
  {id:'working',sh:'Working families',n:'Working families',ic:'⚒',c:'#f2a93b',share:24,turn:.5,start:56,w:{jobs:1,safety:.8,transit:.5},
   d:'Hourly workers in logistics, warehouses, health care and service jobs. The biggest bloc in the city.',dm:{1:1.1,2:.8,3:1.3,4:1.2,5:.6,6:1.2,7:1.1}},
@@ -1360,16 +1366,16 @@ function localImpact(c){const fx=(c&&c.fx)||{};let v=0;const k={crime:-1.5,bligh
 function bumpPlace(at,v){if(!S.pop||!v)return;if(at.startsWith('town:')){const id=at.slice(5);S.pop.nb[id]=clamp((S.pop.nb[id]||0)+v,-20,20);return}
   const pl=placeOf(at);const d=districtAt(pl.lon,pl.lat);if(d)S.pop.d[d]=clamp((S.pop.d[d]||0)+v,-20,20)}
 // Elections that politicians worry about.
-const COUNCIL_ELECT=[2027,2031];
+const COUNCIL_ELECT=[2027,2031,2035,2039,2043,2047,2051,2055,2059,2063];
 const TERM_LIMITED=['Leonard Gaines','Raymond Oakes','Heather Lund']; // members in their second term
 const NB_ELECT={bartlett:2026,germantown:2026,lakeland:2026,collierville:2028,arlington:2028,millington:2028};
 let SUPER_DS=null;
 function superDs(sd){if(!SUPER_DS&&GEO.council.length&&GEO.superd.length){SUPER_DS={};[1,2,3,4,5,6,7].forEach(d=>{const s=superOfDistrict(d);(SUPER_DS[s]=SUPER_DS[s]||[]).push(d)})}return SUPER_DS&&SUPER_DS[sd]||[]}
 function votersOf(m){if(m.d<=7)return{v:dApp(m.d),where:`District ${m.d}`};const ds=superDs(m.d);return{v:ds.length?ds.reduce((a,d)=>a+dApp(d),0)/ds.length:S.approval,where:`Super District ${m.d}`}}
-function councilRace(m){const now=S.y*12+S.m;const y=COUNCIL_ELECT.find(y=>y*12+10>=now);if(!y)return null;return{y,mo:y*12+10-now,limited:!!m.limited&&y===2027}}
+function councilRace(m){const now=S.y*12+S.m;const y=COUNCIL_ELECT.find(y=>y*12+10>=now);if(!y)return null;return{y,mo:y*12+10-now,limited:!!m.limited}}
 function nbRace(id){if(!S.nbElect)return null;const y=S.nbElect[id],now=S.y*12+S.m;return{y,mo:y*12+11-now}}
 function racePressure(r,amb){if(!r)return .6;if(r.limited)return .4;return(r.mo<=12?1.6:1)*(amb?1.25:1)}
-function raceLabel(r){if(!r)return'';if(r.limited)return'Term-limited, not running in 2027';return r.mo<=0?'Election this month':r.mo<=12?`Up for re-election in ${r.mo} month${r.mo===1?'':'s'}`:`Next election ${r.y}`}
+function raceLabel(r){if(!r)return'';if(r.limited)return`Term-limited, not running in ${r.y}`;return r.mo<=0?'Election this month':r.mo<=12?`Up for re-election in ${r.mo} month${r.mo===1?'':'s'}`:`Next election ${r.y}`}
 function voterParts(m){const out=[];if(!S||!S.groups)return out;
   if(m.city){const v=sApp(m.id),r=nbRace(m.id),hot=r&&r.mo>=0&&r.mo<=12;const x=Math.round((v-50)*0.45*(hot?1.6:1));
     if(x)out.push({t:`${m.city} voters' view of you (${Math.round(v)}%)${hot?' · election year':''}`,v:x});
@@ -1394,7 +1400,7 @@ const $=id=>document.getElementById(id);
 let prevMet=null;
 function refreshHUD(){
   if(!S)return;recomputeAll(S);if(S.council.some(m=>m.d>7&&!m.home))assignHomes();
-  $('hFY').textContent=`FY${fyOf(S)} · term ${S.term}`;updateClock();updateMayorChip();
+  $('hFY').textContent=isCand()?`FY${fyOf(S)} · candidate`:`FY${fyOf(S)} · term ${S.term}`;{const lb=$('hApp')&&$('hApp').previousElementSibling;if(lb)lb.textContent=isCand()?'Your support':'Approval'}try{guideCheck()}catch(e){}updateClock();updateMayorChip();
   $('hRes').textContent=fmtM(S.reserve);const pct=S.reserve/annualSpend(S)*100;$('hResPct').textContent=`${pct.toFixed(1)}% of budget${pct<10?' · below 10%':''}`;$('hResPct').style.color=pct<10?'var(--bad)':pct<15?'var(--warn)':'var(--good)';$('hRes').style.color=$('hResPct').style.color;
   $('hApp').textContent=Math.round(S.approval)+'%';$('hAppBar').style.width=S.approval+'%';{const c=S.approval>=55?'var(--good)':S.approval>=45?'var(--warn)':'var(--bad)';$('hAppBar').style.background=c;$('hApp').style.color=c}
   $('hCouncil').textContent=`${favorable(S)} / 13`;$('hCouncil').style.color=favorable(S)>=7?'var(--good)':favorable(S)>=5?'var(--warn)':'var(--bad)';$('hCouncilS').textContent=commitCount()?`favorable · ${commitCount()} committed`:'members favorable';
@@ -1424,7 +1430,7 @@ function nextDeadline(){const m=S.m,y=S.y;
   if(m===4&&S.stage==='draft')return`FY${fyOf(S)+1} budget due this month`;
   if(S.stage==='submitted')return`Council budget vote in June ${m<=6?y:y+1}`;
   if(S.pending)return`New budget takes effect July`;
-  const elY=S.term===1?2027:2031;
+  const elY=elYear();
   const cand=[{t:(m<4?y:y+1)*12+4,txt:`Budget due April ${m<4?y:y+1}`},{t:elY*12+10,txt:S.camp?`Election Day Oct ${electionDate().day}, ${elY} · ${daysToElection()} days`:`City election October ${elY}`}];
   cand.sort((a,b)=>a.t-b.t);return cand[0].txt}
 let toastT;function toast(msg){const t=$('toast');t.textContent=msg;t.classList.add('show');clearTimeout(toastT);toastT=setTimeout(()=>t.classList.remove('show'),4200)}
@@ -1743,7 +1749,7 @@ function hideViews(){onClose=null;if(modalOpen){$('modal').hidden=true;modalOpen
 function navBack(){const p=NAV.stack.pop();if(!p)return;NAV.busy=true;try{hideViews();VIEWS[p.name](...p.a)}finally{NAV.busy=false}renderNav()}
 function navTab(f){if(!VIEWS[f])return;hideViews();VIEWS[f]()}
 function renderNav(){const prev=NAV.stack[NAV.stack.length-1];['p','m'].forEach(k=>{const b=$(k+'Back');if(!b)return;b.hidden=!prev;if(prev){b.textContent='← '+(prev.title||'Back');b.title='Back to '+(prev.title||'the previous screen')+' (Backspace)'}});
-  const act=NAV.cur?TAB_OF[NAV.cur.name]:null;const html=TABS.map(([f,n])=>`<button data-tab="${f}" class="${act===f?'on':''}" aria-pressed="${act===f}">${n}</button>`).join('');
+  const act=NAV.cur?TAB_OF[NAV.cur.name]:null;const html=TABS.filter(([f])=>!(isCand()&&['openBudget','openPolicies','openCabinet'].includes(f))).map(([f,n])=>`<button data-tab="${f}" class="${act===f?'on':''}" aria-pressed="${act===f}">${n}</button>`).join('');
   ['pTabs','mTabs'].forEach(id=>{const el=$(id);if(el)el.innerHTML=html});const mn=$('mNav');if(mn)mn.hidden=!NAV.cur&&!prev}
 function reElectionBlock(m){const r=m.city?nbRace(m.id):councilRace(m);if(!r)return'';const v=m.city?sApp(m.id):votersOf(m).v,where=m.city?`${m.city} voters`:`Voters in ${votersOf(m).where}`;
   const hot=m.city?(r.mo>=0&&r.mo<=12):(r.mo<=12&&!r.limited);
@@ -2114,14 +2120,14 @@ function notifyOn(k){return(S.notify||NOTIFY_DEF)[k]!==false&&S.autoPause!==fals
 function evCat(ev){if(ev.kind==='request'||ev.kind==='memo')return'requests';if(ev.kind==='projx')return'projects';if(ev.sid)return'stories';return'problems'}
 function deskItems(){const now=nowM(),items=[];
   S.events.forEach((e,i)=>{const left=e.expires-(now-e.born);const urgent=e.kind!=='budget'&&e.id!=='briefing'&&left<=1;
-    items.push({cat:urgent?'urgent':'decide',ic:e.kind==='projx'?'⚠':e.sid?'❖':e.kind==='request'?'?':e.kind==='memo'?'✉':e.kind==='budget'?'$':'●',t:evTitle(e),s:`${placeOf(evAt(e)).name}${e.sid?' · '+STORY_NAMES[e.sid]:''}${e.kind!=='budget'&&e.id!=='briefing'?` · ${left<=1?'this month':left+' months'}`:''}`,go:`ev:${i}`})});
+    items.push({cat:urgent?'urgent':'decide',ic:e.kind==='projx'?'⚠':e.kind==='char'?'♟':e.sid?'❖':e.kind==='request'?'?':e.kind==='memo'?'✉':e.kind==='budget'?'$':'●',t:evTitle(e),s:`${placeOf(evAt(e)).name}${e.sid&&e.kind!=='char'?' · '+STORY_NAMES[e.sid]:''}${e.kind!=='budget'&&e.id!=='briefing'?` · ${left<=1?'this month':left+' months'}`:''}`,go:`ev:${i}`})});
   if(S.pendingOrd){const p=PROPOSALS.find(x=>x.id===S.pendingOrd.id);if(p)items.push({cat:'votes',ic:'⚖',t:p.title,s:`Council vote ~${S.pendingOrd.when}`,go:`prop:${p.id}`})}
   (S.projects||[]).filter(p=>p.stage==='council').forEach(p=>items.push({cat:'votes',ic:'⚖',t:p.name,s:`Council vote ${daysLeftWord(p.due)}`,go:`proj:${p.id}`}));
   if(S.stage==='submitted')items.push({cat:'votes',ic:'$',t:`FY${fyOf(S)+1} budget`,s:'Council vote in June',go:'whip'});
   (S.projects||[]).filter(p=>p.stage==='design'||p.stage==='build'||(p.stage==='done'&&now-p.done<=2)).forEach(p=>items.push({cat:'projects',ic:PTYPES[p.type].ic,t:p.name,s:projStageLabel(p),pct:p.progress,go:`proj:${p.id}`}));
   for(const sid in (S.stories||{})){const st=S.stories[sid];if(st.ended||!st.next)continue;items.push({cat:'stories',ic:'❖',t:STORY_NAMES[sid],s:`Next development expected ${st.next.due<=now?'this month':'in '+(st.next.due-now)+' month'+(st.next.due-now===1?'':'s')}`,go:'desk'})}
-  if(!S.promises)items.unshift({cat:'urgent',ic:'★',t:'Make your 3 campaign promises',s:`Deadline September ${Math.floor(promiseDeadline()/12)}`,go:'promises'});
-  else S.promises.forEach(st=>{const P=PMAP[st.id],ps=promiseState(st.id);if(st.status!=='open'&&now-((st.whenM)||now)>3)return;items.push({cat:'promises',ic:st.status==='kept'?'✔':st.status==='broken'?'✕':'★',t:P.n,s:st.status==='open'?`${ps.label} · ${promiseDeadline()-now} months left`:(st.status==='kept'?'Kept':'Broken'),pct:st.status==='open'?ps.pct:null,go:'promises'})});
+  if(!S.promises)items.unshift({cat:'urgent',ic:'★',t:isCand()?'Choose your platform':'Make your 3 campaign promises',s:isCand()?'Three planks to run on':`Deadline September ${Math.floor(promiseDeadline()/12)}`,go:'promises'});
+  else if(!isCand())S.promises.forEach(st=>{const P=PMAP[st.id],ps=promiseState(st.id);if(st.status!=='open'&&now-((st.whenM)||now)>3)return;items.push({cat:'promises',ic:st.status==='kept'?'✔':st.status==='broken'?'✕':'★',t:P.n,s:st.status==='open'?`${ps.label} · ${promiseDeadline()-now} months left`:(st.status==='kept'?'Kept':'Broken'),pct:st.status==='open'?ps.pct:null,go:'promises'})});
   (S.deals||[]).filter(D=>D.status==='open').forEach(D=>{const left=D.due-now;items.push({cat:left<=1?'urgent':'deals',ic:'⚑',t:`${D.text}`,s:`Owed to ${D.name} · ${left<=0?'due this month':left+' month'+(left===1?'':'s')+' left'}`,go:D.type==='road'?`plan:road:${D.d}`:D.type==='townhall'?'actions':'desk'})});
   (S.projects||[]).filter(p=>p.stage==='done'&&(p.maintCut||(p.sat!=null&&p.sat<50))).forEach(p=>items.push({cat:'projects',ic:'⚠',t:p.name,s:`Satisfaction ${Math.round(p.sat??75)}%${p.maintCut?' · upkeep cut':''}`,go:`proj:${p.id}`}));
   if(S.purse&&S.purse.cash<0)items.unshift({cat:'urgent',ic:'🏠',t:'Your personal account is overdrawn',s:`${$0(-S.purse.cash)} on credit cards at 22% APR`,go:'household'});
@@ -2140,7 +2146,7 @@ function openDesk(){const items=deskItems();const N=S.notify||NOTIFY_DEF;
    ${S.promises?`<div class="facts"><h4>Your promises · deadline September ${Math.floor(promiseDeadline()/12)}</h4>${promiseList()}</div>`:''}
    ${rivalCard()}
    <div class="facts"><h4>Stories so far</h4>${Object.values(S.stories||{}).length?Object.values(S.stories).map(st=>`<div style="margin-bottom:6px"><b>${STORY_NAMES[st.sid]}</b> <span class="note">${st.ended?'· ended: '+st.ended.t:'· still developing'}</span><ul style="margin:3px 0 0">${st.steps.map(x=>`<li class="note">${x.d}: ${x.t}</li>`).join('')}</ul></div>`).join(''):'<p class="note">Your choices start stories. Backing a data center deal, ordering hot-spot patrols or finishing a home rehab all have consequences that play out over months.</p>'}</div>
-   <div class="facts"><h4>Your public record</h4>${(S.record||[]).length?`<ul>${S.record.slice(0,12).map(r=>`<li>${r.t}${r.good&&r.good.length?` <span class="note">· helped ${r.good.map(g=>GMAP[g]?GMAP[g].sh:g).join(', ')}</span>`:''}${r.bad&&r.bad.length?` <span class="note">· hurt ${r.bad.map(g=>GMAP[g]?GMAP[g].sh:g).join(', ')}</span>`:''}</li>`).join('')}</ul><p class="note">Opponents use this in the October ${S.term===1?2027:2031} election. Current net effect on your vote share: ${recordSwing()>=0?'+':'−'}${Math.abs(recordSwing()).toFixed(1)} points.</p>`:'<p class="note">Nothing on your record yet. Finished projects and the endings of stories go here, and your opponents will use them.</p>'}</div>
+   <div class="facts"><h4>Your public record</h4>${(S.record||[]).length?`<ul>${S.record.slice(0,12).map(r=>`<li>${r.t}${r.good&&r.good.length?` <span class="note">· helped ${r.good.map(g=>GMAP[g]?GMAP[g].sh:g).join(', ')}</span>`:''}${r.bad&&r.bad.length?` <span class="note">· hurt ${r.bad.map(g=>GMAP[g]?GMAP[g].sh:g).join(', ')}</span>`:''}</li>`).join('')}</ul><p class="note">Opponents use this in the October ${elYear()} election. Current net effect on your vote share: ${recordSwing()>=0?'+':'−'}${Math.abs(recordSwing()).toFixed(1)} points.</p>`:'<p class="note">Nothing on your record yet. Finished projects and the endings of stories go here, and your opponents will use them.</p>'}</div>
    <div class="facts"><h4>Pause the clock when…</h4>${[['problems','New problems arrive'],['requests','Council members send requests or memos'],['stories','A story develops'],['projects','A project runs into trouble'],['votes','The council votes (otherwise you get a notice)']].map(([k,n])=>`<label style="display:flex;gap:8px;align-items:center;margin:3px 0"><input type="checkbox" data-notify="${k}" ${N[k]!==false?'checked':''}> ${n}</label>`).join('')}
     <p class="note">Routine updates (projects starting and finishing, monthly summaries) never stop the clock; they go to the Ledger. The master switch is under Layers.</p></div>`,'desk')}
 openDesk=navWrap('openDesk',openDesk);
@@ -2231,7 +2237,7 @@ function openLook(){const M=S.mayor;if(!M.look)M.look=lookFromLegacy(M);closePan
    <div class="swatches"><span class="note" style="min-width:70px">Hair</span>${HAIRC.map((c,i)=>`<button type="button" class="sw ${M.ptHair===i?'on':''}" style="background:${c}" data-lhair="${i}"></button>`).join('')}</div>${lookControls(M)}</div></div>
    <div class="row"><button class="btn primary" data-act="mayor">Done</button></div>`,true)}
 openLook=navWrap('openLook',openLook);
-function lookTarget(){return $('create')&&!$('create').hidden?CR:(S&&S.mayor)}
+function lookTarget(){return $('start')&&!$('start').hidden&&$('create')&&!$('create').hidden?CR:(S&&S.started&&S.mayor)?S.mayor:CR}
 function refreshLook(){const o=lookTarget();if(!o)return;if(o===CR){renderCreate();return}const el=$('lkPt');if(el)el.innerHTML=portrait(o,140);updateMayorChip()}
 document.addEventListener('change',e=>{const t=e.target;if(!t.dataset||!t.dataset.look)return;const o=lookTarget();if(!o)return;o.look=o.look||defaultLook(o.g);o.look[t.dataset.look]=t.type==='checkbox'?t.checked:t.value;if(o!==CR&&S)save();refreshLook()});
 document.addEventListener('click',e=>{const c=e.target.closest('[data-lookc],[data-lskin],[data-lhair]');if(!c)return;const o=lookTarget();if(!o)return;o.look=o.look||defaultLook(o.g);
@@ -2256,13 +2262,13 @@ const PROMISES=[
  {id:'raises',n:'Respect for city workers',d:'Give city workers a raise of 3% or more in your next budget',grp:['labor'],m:s=>({v:(s.pending||{}).raise!=null&&s.stage==='adopted'?s.pending.raise:s.fyIndex>0?s.raise:0,t:3,base:0,u:'%'})},
 ];
 const PMAP={};PROMISES.forEach(p=>PMAP[p.id]=p);
-function promiseDeadline(){const y=S.term===1?2027:2031;return y*12+9} // end of September before the October election
+function promiseDeadline(){const y=elYear();return y*12+9} // end of September before the October election
 function promiseState(id){const P=PMAP[id],st=(S.promises||[]).find(x=>x.id===id);if(st&&st.status!=='open')return{status:st.status,pct:st.status==='kept'?1:0,label:st.status==='kept'?'Kept':'Broken'};
   if(P.keep){const ok=P.keep(S);return{status:'open',pct:ok?1:0,label:ok?'On track':'Broken now',ok}}
   const x=P.m(S);let pct=x.inv?(x.base-x.v)/(x.base-x.t):(x.v-x.base)/(x.t-x.base);pct=clamp(pct,0,1);const extra=P.also&&!P.also(S);
   const fmt=v=>x.u==='%'?v.toFixed(1)+'%':x.u==='officers'?Math.round(v).toLocaleString():Number.isInteger(v)?String(v):v.toFixed(0);
   return{status:'open',pct:extra?0:pct,label:extra?'Broken by a tax increase':`${fmt(x.v)} of ${fmt(x.t)}${x.u&&x.u!=='%'&&x.u!=='officers'?' '+x.u:''}`,met:!extra&&pct>=1}}
-function choosePromises(ids){S.promises=ids.map(id=>({id,status:'open',made:nowM()}));S.promiseStart=nowM();ids.forEach(id=>(PMAP[id].grp||[]).forEach(g=>{if(S.groups[g])addGroupMod(S.groups[g],`Your promise: ${PMAP[id].n}`,2)}));
+function choosePromises(ids){S.promises=ids.map(id=>({id,status:'open',made:nowM()}));S.promiseStart=nowM();ids.forEach(id=>(PMAP[id].grp||[]).forEach(g=>{if(S.groups[g])addGroupMod(S.groups[g],isCand()?`Your platform: ${PMAP[id].n}`:`Your promise: ${PMAP[id].n}`,isCand()?4:2)}));if(isCand()){S.approval=cityApproval(S);logIt(`Your platform: ${ids.map(id=>PMAP[id].n).join('; ')}.`);return}
   logIt(`You promised: ${ids.map(id=>PMAP[id].n).join('; ')}. Deadline: September ${Math.floor(promiseDeadline()/12)}.`);S.approval=cityApproval(S)}
 function settlePromise(st,kept,why){const P=PMAP[st.id];st.status=kept?'kept':'broken';st.when=dateStr();st.whenM=nowM();
   applyGroupReact(Object.fromEntries(P.grp.map(g=>[g,kept?4:-5])),kept?`Kept your promise: ${P.n}`:`Broke your promise: ${P.n}`);
@@ -2275,6 +2281,7 @@ function promisesMonth(report){if(!S.promises)return;const now=nowM(),dl=promise
   if(now>dl){settlePromise(st,!!P.keep);report.push(P.keep?`Promise kept through the deadline: ${P.n}.`:`Deadline passed. Promise broken: ${P.n}.`);return}
   if(dl-now===3)report.push(`Three months left to keep your promise: ${P.n} (${ps.label}).`)})}
 function openPromises(){const picked=new Set((S._pp||[]));const done=!!S.promises;closePanel();
+  if(isCand()&&!done){openModal('Pick 3. If you win, they become your promises as mayor.','Choose your platform',`<p>What will you run on? Each plank wins over the groups who care about it. If you're elected, you'll have until September ${elYear()+4} to deliver.</p><div class="choices">${PROMISES.map(P=>`<button class="choice" data-act="pickpromise" data-id="${P.id}" style="${picked.has(P.id)?'border-color:var(--amber)':''}"><b>${picked.has(P.id)?'✔ ':''}${P.n}</b><small>${P.d} · matters to ${P.grp.map(g=>GMAP[g].sh).join(', ')}</small></button>`).join('')}</div><div class="row"><button class="btn primary" data-act="savepromises" ${picked.size===3?'':'disabled'}>Run on these ${picked.size}/3</button></div>`,true);return}
   openModal(done?`Deadline: September ${Math.floor(promiseDeadline()/12)}, before the election`:'Pick 3. They stay on your record.',done?'Your promises':'Make your campaign promises',done?promiseList():`
    <p>Voters remember what you promise. Each one has a measurable target and a deadline of September ${Math.floor(promiseDeadline()/12)}, the month before the election. Kept promises become your best ads; broken ones become your opponent's.</p>
    <div class="choices">${PROMISES.map(P=>`<button class="choice" data-act="pickpromise" data-id="${P.id}" style="${picked.has(P.id)?'border-color:var(--amber)':''}"><b>${picked.has(P.id)?'✔ ':''}${P.n}</b><small>${P.d} · matters to ${P.grp.map(g=>GMAP[g].sh).join(', ')}</small></button>`).join('')}</div>
@@ -2339,7 +2346,9 @@ const RIVALS={
  'Collin Brandt':{slogan:'Lower taxes, more police, a city that pays its bills',plat:['fiscal','safety'],champs:['business','owners']},
  'Morgan Pryor':{slogan:'Accountable policing and buses that come on time',plat:['oversight','transit'],champs:['young','renters']},
  'Darnell Whitfield':{slogan:'Fix the streets and bring back good jobs',plat:['streets','jobs'],champs:['working','labor']}};
-function pickRival(){recomputeAll(S);const amb=S.council.map((m,k)=>({m,k})).filter(x=>RIVALS[x.m.name]).sort((a,b)=>a.m.opinion-b.m.opinion)[0];const R=RIVALS[amb.m.name];S.rival={k:amb.k,name:amb.m.name,...R}}
+function pickRival(){recomputeAll(S);let amb=S.council.map((m,k)=>({m,k})).filter(x=>RIVALS[x.m.name]&&!x.m.limited).sort((a,b)=>a.m.opinion-b.m.opinion)[0];if(amb){const R=RIVALS[amb.m.name];S.rival={k:amb.k,name:amb.m.name,...R};return}
+  amb=S.council.map((m,k)=>({m,k})).filter(x=>!x.m.limited).sort((a,b)=>(has(b.m,'ambitious')-has(a.m,'ambitious'))||(a.m.opinion-b.m.opinion))[0]||{m:S.council[0],k:0};const pr=(amb.m.prio||['safety','fiscal']).slice(0,2);
+  const ch=GROUPS.slice().sort((a,b)=>S.groups[a.id].app-S.groups[b.id].app).slice(0,2).map(g=>g.id);S.rival={k:amb.k,name:amb.m.name,slogan:`${PRIO_LABEL[pr[0]]} first`,plat:pr,champs:ch,atk:[`${amb.m.name.split(' ').pop()} has never run anything bigger than a committee`,`${amb.m.name.split(' ').pop()}'s plans would raise your taxes`]}}
 function rivalMember(){return S.rival?S.council[S.rival.k]:null}
 function rivalAttacks(){if(!S.rival)return[];const ch=new Set(S.rival.champs);const out=[];
   (S.record||[]).forEach(r=>{if(r.camp&&r.camp.d<0)out.push({t:r.camp.t,w:Math.abs(r.camp.d)+((r.bad||[]).some(g=>ch.has(g))?1:0)});else if((r.bad||[]).some(g=>ch.has(g)))out.push({t:`${S.rival.name.split(' ').pop()} says your record (${r.t.replace(/^Passed: /,'passing ').toLowerCase()}) hurt ${(r.bad||[]).filter(g=>ch.has(g)).map(g=>GMAP[g].n.toLowerCase()).join(' and ')}.`,w:1})});
@@ -2365,7 +2374,7 @@ function upkeepMonth(report){(S.projects||[]).filter(p=>p.stage==='done').forEac
 // Three separate accounts: the city treasury (S.reserve, $M), the campaign fund (S.camp.cash, $K) and your personal money (S.purse.cash, $).
 // Election Day: Memphis city elections fall on the first Thursday in October (Oct 5, 2023), so the 2027 race is Thursday, Oct 7.
 const fmtK=k=>k>=1000?`$${(k/1000).toFixed(2)}M`:`$${Math.round(k)}K`;
-function electionDate(){const y=S.term===1?2027:2031;const d1=new Date(y,9,1).getDay();const day=1+((4-d1+7)%7);return{y,m:10,day}}
+function electionDate(){const y=elYear();const d1=new Date(y,9,1).getDay();const day=1+((4-d1+7)%7);return{y,m:10,day}}
 function daysToElection(){const e=electionDate();const a=new Date(S.y,S.m-1,S.day),b=new Date(e.y,e.m-1,e.day);return Math.round((b-a)/864e5)}
 function monthsToElection(){return Math.max(0,daysToElection()/30.4)}
 function campInit(s){s.camp=s.camp||{cash:40,raised:40,spent:0,organizers:0,offices:{},ads:[],adUse:{},boost:{},polls:[],donors:{},endorse:{},seek:{},debate:0,debates:{},log:[],personal:0,attacks:[]};
@@ -2397,7 +2406,7 @@ const AD_COST={std:50,big:120};
 function adTiming(){const mo=monthsToElection();return mo<=3?1:mo<=6?0.65:0.35}
 function adOptions(){const out=[];(S.record||[]).forEach((r,i)=>{if(r.camp&&r.camp.d>0||(r.good&&r.good.length&&r.kind!=='money'))out.push({kind:'promote',ref:'r'+i,title:`Promote: ${r.t}`,groups:r.good||[],r});
     else if(r.camp&&r.camp.d<0&&!r.defended)out.push({kind:'defend',ref:'r'+i,title:`Defend: ${r.t}`,groups:r.bad||[],r})});
-  if(S.rival){const R=S.rival;const atk={'Collin Brandt':['Brandt\'s tax cuts would close fire stations and libraries','Brandt has never run anything bigger than a council committee'],'Morgan Pryor':['Pryor would pull officers off the street','Pryor voted against paving money for your neighborhood'],'Darnell Whitfield':['Whitfield\'s spending plans would mean a tax increase','Whitfield promised jobs he can\'t deliver']}[R.name]||['Your opponent has no plan'];
+  if(S.rival){const R=S.rival;const atk={'Collin Brandt':['Brandt\'s tax cuts would close fire stations and libraries','Brandt has never run anything bigger than a council committee'],'Morgan Pryor':['Pryor would pull officers off the street','Pryor voted against paving money for your neighborhood'],'Darnell Whitfield':['Whitfield\'s spending plans would mean a tax increase','Whitfield promised jobs he can\'t deliver']}[R.name]||R.atk||['Your opponent has no plan'];
     atk.forEach((t,i)=>out.push({kind:'attack',ref:'a'+i,title:`Attack: "${t}"`,groups:R.champs}))}
   return out.slice(0,14)}
 function buyAd(ref,size){const opt=adOptions().find(o=>o.ref===ref);const cost=AD_COST[size];if(!opt||S.camp.cash<cost)return;S.camp.cash-=cost;S.camp.spent+=cost;flowC('ads',cost);
@@ -2414,8 +2423,9 @@ function endorsementFor(g){const E=ENDORSERS.find(x=>x.g===g.id);return E?S.camp
 // Offices work where the race is close: a district where you're far ahead or far behind gets little from one.
 function districtCloseness(d){return clamp(1-Math.abs(dApp(d)-50)/14,0.15,1)}
 function officeReach(g){const offs=Object.keys(S.camp.offices||{}).map(Number);if(!offs.length)return 0;let a=0,t=0;for(let d=1;d<=7;d++){const c=dComp(d)[g.id];t+=c;if(offs.includes(d))a+=c*districtCloseness(d)}return a/t}
-function groupSupport(g,o){o=o||{};const G=S.groups[g.id],R=S.rival||{champs:[]},rc=R.camp||{};const champ=R.champs.includes(g.id);
-  let b=G.app+(S.mayor?(mskill('cha')-8)*0.4:0)-(champ?6:0);
+const CHALLENGER_EDGE=10; // voters give a fresh face the benefit of the doubt; a sitting mayor runs on the record
+function groupSupport(g,o){o=o||{};const G=S.groups[g.id],R=S.rival||{champs:[]},rc=R.camp||{};const champ=R.champs.includes(g.id);const SUCC=S.term>=2&&!isCand();
+  let b=(SUCC?20+G.app*0.66+(S.succ?S.succ.bonus:-4):G.app)+(S.mayor&&!SUCC?(mskill('cha')-8)*0.4:0)-(champ?(isCand()?3:6):0)-(isCand()||SUCC?0:CHALLENGER_EDGE);
   if(!o.noAds)b+=(S.camp.boost[g.id]||0);
   if(!o.noRecord)b+=recordSwing();
   if(!o.noDebate)b+=S.camp.debate||0;
@@ -2447,7 +2457,7 @@ function runPoll(kind){const cost=kind==='city'?20:60;if(S.camp.cash<cost)return
 const ENDORSERS=[{id:'bizlead',n:'Greater Memphis business leaders',g:'business'},{id:'unions',n:'City workers\' union council',g:'labor'},{id:'ministers',n:'Interdenominational ministers\' alliance',g:'faith'},
  {id:'teachers',n:'Memphis teachers\' association',g:'parents'},{id:'hoods',n:'Neighborhood associations coalition',g:'owners'},{id:'riders',n:'Transit riders\' union',g:'renters'},{id:'ypn',n:'Young professionals\' civic network',g:'young'}];
 function endorseScore(E){const g=E.g;let you=S.groups[g].app+(S.camp.seek[E.id]?6:0);(S.promises||[]).forEach(st=>{if(PMAP[st.id].grp.includes(g))you+=st.status==='kept'?3:st.status==='broken'?-4:0});
-  const rv=50+(S.rival&&S.rival.champs.includes(g)?8:0);return{you,rv}}
+  const rv=(isCand()?S.inc[g]:50)+(S.rival&&S.rival.champs.includes(g)?(isCand()?3:8):0);return{you,rv}}
 function endorsementsMonth(report){const e=electionDate();if(S.y!==e.y||S.m<7||S.m>9)return;ENDORSERS.forEach(E=>{if(S.camp.endorse[E.id])return;if(Math.random()<(S.m===9?1:0.45)){const sc=endorseScore(E);const r=sc.you>sc.rv+2?'you':sc.rv>sc.you+2?'rival':'none';S.camp.endorse[E.id]=r;
   if(r==='you'){addGroupMod(S.groups[E.g],`${E.n} endorsed you`,3)}const t=`${E.n}: ${r==='you'?'endorsed you':r==='rival'?`endorsed ${S.rival.name}`:'stayed neutral'}.`;report.push(t);clog(t)}})}
 // ---------- debates ----------
@@ -2476,7 +2486,7 @@ function rivalPlan(){const R=S.rival;if(!R)return null;const rc=R.camp;
   rc.attack=neg[0]?{t:neg[0].camp.t,groups:neg[0].bad||[],ref:neg[0].t}:{t:`${R.name} says Memphis can't wait for ${PRIO_LABEL[R.plat[0]].toLowerCase()}.`,groups:R.champs,ref:null};return rc}
 function rivalOfficeReach(g){const rc=(S.rival&&S.rival.camp)||{};const offs=rc.offices||[];if(!offs.length)return 0;let a=0,t=0;for(let d=1;d<=7;d++){const c=dComp(d)[g.id];t+=c;if(offs.includes(d))a+=c*districtCloseness(d)}return a/t}
 function rivalMonth(report){const R=S.rival;if(!R)return;const rc=R.camp;rc.adBy=rc.adBy||{};rc.offices=rc.offices||[];const mo=monthsToElection();rivalPlan();
-  const champEnth=R.champs.reduce((a,g)=>a+Math.max(0,55-S.groups[g].app),0)+rc.targets.reduce((a,g)=>a+Math.max(0,50-S.groups[g].app)*0.5,0);
+  const gv=g=>isCand()?100-S.inc[g]:S.groups[g].app;const champEnth=R.champs.reduce((a,g)=>a+Math.max(0,55-gv(g)),0)+rc.targets.reduce((a,g)=>a+Math.max(0,50-gv(g))*0.5,0);
   const inc=Math.round(26+champEnth*0.9+(R.plat.includes('fiscal')?12:0)+(mo<=4?20:0));rc.cash+=inc;rc.raised+=inc;
   // offices in the closest districts, from five months out
   if(mo<=5&&rc.offices.length<3&&rc.cash>=40){const pick=[1,2,3,4,5,6,7].filter(d=>!rc.offices.includes(d)).sort((a,b)=>districtCloseness(b)-districtCloseness(a))[0];rc.offices.push(pick);clog(`${R.name} opened a field office in District ${pick}, where the race is close.`)}
@@ -2543,7 +2553,7 @@ function openShop(){const P=S.purse;closePanel();
     <div class="choices">${SHOP.map(it=>`<button class="choice" data-act="buy" data-id="${it.id}" ${P.owned[it.id]||P.cash<it.p?'disabled':''}><b>${it.n} · −$${it.p.toLocaleString()}</b><small>${P.owned[it.id]?'Owned':it.d}</small></button>`).join('')}</div></div>
    <div class="row"><button class="btn" data-act="look">Change your look</button><button class="btn primary" data-store="home">More to buy: home, car, tickets, giving</button></div>`,true)}
 openShop=navWrap('openShop',openShop);
-function electionV2(next){recomputeAll(S);const p=headToHead();const others=6+rnd(0,6);const swing=rnd(-2,2);let you=clamp(p*(100-others)+swing,5,90),rv=100-others-you;const won=you>rv;
+function electionV2(next){if(S.term>=2)return succElection(next);recomputeAll(S);const p=headToHead();const others=6+rnd(0,6);const swing=rnd(-2,2);let you=clamp(p*(100-others)+swing,5,90),rv=100-others-you;const won=you>rv;
   const R=S.rival,atk=rivalAttacks(),B=voteBreakdown(),C=S.camp;
   const turnAll=GROUPS.reduce((a,g)=>a+g.share*groupTurnout(g,groupSupport(g)),0);
   const gRows=GROUPS.map(g=>{const sup=groupSupport(g),t=groupTurnout(g,sup);return{g,sup,t,el:g.share*t/turnAll*100}});
@@ -2563,10 +2573,10 @@ function electionV2(next){recomputeAll(S);const p=headToHead();const others=6+rn
     <p class="note">${R.name} ran on "${R.slogan}"${atk.length?` and hit you on: ${atk.slice(0,2).map(x=>x.t).join(' ')}`:''}</p></div>${recordLines()}`;
   logIt(`Election: you ${you.toFixed(1)}%, ${R.name} ${rv.toFixed(1)}%. ${won?'You won.':'You lost.'} Support among adults ${(B.resident*100).toFixed(1)}%, among voters ${(B.full*100).toFixed(1)}%.`);
   S.lastElection={you,rv,won,resident:B.resident,full:B.full,rows:B.rows.map(r=>({k:r.k,v:+r.v.toFixed(2),cost:r.cost||0})),spent:C.spent,rspent:R.camp.spent};
-  if(won&&S.term===1){S.term=2;S.termStart=S.y*12+S.m;S.promises=null;S.deals=(S.deals||[]).filter(d=>d.status==='open');S.council.forEach(m=>m.limited=false);S.council.forEach((m,k)=>{if(hash(k,S.y)<.4){m.mods=[{t:'Newly elected',v:Math.round(rnd(-8,8)),perm:true}]}});
+  if(won&&S.term===1){S.elY=elYear()+4;S.term=2;S.termStart=S.y*12+S.m;S.promises=null;S.deals=(S.deals||[]).filter(d=>d.status==='open');S.council.forEach(m=>m.limited=false);S.council.forEach((m,k)=>{if(hash(k,S.y)<.4){m.mods=[{t:'Newly elected',v:Math.round(rnd(-8,8)),perm:true}]}});
     const wind=campaignWindDown();recomputeAll(S);
-    openModal(`City election · October ${S.y}`,'You won a second term',body+`<div class="facts"><h4>After Election Day</h4><ul>${wind.map(x=>`<li>${x}</li>`).join('')}</ul></div><p>You can serve one more term; the next election is October 2031 and you are term-limited after it. Make new promises for your second term.</p><div class="row"><button class="btn primary" data-act="close">Start term two</button></div>`,true,next)}
-  else{S.over=true;openModal(`City election · October ${S.y}`,won?'Term-limited, with a win':'You lost the election',body+(won?'<p>The charter limits a mayor to two terms. Your time in office is done.</p>':'')+`${summary()}<div class="row"><button class="btn primary" data-act="newgame">Run again</button></div>`,true,next)}
+    openModal(`City election · October ${S.y}`,'You won a second term',body+`<div class="facts"><h4>After Election Day</h4><ul>${wind.map(x=>`<li>${x}</li>`).join('')}</ul></div><p>This is your last term: the charter allows two. In October ${elYear()} you can't run again, so you'll endorse someone to succeed you. Make new promises for your second term.</p><div class="row"><button class="btn primary" data-act="close">Start term two</button></div>`,true,next)}
+  else{S.over=true;const rm=rivalMember();openModal(`City election · October ${S.y}`,'You lost the election',body+summary()+afterLossChoices(rm?{name:rm.name,g:rm.g,age:rm.age,k:R.k}:{name:R.name,g:'m',age:55}),true,next)}
   save()}
 // Plain-language reasons. Exact numbers live in the optional analysis section.
 function voteStory(B){const C=S.camp,R=S.rival,rc=R.camp,row=k=>(B.rows.find(r=>r.k===k)||{v:0}).v,nm=R.name.split(' ').pop(),L=[];const low=g=>GMAP[g].n.toLowerCase();
@@ -2584,7 +2594,7 @@ function voteStory(B){const C=S.camp,R=S.rival,rc=R.camp,row=k=>(B.rows.find(r=>
   return L}
 // What carries over after a won election, stated plainly.
 function campaignWindDown(){const C=S.camp,out=[];const orgs=C.organizers,offs=Object.keys(C.offices).length;
-  out.push(`${fmtK(C.cash)} left in the campaign fund carries over to your 2031 campaign.`);
+  out.push(`${fmtK(C.cash)} left in the campaign fund carries over to your next campaign.`);
   if(orgs||offs)out.push(`Campaign payroll stops: ${orgs} organizer${orgs===1?'':'s'} laid off and ${offs} field office${offs===1?'':'s'} closed. You can rehire later.`);
   const live=Object.entries(C.donors).filter(([id,st])=>st.status==='given');if(live.length)out.push(`Donor relationships continue: ${live.map(([id])=>DONORS[id].n).join(', ')} still expect what they expected. Crossing them still has consequences.`);
   out.push('Polls, endorsements, debates and ad history reset for the next race. The $25,000 cap on your own money resets for the new election.');
@@ -2593,7 +2603,7 @@ function campaignWindDown(){const C=S.camp,out=[];const orgs=C.organizers,offs=O
 
 function checkCampaignDay(){if(!S.camp)return false;const e=electionDate();if(S.y!==e.y)return false;
   if(S.m===9&&DEBATE_DAYS.includes(S.day)){const n=DEBATE_DAYS.indexOf(S.day)+1;if(!S.camp.debates[n]){openDebate(n);return true}}
-  if(S.m===10&&S.day===e.day&&!S.camp.voted){S.camp.voted=true;setPaused(true);electionV2(()=>{});return true}return false}
+  if(S.m===10&&S.day===e.day&&!S.camp.voted){S.camp.voted=true;setPaused(true);if(isCand())candElection();else electionV2(()=>{});return true}return false}
 
 // ---------- money: three accounts, monthly summaries ----------
 // Salary: $170,817 a year = $14,234.75 a month before deductions. Take-home is an estimate under stated assumptions.
@@ -2785,7 +2795,7 @@ function openMove(id,mode,opt){const h=LMAP[id];closePanel();const qs=[];
   openModal(`${h.n} · District ${hoodDistrict(id)||'?'}`,'Find a place',`<p class="note">Cash you could put toward a move: ${$0(cashNow)}${S.home.mode==='own'?` (including about ${$0(sellProceeds())} from selling your current home)`:''}.</p>
    <div class="dlist">${qs.map(x=>{const housing=billTotal(x.q.L.filter(l=>l.k==='housing'));const ok=x.q.cash<=cashNow;const ratio=housing/grossMonthly();
      return`<div class="drow" style="cursor:default;grid-template-columns:minmax(0,1fr) auto;align-items:start;padding:6px 0;border-bottom:1px solid var(--line)"><span><b>${x.t}</b><br><small class="note">${x.mode==='own'?`Price ${fmt$(x.q.H.price)} · loan ${fmt$(x.q.H.loan0)} at ${MORTGAGE_RATE}% · `:''}Housing ${fmt$(housing)}/mo (${Math.round(ratio*100)}% of gross pay${ratio>0.28?', over the 28% guideline':''}) · all bills about ${fmt$(x.q.tot)}/mo · cash needed now ${fmt$(x.q.cash)}</small></span>
-      <button class="btn ${ok&&ratio<=0.36?'primary':''}" data-act="hhgo" data-id="${id}" data-mode="${x.mode}" data-opt="${x.opt}" ${ok?'':'disabled title="Not enough cash"'} style="padding:3px 10px">${x.mode==='own'?'Buy':'Rent'}</button></div>`}).join('')}</div>
+      <button class="btn ${ok&&ratio<=0.36?'primary':''}" data-act="hhgo" data-id="${id}" data-hmode="${x.mode}" data-opt="${x.opt}" ${ok?'':'disabled title="Not enough cash"'} style="padding:3px 10px">${x.mode==='own'?'Buy':'Rent'}</button></div>`}).join('')}</div>
 `,true)}
 openMove=navWrap('openMove',openMove);
 function doMove(id,mode,opt){const h=LMAP[id];const old=S.home;let cash=S.purse.cash;if(old.mode==='own'){cash+=sellProceeds();logIt(`You sold your home in ${LMAP[old.id].n} and cleared ${fmt$(sellProceeds())}.`)}
@@ -2840,7 +2850,7 @@ const CIV_ACTS={
   {id:'hvip',n:'Fund a violence intervention team',d:'Counselors meet shooting victims at the bedside to stop retaliation. Works best at a trauma center.',cost:0.8,cd:12,fx:(p,c)=>{S.hvip=S.hvip||{};const n=Object.values(S.hvip).filter(t=>nowM()-t<12).length;S.hvip[p.id]=nowM();const k=(p.tag==='trauma'?1.3:p.tag==='kids'?0.5:0.35)/(1+n*0.5);S.met.crime=clamp(S.met.crime-k,40,140);c.lvl=clamp(c.lvl+15,0,100);addGroupMod(S.groups.faith,'Hospital violence intervention',1.5);addGroupMod(S.groups.working,'Hospital violence intervention',1);gainXP('safe',6);addRecord({t:`Funded violence intervention at ${p.name}`,good:['faith','working'],bad:[],kind:'act'});return`A violence intervention team starts at ${p.name}.`}},
   {id:'fair',n:'Sponsor a community health fair',d:'Free screenings and sign-ups for coverage.',cost:0.1,cd:6,fx:(p,c,d)=>{if(d)S.pop.d[d]=clamp(S.pop.d[d]+2,-20,20);['working','renters','faith'].forEach(g=>addGroupMod(S.groups[g],'Free health fair',1));c.lvl=clamp(c.lvl+5,0,100);return`Hundreds came to the health fair at ${p.name}.`}},
   {id:'jobs',n:'Partner on job training',d:'Train residents for hospital jobs: aides, techs, food service.',cost:0.3,cd:12,fx:(p,c)=>{S.jobsBoost+=0.6;S.met.jobs+=0.3;addGroupMod(S.groups.working,'Hospital job training',1.5);addGroupMod(S.groups.business,'Hospital job training',0.5);c.lvl=clamp(c.lvl+10,0,100);gainXP('stew',4);return`${p.name} will train and hire residents.`}}]};
-function civCan(p,a){const c=civState(p.id);if(civCd(p.id,a.id,a.cd))return`Again in ${civCd(p.id,a.id,a.cd)} mo`;if(a.slot&&S.slots<=0)return'No meetings left this month';if(a.cost&&S.reserve<a.cost+20)return'Reserve too low (keep $20M for emergencies)';return''}
+function civCan(p,a){if(isCand())return'Only the mayor can do this';const c=civState(p.id);if(civCd(p.id,a.id,a.cd))return`Again in ${civCd(p.id,a.id,a.cd)} mo`;if(a.slot&&S.slots<=0)return'No meetings left this month';if(a.cost&&S.reserve<a.cost+20)return'Reserve too low (keep $20M for emergencies)';return''}
 function doCivic(id,aid){const p=CIVMAP[id];if(!p)return;const a=CIV_ACTS[p.type].find(x=>x.id===aid);if(!a||civCan(p,a))return;const c=civState(id);const d=districtAt(p.lon,p.lat);
   if(a.slot)S.slots--;if(a.cost){S.reserve-=a.cost}c.acts[aid]=nowM();try{const ch=p.type==='police'?'police':p.type==='fire'?'fire':null;if(ch)addMod(staffOf(ch),a.cost?'You put money into their stations':'You visited their people',a.cost?4:2)}catch(e){}const msg=a.fx(p,c,d);S.approval=cityApproval(S);recomputeAll(S);
   goTo(p.lon,p.lat,p.name,3);logIt(`${a.n} at ${p.name}${a.cost?` (${fmtM(a.cost)} from the reserve)`:''}.`);save();refreshHUD();renderCivic();toast(msg);openCivic(id)}
@@ -2897,7 +2907,7 @@ document.addEventListener('click',e=>{const b=e.target.closest('[data-civ],[data
 // ======================= WHERE THE MAYOR IS =======================
 // A marker follows your mayor: City Hall on weekdays, home on weekends, and wherever you go to act.
 let mayorMarker=null,mayorAnim=null;
-function mayorDefault(){const dow=new Date(S.y,S.m-1,S.day).getDay();if(dow===0||dow===6){const h=S.home&&LMAP[S.home.id];if(h)return{lon:h.lon,lat:h.lat,label:'Home'}}return{lon:LM.cityhall.lon,lat:LM.cityhall.lat,label:'City Hall'}}
+function mayorDefault(){const dow=new Date(S.y,S.m-1,S.day).getDay();if(dow===0||dow===6||isCand()){const h=S.home&&LMAP[S.home.id];if(h)return{lon:h.lon,lat:h.lat,label:'Home'}}return{lon:LM.cityhall.lon,lat:LM.cityhall.lat,label:'City Hall'}}
 function goTo(lon,lat,label,days){if(!S)return;S.mayorAt={lon,lat,label,until:(days||2)};renderMayor(true)}
 function mayorDaily(){if(!S)return;if(S.mayorAt&&S.mayorAt.until>0){S.mayorAt.until--;return}const t=mayorDefault();if(!S.mayorAt||S.mayorAt.label!==t.label||S.mayorAt.lon!==t.lon){S.mayorAt={...t,until:0};renderMayor(true)}}
 function mayorInitials(){const n=(S.mayor&&S.mayor.name)||'Mayor';return n.split(/\s+/).filter(Boolean).map(w=>w[0]).slice(0,2).join('').toUpperCase()}
@@ -3183,9 +3193,9 @@ function queueChar(spec,report){const T=CHAR_TYPES[spec.type];const ev={kind:'ch
 function charLifeMonth(report){relInit();schemeTick(report);const open=S.events.filter(e=>e.kind==='char').length+(S.queue||[]).filter(q=>q.ev.kind==='char').length;if(open>=2)return;
   const n=Math.random()<0.65?(Math.random()<0.25?2:1):0;for(let i=0;i<n;i++){const pool=Object.entries(CHAR_TYPES).filter(([k,T])=>T.w>0);let tot=pool.reduce((a,[,T])=>a+T.w,0),r=Math.random()*tot;let pick=pool[0];for(const p of pool){r-=p[1].w;if(r<=0){pick=p;break}}
     const spec=pick[1].gen();if(spec)queueChar({type:pick[0],...spec},report)}}
-function charWho(kind,id){if(kind==='staff'){const s=staffOf(id);return{who:s,role:STAFFMAP[id].role,attr:`data-staff="${id}"`,o:staffOpinion(s)}}const m=S.council[id];recompute(m);return{who:m,role:m.seat+(S.rival&&S.rival.k===+id?' · your opponent':''),attr:`data-char="${id}"`,o:m.opinion}}
+function charWho(kind,id){{const x=charWhoX(kind,id);if(x)return x}if(kind==='staff'){const s=staffOf(id);return{who:s,role:STAFFMAP[id].role,attr:`data-staff="${id}"`,o:staffOpinion(s)}}const m=S.council[id];recompute(m);return{who:m,role:m.seat+(S.rival&&S.rival.k===+id?' · your opponent':''),attr:`data-char="${id}"`,o:m.opinion}}
 function charEventCard(ev,idx){const T=CHAR_TYPES[ev.type];if(!T)return'';const left=ev.expires-(nowM()-ev.born);
-  const faces=T.who(ev).map(([k,id])=>{const w=charWho(k,id);return`<div class="evwho"><button class="ptbtn" ${w.attr}>${portrait(w.who,60)}</button><div class="evwho-n"><b>${w.who.name}</b><small>${w.role}</small><small style="color:${opColor(w.o)}">Opinion ${fmtOp(w.o)}</small></div></div>`}).join('');
+  const faces=T.who(ev).map(([k,id])=>{const w=charWho(k,id);return`<div class="evwho"><button class="ptbtn" ${w.attr}>${portrait(w.who,60)}</button><div class="evwho-n"><b>${w.who.name}</b><small>${w.role}</small>${w.o!=null?`<small style="color:${opColor(w.o)}">Opinion ${fmtOp(w.o)}</small>`:''}</div></div>`}).join('');
   return`<div class="card char-ev"><div class="storytag">♟ People</div><div class="evfaces">${faces}</div><div class="ttl">${T.title(ev)}</div><div class="due">${left<=1?'Respond this month':`Respond within ${left} months`}</div>
    <p>${T.body(ev)}</p><div class="choices">${T.choices.map((c,ci)=>{const ok=!c.need||c.need(ev);return`<button class="choice" data-ev="${idx}" data-ci="${ci}" ${ok?'':'disabled'}><b>${c.l(ev)}</b><small>${c.s(ev)}${ok?'':' · not possible right now'}</small></button>`}).join('')}</div></div>`}
 function resolveChar(ev,ci){const T=CHAR_TYPES[ev.type],c=T&&T.choices[ci];if(!c||(c.need&&!c.need(ev)))return'';const msg=c.do(ev)||'';S.events=S.events.filter(e=>e!==ev);recomputeAll(S);S.approval=cityApproval(S);logIt(`${T.title(ev)}: ${msg}`);save();toast(msg);refreshHUD();return msg}
@@ -3247,6 +3257,234 @@ const _openPanel=openPanel;openPanel=function(sub,title,html,key){const was=!$('
 
 if($('sfxOn')){$('sfxOn').checked=SFX.on;$('sfxVol').value=Math.round(SFX.vol*100)}
 
+// ======================= ELECTION YEARS =======================
+function elYear(){return S&&S.elY?S.elY:(S&&S.term>=2?2031:2027)}
+function isCand(){return !!S&&S.phase==='cand'}
+function annualPay(){return isCand()&&S.cand?OCCS[S.cand.occ].pay:SALARY}
+Object.defineProperty(PAY,'gross',{get(){return annualPay()/12},configurable:true});
+
+// ======================= RUNNING FOR MAYOR =======================
+// You start as a Memphian with a day job, pick a platform, build name recognition and money, and take on the incumbent.
+const OCCS={pastor:{n:'Pastor',pay:58000,sav:9000,g:{faith:6},d:'Leads a congregation in South Memphis'},
+ owner:{n:'Small business owner',pay:72000,sav:22000,g:{business:5,working:2},d:'Runs a family restaurant on Summer Avenue'},
+ nurse:{n:'Nurse',pay:78000,sav:14000,g:{working:5,parents:2},d:'Twelve years in an emergency department'},
+ teacher:{n:'Teacher',pay:56000,sav:8000,g:{parents:6,young:1},d:'Teaches eighth-grade English at an MSCS middle school'},
+ union:{n:'Union electrician',pay:82000,sav:16000,g:{labor:6,working:2},d:'Electrician and shop steward'},
+ nonprofit:{n:'Nonprofit director',pay:68000,sav:10000,g:{renters:5,faith:2},d:'Runs a tenants\' rights nonprofit'},
+ officer:{n:'Retired police sergeant',pay:61000,sav:30000,g:{owners:4,faith:2},d:'Twenty-five years with MPD, now retired'},
+ tech:{n:'Software engineer',pay:118000,sav:40000,g:{young:6,business:2},d:'Works for a logistics tech company'}};
+const FIRST_INC={name:'Russell Hargrove',g:'m',age:61,slogan:'Steady leadership for a safer Memphis',plat:['safety','fiscal'],champs:['owners','business','faith'],frame:'#8a96a3'};
+const SLOGANS=['Keep Memphis moving','Results, not excuses','A city that works for every neighborhood','Safer streets, stronger schools'];
+function incRival(ch){const pk=a=>a[Math.floor(Math.random()*a.length)];const pl=ch.plat||[pk(['safety','streets','jobs']),pk(['fiscal','education','transit'])];
+  return{k:-1,inc:true,name:ch.name,ch,slogan:ch.slogan||pk(SLOGANS),plat:pl,champs:ch.champs||GROUPS.slice().sort((a,b)=>(S.groups[b.id].app)-(S.groups[a.id].app)).slice(0,3).map(g=>g.id),
+    atk:[`${ch.name.split(' ').pop()}'s Memphis still can't fix a pothole`,`${ch.name.split(' ').pop()} promised safer streets and didn't deliver`]}}
+// The city keeps running while you aren't mayor: a month of the incumbent's government.
+function aiMonth(){monthlySim(S);S.m++;if(S.m>12){S.m=1;S.y++}S.day=1;
+  if(S.m===4){S.pending=defaultProposal(S);S.stage='adopted'}if(S.m===6)readingUpdate(S);if(S.m===7&&S.pending){enact(S,S.pending);S.pending=null;S.stage='none'}
+  S.events=[];S.queue=[];if(S.m===12)try{suburbElections([])}catch(e){}}
+function prioOnly(s,g){const sw=Object.values(g.w).reduce((a,b)=>a+b,0);let v=0;for(const p in g.w)v+=g.w[p]*(prioScore(s,p)-50)/sw*0.8;return v}
+function incTarget(g){return clamp(50+(S.incBase[g.id]||0)+prioOnly(S,g),5,95)}
+function candKnown(g){const G=S.groups[g.id];const raw=G.mods.reduce((a,x)=>a+x.v,0),cap=22*Math.tanh(raw/22);
+  return clamp(40+(52-S.inc[g.id])*0.6+((OCCS[S.cand.occ].g||{})[g.id]||0)+cap,5,95)}
+function candTarget(g){const r=S.cand.rec;return clamp(r*candKnown(g)+(1-r)*24,5,95)}
+const _groupsMonth=groupsMonth;
+groupsMonth=function(s){if(s.phase!=='cand')return _groupsMonth(s);
+  GROUPS.forEach(g=>{s.inc[g.id]=clamp(s.inc[g.id]+(incTarget(g)-s.inc[g.id])*0.22+rnd(-.4,.4),5,95);const G=s.groups[g.id];G.app=clamp(G.app+(candTarget(g)-G.app)*0.35+rnd(-.4,.4),5,95);G.mods.forEach(x=>x.v*=0.93);G.mods=G.mods.filter(x=>Math.abs(x.v)>=0.3)});
+  for(const d in s.pop.d)s.pop.d[d]*=0.9;s.approval=cityApproval(s)};
+function candBump(gid,v,t){const G=S.groups[gid];addGroupMod(G,t,v);G.app=clamp(G.app+v*0.35*S.cand.rec,5,95)}
+function recUp(v){S.cand.rec=clamp(S.cand.rec+v,0,1)}
+function candEndOfMonth(){releaseQueued(true);const before=snapshotMet(S);const report=[];
+  monthlySim(S);if(S.mayor)gainXP(S.mayor.focus,12);S.m++;if(S.m>12){S.m=1;S.y++}S.day=1;expire(S,report);
+  if(S.m===4){S.pending=defaultProposal(S);S.stage='adopted';report.push(`Mayor ${S.rival.name} sent the council a cost-to-continue budget.`)}
+  if(S.m===6){const r=readingUpdate(S);report.push(`TCAP results: MSCS reading went from ${r.before.toFixed(1)}% to ${r.after.toFixed(1)}%. Mayor ${S.rival.name.split(' ').pop()} owns that number, for better or worse.`)}
+  if(S.m===7&&S.pending){enact(S,S.pending);S.pending=null;S.stage='none'}
+  recUp(0.012);candSpawn(report);
+  campaignMonth(report);if(S.rival&&S.rival.camp){S.rival.camp.cash+=8;S.rival.camp.raised+=8}purseMonth(report);householdMonth(report);moneyMonth(report,0);
+  const avg=Math.round(GROUPS.reduce((a,g)=>a+g.share*S.inc[g.id],0)/100);
+  logIt(`${MONTHS_L[(S.m+10)%12]} closed. Your support ${Math.round(S.approval)}%, name recognition ${Math.round(S.cand.rec*100)}%. Mayor ${S.rival.name.split(' ').pop()}'s approval about ${avg}%.`);report.forEach(l=>logIt(l));
+  notify('month',`${MONTHS_L[(S.m+10)%12]} closed`,`Your support ${Math.round(S.approval)}% (${S.approval>=before.approval?'+':'−'}${Math.abs(S.approval-before.approval).toFixed(1)}) · name recognition ${Math.round(S.cand.rec*100)}% · the mayor's approval ${avg}%`,()=>openLedger());
+  save();refreshHUD()}
+const _endOfMonth=endOfMonth;endOfMonth=function(){if(isCand()&&!S.over)return candEndOfMonth();return _endOfMonth()};
+// candidate events
+function candSpawn(report){const mo=monthsToElection();if(mo<0.5)return;const open=S.events.filter(e=>e.kind==='char').length+(S.queue||[]).filter(q=>q.ev.kind==='char').length;if(open>=2)return;
+  if(mo<=7&&mo>=1.2&&Math.random()<0.75)queueChar({type:'forum',host:GROUPS[Math.floor(Math.random()*GROUPS.length)].id,issue:worstPrio()});
+  else if(Math.random()<0.3)queueChar({type:'scrutiny'});
+  if(Math.random()<0.25)queueChar({type:Math.random()<0.5?'incattack':'surge'})}
+function worstPrio(){const ps=['safety','streets','blight','transit','jobs','education'];return ps.sort((a,b)=>prioScore(S,a)-prioScore(S,b))[0]}
+Object.assign(CHAR_TYPES,{
+ forum:{w:0,title:ev=>`Candidate forum hosted by ${GMAP[ev.host].n.toLowerCase()} leaders`,
+  body:ev=>`The room is full and Mayor ${S.rival.name} is on the stage with you. The moderator asks about ${PRIO_LABEL[ev.issue].toLowerCase()}, where the city is struggling.`,
+  who:ev=>[['me'],['inc']],
+  choices:[{l:()=>'Talk about your platform',s:()=>'Safe · groups who care about your platform warm up · name recognition ▲',do:ev=>{(S.promises||[]).forEach(st=>(PMAP[st.id].grp||[]).forEach(g=>candBump(g,1.6,'Your platform at a forum')));recUp(0.05);S.stats=S.stats||{};S.stats.forums=(S.stats.forums||0)+1;gainXP('cha',5);return'Solid answers. People in the room learned your name.'}},
+   {l:ev=>`Go after the mayor on ${PRIO_LABEL[ev.issue].toLowerCase()}`,s:()=>'Risky · Charisma decides it · a hit wins over the frustrated · a miss looks negative',do:ev=>{S.stats=S.stats||{};S.stats.forums=(S.stats.forums||0)+1;gainXP('cha',6);const ok=Math.random()<0.35+mskill('cha')*0.03;
+     if(ok){GROUPS.filter(g=>g.w[ev.issue]).forEach(g=>candBump(g.id,3*g.w[ev.issue],`Took on the mayor over ${PRIO_LABEL[ev.issue].toLowerCase()}`));recUp(0.07);return'The line got applause and made the evening news.'}
+     GROUPS.forEach(g=>candBump(g.id,-0.8,'Came off as negative at a forum'));recUp(0.03);return'It landed flat. The mayor had a ready answer and you looked angry.'}},
+   {l:ev=>`Speak to the ${GMAP[ev.host].n.toLowerCase()} in the room`,s:ev=>`${GMAP[ev.host].n} ▲▲ · everyone else barely notices`,do:ev=>{candBump(ev.host,4,'Spoke to their concerns at a forum');recUp(0.03);S.stats=S.stats||{};S.stats.forums=(S.stats.forums||0)+1;return'The hosts liked what they heard.'}}],
+  ignore:ev=>{candBump(ev.host,-2,'Skipped their forum');}},
+ scrutiny:{w:0,title:()=>'A reporter is looking into your past',
+  body:()=>`A reporter is asking questions about your years as a ${OCCS[S.cand.occ].n.toLowerCase()}: old tax filings, a lawsuit that was settled, and people you used to work with.`,
+  who:()=>[['me']],
+  choices:[{l:()=>'Release everything yourself',s:()=>'A small dip now, and the story dies · name recognition ▲',do:()=>{GROUPS.forEach(g=>candBump(g.id,-0.6,'Old filings released'));recUp(0.03);return'You got ahead of it. The story ran once and faded.'}},
+   {l:()=>'Say nothing and wait',s:()=>'Half the time nothing happens; half the time it gets worse',do:()=>{if(Math.random()<0.5)return'The reporter moved on to other stories.';GROUPS.forEach(g=>candBump(g.id,-2,'Stonewalled a reporter'));return'The story ran anyway, and your silence became the headline.'}},
+   {l:()=>'Attack the paper',s:()=>'Business ▲ · young professionals and renters ▼',do:()=>{candBump('business',1,'Stood up to the press');candBump('young',-2,'Attacked a reporter');candBump('renters',-1,'Attacked a reporter');return'Your base cheered. Others winced.'}}],
+  ignore:()=>{GROUPS.forEach(g=>candBump(g.id,-1.5,'Dodged questions about your past'))}},
+ incattack:{w:0,title:()=>`Mayor ${S.rival.name.split(' ').pop()} is attacking you`,
+  body:()=>`Mayor ${S.rival.name} tells reporters you've "never run anything bigger than a ${OCCS[S.cand.occ].n==='Small business owner'?'lunch counter':'committee meeting'}" and that Memphis can't afford on-the-job training.`,
+  who:()=>[['inc']],
+  choices:[{l:()=>'Answer with an ad',s:()=>'−$25K campaign · cancels the damage · name recognition ▲',need:()=>S.camp.cash>=25,do:()=>{S.camp.cash-=25;S.camp.spent+=25;flowC('ads',25);recUp(0.04);return'Your response ad ran all week.'}},
+   {l:()=>'Laugh it off at your next stop',s:()=>'Charisma decides it',do:()=>{if(Math.random()<0.3+mskill('cha')*0.035){recUp(0.04);GROUPS.forEach(g=>candBump(g.id,0.8,'Laughed off the mayor\'s attack'));return'Your comeback went viral.'}GROUPS.forEach(g=>candBump(g.id,-1.2,'The mayor\'s attack stuck'));return'It didn\'t land. The attack stuck.'}}],
+  ignore:()=>{GROUPS.forEach(g=>candBump(g.id,-1.5,'The mayor\'s attack went unanswered'))}},
+ surge:{w:0,title:()=>'Volunteers are showing up',
+  body:()=>'After your last appearance, people are walking into your office asking how to help.',
+  who:()=>[['me']],
+  choices:[{l:()=>'Put them on doors',s:()=>'+1 organizer for free · turnout ▲',do:()=>{S.camp.organizers=Math.min(10,S.camp.organizers+1);S.camp.freeOrg=(S.camp.freeOrg||0)+1;return'Volunteers are knocking doors this weekend.'}},
+   {l:()=>'Put them on the phones for donations',s:()=>'About +$15K',do:()=>{S.camp.cash+=15;S.camp.raised+=15;flowC('small',15);return'The phone bank raised about +$15K.'}}],
+  ignore:()=>{}}});
+// candidate actions (instead of the mayor's)
+function openCandActions(){closePanel();S.acts=S.acts||{};const slots=S.slots;
+  openModal(`Running for mayor · ${slots} campaign stop${slots===1?'':'s'} left this month · name recognition ${Math.round(S.cand.rec*100)}%`,'Campaign trail',`
+   <p class="note">You aren't mayor yet, so you can't sign orders or write budgets. You win by getting known, building support and raising money. Most moves use one of your 3 campaign stops a month.</p>
+   <div class="facts"><h4>Knock doors</h4><p class="note">A day of door-knocking in one district. Helps most with the groups who live there. Each district once every 2 months.</p><div class="row">${[1,2,3,4,5,6,7].map(d=>{const cd=cdLeft('kd'+d,2);return`<button class="btn" data-act="cdoors" data-d="${d}" ${cd||slots<=0?'disabled':''} title="${cd?`Again in ${cd} mo`:''}">District ${d} <small style="color:${apColor(dApp(d))}">${Math.round(dApp(d))}%</small></button>`}).join('')}</div></div>
+   <div class="facts"><h4>Meet community leaders</h4><p class="note">Pastors, union heads, PTA presidents and business owners. Each group once every 3 months.</p><div class="row">${GROUPS.map(g=>{const cd=cdLeft('cg'+g.id,3);return`<button class="btn" data-act="cmeet" data-g="${g.id}" ${cd||slots<=0?'disabled':''}>${g.ic} ${g.n} <small style="color:${apColor(S.groups[g.id].app)}">${Math.round(S.groups[g.id].app)}%</small></button>`}).join('')}</div></div>
+   <div class="facts"><h4>Speak out on an issue</h4><p class="note">Once a month. The groups who care about the issue hear you.</p><div class="row">${['safety','education','streets','jobs','transit','blight','fiscal','labor','oversight'].map(p=>`<button class="btn" data-act="cspeak" data-p="${p}" ${cdLeft('cspeak',1)?'disabled':''}>${PRIO_LABEL[p]}</button>`).join('')}</div></div>
+   <div class="facts"><h4>Your platform</h4>${S.promises?`<ul>${S.promises.map(st=>`<li><b>${PMAP[st.id].n}</b> · ${PMAP[st.id].d}</li>`).join('')}</ul><p class="note">If you win, these become your promises as mayor.</p>`:`<div class="row"><button class="btn primary" data-act="promises">Choose your platform</button></div>`}</div>
+   <div class="row"><button class="btn primary" data-act="hq">Campaign HQ</button></div>`,true)}
+openCandActions=navWrap('openCandActions',openCandActions);
+function candDoors(d){if(cdLeft('kd'+d,2)||S.slots<=0)return;S.slots--;markAct('kd'+d);const mix=dComp(d);GROUPS.forEach(g=>candBump(g.id,clamp(mix[g.id]/(g.share/100),0.3,2)*1.4,`Knocked doors in District ${d}`));recUp(0.025);gainXP('cha',4);goTo(...districtCenter(d),`Doors, District ${d}`,2);
+  S.approval=cityApproval(S);save();refreshHUD();toast(`You spent the day knocking doors in District ${d}.`);openCandActions()}
+function candMeet(gid){if(cdLeft('cg'+gid,3)||S.slots<=0)return;S.slots--;markAct('cg'+gid);candBump(gid,3+Math.max(0,mskill('dip')-6)*0.3,'Met with their leaders');recUp(0.015);gainXP('dip',5);S.approval=cityApproval(S);save();refreshHUD();toast(`You met with ${GMAP[gid].n.toLowerCase()} leaders.`);openCandActions()}
+function candSpeak(p){if(cdLeft('cspeak',1))return;markAct('cspeak');GROUPS.forEach(g=>{if(g.w[p])candBump(g.id,g.w[p]*(1.6+Math.max(0,mskill('cha')-6)*0.2),`Spoke out on ${PRIO_LABEL[p].toLowerCase()}`)});recUp(0.03);gainXP('cha',4);S.approval=cityApproval(S);save();refreshHUD();toast(`You spoke out on ${PRIO_LABEL[p].toLowerCase()}.`);openCandActions()}
+// candidate ads
+const _adOptions=adOptions;adOptions=function(){if(!isCand())return _adOptions();const out=[{kind:'promote',ref:'intro',title:'Introduce yourself to Memphis',groups:GROUPS.map(g=>g.id)}];
+  (S.promises||[]).forEach(st=>out.push({kind:'promote',ref:'p_'+st.id,title:`Your plan: ${PMAP[st.id].n}`,groups:PMAP[st.id].grp}));
+  (S.rival.atk||[]).forEach((t,i)=>out.push({kind:'attack',ref:'a'+i,title:`Attack: "${t}"`,groups:S.rival.champs}));return out};
+const _buyAd=buyAd;buyAd=function(ref,size){const c0=S.camp.cash;_buyAd(ref,size);if(isCand()&&S.camp.cash<c0)recUp(size==='big'?0.07:0.04)};
+// becoming a candidate
+function beginCampaign(cr,keep){window.__noGuide=true;
+  if(!keep){beginTerm(cr,true);S.events=[];S.queue=[];S.rival=null;S.camp=null;while(!(S.y===2027&&S.m===3))aiMonth();S.elY=2027;S.incumb={...FIRST_INC}}
+  else{S.mayor={...cr,look:{...(cr.look||defaultLook(cr.g))},name:(cr.name||'Candidate').trim(),skills:{...cr.skills},traits:[...cr.traits],xp:{},trained:-99,frame:'#f2a93b'};S.over=false;S.started=true;$('start').hidden=true;$('start').classList.remove('creating');$('app').classList.remove('pre')}
+  S.phase='cand';S.term=0;S.cand={occ:cr.occ||'nonprofit',rec:0.22,start:nowM()};S.inc={};S.incBase={};
+  GROUPS.forEach(g=>{const G=S.groups[g.id];S.inc[g.id]=G.app;S.incBase[g.id]=0;S.incBase[g.id]=G.app-incTarget(g);G.mods=[];G.app=clamp(24+((OCCS[S.cand.occ].g||{})[g.id]||0)*0.3,5,95);G.base=0});
+  S.promises=null;S.record=[];S.deals=[];S.events=[];S.queue=[];S.lastElection=null;S.succ=null;S.stats={};S.guide=null;S.endorsed={};
+  S.rival=incRival(S.incumb);S.camp=null;campInit(S);S.camp.cash=10;S.camp.raised=10;
+  S.home=null;homeInit(S);S.purse.cash=OCCS[S.cand.occ].sav;S.purse.paid=0;S.mayorAt=null;S.approval=cityApproval(S);S.paused=true;
+  save();applyLayers();refreshHUD();try{renderMayor(false);renderHomeMarker()}catch(e){}
+  notify('event',`You're running for mayor`,`Election Day is Thursday, October ${electionDate().day}, ${elYear()}. Mayor ${S.rival.name} is running for re-election.`,()=>openCandActions(),{ttl:14});
+  window.__noGuide=false;S.guide=null;setTimeout(()=>{if(!S.promises)openPromises()},700)}
+// ---------- election night for a candidate ----------
+function candElection(){recomputeAll(S);const p=headToHead();const others=5+rnd(0,6);const swing=rnd(-2,2);let you=clamp(p*(100-others)+swing,5,90),rv=100-others-you;const won=you>rv;const B=voteBreakdown();
+  S.lastElection={you,rv,won,cand:true,full:B.full,resident:B.resident};logIt(`Election: you ${you.toFixed(1)}%, Mayor ${S.rival.name} ${rv.toFixed(1)}%. ${won?'You won.':'You lost.'}`);
+  const rows=GROUPS.map(g=>{const sup=groupSupport(g);return`<div class="drow" style="cursor:default;grid-template-columns:minmax(0,1fr) 90px 44px"><span>${g.ic} ${g.n}</span><span class="gbar"><i style="width:${Math.round(sup*100)}%;background:${apColor(sup*100)}"></i></span><b class="gv">${Math.round(sup*100)}%</b></div>`}).join('');
+  const body=`<p>You took <b>${you.toFixed(1)}%</b> to <b>${rv.toFixed(1)}%</b> for Mayor ${S.rival.name}, with ${others.toFixed(1)}% for the rest of the field.</p>
+   <div class="facts"><h4>How each group voted</h4><div class="dlist">${rows}</div><p class="note">Name recognition at the end: ${Math.round(S.cand.rec*100)}%. You raised ${fmtK(S.camp.raised)} and spent ${fmtK(S.camp.spent)}; the mayor spent ${fmtK(S.rival.camp.spent)}.</p></div>`;
+  if(won)openModal(`City election · October ${S.y}`,`You won. Mayor-elect ${S.mayor.name}`,body+`<p>You take office on January 1, ${S.y+1}. Your platform becomes your list of promises as mayor.</p><div class="row"><button class="btn primary" data-act="takeoffice">Take the oath</button></div>`,true);
+  else openModal(`City election · October ${S.y}`,'You lost the election',body+afterLossChoices(S.rival.ch||{name:S.rival.name,g:'m',age:58}),true);
+  save()}
+function afterLossChoices(w){S._winner=w;return`<div class="facts"><h4>What now?</h4><p>Memphis goes on. You can keep playing.</p><div class="choices">
+   <button class="choice" data-act="playwinner"><b>Play as Mayor ${w.name}</b><small>Take over the winner's term from January 1</small></button>
+   <button class="choice" data-act="runagain"><b>Run again in ${elYear()+4}</b><small>Skip ahead to the next race and run as a new candidate</small></button>
+   <button class="choice" data-act="newgame"><b>Start over</b><small>A brand-new game</small></button></div></div>`}
+// ---------- taking office ----------
+function toJan(){let g=0;while(!(S.m===1&&S.day===1)&&g++<6){aiMonth()}}
+function freshTerm(how){toJan();S.phase='mayor';S.term=1;S.termStart=nowM();S.elY=S.y+3;S.over=false;
+  GROUPS.forEach(g=>{const G=S.groups[g.id];G.mods=G.mods.filter(x=>/promise|platform/i.test(x.t)).map(x=>({...x,v:x.v*0.6}));G.base=0;G.base=G.app-groupTarget(S,g)});
+  S.approval=cityApproval(S);S.events=[];S.queue=[];S.record=[];S.deals=[];S.dealCommit=null;S.commit={};S.lastElection=null;S.succ=null;S.endorsed={};S.scheme=null;
+  const cash=S.camp?Math.round(S.camp.cash*(how==='cand'?1:0)):0;S.camp=null;S.rival=null;pickRival();campInit(S);S.camp.cash=Math.max(40,cash);S.camp.raised=S.camp.cash;
+  S.stage='none';S.slots=3;S.mayorAt=null;S.guide=null;S.stats=S.stats||{};save();applyLayers();refreshHUD();try{renderMayor(false)}catch(e){}}
+function takeOffice(){const plat=(S.promises||[]).map(st=>st.id);const inc=S.rival&&S.rival.name;histAdd(S.incumb||{name:inc},'lost to '+S.mayor.name);
+  GROUPS.forEach(g=>{const G=S.groups[g.id];G.app=clamp(G.app*0.55+S.inc[g.id]*0.15+18,20,80)});freshTerm('cand');S.promises=null;S.inc=null;
+  if(plat.length)choosePromises(plat);onClose=null;closeModal();
+  openModal(`January 1, ${S.y}`,`Mayor ${S.mayor.name}`,`<p>You took the oath of office at City Hall. Your term runs to ${S.elY+1}; the next election is October ${S.elY}.</p>
+   <div class="facts"><div class="opl"><div><span>Reserve fund</span><b>${fmtM(S.reserve)}</b></div><div><span>Property tax rate</span><b>$${S.taxRate.toFixed(2)}</b></div><div><span>Your approval</span><b>${Math.round(S.approval)}%</b></div><div><span>Violent crime index</span><b>${Math.round(S.met.crime)}</b></div></div></div>
+   <p>Your platform is now your promise list, with a September ${S.elY} deadline. The budget is due in April. Press Space when you're ready.</p><div class="row"><button class="btn primary" data-act="close">Get to work</button></div>`,true);
+  notify('good',`Sworn in as mayor`,`Your promises are due by September ${S.elY}.`,()=>openPromises())}
+// ---------- succession ----------
+function histAdd(m,how){S.history=S.history||[];S.history.push({name:m.name,to:S.y,how})}
+function newCouncilFace(k){const m=S.council[k];if(!m)return;const g=Math.random()<.5?'f':'m';const pk=a=>a[Math.floor(Math.random()*a.length)];
+  m.name=`${pk(NEWNAMES[g])} ${pk(NEWNAMES.l)}`;m.g=g;m.age=34+Math.floor(Math.random()*25);m.traits=[pk(Object.keys(TRAITS))];m.mods=[{t:'New to the council',v:0,perm:true}];m.favors=0;m.hook=null;m.look=null;m.limited=false;
+  if(S.rel)for(const key in S.rel){const[a,b]=key.split('-').map(Number);if(a===k||b===k)delete S.rel[key]}}
+function becomeMayor(ch,how){if(!isCand())histAdd(S.mayor,how);S.promises=null;S._pp=null;S.inc=null;const pk=a=>a[Math.floor(Math.random()*a.length)];
+  if(ch.k!=null&&ch.k>=0)newCouncilFace(ch.k);if(ch.staff){replaceStaff(ch.staff,true)}
+  const sk={};['dip','stew','intr','safe','learn','cha'].forEach(k=>sk[k]=5+Math.floor(Math.random()*6));
+  S.mayor={name:ch.name,g:ch.g||'m',age:ch.age||50,ptSkin:Math.floor(Math.random()*8),ptHair:Math.floor(Math.random()*5),ptStyle:0,ptGlasses:Math.random()<.3,look:defaultLook(ch.g||'m'),frame:'#f2a93b',traits:[],skills:sk,xp:{},trained:-99,focus:pk(['dip','stew','cha','safe'])};
+  GROUPS.forEach(g=>{const G=S.groups[g.id];G.app=clamp(G.app*0.5+26,25,75)});freshTerm(how);onClose=null;closeModal();
+  openModal(`January 1, ${S.y}`,`Mayor ${S.mayor.name}`,`<p>You now play as <b>${S.mayor.name}</b>, Memphis's new mayor. The term runs to ${S.elY+1}; the next election is October ${S.elY}.</p>
+   <div class="facts"><h4>Mayors of Memphis in this game</h4><ul>${(S.history||[]).map(h=>`<li>${h.name}, until ${h.to} (${h.how})</li>`).join('')}<li><b>${S.mayor.name}</b>, from ${S.y}</li></ul></div>
+   <p>Start by making three promises. Press Space when you're ready.</p><div class="row"><button class="btn primary" data-act="promises">Make your promises</button></div>`,true)}
+function runAgain(){const w=S._winner;if(S.phase!=='cand'&&w)histAdd(S.mayor,S.lastElection&&S.lastElection.succ?'term-limited':'lost re-election');
+  // the winner governs; skip to March of the next election year
+  const next=elYear()+4;S.phase='ai';S.over=false;toJan();if(w&&w.k!=null&&w.k>=0)newCouncilFace(w.k);let g=0;while(!(S.y===next&&S.m===3)&&g++<80)aiMonth();
+  S.elY=next;S.incumb={name:w?w.name:'Mayor',g:w&&w.g||'m',age:(w&&w.age||55)+4,frame:'#8a96a3'};
+  onClose=null;closeModal();closePanel();CR=newCR();CR.run=true;CR.keep=true;$('start').hidden=false;$('intro').hidden=true;openCreate()}
+// successor choice for a term-limited mayor
+function succCandidates(){recomputeAll(S);const out=[];const cm=S.council.map((m,k)=>({m,k})).filter(x=>!x.m.limited&&(!S.rival||x.k!==S.rival.k)).sort((a,b)=>b.m.opinion-a.m.opinion)[0];
+  if(cm)out.push({kind:'char',k:cm.k,name:cm.m.name,g:cm.m.g,age:cm.m.age,role:cm.m.seat,bonus:2+cm.m.opinion*0.04});
+  const st=STAFF_DEF.map(D=>staffOf(D.id)).filter(s=>!(S.scheme&&S.scheme.id===s.id)).sort((a,b)=>staffOpinion(b)-staffOpinion(a))[0];
+  if(st)out.push({kind:'staff',staff:st.id,name:st.name,g:st.g,age:st.age,role:STAFFMAP[st.id].role,bonus:1+staffOpinion(st)*0.03});
+  const g=Math.random()<.5?'f':'m',pk=a=>a[Math.floor(Math.random()*a.length)];out.push({kind:'new',name:`${pk(NEWNAMES[g])} ${pk(NEWNAMES.l)}`,g,age:38+Math.floor(Math.random()*15),role:pk(['Pastor and community organizer','Small business owner','Hospital administrator','Former school principal']),bonus:1.5});return out}
+Object.assign(CHAR_TYPES,{succession:{w:0,title:()=>'Who should be the next mayor?',
+  body:ev=>`The charter limits you to two terms. ${S.rival?`${S.rival.name} is running to replace you.`:''} Your endorsement and your campaign money can carry someone into office, and your approval (${Math.round(S.approval)}%) is what they inherit.`,
+  who:ev=>ev.c.filter(c=>c.kind!=='new').map(c=>c.kind==='char'?['char',c.k]:['staff',c.staff]),
+  choices:[0,1,2].map(i=>({l:ev=>ev.c[i]?`Endorse ${ev.c[i].name}`:'—',s:ev=>ev.c[i]?`${ev.c[i].role}, ${ev.c[i].age}`:'',need:ev=>!!ev.c[i],do:ev=>{S.succ={...ev.c[i]};return`You endorsed ${ev.c[i].name} to succeed you. Your campaign now works for them.`}})).concat([{l:()=>'Stay out of it',s:()=>'Your side runs without you; much weaker',do:ev=>{S.succ={...ev.c[ev.c.length-1],bonus:-4,neutral:true};return'You stayed neutral.'}}]),
+  ignore:ev=>{S.succ={...ev.c[ev.c.length-1],bonus:-4,neutral:true}}}});
+function succCheck(){if(isCand()||S.term<2||S.succ||S.succAsked===elYear())return;if(monthsToElection()>10)return;S.succAsked=elYear();queueChar({type:'succession',c:succCandidates(),at:'cityhall'})}
+
+// ---------- the successor's election (term-limited mayor) ----------
+function succElection(next){recomputeAll(S);if(!S.succ){const c=succCandidates();S.succ={...c[c.length-1],bonus:-4,neutral:true}}const p=headToHead();const others=6+rnd(0,6);const swing=rnd(-2,2);let you=clamp(p*(100-others)+swing,5,90),rv=100-others-you;const won=you>rv;
+  const R=S.rival,m=rivalMember();const sc=S.succ;S.lastElection={you,rv,won,succ:true};logIt(`Election: ${sc.name} ${you.toFixed(1)}%, ${R.name} ${rv.toFixed(1)}%.`);
+  const rows=GROUPS.map(g=>{const sup=groupSupport(g);return`<div class="drow" style="cursor:default;grid-template-columns:minmax(0,1fr) 90px 44px"><span>${g.ic} ${g.n}</span><span class="gbar"><i style="width:${Math.round(sup*100)}%;background:${apColor(sup*100)}"></i></span><b class="gv">${Math.round(sup*100)}%</b></div>`}).join('');
+  const body=`<p>${sc.neutral?'The candidate closest to you':`Your candidate, ${sc.name},`} took <b>${you.toFixed(1)}%</b> to <b>${rv.toFixed(1)}%</b> for ${R.name}.</p><div class="facts"><h4>How each group voted for ${sc.name}</h4><div class="dlist">${rows}</div><p class="note">They ran on your record: ${Math.round(S.approval)}% approval when you left.</p></div>`;
+  S.over=true;
+  if(won)openModal(`City election · October ${S.y}`,`${sc.name} will be the next mayor`,body+`<div class="facts"><h4>What now?</h4><div class="choices"><button class="choice" data-act="playsucc"><b>Continue as Mayor ${sc.name}</b><small>Your successor takes office January 1</small></button><button class="choice" data-act="newgame"><b>Start over</b><small>A brand-new game</small></button></div></div>`,true);
+  else openModal(`City election · October ${S.y}`,`${R.name} won the open seat`,body+afterLossChoices(m?{name:m.name,g:m.g,age:m.age,k:R.k}:{name:R.name,g:'m',age:55}),true);
+  save()}
+function charWhoX(kind,id){if(kind==='me'){const m=S.mayor;return{who:m,role:isCand()?`Candidate · ${OCCS[S.cand.occ].n}`:'You',attr:'data-act="mayor"',o:null}}
+  if(kind==='inc'){const c=S.rival.ch||{name:S.rival.name,g:'m',age:58};return{who:{...c,frame:c.frame||'#8a96a3'},role:'Mayor of Memphis, running for re-election',attr:'',o:null}}return null}
+document.addEventListener('click',e=>{const b=e.target.closest('[data-act]');if(!b||!S)return;const a=b.dataset.act;const map_={cdoors:()=>candDoors(+b.dataset.d),cmeet:()=>candMeet(b.dataset.g),cspeak:()=>candSpeak(b.dataset.p),takeoffice:()=>takeOffice(),
+  playwinner:()=>{const w=S._winner;if(w)becomeMayor(w,S.lastElection&&S.lastElection.succ?'term-limited':'lost re-election')},runagain:()=>runAgain(),playsucc:()=>{const c=S.succ;becomeMayor({...c,k:c.kind==='char'?c.k:null,staff:c.kind==='staff'?c.staff:null},'term-limited')}};
+  if(map_[a]){e.preventDefault();e.stopImmediatePropagation();map_[a]()}},true);
+// Things only the mayor can do
+['openBudget','openPolicies','openCabinet','openStaff','openPlanner','openPropose','openWhip','openOutlook'].forEach(n=>{const f=window[n]||eval(n);const w=function(...a){if(isCand()){toast(`Only the mayor can do that. Win in October ${elYear()} first.`);return}return f.apply(this,a)};try{eval(n+'=w')}catch(e){}});
+const _openActions=openActions;openActions=function(){if(isCand())return openCandActions();return _openActions()};
+const _openCabinetSeen=openCabinet;openCabinet=function(...a){S.seen=S.seen||{};S.seen.cabinet=true;return _openCabinetSeen.apply(this,a)};
+
+// ======================= GETTING STARTED =======================
+// A short list of goals that teaches one system at a time. Shown at the top of the Mayor's Desk.
+const anyAct=re=>Object.keys(S.acts||{}).some(k=>re.test(k));
+const GUIDE_MAYOR=[
+ {id:'brief',t:'Read your chief of staff\'s briefing',h:'Open City Hall and answer the briefing.',done:()=>!S.events.some(e=>e.id==='briefing'),go:()=>openPlace('cityhall')},
+ {id:'prom',t:'Make your three promises',h:'They become your record in the next election.',done:()=>!!S.promises,go:()=>openPromises()},
+ {id:'clock',t:'Start the clock',h:'Press Space or ▶ Resume. Time runs day by day; + and − change the speed.',done:()=>!S.paused||S.day>=5||nowM()>(S.guide.m0||0),go:()=>setPaused(false)},
+ {id:'issue',t:'Handle a problem on the map',h:'Click an amber pin, or a desk item, and choose a response.',done:()=>((S.stats||{}).resolved||0)>0,go:()=>{const e=S.events.find(e=>e.kind==='event'&&e.id!=='briefing');if(e)openPlace(evAt(e));else openDesk()}},
+ {id:'meet',t:'Meet a council member in private',h:'Open the Council, pick a member, and use one of your 3 monthly meetings.',done:()=>S.council.some(m=>m.met!=null&&m.met>=0),go:()=>openCouncil()},
+ {id:'civic',t:'Visit a police station, fire station or hospital',h:'Click a ★, ▲ or ✚ on the map.',done:()=>Object.values(S.civic||{}).some(c=>Object.keys(c.acts||{}).length),go:()=>openCivicList('fire')},
+ {id:'town',t:'Hold a town hall',h:'Actions (E) → Hold a town hall. Pick a district where approval is low.',done:()=>anyAct(/^th\d/),go:()=>openActions()},
+ {id:'cab',t:'Check on your cabinet',h:'The Cabinet tab. Hover a face to see how they feel about you.',done:()=>!!(S.seen||{}).cabinet,go:()=>openCabinet()},
+ {id:'proj',t:'Start a capital project',h:'Actions (E) → Start a capital project. It needs 7 council votes.',done:()=>(S.projects||[]).length>0,go:()=>openActions()},
+ {id:'fund',t:'Raise campaign money',h:'Campaign HQ (K) → Grassroots fundraiser.',done:()=>anyAct(/^fr_/),go:()=>openHQ()},
+ {id:'budget',t:'Send the council your budget in April',h:'In April, open the Budget office and submit.',done:()=>S.stage==='submitted'||S.stage==='adopted'||!!S.pending||(S.fyIndex||0)>(S.guide.fy0||0),go:()=>openBudget()}];
+const GUIDE_CAND=[
+ {id:'plat',t:'Choose your platform',h:'Three planks. If you win, they become your promises.',done:()=>!!S.promises,go:()=>openPromises()},
+ {id:'clock',t:'Start the clock',h:'Press Space or ▶ Resume.',done:()=>!S.paused||S.day>=5||nowM()>(S.guide.m0||0),go:()=>setPaused(false)},
+ {id:'doors',t:'Knock doors in a district',h:'Actions (E) → Knock doors. It builds support and name recognition.',done:()=>anyAct(/^kd\d/),go:()=>openActions()},
+ {id:'leaders',t:'Meet community leaders',h:'Actions (E) → Meet community leaders.',done:()=>anyAct(/^cg/),go:()=>openActions()},
+ {id:'fund',t:'Hold a grassroots fundraiser',h:'Campaign HQ (K). Money pays for ads, organizers and polls.',done:()=>anyAct(/^fr_/),go:()=>openHQ()},
+ {id:'poll',t:'Run a poll',h:'Campaign HQ → Latest poll. See where you stand against the mayor.',done:()=>((S.camp||{}).polls||[]).length>0,go:()=>openHQ()},
+ {id:'ad',t:'Run your first ad',h:'Campaign HQ → Ads. "Introduce yourself" raises name recognition.',done:()=>((S.camp||{}).ads||[]).length>0,go:()=>openHQ()},
+ {id:'forum',t:'Speak at a candidate forum',h:'Forums arrive as ♟ People events in the spring and summer.',done:()=>((S.stats||{}).forums||0)>0,go:()=>openDesk()},
+ {id:'endorse',t:'Ask a group for its endorsement',h:'Campaign HQ → Endorsements, before July.',done:()=>Object.keys(((S.camp||{}).seek)||{}).length>0,go:()=>openHQ()}];
+function guideList(){return isCand()?GUIDE_CAND:GUIDE_MAYOR}
+function guideInit(){if(!S||!S.started)return null;const key=isCand()?'cand':'mayor';if(!S.guide||S.guide.key!==key)S.guide={key,done:{},m0:nowM(),fy0:S.fyIndex||0,off:false};return S.guide}
+function guideCheck(){if(window.__noGuide||(S&&S.phase==='ai'))return;const G=guideInit();if(!G||G.off)return;let any=false;guideList().forEach(q=>{if(G.done[q.id])return;let ok=false;try{ok=q.done()}catch(e){}if(ok){G.done[q.id]=true;any=true;
+  if(isCand())recUp(0.01);else GROUPS.forEach(g=>addGroupMod(S.groups[g.id],'Getting to work',0.3));gainXP(S.mayor.focus||'dip',5);
+  const nx=guideList().find(x=>!G.done[x.id]);notify('good',`Goal complete: ${q.t}`,nx?`Next: ${nx.t}`:'You know the basics now.',nx?()=>{try{nx.go()}catch(e){}}:null)}});if(any){save();try{renderDesk()}catch(e){}}}
+function guideBox(){const G=guideInit();if(!G||G.off)return'';const L=guideList(),n=L.filter(q=>G.done[q.id]).length;if(n>=L.length)return'';const nx=L.filter(q=>!G.done[q.id]).slice(0,2);
+  return`<div class="guidebox"><div class="gb-h"><b>Getting started</b><span>${n} of ${L.length}</span><button class="gb-x" data-guideoff="1" title="Hide the goals">×</button></div><div class="gbar"><i style="width:${n/L.length*100}%;background:var(--amber)"></i></div>
+   ${nx.map((q,i)=>`<div class="gb-q${i?' later':''}"><div><b>${q.t}</b>${i?'':`<small>${q.h}</small>`}</div>${i?'':`<button class="btn" data-guide="${q.id}">Show me</button>`}</div>`).join('')}</div>`}
+const _renderDesk=renderDesk;renderDesk=function(){_renderDesk();try{const b=guideBox();if(b)$('desk').insertAdjacentHTML('afterbegin',b)}catch(e){}};
+document.addEventListener('click',e=>{const g=e.target.closest('[data-guide],[data-guideoff]');if(!g||!S)return;e.preventDefault();e.stopPropagation();
+  if(g.dataset.guideoff){S.guide.off=true;save();renderDesk();toast('Goals hidden.');return}const q=guideList().find(x=>x.id===g.dataset.guide);if(q){if(modalOpen){onClose=null;closeModal()}try{q.go()}catch(err){}}},true);
+
 function openLedger(){const L=S.log||[];openPanel('Everything that has happened, newest first','Ledger',L.length?`<div class="logl">${L.map(x=>`<div><span>${x.d}</span><p style="margin:0">${x.t}</p></div>`).join('')}</div>`:'<p class="note">Nothing yet. Start the clock with Space or ▶.</p>','ledger')}
 function openPolicies(){const ks=Object.keys(POLICIES);
   openPanel('Ongoing programs you control','Your initiatives',`<p>Mid-year, these are paid from the reserve fund. In April they go into the budget you send the council.</p>
@@ -3256,7 +3494,7 @@ function election(next){
   const share=clamp(20+S.approval*0.6+(mskill('cha')-8)*0.4+recordSwing()+rnd(-4,4),10,80),rival=clamp(60-S.approval*0.5+(amb?Math.max(0,-amb.opinion)/8:0)+rivalStrength()+rnd(-4,4),10,70);const won=share>rival;
   const rivalName=amb?`Councilmember ${amb.name} (${amb.seat})`:'your closest rival';
   const other=Math.max(0,100-share-rival);
-  if(won&&S.term===1){S.term=2;S.termStart=S.y*12+S.m;S.promises=null;S.deals=(S.deals||[]).filter(d=>d.status==='open');setTimeout(()=>{if(S.rival)S.rival=null;pickRival()},0);S.council.forEach(m=>m.limited=false);S.council.forEach((m,k)=>{if(hash(k,S.y)<.4){m.mods=[{t:'Newly elected',v:Math.round(rnd(-8,8)),perm:true}]}});recomputeAll(S);
+  if(won&&S.term===1){S.elY=elYear()+4;S.term=2;S.termStart=S.y*12+S.m;S.promises=null;S.deals=(S.deals||[]).filter(d=>d.status==='open');setTimeout(()=>{if(S.rival)S.rival=null;pickRival()},0);S.council.forEach(m=>m.limited=false);S.council.forEach((m,k)=>{if(hash(k,S.y)<.4){m.mods=[{t:'Newly elected',v:Math.round(rnd(-8,8)),perm:true}]}});recomputeAll(S);
     openModal('City election · October 2027','You won a second term',`<p>You took ${share.toFixed(1)}% of the vote to ${rival.toFixed(1)}% for ${rivalName}, with ${other.toFixed(1)}% split among the rest of the field. Memphis elects its mayor by plurality, with no runoff since a 1991 federal court ruling.</p>${S.rival?`<p class="note">${S.rival.name} ran on "${S.rival.slogan}"${atk.length?` and hit you on: ${atk.slice(0,3).map(x=>x.t).join(' ')}`:''}</p>`:''}${recordLines()}<p>Several council seats turned over. You can serve one more term; the next election is October 2031 and you are term-limited after it.</p><div class="row"><button class="btn primary" data-act="close">Start term two</button></div>`,false,next)}
   else{S.over=true;
     openModal(`City election · October ${S.y}`,won?'Term-limited, with a win':'You lost the election',`<p>${won?`Your approval carried your side's agenda to a ${share.toFixed(1)}% win, but the charter limits a mayor to two terms. Your time in office is done.`:`You took ${share.toFixed(1)}% to ${rival.toFixed(1)}% for ${rivalName}, who wins the mayor's office.`}</p>${S.rival?`<p class="note">${S.rival.name} ran on "${S.rival.slogan}"${atk.length?` and hit you on: ${atk.slice(0,3).map(x=>x.t).join(' ')}`:''}</p>`:''}${recordLines()}${summary()}<div class="row"><button class="btn primary" data-act="newgame">Run again</button></div>`,false,next)}
@@ -3265,11 +3503,14 @@ function summary(){const M=S.met;return`<div class="facts"><h4>Your record</h4><
 function showEnd(){openModal('Game over','Your time in office is over',`${summary()}<div class="row"><button class="btn primary" data-act="newgame">Run again</button></div>`)}
 function openHelp(){closePanel();openModal('How to play','Guide',`
   <div class="facts"><h4>Controls</h4><ul><li>WASD or the arrow keys pan the map; hold Shift to pan faster. Moving the mouse to the edge of the screen scrolls too (turn it off under Layers). You can also drag.</li><li>Scroll or pinch to zoom toward the cursor; Q and Z (or the + and − buttons on the right) zoom too, and Home shows the whole city. F, or the ◉ button, finds your mayor: the gold marker is at City Hall on weekdays, home on weekends, and wherever you go to act.</li><li>Hover any face or name (council members, suburban mayors, your cabinet, your own portrait) for a quick character card with their opinion of you and why. Click for the full page. News comes to you from a person: your cabinet for their departments, the local council member for neighborhood problems, a suburban mayor for regional ones.</li><li>People act on their own. Council members have allies and rivals (shown on their cards): allies vote together, so locking in one with a favor or a hook pulls their allies your way, and how an ally feels about you rubs off. Feuds, voting pacts, your opponent courting members, endorsement requests, cabinet requests and scandals arrive as ♟ People events. Ignoring them costs you, and some end up in your opponent's ads. An ambitious cabinet member may quietly build support for their own run; if you don't catch it, they quit and back your opponent.</li><li>Your cabinet (Cabinet tab) runs the city: chief of staff, police and fire chiefs, finance, public works, housing, economic development, MLGW, MATA and communications. Meet them, praise them or replace them. Unhappy ones leak to reporters; very unhappy ones quit.</li><li>Police stations (★), fire stations (▲) and hospitals (✚) are on the map. Click one to visit, fund equipment or programs, or fix problems there. Turn them off under Layers.</li><li>Scroll or pinch to zoom toward the cursor. Zoomed out you get the political map, with each council district in its own color. Zoom in and the camera tilts down into the 3D city.</li><li>Click a landmark or amber pin to open it. Click a district or precinct when those layers are on.</li><li>Time runs day by day. Space pauses and resumes; + and − (or the pips by the date) set speed 1–5. New business arrives on random days and pauses the game (turn that off under Layers). Each month closes on its last day and goes into the Ledger. N skips to the end of the month. B opens the budget, C the council, O public opinion, L the map layers. Keys 1–7 switch map modes: City, Political, Council opinion, Street condition, MPD precincts, Region, Public opinion.</li><li>Every menu has tabs along the top (Mayor, Opinion, Council, Region, Budget, Programs, Ledger) and a ← Back button that returns to the screen you came from. Backspace also goes back; Esc closes.</li></ul></div>
-  <div class="facts"><h4>The campaign and your money</h4><p class="note"><a href="#" data-act="moneyintro">Show the three-accounts introduction again</a></p><ul><li>You keep three separate accounts: the city treasury (the reserve fund, for services and projects), your campaign fund (for ads, staff, polls and rallies) and your personal money (your salary).</li><li>Campaign HQ (K): raise money from small donors and major donors (who expect things in return), buy ads that promote your record, defend it or attack your opponent, hire organizers, open field offices, poll the race and ask groups for endorsements. Your opponent raises and spends too.</li><li>Endorsements are decided July to September 2027, debates are September 9 and 23, and Election Day is Thursday, October 7, 2027. The vote comes from each population group's support and turnout, so money amplifies your record but can't replace it.</li><li>Your salary ($170,817 a year; $14,234.75 a month before deductions, about $9,600 after deductions) pays into a personal account. Spend it on optional wardrobe items, or put up to $25,000 into your campaign.</li></ul></div>
+  <div class="facts"><h4>Two ways to start</h4><ul><li><b>Start as mayor</b>: you take office in October 2026 with a year to go before the election.</li><li><b>Run for mayor</b>: you're a Memphian with a day job (pastor, nurse, teacher, small business owner and more) in March 2027. Pick three platform planks, knock doors, meet community leaders, speak out, raise money, run ads, win forums and debates, and take on the sitting mayor in October. Name recognition starts low; voters who don't know you won't vote for you. If you win, you're sworn in on January 1 and your platform becomes your promise list.</li></ul></div>
+  <div class="facts"><h4>After your term</h4><ul><li>The game goes on. Mayors can serve two terms. In your second term, a few months into the election year, you choose whom to endorse: a council ally, someone from your cabinet, or a newcomer. Your approval and your campaign carry them. If they win, you keep playing as the new mayor.</li><li>If you lose an election, or your successor does, you can keep playing as the winner, skip ahead and run again as a new candidate, or start over. The Mayors of Memphis in your game are listed as you go.</li></ul></div>
+  <div class="facts"><h4>Getting started goals</h4><p class="note">The Mayor's Desk shows a short list of goals that teach one thing at a time, with a Show me button. Hide it with ×.</p></div>
+  <div class="facts"><h4>The campaign and your money</h4><p class="note"><a href="#" data-act="moneyintro">Show the three-accounts introduction again</a></p><ul><li>You keep three separate accounts: the city treasury (the reserve fund, for services and projects), your campaign fund (for ads, staff, polls and rallies) and your personal money (your salary).</li><li>Campaign HQ (K): raise money from small donors and major donors (who expect things in return), buy ads that promote your record, defend it or attack your opponent, hire organizers, open field offices, poll the race and ask groups for endorsements. Your opponent raises and spends too.</li><li>Endorsements are decided July to September of each election year, debates are September 9 and 23, and Election Day is the first Thursday in October. The vote comes from each population group's support and turnout, so money amplifies your record but can't replace it.</li><li>Your salary ($170,817 a year; $14,234.75 a month before deductions, about $9,600 after deductions) pays into a personal account. Spend it on optional wardrobe items, or put up to $25,000 into your campaign.</li></ul></div>
   <div class="facts"><h4>Projects, stories and your desk</h4><ul><li>Start a capital project from Actions: repave a poorly rated road, rehab vacant homes in a neighborhood, or renovate a park. It goes to the council, out to bid, then takes months to build, with delays you have to handle. Pay from reserves month by month or borrow with bonds. You'll see each project on the map, and finished roads turn green in the street condition map.</li><li>Some decisions start stories that come back months later: backing a data center deal, ordering hot-spot patrols, or deciding who gets rehabbed homes. How they end goes on your public record, and your opponent uses that record in the election.</li><li>The Mayor's Desk (left side, or press I) gathers urgent decisions, council votes, projects and developing stories. Click any item to go there. Choose what pauses the clock from the full desk.</li></ul></div>
   <div class="facts"><h4>Taking action</h4><ul><li>Press E or click Actions to make your own moves at any time: propose ordinances to the council, sign executive orders, hold town halls in a district, meet with community leaders, hold press conferences and, in election years, rally your supporters.</li><li>Before you send an ordinance, you see a projected vote. Each member weighs their own priorities, their voters, their backers and how they feel about you, so some will vote against what their district wants. Lock in votes with favors and hooks.</li></ul></div>
   <div class="facts"><h4>Public opinion</h4><ul><li>Memphis is split into eight population groups: working families, homeowners and seniors, renters and bus riders, MSCS parents, the church community, young professionals, the business community, and city workers. Each has a size, a turnout rate, home districts, concerns and its own approval of you.</li><li>Your approval is their average, weighted by size and turnout. Each council district's approval comes from the groups that live there, so the same decision lands differently in District 2 and District 6.</li><li>Council members and suburban mayors want to keep their jobs. They follow their own voters' view of you, more strongly in the year before an election.</li><li>City indicators are colored green (good), yellow (neutral) or red (bad).</li></ul></div>
-  <div class="facts"><h4>The year</h4><ul><li>Council members are characters. Each has traits, a home district and an opinion of you from −100 to +100, built from the reasons listed on their page. Reasons fade over time. Each month you get 3 private meetings, and you can fund a $1M project in a member's district every 6 months. Frugal members resent that spending.</li><li>Favors and hooks: members owe you a favor when you grant their requests (blue pins in their home districts), fund their district projects or quietly protect them. Your inspector general's memos can hand you a hook. Spend a favor or a hook to lock a member's vote for the next council vote. Hooks can leak. Press V or open the Council to see the whip count.</li><li>Your mayor is a character too. You choose a name, look, up to 3 traits (one background) and spend 22 skill points at the start. Six skills (Diplomacy, Stewardship, Intrigue, Public Safety, Learning, Charisma) shape opinion, revenue, crime, schools, approval and hooks. They grow with experience from the work you do, a monthly lifestyle focus and training. Click your portrait at the top left.</li><li>Bartlett, Germantown, Collierville, Arlington, Lakeland and Millington are separate cities, outlined on the map. Their mayors are characters with their own relations score. Meet them, co-host events, and handle shared issues like mutual aid, annexation reserves, school buildings and water. Good relations help the regional economy; bad ones send the suburbs to Nashville against you.</li><li>Budget season (April), the June budget vote and elections pause the clock for you.</li><li>Fiscal year runs July–June. Write the next budget in April, the council votes in June, it takes effect July 1.</li><li>TCAP reading results arrive in June.</li><li>Unanswered problems expire and cost you approval and council goodwill. Handling an issue in a member's district earns a little goodwill from that member.</li><li>City elections: October 2027 and October 2031. Mayors are limited to two terms.</li></ul></div>
+  <div class="facts"><h4>The year</h4><ul><li>Council members are characters. Each has traits, a home district and an opinion of you from −100 to +100, built from the reasons listed on their page. Reasons fade over time. Each month you get 3 private meetings, and you can fund a $1M project in a member's district every 6 months. Frugal members resent that spending.</li><li>Favors and hooks: members owe you a favor when you grant their requests (blue pins in their home districts), fund their district projects or quietly protect them. Your inspector general's memos can hand you a hook. Spend a favor or a hook to lock a member's vote for the next council vote. Hooks can leak. Press V or open the Council to see the whip count.</li><li>Your mayor is a character too. You choose a name, look, up to 3 traits (one background) and spend 22 skill points at the start. Six skills (Diplomacy, Stewardship, Intrigue, Public Safety, Learning, Charisma) shape opinion, revenue, crime, schools, approval and hooks. They grow with experience from the work you do, a monthly lifestyle focus and training. Click your portrait at the top left.</li><li>Bartlett, Germantown, Collierville, Arlington, Lakeland and Millington are separate cities, outlined on the map. Their mayors are characters with their own relations score. Meet them, co-host events, and handle shared issues like mutual aid, annexation reserves, school buildings and water. Good relations help the regional economy; bad ones send the suburbs to Nashville against you.</li><li>Budget season (April), the June budget vote and elections pause the clock for you.</li><li>Fiscal year runs July–June. Write the next budget in April, the council votes in June, it takes effect July 1.</li><li>TCAP reading results arrive in June.</li><li>Unanswered problems expire and cost you approval and council goodwill. Handling an issue in a member's district earns a little goodwill from that member.</li><li>City elections are every four years in October. Mayors are limited to two terms.</li></ul></div>
   <div class="row"><button class="btn" data-act="newgame">Start over</button></div>`)}
 
 // ======================= MAP =======================
@@ -3508,7 +3749,7 @@ function camLoop(t){const dt=Math.min(.05,lastT?(t-lastT)/1000:0);lastT=t;timeSt
     if(dx||dy){panHeld=Math.min(1.2,panHeld+dt);const n=Math.hypot(dx,dy),z=map.getZoom(),zs=z<12?1.35:z<14?1.15:1,sp=(keysDown.has('shift')?2600:1300)*zs*(0.75+panHeld*0.6)*dt;if(flying){map.stop();flying=false}map.panBy([dx/n*sp,dy/n*sp],{duration:0})}else panHeld=0;
     let dz=0;if(keysDown.has('q')||keysDown.has('pagedown'))dz-=1;if(keysDown.has('z')||keysDown.has('pageup'))dz+=1;
     if(dz){if(flying){map.stop();flying=false}map.setZoom(clamp(map.getZoom()+dz*(keysDown.has('shift')?8:4.8)*dt,map.getMinZoom(),map.getMaxZoom()))}
-    if(!flying){const want=pitchFor(map.getZoom()),p=map.getPitch();if(Math.abs(p-want)>0.15)map.setPitch(p+(want-p)*Math.min(1,dt*9));if(Math.abs(map.getBearing())>0.01)map.setBearing(0)}
+    if(!flying&&!map.isEasing()&&!map.isZooming()&&!map.isMoving()){const want=pitchFor(map.getZoom()),p=map.getPitch();if(Math.abs(p-want)>0.15)map.setPitch(p+(want-p)*Math.min(1,dt*9));if(Math.abs(map.getBearing())>0.01)map.setBearing(0)}
   }
   requestAnimationFrame(camLoop)}
 window.addEventListener('keyup',e=>keysDown.delete(e.key.toLowerCase()));
@@ -3529,8 +3770,8 @@ function paintNb(){if(!map||!map.getLayer('nb-fill')||!S||!S.nb)return;const H=[
   if(S.mode==='region'||(S.mode==='public'&&(S.popView||'all')==='all')){const ex=['match',['get','n']];NB_IDS.forEach(id=>ex.push(NEIGHBORS[id].GIS,S.mode==='public'?apColor(sApp(id)):opColor(S.nb[id].opinion)));ex.push('#888');
     map.setPaintProperty('nb-fill','fill-color',ex);map.setPaintProperty('nb-fill','fill-opacity',['case',H,.72,.58])}
   else{map.setPaintProperty('nb-fill','fill-color',['match',['get','n'],...NB_IDS.flatMap(i=>[NEIGHBORS[i].GIS,NEIGHBORS[i].col]),'#888']);map.setPaintProperty('nb-fill','fill-opacity',['case',H,.22,.08])}}
-function setMode(id){if(!S)return;S.mode=id;applyLayers();refreshHUD();save();const m=MODES.find(x=>x.id===id);toast(`Map mode: ${m.n}. ${m.d}`)}
-function renderModes(){const el=$('modes');if(!el||!S)return;const mode=S.mode||'real';
+function setMode(id){if(!S||!MODES.find(m=>m.id===id))return;S.mode=id;applyLayers();refreshHUD();save();const m=MODES.find(x=>x.id===id);toast(`Map mode: ${m.n}. ${m.d}`)}
+function renderModes(){const el=$('modes');if(!el||!S)return;if(!MODES.find(m=>m.id===S.mode))S.mode='real';const mode=S.mode;
   el.innerHTML=MODES.map((m,i)=>`<button data-mode="${m.id}" class="${mode===m.id?'on':''}" title="${m.n} (${i+1}): ${m.d}" aria-label="${m.n}" aria-pressed="${mode===m.id}">${m.ic}<kbd>${i+1}</kbd></button>`).join('')+`<span class="modename">${MODES.find(m=>m.id===mode).n}</span>`}
 const DCOL_EXPR=()=>['match',['get','d'],1,DCOL[1],2,DCOL[2],3,DCOL[3],4,DCOL[4],5,DCOL[5],6,DCOL[6],7,DCOL[7],'#888'];
 function paintCouncil(){if(!map||!map.getLayer('council-fill')||!S)return;const mode=S.mode||'real',H=['boolean',['feature-state','hover'],false];
@@ -3622,7 +3863,7 @@ document.addEventListener('click',e=>{
   else if(a==='shop')openShop();
   else if(a==='household')openHousehold();
   else if(a==='hhmove')openMove(b.dataset.id);
-  else if(a==='hhgo')doMove(b.dataset.id,b.dataset.mode,b.dataset.mode==='own'?+b.dataset.opt:b.dataset.opt);
+  else if(a==='hhgo')doMove(b.dataset.id,b.dataset.hmode,b.dataset.hmode==='own'?+b.dataset.opt:b.dataset.opt);
   else if(a==='introok'||a==='introskip'){S.seenMoneyIntro=true;if(a==='introskip'){try{localStorage.setItem('bcm-nomoneyintro','1')}catch(e){}}save();closeModal()}
   else if(a==='finances')openFinances();
   else if(a==='moneyintro')openMoneyIntro();
@@ -3669,8 +3910,8 @@ document.addEventListener('click',e=>{
   else if(a==='policies')openPolicies();
   else if(a==='help')openHelp();
   else if(a==='layers')toggleLayersBox();
-  else if(a==='zin')map&&map.easeTo({zoom:Math.min(18.5,map.getZoom()+1.6),duration:250});
-  else if(a==='zout')map&&map.easeTo({zoom:Math.max(9.2,map.getZoom()-2.6),duration:250});
+  else if(a==='zin'){if(map){const z=Math.min(18.5,map.getZoom()+1.6);map.easeTo({zoom:z,pitch:pitchFor(z),duration:300})}}
+  else if(a==='zout'){if(map){const z=Math.max(9.2,map.getZoom()-2.6);map.easeTo({zoom:z,pitch:pitchFor(z),duration:300})}}
   else if(a==='home')camFly({...HOME_VIEW,speed:1.6});
     else if(a==='gompd')flyTo('mpd',true);
   else if(a==='showDistricts'){closeModal();setMode('opinion');camFly({...HOME_VIEW,speed:1.6})}
@@ -3720,15 +3961,15 @@ function save(){if(!S||!S.started)return;try{localStorage.setItem(KEY,JSON.strin
 function load(){try{const t=localStorage.getItem(KEY);if(!t)return null;const s=JSON.parse(t);return s&&s.started?s:null}catch(e){return null}}
 
 // ======================= BOOT =======================
-function beginTerm(cr){S=newState();const c=cr||newCR();S.mayor={...c,look:{...(c.look||defaultLook(c.g))},name:(c.name||'Mayor').trim(),skills:{...c.skills},traits:[...c.traits],xp:{},trained:-99,frame:'#f2a93b'};$('start').classList.remove('creating');$('app').classList.remove('pre');assignHomes();initGroups(S);recomputeAll(S);S.started=true;spawn(S,EVENTS[0],{expires:99});queueNewBusiness(null);pickRival();campInit(S);homeInit(S);S.mf={r0:S.reserve};save();$('start').hidden=true;prevMet=null;applyLayers();refreshHUD();
-  camFly({center:[LM.cityhall.lon,LM.cityhall.lat],zoom:15.6,speed:0.9});setTimeout(()=>{if(!S.promises)openPromises()},900);
+function beginTerm(cr,quiet){S=newState();const c=cr||newCR();S.mayor={...c,look:{...(c.look||defaultLook(c.g))},name:(c.name||'Mayor').trim(),skills:{...c.skills},traits:[...c.traits],xp:{},trained:-99,frame:'#f2a93b'};$('start').classList.remove('creating');$('app').classList.remove('pre');assignHomes();initGroups(S);recomputeAll(S);S.started=true;spawn(S,EVENTS[0],{expires:99});queueNewBusiness(null);pickRival();campInit(S);homeInit(S);S.mf={r0:S.reserve};save();$('start').hidden=true;prevMet=null;applyLayers();refreshHUD();
+  S.phase='mayor';camFly({center:[LM.cityhall.lon,LM.cityhall.lat],zoom:quiet?13:15.6,speed:0.9});if(quiet)return;setTimeout(()=>{if(!S.promises)openPromises()},900);
   setTimeout(()=>openPlace('cityhall'),2600);toast(`Sworn in, Mayor ${S.mayor.name.split(' ').pop()}. Time is paused: read your briefing, then press Space or ▶.`)}
 // ---- character creation ----
 const SKINS=['#5a3825','#6b4226','#8d5524','#a8693f','#c68642','#e0ac69','#f1c27d','#ffdbac'],HAIRC=['#17110d','#2c1d13','#3d281a','#5a3d26','#8a6440','#b9b4ab'];
 let CR=null;
 function newCR(){return{name:'',g:'m',age:45,ptSkin:3,ptHair:1,ptStyle:0,ptGlasses:false,ptBeard:false,look:defaultLook('m'),frame:'#f2a93b',traits:[],skills:{dip:4,stew:4,intr:4,safe:4,learn:4,cha:4},focus:'dip'}}
 function crSpent(){return Object.values(CR.skills).reduce((a,v)=>a+v-SKILL_BASE,0)}
-function renderCreate(){const left=SKILL_POOL-crSpent();const bgs=CR.traits.filter(t=>MTRAITS[t].bg).length;
+function renderCreate(){const left=SKILL_POOL-crSpent();{const run=!!CR.run;$('cOccL').hidden=!run;if(run){CR.occ=CR.occ||'nonprofit';$('cOcc').innerHTML=Object.entries(OCCS).map(([k,o])=>`<option value="${k}" ${CR.occ===k?'selected':''}>${o.n} · $${o.pay.toLocaleString()} a year · ${o.d}</option>`).join('')}const h=$('create').querySelector('h2');if(h)h.textContent=run?'Create your candidate':'Create your mayor';$('cGo').textContent=run?'Launch your campaign':'Take the oath'}const bgs=CR.traits.filter(t=>MTRAITS[t].bg).length;
   $('cPt').innerHTML=portrait({...CR,name:CR.name||'Mayor'},140);
   $('cSkin').innerHTML='<span class="note" style="min-width:70px">Skin</span>'+SKINS.map((c,i)=>`<button type="button" class="sw ${CR.ptSkin===i?'on':''}" style="background:${c}" data-skin="${i}" aria-label="Skin tone ${i+1}"></button>`).join('');
   $('cHair').innerHTML='<span class="note" style="min-width:70px">Hair</span>'+HAIRC.map((c,i)=>`<button type="button" class="sw ${CR.ptHair===i?'on':''}" style="background:${c}" data-hair="${i}" aria-label="Hair color ${i+1}"></button>`).join('');
@@ -3755,13 +3996,14 @@ document.addEventListener('click',e=>{if(!CR||$('create').hidden)return;const t=
   const hr=t.closest('[data-hair]');if(hr){CR.ptHair=+hr.dataset.hair;renderCreate();return}
   if(t.closest('#cRand')){randomCR();return}
   if(t.closest('#cBack')){$('create').hidden=true;$('intro').hidden=false;$('start').classList.remove('creating');return}
-  if(t.closest('#cGo')){if((CR.name||'').trim().length<2){$('cName').focus();return}beginTerm(CR);return}});
+  if(t.closest('#cGo')){if((CR.name||'').trim().length<2){$('cName').focus();return}if(CR.run)beginCampaign(CR,!!CR.keep);else beginTerm(CR);return}});
 document.addEventListener('input',e=>{if(!CR||$('create').hidden)return;const t=e.target;
   if(t.id==='cName'){CR.name=t.value;$('cGo').disabled=t.value.trim().length<2;$('cPt').innerHTML=portrait({...CR,name:CR.name||'Mayor'},140)}
   else if(t.id==='cAge'){CR.age=clamp(+t.value||45,30,75);$('cPt').innerHTML=portrait({...CR,name:CR.name||'Mayor'},140)}});
 document.addEventListener('change',e=>{if(!CR||$('create').hidden)return;const t=e.target;
+  if(t.id==='cOcc'){CR.occ=t.value;return}
   if(t.id==='cG'){CR.g=t.value;const old=CR.look||{};CR.look={...defaultLook(CR.g),suitC:old.suitC||0,glasses:old.glasses||'none'};renderCreate()}else if(t.id==='cFocus'){CR.focus=t.value}else if(t.id==='cAge'){CR.age=clamp(+t.value||45,30,75);t.value=CR.age;renderCreate()}});
-function migrate(s){if(!s)return s;if(!s.mayor)s.mayor=defaultMayor('Mayor');s.mayor.xp=s.mayor.xp||{};if(s.day==null)s.day=1;if(s.speed==null)s.speed=2;if(s.paused==null)s.paused=true;if(s.autoPause==null)s.autoPause=true;s.queue=s.queue||[];s.log=s.log||[];s.mode=s.mode||'real';if(s.slots==null)s.slots=3;s.commit=s.commit||{};{const fresh=initNeighbors();s.nb=s.nb||{};for(const id in fresh)if(!s.nb[id])s.nb[id]=fresh[id]}s.council.forEach(m=>{if(m.favors==null)m.favors=0;if(m.hook===undefined)m.hook=null});
+function migrate(s){if(!s)return s;if(!s.phase)s.phase='mayor';if(!s.mayor)s.mayor=defaultMayor('Mayor');s.mayor.xp=s.mayor.xp||{};if(s.day==null)s.day=1;if(s.speed==null)s.speed=2;if(s.paused==null)s.paused=true;if(s.autoPause==null)s.autoPause=true;s.queue=s.queue||[];s.log=s.log||[];s.mode=s.mode||'real';if(s.slots==null)s.slots=3;s.commit=s.commit||{};{const fresh=initNeighbors();s.nb=s.nb||{};for(const id in fresh)if(!s.nb[id])s.nb[id]=fresh[id]}s.council.forEach(m=>{if(m.favors==null)m.favors=0;if(m.hook===undefined)m.hook=null});
   s.council.forEach((m,k)=>{const c=COUNCIL.find(x=>x.seat===m.seat)||COUNCIL[k];Object.assign(m,{g:c.g,age:c.age,traits:c.traits,name:m.name||c.name});
     if(!m.mods){const old=m.op==null?50:m.op;m.mods=[{t:'First impressions',v:Math.round((hash(k,9)-.5)*16),perm:true}];if(Math.abs(old-50)>=1)m.mods.push({t:'Past dealings',v:Math.round((old-50)*2)});m.met=-1;m.funded=-99}});
   s.council.forEach(m=>{if(m.limited==null)m.limited=TERM_LIMITED.includes(m.name)});
@@ -3774,7 +4016,7 @@ function start(data){
   if(saved)$('bLoad').hidden=false;
   if(data&&data.S&&data.S.started)$('start').hidden=true;else $('app').classList.add('pre');
   refreshHUD();
-  $('bNew').onclick=openCreate;
+  $('bNew').onclick=()=>{CR=newCR();openCreate()};$('bRun').onclick=()=>{CR=newCR();CR.run=true;openCreate()};
   $('bLoad').onclick=()=>{S=migrate(load())||S;assignHomes();S.started=true;$('app').classList.remove('pre');$('start').hidden=true;applyLayers();refreshHUD();camFly({center:[-90.02,35.135],zoom:12.4,speed:1.2})};
   if(window.maplibregl)initMap();else window.addEventListener('mlready',initMap,{once:true});
 }
@@ -3798,6 +4040,6 @@ window.bluffMusicContext = () => {
 window.claude?.hot?.snapshot?.(()=>({S}));
 window.claude?.hot?.ready?window.claude.hot.ready(start):start(window.claude?.hot?.data??{});
 </script>
-<script src="music.js?v=20"></script>
+<script src="music.js?v=21"></script>
 </body>
 </html>
