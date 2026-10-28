@@ -100,7 +100,7 @@
     const vertices=new Float32Array(count);let at=0;for(const m of chunks){vertices.set(m,at);at+=m.length;}
     signature=sig;pendingVertices=vertices;map.triggerRepaint();
   }
-  function sync(){enabled=state()?.layers.bld!==false;if(map){schedule();map.triggerRepaint();}}
+  function sync(){if(typeof state!=='function')return;enabled=state()?.layers.bld!==false;if(map){schedule();map.triggerRepaint();}}
   function install(options){map=options.map;state=options.state;
     const layer={id:'house-roofs',type:'custom',renderingMode:'3d',
       onAdd(_map,gl){

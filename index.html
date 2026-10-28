@@ -634,7 +634,7 @@ details.analysis{margin-top:6px}details.analysis summary{cursor:pointer;color:va
   function next(){if(k>=urls.length){window.__mlFail=true;window.dispatchEvent(new Event('mlready'));return}const s=document.createElement('script');s.src=urls[k++];s.onload=()=>window.dispatchEvent(new Event('mlready'));s.onerror=next;document.head.appendChild(s)}next()})();
 </script>
 <script src="city-buildings.js?v=25.6"></script>
-<script src="city-houses.js?v=25.6"></script>
+<script src="city-houses.js?v=25.6b"></script>
 <script>
 "use strict";
 // ======================= LOADING SCREEN =======================
@@ -4339,7 +4339,7 @@ window.addEventListener('keydown',e=>{if(!S||!S.started||!$('start').hidden||mod
 // ======================= ONLY THE MAYOR =======================
 // A candidate (or anyone not in office) is an ordinary citizen: no council meetings, votes, favors, deals, budget,
 // executive orders, city money, cabinet, regional diplomacy or the mayor's platform. One gate covers every button.
-function inOffice(){return!!S&&S.phase==='mayor'}
+function inOffice(){return!!S&&S.phase!=='cand'&&S.phase!=='ai'}
 const MAYOR_ACTS=new Set(['acceptAmend','budget','cabinet','callfavor','countymeet','dealaccept','dealcounter','dealrefuse','exec','fund','maintcut','maintrestore','meet','meetgroup','nbgift','nbmeet','negotiate','plan','planD','planFund','planSite','plantype','policies','presser','projpause','propose','propwhip','rally','resetBudget','sendproj','sendprop','submitBudget','toggle','townhall','train','usehook','vetoAmend','whip','wmeet','platform','sotc','vetoAmend']);
 const MAYOR_DATA=['data-staff','data-civ','data-push','data-news','data-sotc','data-sotcgo','data-div'];
 function mayorOnlyBtn(b){if(!b||!b.dataset)return false;if(b.dataset.act&&MAYOR_ACTS.has(b.dataset.act))return true;if(b.dataset.news==='press'||b.dataset.news==='int')return true;
