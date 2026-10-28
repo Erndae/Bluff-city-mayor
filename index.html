@@ -13,7 +13,7 @@
 <style>
 body{margin:0}
 
-/* Layout: full-bleed night map of Memphis; civic-ledger HUD and a right-hand dossier panel float over it. Single dark look by design. */
+/* Daylight city-builder map with a contrasting civic-ledger HUD. */
 :root{
   --ink:#0d1822; --panel:#13212d; --panel2:#1a2c3b; --line:#2a4052; --text:#ece4d3; --muted:#9caab4;
   --amber:#f2a93b; --good:#5cc28d; --bad:#e8644f; --warn:#e6c547; --river:#2f6f9e;
@@ -180,7 +180,7 @@ button.seat:hover{border-color:var(--amber)}
 .seatrow{display:grid;grid-template-columns:auto 1fr auto;gap:10px;align-items:center}
 .seatinfo{min-width:0;display:flex;flex-direction:column;gap:3px}
 .opn{font-family:var(--f-mono);font-size:18px;font-weight:500;font-variant-numeric:tabular-nums}
-.pt{display:block;border-radius:5px;flex:none}
+.pt{display:block;border-radius:12px;flex:none}
 .traits{display:flex;flex-wrap:wrap;gap:4px}
 .trait{display:inline-flex;align-items:center;gap:4px;font-family:var(--f-label);font-weight:600;font-size:12.5px;letter-spacing:.03em;padding:1px 7px 1px 5px;border-radius:4px;border:1px solid var(--tc);color:var(--text);background:color-mix(in srgb,var(--tc) 18%,transparent);cursor:help}
 .trait.sm{padding:0 5px;font-size:11.5px}
@@ -451,6 +451,7 @@ details.analysis{margin-top:6px}details.analysis summary{cursor:pointer;color:va
 .card.story{border-left:3px solid #5aa7d8}.storytag{font-family:var(--f-label);font-weight:600;font-size:11.5px;letter-spacing:.1em;text-transform:uppercase;color:#5aa7d8;margin-bottom:2px}
 @media (max-width:640px){.grow{grid-template-columns:30px minmax(0,1fr) 44px;}.grow .gbar,.grow .gst{display:none}}
 </style>
+<link rel="stylesheet" href="city-design.css?v=18">
 
 <div id="app">
   <div id="map" aria-label="Map of Memphis"></div>
@@ -566,6 +567,7 @@ details.analysis{margin-top:6px}details.analysis summary{cursor:pointer;color:va
 (function(){const urls=['https://cdn.jsdelivr.net/npm/maplibre-gl@4.7.1/dist/maplibre-gl.js','https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js'];let k=0;
   function next(){if(k>=urls.length){window.__mlFail=true;window.dispatchEvent(new Event('mlready'));return}const s=document.createElement('script');s.src=urls[k++];s.onload=()=>window.dispatchEvent(new Event('mlready'));s.onerror=next;document.head.appendChild(s)}next()})();
 </script>
+<script src="city-buildings.js?v=18"></script>
 <script>
 "use strict";
 // ======================= PLACES =======================
@@ -701,6 +703,7 @@ function opColor(o){const st=[[-60,[192,57,43]],[-20,[232,100,79]],[0,[140,146,1
   for(let i=0;i<st.length-1;i++){const[a,ca]=st[i],[b,cb]=st[i+1];if(o<=b){const t=(o-a)/(b-a);return'#'+ca.map((v,j)=>Math.round(v+(cb[j]-v)*t).toString(16).padStart(2,'0')).join('')}}return'#2e9e5b'}
 function homeOf(m){return m.home||m.d}
 // Procedural portrait.
+function portraitMouth(m){return m.opinion < -15?'M44 58 Q50 54 56 58':m.opinion > 10||m.traits?.includes('gregarious')?'M44 55 Q50 63 56 55':'M44 56 Q50 59 56 56'}
 function portrait(m,w){if(m.look)return portraitLook(m,w);const h=Math.round(w*1.25),r=k=>hash(m.name.length*31+k,m.name.charCodeAt(0)*7+m.name.charCodeAt(1));
   const skins=['#5a3825','#6b4226','#8d5524','#a8693f','#c68642','#e0ac69','#f1c27d','#ffdbac'],skin=skins[m.ptSkin!=null?m.ptSkin:Math.floor(r(1)*skins.length)];
   const HAIRS=['#17110d','#2c1d13','#3d281a','#5a3d26','#8a6440','#b9b4ab'];const gray=m.ptHair!=null?m.ptHair===5:(m.age>=58&&r(2)<.7);const hairs=HAIRS.slice(0,5);const hair=m.ptHair!=null?HAIRS[m.ptHair]:gray?(r(3)<.5?'#b9b4ab':'#8e8a84'):hairs[Math.floor(r(4)*hairs.length)];
@@ -713,13 +716,13 @@ function portrait(m,w){if(m.look)return portraitLook(m,w);const h=Math.round(w*1
   const neck=f?`<path d="M42 60 L58 60 L60 72 L40 72Z" fill="${skin}"/>`:`<path d="M41 60 L59 60 L61 74 L39 74Z" fill="${skin}"/>`;
   const body=`<path d="M8 125 Q10 82 38 74 L50 84 L62 74 Q90 82 92 125Z" fill="${suit}"/>`+(f?`<path d="M38 74 L50 92 L62 74 L58 72 L50 84 L42 72Z" fill="#e9e4da"/>`:`<path d="M40 73 L50 86 L60 73 L56 71 L50 80 L44 71Z" fill="#ecebe7"/><path d="M48.5 80 L51.5 80 L53 100 L50 104 L47 100Z" fill="${['#8c2f2f','#2f4f8c','#7a6a2a','#3f6b4f'][Math.floor(r(8)*4)]}"/>`);
   const face=`<ellipse cx="50" cy="44" rx="16" ry="19" fill="${skin}"/><ellipse cx="34" cy="46" rx="3" ry="5" fill="${skin}"/><ellipse cx="66" cy="46" rx="3" ry="5" fill="${skin}"/>
-   <ellipse cx="44" cy="45" rx="1.9" ry="2.2" fill="#1a1410"/><ellipse cx="56" cy="45" rx="1.9" ry="2.2" fill="#1a1410"/>
+   <ellipse cx="44" cy="45" rx="3.2" ry="3.8" fill="#fff9ee"/><ellipse cx="56" cy="45" rx="3.2" ry="3.8" fill="#fff9ee"/><ellipse cx="44.5" cy="45.5" rx="1.9" ry="2.6" fill="#302c32"/><ellipse cx="55.5" cy="45.5" rx="1.9" ry="2.6" fill="#302c32"/><circle cx="45.2" cy="44.5" r=".8" fill="white"/><circle cx="56.2" cy="44.5" r=".8" fill="white"/><ellipse cx="39" cy="51" rx="3" ry="1.5" fill="#e88776" opacity=".25"/><ellipse cx="61" cy="51" rx="3" ry="1.5" fill="#e88776" opacity=".25"/>
    <path d="M40 40 Q44 38 47 40" stroke="${gray?'#7d776f':'#1a1410'}" stroke-width="1.4" fill="none"/><path d="M53 40 Q56 38 60 40" stroke="${gray?'#7d776f':'#1a1410'}" stroke-width="1.4" fill="none"/>
-   <path d="M50 46 Q48.5 51 50.5 52" stroke="rgba(0,0,0,.25)" stroke-width="1.2" fill="none"/><path d="M44.5 55.5 Q50 ${58+r(9)*2} 55.5 55.5" stroke="#5a2e26" stroke-width="1.5" fill="none" stroke-linecap="round"/>`+
+   <path d="M50 46 Q48.5 51 50.5 52" stroke="rgba(0,0,0,.25)" stroke-width="1.2" fill="none"/><path d="${portraitMouth(m)}" stroke="#5a2e26" stroke-width="1.5" fill="none" stroke-linecap="round"/>`+
    (glasses?`<g stroke="#20201f" stroke-width="1.2" fill="rgba(255,255,255,.08)"><rect x="38.5" y="41" width="10" height="7.5" rx="2.5"/><rect x="51.5" y="41" width="10" height="7.5" rx="2.5"/><path d="M48.5 44 L51.5 44"/></g>`:'')+
    (!f&&(m.ptBeard!=null?m.ptBeard:r(10)<.35)?`<path d="M42 57 Q50 64 58 57 Q57 62 50 63 Q43 62 42 57Z" fill="${hair}" opacity=".85"/>`:'');
-  return`<svg width="${w}" height="${h}" viewBox="0 0 100 125" role="img" aria-label="Portrait of ${m.name}" class="pt"><defs><radialGradient id="bg${m.name.length}${w}" cx="50%" cy="35%" r="70%"><stop offset="0" stop-color="#2a3c4c"/><stop offset="1" stop-color="#101a23"/></radialGradient></defs>
-   <rect width="100" height="125" fill="url(#bg${m.name.length}${w})"/>${hairBack}${neck}${body}${face}${hairFront}<rect x="1.5" y="1.5" width="97" height="122" rx="4" fill="none" stroke="${frame}" stroke-width="3"/></svg>`}
+  return`<svg width="${w}" height="${h}" viewBox="0 0 100 125" role="img" aria-label="Portrait of ${m.name}" class="pt"><defs><radialGradient id="bg${m.name.length}${w}" cx="50%" cy="35%" r="70%"><stop offset="0" stop-color="#9ddbc9"/><stop offset="1" stop-color="#347f91"/></radialGradient></defs>
+   <rect width="100" height="125" fill="url(#bg${m.name.length}${w})"/>${neck}${body}<g transform="translate(-15 -13.2) scale(1.3)">${hairBack}${face}${hairFront}</g><rect x="1.5" y="1.5" width="97" height="122" rx="12" fill="none" stroke="${frame}" stroke-width="3"/></svg>`}
 // ======================= THE MAYOR (player character) =======================
 const SKILLS=[{k:'dip',n:'Diplomacy',ic:'◆',d:'Council and neighbor opinion of you, and how much meetings earn.'},
  {k:'stew',n:'Stewardship',ic:'$',d:'City revenue: about $0.8M a year for each point above 8.'},
@@ -2215,9 +2218,9 @@ function portraitLook(m,w){const h=Math.round(w*1.25),L=m.look;
   else if(B==='goatee')beard=`<path d="M43 54 Q50 50.5 57 54 Q50 55.8 43 54Z" fill="${hair}"/><path d="M45.5 58.5 Q50 60.5 54.5 58.5 L53.5 64.5 Q50 66.5 46.5 64.5Z" fill="${hair}"/>`;
   else if(B==='chinstrap')beard=`<path d="M34.5 46 Q35 65 50 66.5 Q65 65 65.5 46 L63.5 47 Q62.5 61.5 50 63 Q37.5 61.5 36.5 47Z" fill="${hair}"/>`;
   else if(B==='full')beard=`<path d="M34.5 45 Q33.5 67 50 68 Q66.5 67 65.5 45 Q63 58 57 58.5 Q50 56.5 43 58.5 Q37 58 34.5 45Z" fill="${hair}"/><path d="M43 54 Q50 50.5 57 54 Q50 55.8 43 54Z" fill="${hair}"/>`;
-  const mouth=`<path d="M44.5 56 Q50 58.5 55.5 56" stroke="#5a2e26" stroke-width="1.5" fill="none" stroke-linecap="round"/>`;
+  const mouth=`<path d="${portraitMouth(m)}" stroke="#5a2e26" stroke-width="1.5" fill="none" stroke-linecap="round"/>`;
   const face=`<ellipse cx="50" cy="44" rx="16" ry="19" fill="${skin}"/><ellipse cx="34" cy="46" rx="3" ry="5" fill="${skin}"/><ellipse cx="66" cy="46" rx="3" ry="5" fill="${skin}"/>
-   <ellipse cx="44" cy="45" rx="1.9" ry="2.2" fill="#1a1410"/><ellipse cx="56" cy="45" rx="1.9" ry="2.2" fill="#1a1410"/>
+   <ellipse cx="44" cy="45" rx="3.2" ry="3.8" fill="#fff9ee"/><ellipse cx="56" cy="45" rx="3.2" ry="3.8" fill="#fff9ee"/><ellipse cx="44.5" cy="45.5" rx="1.9" ry="2.6" fill="#302c32"/><ellipse cx="55.5" cy="45.5" rx="1.9" ry="2.6" fill="#302c32"/><circle cx="45.2" cy="44.5" r=".8" fill="white"/><circle cx="56.2" cy="44.5" r=".8" fill="white"/><ellipse cx="39" cy="51" rx="3" ry="1.5" fill="#e88776" opacity=".25"/><ellipse cx="61" cy="51" rx="3" ry="1.5" fill="#e88776" opacity=".25"/>
    <path d="M40 40 Q44 38 47 40" stroke="${gray?'#7d776f':'#1a1410'}" stroke-width="1.4" fill="none"/><path d="M53 40 Q56 38 60 40" stroke="${gray?'#7d776f':'#1a1410'}" stroke-width="1.4" fill="none"/>
    <path d="M50 46 Q48.5 51 50.5 52" stroke="rgba(0,0,0,.25)" stroke-width="1.2" fill="none"/>`;
   const ear=L.ear==='studs'?`<circle cx="33.5" cy="50.5" r="1.3" fill="#e8d28a"/><circle cx="66.5" cy="50.5" r="1.3" fill="#e8d28a"/>`:L.ear==='hoops'?`<circle cx="33.5" cy="53.5" r="3" fill="none" stroke="#e0c46c" stroke-width="1.1"/><circle cx="66.5" cy="53.5" r="3" fill="none" stroke="#e0c46c" stroke-width="1.1"/>`:'';
@@ -2225,8 +2228,8 @@ function portraitLook(m,w){const h=Math.round(w*1.25),L=m.look;
     G==='round'?`<g stroke="#8a6a2a" stroke-width="1.1" fill="rgba(255,255,255,.08)"><circle cx="44" cy="45" r="4.6"/><circle cx="56" cy="45" r="4.6"/><path d="M48.6 44.5 L51.4 44.5"/></g>`:
     G==='designer'?`<g stroke="#7a4a22" stroke-width="1.8" fill="rgba(255,255,255,.06)"><rect x="38" y="40.5" width="10.5" height="8" rx="3.2"/><rect x="51.5" y="40.5" width="10.5" height="8" rx="3.2"/><path d="M48.5 43.5 Q50 42.5 51.5 43.5" stroke="#d6b04c" stroke-width="1.2"/></g>`:G==='bold'?`<g stroke="#111" stroke-width="2.2" fill="rgba(255,255,255,.06)"><rect x="38" y="40.5" width="11" height="8.5" rx="1.5"/><rect x="51" y="40.5" width="11" height="8.5" rx="1.5"/><path d="M49 44 L51 44"/></g>`:'';
   const id='bgL'+(m.name||'').length+w;
-  return`<svg width="${w}" height="${h}" viewBox="0 0 100 125" role="img" aria-label="Portrait of ${m.name}" class="pt"><defs><radialGradient id="${id}" cx="50%" cy="35%" r="70%"><stop offset="0" stop-color="#2a3c4c"/><stop offset="1" stop-color="#101a23"/></radialGradient></defs>
-   <rect width="100" height="125" fill="url(#${id})"/>${back}${neck}${body}${stoleS}${pocketS}${pinS}${face}${beard}${mouth}${ear}${gl}${HT&&HT!=='none'&&['afro','bun','twists','locs'].includes(H)?'':front}${hatS}<rect x="1.5" y="1.5" width="97" height="122" rx="4" fill="none" stroke="${frame}" stroke-width="3"/></svg>`}
+  return`<svg width="${w}" height="${h}" viewBox="0 0 100 125" role="img" aria-label="Portrait of ${m.name}" class="pt"><defs><radialGradient id="${id}" cx="50%" cy="35%" r="70%"><stop offset="0" stop-color="#9ddbc9"/><stop offset="1" stop-color="#347f91"/></radialGradient></defs>
+   <rect width="100" height="125" fill="url(#${id})"/>${neck}${body}${stoleS}${pocketS}${pinS}<g transform="translate(-15 -13.2) scale(1.3)">${back}${face}${beard}${mouth}${ear}${gl}${HT&&HT!=='none'&&['afro','bun','twists','locs'].includes(H)?'':front}${hatS}</g><rect x="1.5" y="1.5" width="97" height="122" rx="12" fill="none" stroke="${frame}" stroke-width="3"/></svg>`}
 function lookControls(o){const L=o.look;const own=(S&&o===S.mayor&&S.purse)?S.purse.owned:{};const HATS=[['none','None']].concat(own.cap?[['cap','Ball cap']]:[],own.fedora?[['fedora','Fedora']]:[],own.churchhat?[['churchhat','Church hat']]:[]);const sel=(k,opts,label)=>`<label>${label}<select data-look="${k}">${opts.map(([v,n])=>`<option value="${v}" ${L[k]===v?'selected':''}>${n}</option>`).join('')}</select></label>`;
   const sw=(k,cols,label)=>`<div class="swatches"><span class="note" style="min-width:70px">${label}</span>${cols.map((c,i)=>`<button type="button" class="sw ${L[k]===i?'on':''}" style="background:${c}" data-lookc="${k}" data-i="${i}" aria-label="${label} ${i+1}"></button>`).join('')}</div>`;
   return`<div class="lookgrid">${sel('hair',HAIRSTYLES,'Hairstyle')}${sel('beard',BEARDS,'Facial hair')}${sel('outfit',OUTFITS.concat(own.threepiece?[['threepiece','Three-piece suit']]:[]),'Clothing')}${sel('glasses',GLASSES.concat(own.designer?[['designer','Designer frames']]:[]),'Glasses')}${sel('ear',EARRINGS,'Earrings')}${HATS.length>1?sel('hat',HATS,'Hat'):''}<label class="ck"><input type="checkbox" data-look="pin" ${L.pin?'checked':''}> Lapel pin</label>${own.pocket?`<label class="ck"><input type="checkbox" data-look="pocket" ${L.pocket?'checked':''}> Pocket square</label>`:''}${own.stole?`<label class="ck"><input type="checkbox" data-look="stole" ${L.stole?'checked':''}> Kente stole</label>`:''}</div>
@@ -2895,7 +2898,7 @@ function civFixHospital(id){const c=civState(id);if(CIVMAP[id].type==='hospital'
 // ---------- map markers ----------
 let civMarkers=[];
 function renderCivic(){if(!mapReady||!S)return;if(!civMarkers.length){for(const t in CIV)CIV[t].list.forEach(p=>{const el=document.createElement('button');el.className='civ civ-'+t;el.setAttribute('aria-label',p.name);el.title=`${p.name} · ${p.addr}`;
-    el.innerHTML=`<span class="ci">${CIV[t].ic}</span><span class="cn">${p.name.replace(' Station','').replace('Fire Station ','FS ')}</span>`;el.addEventListener('click',e=>{e.stopPropagation();if(!S.started)return;openCivic(p.id)});
+    el.innerHTML=`<span class="ci">${CIV[t].ic}</span><span class="cn">${p.name.replace(' Station','').replace('Fire Station ','FS ')}</span>`;el.addEventListener('click',e=>{e.stopPropagation();if(!S.started)return;window.BCBuildings?.select('civic:'+p.id);openCivic(p.id)});
     civMarkers.push({m:new maplibregl.Marker({element:el,anchor:'center'}).setLngLat([p.lon,p.lat]).addTo(map),el,p})})}
   const on=S.layers.civic!==false,z=map.getZoom();civMarkers.forEach(o=>{const c=civState(o.p.id);o.el.classList.toggle('out',!!c.out);const minZ=o.p.type==='fire'?11.4:10.2;o.el.style.display=on&&(z>=minZ||c.out)?'':'none';o.el.classList.toggle('named',z>=13.2)})}
 document.addEventListener('click',e=>{const b=e.target.closest('[data-civ],[data-civlist],[data-civ-open],[data-civfly]');if(!b||!S)return;e.preventDefault();
@@ -2914,7 +2917,7 @@ function mayorInitials(){const n=(S.mayor&&S.mayor.name)||'Mayor';return n.split
 function renderMayor(animate){if(!mapReady||!S||!S.started)return;if(!S.mayorAt)S.mayorAt={...mayorDefault(),until:0};const A=S.mayorAt;
   if(!mayorMarker){const el=document.createElement('button');el.className='mayorpin';el.title='Where your mayor is';el.innerHTML=`<span class="mp-ring"></span><span class="mp-face"></span><span class="mp-lab"></span>`;
     el.addEventListener('click',e=>{e.stopPropagation();openMayor()});mayorMarker=new maplibregl.Marker({element:el,anchor:'bottom'}).setLngLat([A.lon,A.lat]).addTo(map)}
-  const el=mayorMarker.getElement();el.querySelector('.mp-face').textContent=mayorInitials();el.querySelector('.mp-lab').textContent=`You · ${A.label}`;
+  const el=mayorMarker.getElement();el.querySelector('.mp-face').innerHTML=portrait(S.mayor,34);el.querySelector('.mp-lab').textContent=`You · ${A.label}`;
   const from=mayorMarker.getLngLat(),to={lng:A.lon,lat:A.lat};if(!animate||(Math.abs(from.lng-to.lng)<1e-6&&Math.abs(from.lat-to.lat)<1e-6)){mayorMarker.setLngLat([A.lon,A.lat]);return}
   if(mayorAnim)cancelAnimationFrame(mayorAnim);const t0=performance.now(),dur=1400;el.classList.add('moving');
   const step=t=>{const k=Math.min(1,(t-t0)/dur),e2=k<.5?2*k*k:1-Math.pow(-2*k+2,2)/2;mayorMarker.setLngLat([from.lng+(to.lng-from.lng)*e2,from.lat+(to.lat-from.lat)*e2]);if(k<1)mayorAnim=requestAnimationFrame(step);else{mayorAnim=null;el.classList.remove('moving')}};mayorAnim=requestAnimationFrame(step)}
@@ -3522,7 +3525,7 @@ function decodeLayer(g){const s=atob(g),n=s.length;let i=0,px=0,py=0;const out=[
 function fcPoly(feats,props){return{type:'FeatureCollection',features:feats.map((parts,i)=>({type:'Feature',id:i+1,properties:props?props(i):{},geometry:{type:'Polygon',coordinates:parts.map(r=>{if(r.length&&(r[0][0]!==r[r.length-1][0]||r[0][1]!==r[r.length-1][1]))r=r.concat([r[0]]);return r}).filter(r=>r.length>=4)}})).filter(f=>f.geometry.coordinates.length)}}
 function fcLine(feats,props){return{type:'FeatureCollection',features:feats.map((parts,i)=>({type:'Feature',properties:props?props(i):{},geometry:{type:'MultiLineString',coordinates:parts}}))}}
 const FCC={'Interstate':'I','Freeway/Expressway':'I','Principal Arterial':'P','Minor Arterial':'M','Major Collector':'C','Minor Collector':'C'};
-const LAND='#111a21',CITY='#192630';
+const LAND='#9ebc94',CITY='#cad6ab';
 function styleBase(){return{version:8,sources:{},layers:[{id:'bg',type:'background',paint:{'background-color':LAND}}]}}
 function initMap(){
   if(window.__mlFail||!window.maplibregl){setStatus('The map engine could not load. Check your connection and reload.');return}
@@ -3587,20 +3590,20 @@ async function loadBase(){
     const W=(a)=>['interpolate',['exponential',1.6],['zoom'],...a];
     const add=l=>map.addLayer(l);
     add({id:'city-fill',type:'fill',source:'city',paint:{'fill-color':CITY}});
-    add({id:'muni-fill',type:'fill',source:'muni',filter:['in',['get','n'],['literal',['ARLINGTON','BARTLETT','COLLIERVILLE','GERMANTOWN','LAKELAND','MILLINGTON']]],paint:{'fill-color':'#10181e','fill-opacity':.85}});
+    add({id:'muni-fill',type:'fill',source:'muni',filter:['in',['get','n'],['literal',['ARLINGTON','BARTLETT','COLLIERVILLE','GERMANTOWN','LAKELAND','MILLINGTON']]],paint:{'fill-color':'#b6c99d','fill-opacity':.85}});
     add({id:'nb-fill',type:'fill',source:'muni',filter:['in',['get','n'],['literal',NB_IDS.map(i=>NEIGHBORS[i].GIS)]],paint:{'fill-color':['match',['get','n'],...NB_IDS.flatMap(i=>[NEIGHBORS[i].GIS,NEIGHBORS[i].col]),'#888'],'fill-opacity':['case',['boolean',['feature-state','hover'],false],.22,.08]}});
     add({id:'nb-line',type:'line',source:'muni',filter:['in',['get','n'],['literal',NB_IDS.map(i=>NEIGHBORS[i].GIS)]],paint:{'line-color':['match',['get','n'],...NB_IDS.flatMap(i=>[NEIGHBORS[i].GIS,NEIGHBORS[i].col]),'#888'],'line-width':['interpolate',['linear'],['zoom'],9,1.6,13,2.6],'line-opacity':.75}});
-    add({id:'airport-fill',type:'fill',source:'airport',paint:{'fill-color':'#1d2730'}});
-    add({id:'parks-fill',type:'fill',source:'parks',paint:{'fill-color':'#1b3526','fill-outline-color':'#24452f'}});
-    add({id:'river-fill',type:'fill',source:'river',paint:{'fill-color':'#0c2236'}});
-    add({id:'streams',type:'line',source:'streams',paint:{'line-color':'#123b5a','line-width':W([9,0.6,13,2,16,5])}});
-    add({id:'creeks',type:'line',source:'creeks',minzoom:10.5,paint:{'line-color':'#123b5a','line-width':W([10,0.4,14,1.2,17,3]),'line-opacity':.85}});
-    add({id:'streets',type:'line',source:'streets',layout:{'line-cap':'round','line-join':'round'},paint:{'line-color':['interpolate',['linear'],['zoom'],10,'#33424f',14,'#36475a',16,'#3f4f5e'],'line-width':W([9,0.35,12,0.7,14,1.6,16,4.5,18,12])}});
+    add({id:'airport-fill',type:'fill',source:'airport',paint:{'fill-color':'#b9c9c3'}});
+    add({id:'parks-fill',type:'fill',source:'parks',paint:{'fill-color':'#76b77a','fill-outline-color':'#59966b'}});
+    add({id:'river-fill',type:'fill',source:'river',paint:{'fill-color':'#5aacc2'}});
+    add({id:'streams',type:'line',source:'streams',paint:{'line-color':'#60a9bf','line-width':W([9,0.6,13,2,16,5])}});
+    add({id:'creeks',type:'line',source:'creeks',minzoom:10.5,paint:{'line-color':'#60a9bf','line-width':W([10,0.4,14,1.2,17,3]),'line-opacity':.85}});
+    add({id:'streets',type:'line',source:'streets',layout:{'line-cap':'round','line-join':'round'},paint:{'line-color':['interpolate',['linear'],['zoom'],10,'#eee5cb',14,'#f7edd6',16,'#fff4de'],'line-width':W([9,0.35,12,0.7,14,1.6,16,4.5,18,12])}});
     add({id:'rail',type:'line',source:'rail',minzoom:11,paint:{'line-color':'#5a5143','line-width':W([11,0.5,15,1.4,18,3]),'line-dasharray':[3,2]}});
-    add({id:'roads-c',type:'line',source:'fc',filter:['==',['get','c'],'C'],layout:{'line-cap':'round','line-join':'round'},paint:{'line-color':'#46525e','line-width':W([9,0.4,12,1,14,2.4,16,6,18,14])}});
-    add({id:'roads-m',type:'line',source:'fc',filter:['==',['get','c'],'M'],layout:{'line-cap':'round','line-join':'round'},paint:{'line-color':'#5f5d57','line-width':W([9,0.6,12,1.4,14,3,16,7,18,16])}});
-    add({id:'roads-p',type:'line',source:'fc',filter:['==',['get','c'],'P'],layout:{'line-cap':'round','line-join':'round'},paint:{'line-color':'#8a7552','line-width':W([9,0.8,12,1.8,14,3.6,16,8,18,18])}});
-    add({id:'roads-i-case',type:'line',source:'fc',filter:['==',['get','c'],'I'],layout:{'line-cap':'round','line-join':'round'},paint:{'line-color':'#2a1d0b','line-width':W([9,2.2,12,4,14,7,16,13,18,26])}});
+    add({id:'roads-c',type:'line',source:'fc',filter:['==',['get','c'],'C'],layout:{'line-cap':'round','line-join':'round'},paint:{'line-color':'#f0dfbc','line-width':W([9,0.4,12,1,14,2.4,16,6,18,14])}});
+    add({id:'roads-m',type:'line',source:'fc',filter:['==',['get','c'],'M'],layout:{'line-cap':'round','line-join':'round'},paint:{'line-color':'#e9ce99','line-width':W([9,0.6,12,1.4,14,3,16,7,18,16])}});
+    add({id:'roads-p',type:'line',source:'fc',filter:['==',['get','c'],'P'],layout:{'line-cap':'round','line-join':'round'},paint:{'line-color':'#e4b878','line-width':W([9,0.8,12,1.8,14,3.6,16,8,18,18])}});
+    add({id:'roads-i-case',type:'line',source:'fc',filter:['==',['get','c'],'I'],layout:{'line-cap':'round','line-join':'round'},paint:{'line-color':'#bf986b','line-width':W([9,2.2,12,4,14,7,16,13,18,26])}});
     add({id:'roads-i',type:'line',source:'fc',filter:['==',['get','c'],'I'],layout:{'line-cap':'round','line-join':'round'},paint:{'line-color':'#d79a3b','line-width':W([9,1.2,12,2.4,14,4.6,16,9,18,20])}});
     if(map.getSource('pci'))add({id:'pci',type:'line',source:'pci',layout:{visibility:'none','line-cap':'round','line-join':'round'},paint:{'line-color':['case',['boolean',['feature-state','fixed'],false],'#2e9e5b',['case',['<',['get','p'],0],'#59626b',['interpolate',['linear'],['get','p'],0,'#b8322a',40,'#e8644f',55,'#e6c547',70,'#8fcf6a',90,'#2e9e5b']]],'line-width':W([9,2.6,12,4.6,14,7,16,12,18,22])}});
     add({id:'city-line',type:'line',source:'city',paint:{'line-color':'#f2a93b','line-opacity':['interpolate',['linear'],['zoom'],9,.75,13,.35],'line-width':W([9,1.2,14,2.4]),'line-dasharray':[4,2]}});
@@ -3611,7 +3614,7 @@ async function loadBase(){
     add({id:'superd-line',type:'line',source:'superd',layout:{visibility:'none'},paint:{'line-color':'#ffffff','line-width':3,'line-dasharray':[3,1.5],'line-opacity':.85}});
     add({id:'precinct-fill',type:'fill',source:'precincts',layout:{visibility:'none'},paint:{'fill-color':['to-color',['at',['get','k'],['literal',PCOL]]],'fill-opacity':['case',['boolean',['feature-state','hover'],false],.34,.18]}});
     add({id:'precinct-line',type:'line',source:'precincts',layout:{visibility:'none'},paint:{'line-color':'#cfd8e3','line-width':1.8}});
-    map.setLight({anchor:'viewport',color:'#ffe7c2',intensity:.32,position:[1.4,200,40]});
+    map.setLight({anchor:'viewport',color:'#fff0ce',intensity:.48,position:[1.4,200,40]});
     addLabels();
     mapReady=true;applyLayers();refreshHUD();zoomClasses();
     setupMapInteractions();
@@ -3622,12 +3625,17 @@ async function loadBuildings(){
   try{setStatus('Loading downtown and commercial buildings…');
     const d=await getJSON('data/buildings-main.json');Object.assign(RAW,d.layers);
     map.addSource('bmain',{type:'geojson',data:'bcm://bmain',tolerance:0.2,buffer:32});
-    map.addLayer({id:'bmain-flat',type:'fill',source:'bmain',maxzoom:13.5,paint:{'fill-color':'#2c3a47','fill-opacity':['interpolate',['linear'],['zoom'],11,.5,13.5,.9]}},'council-fill');
-    map.addLayer({id:'bmain-3d',type:'fill-extrusion',source:'bmain',minzoom:13.5,paint:{'fill-extrusion-color':['interpolate',['linear'],['get','h'],0,'#2e3c49',20,'#3a4a59',60,'#4d6072',140,'#7b8fa3'],'fill-extrusion-height':['interpolate',['linear'],['zoom'],13.5,0,14.2,['get','h']],'fill-extrusion-base':0,'fill-extrusion-opacity':.92,'fill-extrusion-vertical-gradient':true}},'council-fill');
+    map.addLayer({id:'bmain-flat',type:'fill',source:'bmain',maxzoom:13.5,paint:{'fill-color':'#d4ad89','fill-opacity':['interpolate',['linear'],['zoom'],11,.5,13.5,.9]}},'council-fill');
+    map.addLayer({id:'bmain-3d',type:'fill-extrusion',source:'bmain',minzoom:13.5,paint:{'fill-extrusion-color':['interpolate',['linear'],['get','h'],0,'#dca57e',20,'#e7ceaa',60,'#8dbcc8',140,'#d4e5e7'],'fill-extrusion-height':['interpolate',['linear'],['zoom'],13.5,0,14.2,['get','h']],'fill-extrusion-base':0,'fill-extrusion-opacity':1,'fill-extrusion-vertical-gradient':true}},'council-fill');
     map.addSource('pyramid',{type:'geojson',data:'bcm://pyramid'});
     map.addLayer({id:'pyramid-flat',type:'fill',source:'pyramid',maxzoom:13.5,filter:['==',['get','i'],0],paint:{'fill-color':'#5d6f80','fill-opacity':['interpolate',['linear'],['zoom'],11,.5,13.5,.9]}},'council-fill');
     map.addLayer({id:'pyramid-3d',type:'fill-extrusion',source:'pyramid',minzoom:13.5,paint:{'fill-extrusion-color':['interpolate',['linear'],['get','i'],0,'#7f909f',16,'#a7b6c3',31,'#d7e0e7'],
       'fill-extrusion-base':['interpolate',['linear'],['zoom'],13.5,0,14.2,['get','b']],'fill-extrusion-height':['interpolate',['linear'],['zoom'],13.5,0,14.2,['get','t']],'fill-extrusion-opacity':1,'fill-extrusion-vertical-gradient':true}},'council-fill');
+    try{await window.BCBuildings.install({map,state:()=>S,openPlace,openCivic,onAnchors:anchors=>{
+      for(const a of anchors){const [kind,id]=a.key.split(':');const p=kind==='civic'?CIVMAP[id]:LM[id];if(!p)continue;[p.lon,p.lat]=a.coordinates;
+        const marker=kind==='civic'?civMarkers.find(o=>o.p.id===id)?.m:lmMarkers[id]?.m;marker?.setLngLat(a.coordinates);}
+      if(S?.started){renderPins();if(!S.mayorAt?.until){S.mayorAt={...mayorDefault(),until:0};renderMayor(false)}}
+    }})}catch(e){console.warn('Named building links unavailable',e)}
     applyLayers();setStatus(null);
     map.on('moveend',maybeLoadHomes);maybeLoadHomes();
   }catch(e){console.error(e);setStatus(null);toast('Some building data could not load. Streets and districts still work.')}
@@ -3639,8 +3647,8 @@ async function maybeLoadHomes(){
   try{setStatus('Loading 250,970 homes and small buildings…');
     const d=await getJSON('data/buildings-homes.json');Object.assign(RAW,d.layers);
     map.addSource('bhomes',{type:'geojson',data:'bcm://bhomes',tolerance:0.25,buffer:32,maxzoom:15});
-    map.addLayer({id:'bhomes-flat',type:'fill',source:'bhomes',minzoom:13,maxzoom:15,paint:{'fill-color':'#28343f','fill-opacity':['interpolate',['linear'],['zoom'],13,0,13.6,.85]}},'bmain-flat');
-    map.addLayer({id:'bhomes-3d',type:'fill-extrusion',source:'bhomes',minzoom:15,paint:{'fill-extrusion-color':'#2b3845','fill-extrusion-height':4.5,'fill-extrusion-opacity':.9}},'bmain-3d');
+    map.addLayer({id:'bhomes-flat',type:'fill',source:'bhomes',minzoom:13,maxzoom:15,paint:{'fill-color':'#c99b7b','fill-opacity':['interpolate',['linear'],['zoom'],13,0,13.6,.85]}},'bmain-flat');
+    map.addLayer({id:'bhomes-3d',type:'fill-extrusion',source:'bhomes',minzoom:15,paint:{'fill-extrusion-color':['match',['%', ['id'],5],0,'#d89979',1,'#e6c48f',2,'#a0c3ab',3,'#b4bdd5','#d3b49b'],'fill-extrusion-height':4.5,'fill-extrusion-opacity':1}},'bmain-3d');
     homesState='done';applyLayers();setStatus(null);
   }catch(e){console.error(e);homesState='idle';setStatus(null)}
 }
@@ -3654,7 +3662,7 @@ function addLabels(){
     const right=id==='lakeland';nbMarkers[id]={m:new maplibregl.Marker({element:el,anchor:right?'right':'left',offset:right?[6,-12]:[-6,0]}).setLngLat(g.c).addTo(map),el}});
   LMKS.forEach(L=>{const el=document.createElement('button');el.className='lm'+(L.planned?' planned':'');el.setAttribute('aria-label',L.name);
     el.innerHTML=`<span class="dot" style="background:${L.col}"></span><span class="nm">${L.short||L.name}</span><span class="ct"></span>`;
-    el.addEventListener('click',e=>{e.stopPropagation();if(!S.started)return;openPlace(L.id)});
+    el.addEventListener('click',e=>{e.stopPropagation();if(!S.started)return;window.BCBuildings?.select('landmark:'+L.id);openPlace(L.id)});
     lmMarkers[L.id]={m:new maplibregl.Marker({element:el,anchor:'left',offset:L.off||[-6,0]}).setLngLat([L.lon,L.lat]).addTo(map),el,L}});
   GEO.council.forEach(f=>{const c=polyCenter(f.parts);const el=document.createElement('div');el.className='dlabel';distMarkers.push({m:mk(el,c[0],c[1]),el,d:f.v,kind:'council'})});
   GEO.superd.forEach(f=>{const c=polyCenter(f.parts);const el=document.createElement('div');el.className='dlabel';el.innerHTML=`SD ${f.v}<small>Super District ${f.v}</small>`;distMarkers.push({m:mk(el,c[0],c[1]),el,d:f.v,kind:'superd'})});
@@ -3705,6 +3713,7 @@ function applyLayers(){if(!mapReady)return;const L=S?S.layers:{superd:false,bld:
   renderModes();renderLegend();
   ['bmain-flat','bmain-3d','bhomes-flat','bhomes-3d','pyramid-flat','pyramid-3d'].forEach(id=>vis(id,L.bld));
   $('lySuper').checked=L.superd;$('lyBld').checked=L.bld;$('lyLabels').checked=L.labels;$('lyEdge').checked=L.edge!==false;if($('lyCivic'))$('lyCivic').checked=L.civic!==false;$('lyPause').checked=S?S.autoPause!==false:true;
+  window.BCBuildings?.sync();
   zoomClasses();if(L.bld&&homesState==='idle'&&map.getSource('bmain'))maybeLoadHomes()}
 let hoverState=null;
 function setupMapInteractions(){
@@ -3712,7 +3721,7 @@ function setupMapInteractions(){
     if(mode==='streets'&&map.getLayer('pci'))out.push('pci');
     if(mode==='political'||mode==='opinion'||mode==='public'||mode==='streets'||(mode==='real'&&map.getZoom()<POLZ&&!S.layers.superd))out.push('council-fill');
     if(S.layers.superd)out.push('superd-fill');if(mode==='precinct')out.push('precinct-fill');if(map.getLayer('nb-fill'))out.push('nb-fill');return out};
-  map.on('mousemove',e=>{if(!S||!S.started)return;const fs=map.queryRenderedFeatures(e.point,{layers:activeLayers()});
+  map.on('mousemove',e=>{if(!S||!S.started)return;if(window.BCBuildings?.hover(e.point))return;const fs=map.queryRenderedFeatures(e.point,{layers:activeLayers()});
     const tip=$('tip');
     if(hoverState){map.setFeatureState(hoverState,{hover:false});hoverState=null}
     if(!fs.length){tip.hidden=true;$('map').classList.remove('hot');return}
@@ -3725,7 +3734,7 @@ function setupMapInteractions(){
     tip.innerHTML=html;tip.hidden=false;tip.style.left=(e.point.x+14)+'px';tip.style.top=(e.point.y+14)+'px'});
   map.on('mouseout',()=>{$('tip').hidden=true});
   map.on('movestart',()=>{$('tip').hidden=true;if(hoverState){map.setFeatureState(hoverState,{hover:false});hoverState=null}$('map').classList.remove('hot')});
-  map.on('click',e=>{if(!S||!S.started)return;const fs=map.queryRenderedFeatures(e.point,{layers:activeLayers()});
+  map.on('click',e=>{if(!S||!S.started)return;if(window.BCBuildings?.click(e.point))return;const fs=map.queryRenderedFeatures(e.point,{layers:activeLayers()});
     if(!fs.length)return;const f=fs.find(x=>x.source!=='pci')||fs[0];if(f.source==='pci')return;
     if(f.source==='muni'){const id=NB_IDS.find(i=>NEIGHBORS[i].GIS===f.properties.n);if(id)openNeighbor(id);return}
     if(f.source==='council')openDistrict(f.properties.d,false);else if(f.source==='superd')openDistrict(f.properties.d,true);else openPrecinct(f.properties.n)});

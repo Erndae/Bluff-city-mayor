@@ -1,0 +1,16 @@
+/* Warm daylight map labels and rounded, readable city-builder markers. */
+.hood{color:#304f48;text-shadow:0 1px 2px #f6f4d9,0 0 5px #f6f4d9;font-weight:700}
+.hood.town{color:#486257}
+.road{color:#514c41;text-shadow:0 1px 2px #fff5de,0 0 4px #fff5de}
+.lm .nm{background:#fff4de;color:#303e43;border:1px solid #b7a98c;border-radius:7px;box-shadow:0 2px 5px #26372c26}
+.lm .dot{border-color:#fff4de;box-shadow:0 1px 4px #26372c55}
+.lm.busy .nm{color:#5c421d;background:#ffe4a6}
+.civ .ci{border-color:#fff8e5;border-radius:7px;box-shadow:0 2px 4px #26372c55}
+.civ .cn{color:#283e40;text-shadow:0 1px 2px #fff8e5,0 0 4px #fff8e5;background:#fff4deeb;padding:4px 6px;border-radius:5px}
+.mayorpin .mp-face{width:34px;height:39px;left:0;border-radius:12px;background:#69bdba;line-height:normal}
+.mayorpin .mp-face .pt{width:30px;height:35px;border-radius:9px;object-fit:cover}
+.maplibregl-popup{position:absolute;top:0;left:0;display:flex;will-change:transform;pointer-events:none}
+.maplibregl-popup-content{position:relative;background:var(--panel);padding:12px;border:1px solid var(--line);border-radius:10px;pointer-events:auto}
+.maplibregl-popup-close-button{position:absolute;right:0;top:0;background:none;border:0;cursor:pointer}
+.building-choices{display:grid;gap:8px;padding-top:10px}
+.building-choices button{background:var(--panel2);border:1px solid var(--line);border-radius:6px;padding:8px;cursor:pointer}

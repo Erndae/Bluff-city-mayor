@@ -1,0 +1,362 @@
+[
+  {
+    "key": "landmark:cityhall",
+    "address": "125 N. Main St."
+  },
+  {
+    "key": "landmark:county",
+    "address": "160 N. Main St."
+  },
+  {
+    "key": "landmark:mpd",
+    "address": "170 N. Main St. (Public Safety Building)"
+  },
+  {
+    "key": "landmark:fire",
+    "address": "65 S. Front St."
+  },
+  {
+    "key": "landmark:mlgw",
+    "address": "220 S. Main St."
+  },
+  {
+    "key": "landmark:forum",
+    "address": "191 Beale St."
+  },
+  {
+    "key": "landmark:ncrm",
+    "address": "450 Mulberry St."
+  },
+  {
+    "key": "landmark:stjude",
+    "address": "262 Danny Thomas Pl."
+  },
+  {
+    "key": "landmark:mata",
+    "address": "444 N. Main St."
+  },
+  {
+    "key": "landmark:mscs",
+    "address": "160 S. Hollywood St."
+  },
+  {
+    "key": "landmark:library",
+    "address": "3030 Poplar Ave."
+  },
+  {
+    "key": "landmark:graceland",
+    "address": "3764 Elvis Presley Blvd."
+  },
+  {
+    "key": "landmark:xai",
+    "address": "3231 Paul R. Lowry Rd."
+  },
+  {
+    "key": "landmark:oem",
+    "address": "79 S. Flicker St."
+  },
+  {
+    "key": "civic:p0",
+    "address": "2234 Truitt St."
+  },
+  {
+    "key": "civic:p1",
+    "address": "2602 Mt. Moriah Rd."
+  },
+  {
+    "key": "civic:p2",
+    "address": "791 E. Raines Rd."
+  },
+  {
+    "key": "civic:p3",
+    "address": "3840 Ridgeway Rd."
+  },
+  {
+    "key": "civic:p4",
+    "address": "6850 Appling Farms Pkwy."
+  },
+  {
+    "key": "civic:p5",
+    "address": "3430 Austin Peay Hwy."
+  },
+  {
+    "key": "civic:p6",
+    "address": "949 E. E.H. Crump Blvd."
+  },
+  {
+    "key": "civic:p7",
+    "address": "444 N. Main St."
+  },
+  {
+    "key": "civic:p8",
+    "address": "426 Tillman St."
+  },
+  {
+    "key": "civic:f0",
+    "address": "7495 Reese Rd."
+  },
+  {
+    "key": "civic:f1",
+    "address": "333 E. Parkway N."
+  },
+  {
+    "key": "civic:f2",
+    "address": "4602 Riverdale Rd."
+  },
+  {
+    "key": "civic:f3",
+    "address": "4258 Overton Crossing St."
+  },
+  {
+    "key": "civic:f4",
+    "address": "3345 Millington St."
+  },
+  {
+    "key": "civic:f5",
+    "address": "2530 Whitney Ave."
+  },
+  {
+    "key": "civic:f6",
+    "address": "3423 Scenic Hwy."
+  },
+  {
+    "key": "civic:f7",
+    "address": "3510 Coleman Rd."
+  },
+  {
+    "key": "civic:f8",
+    "address": "2780 Rockcreek Pkwy."
+  },
+  {
+    "key": "civic:f9",
+    "address": "611 National St."
+  },
+  {
+    "key": "civic:f10",
+    "address": "1826 Union Ave."
+  },
+  {
+    "key": "civic:f11",
+    "address": "3950 Weaver Rd."
+  },
+  {
+    "key": "civic:f12",
+    "address": "595 Sanga Rd."
+  },
+  {
+    "key": "civic:f13",
+    "address": "5881 E. Raines Rd."
+  },
+  {
+    "key": "civic:f14",
+    "address": "2034 S. Lauderdale St."
+  },
+  {
+    "key": "civic:f15",
+    "address": "3468 Jackson Ave."
+  },
+  {
+    "key": "civic:f16",
+    "address": "3909 Knight Arnold Rd."
+  },
+  {
+    "key": "civic:f17",
+    "address": "3215 S. Third St."
+  },
+  {
+    "key": "civic:f18",
+    "address": "4255 E. Raines Rd."
+  },
+  {
+    "key": "civic:f19",
+    "address": "5921 Shelby Oaks Dr."
+  },
+  {
+    "key": "civic:f20",
+    "address": "625 Mississippi Blvd."
+  },
+  {
+    "key": "civic:f21",
+    "address": "2785 Rudder Rd."
+  },
+  {
+    "key": "civic:f22",
+    "address": "980 E. McLemore Ave."
+  },
+  {
+    "key": "civic:f23",
+    "address": "2231 E. Shelby Dr."
+  },
+  {
+    "key": "civic:f24",
+    "address": "5185 S. Third St."
+  },
+  {
+    "key": "civic:f25",
+    "address": "688 Breedlove St."
+  },
+  {
+    "key": "civic:f26",
+    "address": "3426 Southern Ave."
+  },
+  {
+    "key": "civic:f27",
+    "address": "2248 Chelsea Ave."
+  },
+  {
+    "key": "civic:f28",
+    "address": "474 S. Main St."
+  },
+  {
+    "key": "civic:f29",
+    "address": "1670 Channel Ave."
+  },
+  {
+    "key": "civic:f30",
+    "address": "1025 E. Raines Rd."
+  },
+  {
+    "key": "civic:f31",
+    "address": "3242 Fontaine Rd."
+  },
+  {
+    "key": "civic:f32",
+    "address": "1253 E. Holmes Rd."
+  },
+  {
+    "key": "civic:f33",
+    "address": "6675 Winchester Rd."
+  },
+  {
+    "key": "civic:f34",
+    "address": "148 S. Parkway W."
+  },
+  {
+    "key": "civic:f35",
+    "address": "4735 Willow Rd."
+  },
+  {
+    "key": "civic:f36",
+    "address": "1510 Chelsea Ave."
+  },
+  {
+    "key": "civic:f37",
+    "address": "1150 Getwell Rd."
+  },
+  {
+    "key": "civic:f38",
+    "address": "3305 S. Mendenhall Rd."
+  },
+  {
+    "key": "civic:f39",
+    "address": "4715 Horn Lake Rd."
+  },
+  {
+    "key": "civic:f40",
+    "address": "1460 N. Second St."
+  },
+  {
+    "key": "civic:f41",
+    "address": "2161 Ridgeway Rd."
+  },
+  {
+    "key": "civic:f42",
+    "address": "220 N. Humphreys Blvd."
+  },
+  {
+    "key": "civic:f43",
+    "address": "4985 Raleigh LaGrange Rd."
+  },
+  {
+    "key": "civic:f44",
+    "address": "8395 Dexter Rd."
+  },
+  {
+    "key": "civic:f45",
+    "address": "550 S. Mendenhall Rd."
+  },
+  {
+    "key": "civic:f46",
+    "address": "4472 Powell Ave."
+  },
+  {
+    "key": "civic:f47",
+    "address": "2147 Elvis Presley Blvd."
+  },
+  {
+    "key": "civic:f48",
+    "address": "2555 Winchester Rd."
+  },
+  {
+    "key": "civic:f49",
+    "address": "4351 New Allen Rd."
+  },
+  {
+    "key": "civic:f50",
+    "address": "1017 Jefferson Ave."
+  },
+  {
+    "key": "civic:f51",
+    "address": "2960 Lamar Ave."
+  },
+  {
+    "key": "civic:f52",
+    "address": "4930 Pleasant Hill Rd."
+  },
+  {
+    "key": "civic:f53",
+    "address": "2203 Lamar Ave."
+  },
+  {
+    "key": "civic:f54",
+    "address": "235 Chelsea Ave."
+  },
+  {
+    "key": "civic:f55",
+    "address": "400 Adams Ave."
+  },
+  {
+    "key": "civic:h0",
+    "address": "877 Jefferson Ave."
+  },
+  {
+    "key": "civic:h1",
+    "address": "1265 Union Ave."
+  },
+  {
+    "key": "civic:h2",
+    "address": "848 Adams Ave."
+  },
+  {
+    "key": "civic:h3",
+    "address": "262 Danny Thomas Pl."
+  },
+  {
+    "key": "civic:h4",
+    "address": "1030 Jefferson Ave."
+  },
+  {
+    "key": "civic:h5",
+    "address": "6019 Walnut Grove Rd."
+  },
+  {
+    "key": "civic:h6",
+    "address": "6225 Humphreys Blvd."
+  },
+  {
+    "key": "civic:h7",
+    "address": "3960 New Covington Pike"
+  },
+  {
+    "key": "civic:h8",
+    "address": "1300 Wesley Dr."
+  },
+  {
+    "key": "civic:h9",
+    "address": "5959 Park Ave."
+  },
+  {
+    "key": "civic:h10",
+    "address": "3000 Getwell Rd."
+  }
+]

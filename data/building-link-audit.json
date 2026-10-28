@@ -1,0 +1,821 @@
+{
+  "method": "Address points contained by municipal footprints, or footprints wholly contained by the address parcel. Multi-building parcels require matching street numbers. Nearby buildings are never automatically substituted.",
+  "matched": [
+    {
+      "key": "landmark:cityhall",
+      "name": "City Hall",
+      "buildings": [
+        "bldBig:9251"
+      ],
+      "method": "point-in-building",
+      "source": "https://gis.memphistn.gov/server/rest/services/Geocode/Locator_MemphisCityLimits/GeocodeServer/findAddressCandidates?f=json&SingleLine=125%20N.%20Main%20St.%2C%20Memphis%2C%20TN&outSR=4326&outFields=*&locationType=rooftop"
+    },
+    {
+      "key": "landmark:county",
+      "name": "Vasco A. Smith Jr. County Administration Bldg.",
+      "buildings": [
+        "bldBig:9276"
+      ],
+      "method": "point-in-building",
+      "source": "https://gis.memphistn.gov/server/rest/services/Geocode/Locator_MemphisCityLimits/GeocodeServer/findAddressCandidates?f=json&SingleLine=160%20N.%20Main%20St.%2C%20Memphis%2C%20TN&outSR=4326&outFields=*&locationType=rooftop"
+    },
+    {
+      "key": "landmark:mpd",
+      "name": "MPD Headquarters",
+      "buildings": [
+        "bldBig:9280"
+      ],
+      "method": "address-parcel",
+      "source": "https://gis.memphistn.gov/server/rest/services/Parcel/CERT_TAX_PARCELS/FeatureServer/0/query?f=json&geometry=-90.050487681316,35.149802153534&geometryType=esriGeometryPoint&inSR=4326&spatialRel=esriSpatialRelIntersects&outFields=PARCELID,PAR_ADRNO,PAR_ADDR1,LANDUSE&returnGeometry=true&outSR=4326",
+      "parcel": "002010  00004"
+    },
+    {
+      "key": "landmark:fire",
+      "name": "Memphis Fire Headquarters",
+      "buildings": [
+        "bldBig:8776"
+      ],
+      "method": "point-in-building",
+      "source": "https://gis.memphistn.gov/server/rest/services/Geocode/Locator_MemphisCityLimits/GeocodeServer/findAddressCandidates?f=json&SingleLine=65%20S.%20Front%20St.%2C%20Memphis%2C%20TN&outSR=4326&outFields=*&locationType=rooftop"
+    },
+    {
+      "key": "landmark:mlgw",
+      "name": "MLGW Headquarters",
+      "buildings": [
+        "bldBig:8494"
+      ],
+      "method": "point-in-building",
+      "source": "https://gis.memphistn.gov/server/rest/services/Geocode/Locator_MemphisCityLimits/GeocodeServer/findAddressCandidates?f=json&SingleLine=220%20S.%20Main%20St.%2C%20Memphis%2C%20TN&outSR=4326&outFields=*&locationType=rooftop"
+    },
+    {
+      "key": "landmark:forum",
+      "name": "FedExForum",
+      "buildings": [
+        "bldBig:8404"
+      ],
+      "method": "point-in-building",
+      "source": "https://gis.memphistn.gov/server/rest/services/Geocode/Locator_MemphisCityLimits/GeocodeServer/findAddressCandidates?f=json&SingleLine=191%20Beale%20St.%2C%20Memphis%2C%20TN&outSR=4326&outFields=*&locationType=rooftop"
+    },
+    {
+      "key": "landmark:ncrm",
+      "name": "National Civil Rights Museum",
+      "buildings": [
+        "bldBig:8080"
+      ],
+      "method": "point-in-building",
+      "source": "https://gis.memphistn.gov/server/rest/services/Geocode/Locator_MemphisCityLimits/GeocodeServer/findAddressCandidates?f=json&SingleLine=450%20Mulberry%20St.%2C%20Memphis%2C%20TN&outSR=4326&outFields=*&locationType=rooftop"
+    },
+    {
+      "key": "landmark:stjude",
+      "name": "St. Jude Children's Research Hospital",
+      "buildings": [
+        "bldBig:9443"
+      ],
+      "method": "point-in-building",
+      "source": "https://gis.memphistn.gov/server/rest/services/Geocode/Locator_MemphisCityLimits/GeocodeServer/findAddressCandidates?f=json&SingleLine=262%20Danny%20Thomas%20Pl.%2C%20Memphis%2C%20TN&outSR=4326&outFields=*&locationType=rooftop"
+    },
+    {
+      "key": "landmark:mata",
+      "name": "MATA North End Terminal",
+      "buildings": [
+        "bldBig:9592"
+      ],
+      "method": "point-in-building",
+      "source": "https://gis.memphistn.gov/server/rest/services/Geocode/Locator_MemphisCityLimits/GeocodeServer/findAddressCandidates?f=json&SingleLine=444%20N.%20Main%20St.%2C%20Memphis%2C%20TN&outSR=4326&outFields=*&locationType=rooftop"
+    },
+    {
+      "key": "landmark:mscs",
+      "name": "MSCS Board of Education",
+      "buildings": [
+        "bldBig:7538"
+      ],
+      "method": "point-in-building",
+      "source": "https://gis.memphistn.gov/server/rest/services/Geocode/Locator_MemphisCityLimits/GeocodeServer/findAddressCandidates?f=json&SingleLine=160%20S.%20Hollywood%20St.%2C%20Memphis%2C%20TN&outSR=4326&outFields=*&locationType=rooftop"
+    },
+    {
+      "key": "landmark:library",
+      "name": "Benjamin L. Hooks Central Library",
+      "buildings": [
+        "bldBig:7762"
+      ],
+      "method": "point-in-building",
+      "source": "https://gis.memphistn.gov/server/rest/services/Geocode/Locator_MemphisCityLimits/GeocodeServer/findAddressCandidates?f=json&SingleLine=3030%20Poplar%20Ave.%2C%20Memphis%2C%20TN&outSR=4326&outFields=*&locationType=rooftop"
+    },
+    {
+      "key": "landmark:graceland",
+      "name": "Graceland",
+      "buildings": [
+        "bldBig:1761"
+      ],
+      "method": "point-in-building",
+      "source": "https://gis.memphistn.gov/server/rest/services/Geocode/Locator_MemphisCityLimits/GeocodeServer/findAddressCandidates?f=json&SingleLine=3764%20Elvis%20Presley%20Blvd.%2C%20Memphis%2C%20TN&outSR=4326&outFields=*&locationType=rooftop"
+    },
+    {
+      "key": "landmark:oem",
+      "name": "911 Emergency Communications Center",
+      "buildings": [
+        "bldBig:7615"
+      ],
+      "method": "point-in-building",
+      "source": "Existing city GIS point"
+    },
+    {
+      "key": "civic:p0",
+      "name": "Airways Station",
+      "buildings": [
+        "bldBig:4521"
+      ],
+      "method": "point-in-building",
+      "source": "https://gis.memphistn.gov/server/rest/services/Geocode/Locator_MemphisCityLimits/GeocodeServer/findAddressCandidates?f=json&SingleLine=2234%20Truitt%20St.%2C%20Memphis%2C%20TN&outSR=4326&outFields=*&locationType=rooftop"
+    },
+    {
+      "key": "civic:p1",
+      "name": "Mt. Moriah Station",
+      "buildings": [
+        "bldBig:4172"
+      ],
+      "method": "point-in-building",
+      "source": "https://gis.memphistn.gov/server/rest/services/Geocode/Locator_MemphisCityLimits/GeocodeServer/findAddressCandidates?f=json&SingleLine=2602%20Mt.%20Moriah%20Rd.%2C%20Memphis%2C%20TN&outSR=4326&outFields=*&locationType=rooftop"
+    },
+    {
+      "key": "civic:p2",
+      "name": "Raines Station",
+      "buildings": [
+        "bldBig:1127"
+      ],
+      "method": "point-in-building",
+      "source": "https://gis.memphistn.gov/server/rest/services/Geocode/Locator_MemphisCityLimits/GeocodeServer/findAddressCandidates?f=json&SingleLine=791%20E.%20Raines%20Rd.%2C%20Memphis%2C%20TN&outSR=4326&outFields=*&locationType=rooftop"
+    },
+    {
+      "key": "civic:p3",
+      "name": "Ridgeway Station",
+      "buildings": [
+        "bldBig:1491"
+      ],
+      "method": "point-in-building",
+      "source": "https://gis.memphistn.gov/server/rest/services/Geocode/Locator_MemphisCityLimits/GeocodeServer/findAddressCandidates?f=json&SingleLine=3840%20Ridgeway%20Rd.%2C%20Memphis%2C%20TN&outSR=4326&outFields=*&locationType=rooftop"
+    },
+    {
+      "key": "civic:p4",
+      "name": "Appling Farms Station",
+      "buildings": [
+        "bldBig:10482"
+      ],
+      "method": "point-in-building",
+      "source": "https://gis.memphistn.gov/server/rest/services/Geocode/Locator_MemphisCityLimits/GeocodeServer/findAddressCandidates?f=json&SingleLine=6850%20Appling%20Farms%20Pkwy.%2C%20Memphis%2C%20TN&outSR=4326&outFields=*&locationType=rooftop"
+    },
+    {
+      "key": "civic:p6",
+      "name": "Crump Station",
+      "buildings": [
+        "bldBig:7706"
+      ],
+      "method": "point-in-building",
+      "source": "https://gis.memphistn.gov/server/rest/services/Geocode/Locator_MemphisCityLimits/GeocodeServer/findAddressCandidates?f=json&SingleLine=949%20E%20EH%20Crump%20Blvd%2C%20Memphis%2C%20TN&outSR=4326&outFields=*&locationType=rooftop"
+    },
+    {
+      "key": "civic:p7",
+      "name": "North Main Station",
+      "buildings": [
+        "bldBig:9592"
+      ],
+      "method": "point-in-building",
+      "source": "https://gis.memphistn.gov/server/rest/services/Geocode/Locator_MemphisCityLimits/GeocodeServer/findAddressCandidates?f=json&SingleLine=444%20N.%20Main%20St.%2C%20Memphis%2C%20TN&outSR=4326&outFields=*&locationType=rooftop"
+    },
+    {
+      "key": "civic:p8",
+      "name": "Tillman Station",
+      "buildings": [
+        "bldBig:8632"
+      ],
+      "method": "point-in-building",
+      "source": "https://gis.memphistn.gov/server/rest/services/Geocode/Locator_MemphisCityLimits/GeocodeServer/findAddressCandidates?f=json&SingleLine=426%20Tillman%20St.%2C%20Memphis%2C%20TN&outSR=4326&outFields=*&locationType=rooftop"
+    },
+    {
+      "key": "civic:f0",
+      "name": "Fire Station 56",
+      "buildings": [
+        "bldBig:17633"
+      ],
+      "method": "point-in-building",
+      "source": "https://gis.memphistn.gov/server/rest/services/Geocode/Locator_MemphisCityLimits/GeocodeServer/findAddressCandidates?f=json&SingleLine=7495%20Reese%20Rd.%2C%20Memphis%2C%20TN&outSR=4326&outFields=*&locationType=rooftop"
+    },
+    {
+      "key": "civic:f1",
+      "name": "Fire Station 13",
+      "buildings": [
+        "bldBig:8737"
+      ],
+      "method": "point-in-building",
+      "source": "https://gis.memphistn.gov/server/rest/services/Geocode/Locator_MemphisCityLimits/GeocodeServer/findAddressCandidates?f=json&SingleLine=333%20E.%20Parkway%20N.%2C%20Memphis%2C%20TN&outSR=4326&outFields=*&locationType=rooftop"
+    },
+    {
+      "key": "civic:f2",
+      "name": "Fire Station 55",
+      "buildings": [
+        "bldBig:473"
+      ],
+      "method": "point-in-building",
+      "source": "https://gis.memphistn.gov/server/rest/services/Geocode/Locator_MemphisCityLimits/GeocodeServer/findAddressCandidates?f=json&SingleLine=4602%20Riverdale%20Rd.%2C%20Memphis%2C%20TN&outSR=4326&outFields=*&locationType=rooftop"
+    },
+    {
+      "key": "civic:f3",
+      "name": "Fire Station 31",
+      "buildings": [
+        "bldBig:15783"
+      ],
+      "method": "point-in-building",
+      "source": "https://gis.memphistn.gov/server/rest/services/Geocode/Locator_MemphisCityLimits/GeocodeServer/findAddressCandidates?f=json&SingleLine=4258%20Overton%20Crossing%20St.%2C%20Memphis%2C%20TN&outSR=4326&outFields=*&locationType=rooftop"
+    },
+    {
+      "key": "civic:f4",
+      "name": "Fire Station 26",
+      "buildings": [
+        "bldBig:11964"
+      ],
+      "method": "point-in-building",
+      "source": "Existing city GIS point"
+    },
+    {
+      "key": "civic:f5",
+      "name": "Fire Station 27",
+      "buildings": [
+        "bldBig:11742"
+      ],
+      "method": "point-in-building",
+      "source": "https://gis.memphistn.gov/server/rest/services/Geocode/Locator_MemphisCityLimits/GeocodeServer/findAddressCandidates?f=json&SingleLine=2530%20Whitney%20Ave.%2C%20Memphis%2C%20TN&outSR=4326&outFields=*&locationType=rooftop"
+    },
+    {
+      "key": "civic:f6",
+      "name": "Fire Station 46",
+      "buildings": [
+        "bldBig:11601"
+      ],
+      "method": "point-in-building",
+      "source": "https://gis.memphistn.gov/server/rest/services/Geocode/Locator_MemphisCityLimits/GeocodeServer/findAddressCandidates?f=json&SingleLine=3423%20Scenic%20Hwy.%2C%20Memphis%2C%20TN&outSR=4326&outFields=*&locationType=rooftop"
+    },
+    {
+      "key": "civic:f7",
+      "name": "Fire Station 47",
+      "buildings": [
+        "bldBig:12013"
+      ],
+      "method": "point-in-building",
+      "source": "https://gis.memphistn.gov/server/rest/services/Geocode/Locator_MemphisCityLimits/GeocodeServer/findAddressCandidates?f=json&SingleLine=3510%20Coleman%20Rd.%2C%20Memphis%2C%20TN&outSR=4326&outFields=*&locationType=rooftop"
+    },
+    {
+      "key": "civic:f8",
+      "name": "Fire Station 59",
+      "buildings": [
+        "bldBig:17746"
+      ],
+      "method": "point-in-building",
+      "source": "Existing city GIS point"
+    },
+    {
+      "key": "civic:f9",
+      "name": "Fire Station 17",
+      "buildings": [
+        "bldRest:87785"
+      ],
+      "method": "point-in-building",
+      "source": "https://gis.memphistn.gov/server/rest/services/Geocode/Locator_MemphisCityLimits/GeocodeServer/findAddressCandidates?f=json&SingleLine=611%20National%20St.%2C%20Memphis%2C%20TN&outSR=4326&outFields=*&locationType=rooftop"
+    },
+    {
+      "key": "civic:f10",
+      "name": "Fire Station 11",
+      "buildings": [
+        "bldCore:19176"
+      ],
+      "method": "point-in-building",
+      "source": "https://gis.memphistn.gov/server/rest/services/Geocode/Locator_MemphisCityLimits/GeocodeServer/findAddressCandidates?f=json&SingleLine=1826%20Union%20Ave.%2C%20Memphis%2C%20TN&outSR=4326&outFields=*&locationType=rooftop"
+    },
+    {
+      "key": "civic:f11",
+      "name": "Fire Station 37",
+      "buildings": [
+        "bldBig:1528"
+      ],
+      "method": "point-in-building",
+      "source": "https://gis.memphistn.gov/server/rest/services/Geocode/Locator_MemphisCityLimits/GeocodeServer/findAddressCandidates?f=json&SingleLine=3950%20Weaver%20Rd.%2C%20Memphis%2C%20TN&outSR=4326&outFields=*&locationType=rooftop"
+    },
+    {
+      "key": "civic:f12",
+      "name": "Fire Station 54",
+      "buildings": [
+        "bldBig:15177"
+      ],
+      "method": "point-in-building",
+      "source": "Existing city GIS point"
+    },
+    {
+      "key": "civic:f13",
+      "name": "Fire Station 53",
+      "buildings": [
+        "bldBig:857"
+      ],
+      "method": "point-in-building",
+      "source": "https://gis.memphistn.gov/server/rest/services/Geocode/Locator_MemphisCityLimits/GeocodeServer/findAddressCandidates?f=json&SingleLine=5881%20E.%20Raines%20Rd.%2C%20Memphis%2C%20TN&outSR=4326&outFields=*&locationType=rooftop"
+    },
+    {
+      "key": "civic:f14",
+      "name": "Fire Station 20",
+      "buildings": [
+        "bldBig:4852"
+      ],
+      "method": "point-in-building",
+      "source": "https://gis.memphistn.gov/server/rest/services/Geocode/Locator_MemphisCityLimits/GeocodeServer/findAddressCandidates?f=json&SingleLine=2034%20S.%20Lauderdale%20St.%2C%20Memphis%2C%20TN&outSR=4326&outFields=*&locationType=rooftop"
+    },
+    {
+      "key": "civic:f15",
+      "name": "Fire Station 23",
+      "buildings": [
+        "bldBig:10124"
+      ],
+      "method": "point-in-building",
+      "source": "https://gis.memphistn.gov/server/rest/services/Geocode/Locator_MemphisCityLimits/GeocodeServer/findAddressCandidates?f=json&SingleLine=3468%20Jackson%20Ave.%2C%20Memphis%2C%20TN&outSR=4326&outFields=*&locationType=rooftop"
+    },
+    {
+      "key": "civic:f16",
+      "name": "Fire Station 34",
+      "buildings": [
+        "bldBig:3296"
+      ],
+      "method": "point-in-building",
+      "source": "https://gis.memphistn.gov/server/rest/services/Geocode/Locator_MemphisCityLimits/GeocodeServer/findAddressCandidates?f=json&SingleLine=3909%20Knight%20Arnold%20Rd.%2C%20Memphis%2C%20TN&outSR=4326&outFields=*&locationType=rooftop"
+    },
+    {
+      "key": "civic:f17",
+      "name": "Fire Station 36",
+      "buildings": [
+        "bldBig:3273"
+      ],
+      "method": "point-in-building",
+      "source": "https://gis.memphistn.gov/server/rest/services/Geocode/Locator_MemphisCityLimits/GeocodeServer/findAddressCandidates?f=json&SingleLine=3215%20S.%20Third%20St.%2C%20Memphis%2C%20TN&outSR=4326&outFields=*&locationType=rooftop"
+    },
+    {
+      "key": "civic:f18",
+      "name": "Fire Station 50",
+      "buildings": [
+        "bldBig:1044"
+      ],
+      "method": "point-in-building",
+      "source": "https://gis.memphistn.gov/server/rest/services/Geocode/Locator_MemphisCityLimits/GeocodeServer/findAddressCandidates?f=json&SingleLine=4255%20E.%20Raines%20Rd.%2C%20Memphis%2C%20TN&outSR=4326&outFields=*&locationType=rooftop"
+    },
+    {
+      "key": "civic:f19",
+      "name": "Fire Station 51",
+      "buildings": [
+        "bldBig:9864"
+      ],
+      "method": "point-in-building",
+      "source": "https://gis.memphistn.gov/server/rest/services/Geocode/Locator_MemphisCityLimits/GeocodeServer/findAddressCandidates?f=json&SingleLine=5921%20Shelby%20Oaks%20Dr.%2C%20Memphis%2C%20TN&outSR=4326&outFields=*&locationType=rooftop"
+    },
+    {
+      "key": "civic:f20",
+      "name": "Fire Station 8",
+      "buildings": [
+        "bldBig:7626"
+      ],
+      "method": "point-in-building",
+      "source": "https://gis.memphistn.gov/server/rest/services/Geocode/Locator_MemphisCityLimits/GeocodeServer/findAddressCandidates?f=json&SingleLine=625%20Mississippi%20Blvd.%2C%20Memphis%2C%20TN&outSR=4326&outFields=*&locationType=rooftop"
+    },
+    {
+      "key": "civic:f21",
+      "name": "Fire Station Airport",
+      "buildings": [
+        "bldBig:1284"
+      ],
+      "method": "point-in-building",
+      "source": "https://gis.memphistn.gov/server/rest/services/Geocode/Locator_MemphisCityLimits/GeocodeServer/findAddressCandidates?f=json&SingleLine=2785%20Rudder%20Rd.%2C%20Memphis%2C%20TN&outSR=4326&outFields=*&locationType=rooftop"
+    },
+    {
+      "key": "civic:f22",
+      "name": "Fire Station 14",
+      "buildings": [
+        "bldBig:6464"
+      ],
+      "method": "point-in-building",
+      "source": "https://gis.memphistn.gov/server/rest/services/Geocode/Locator_MemphisCityLimits/GeocodeServer/findAddressCandidates?f=json&SingleLine=980%20E.%20McLemore%20Ave.%2C%20Memphis%2C%20TN&outSR=4326&outFields=*&locationType=rooftop"
+    },
+    {
+      "key": "civic:f23",
+      "name": "Fire Station 40",
+      "buildings": [
+        "bldBig:517"
+      ],
+      "method": "point-in-building",
+      "source": "https://gis.memphistn.gov/server/rest/services/Geocode/Locator_MemphisCityLimits/GeocodeServer/findAddressCandidates?f=json&SingleLine=2231%20E.%20Shelby%20Dr.%2C%20Memphis%2C%20TN&outSR=4326&outFields=*&locationType=rooftop"
+    },
+    {
+      "key": "civic:f24",
+      "name": "Fire Station 45",
+      "buildings": [
+        "bldBig:18914"
+      ],
+      "method": "point-in-building",
+      "source": "https://gis.memphistn.gov/server/rest/services/Geocode/Locator_MemphisCityLimits/GeocodeServer/findAddressCandidates?f=json&SingleLine=5185%20S.%20Third%20St.%2C%20Memphis%2C%20TN&outSR=4326&outFields=*&locationType=rooftop"
+    },
+    {
+      "key": "civic:f25",
+      "name": "Fire Station 15",
+      "buildings": [
+        "bldBig:9643"
+      ],
+      "method": "point-in-building",
+      "source": "https://gis.memphistn.gov/server/rest/services/Geocode/Locator_MemphisCityLimits/GeocodeServer/findAddressCandidates?f=json&SingleLine=688%20Breedlove%20St.%2C%20Memphis%2C%20TN&outSR=4326&outFields=*&locationType=rooftop"
+    },
+    {
+      "key": "civic:f26",
+      "name": "Fire Station 18",
+      "buildings": [
+        "bldRest:81599"
+      ],
+      "method": "point-in-building",
+      "source": "https://gis.memphistn.gov/server/rest/services/Geocode/Locator_MemphisCityLimits/GeocodeServer/findAddressCandidates?f=json&SingleLine=3426%20Southern%20Ave.%2C%20Memphis%2C%20TN&outSR=4326&outFields=*&locationType=rooftop"
+    },
+    {
+      "key": "civic:f27",
+      "name": "Fire Station 19",
+      "buildings": [
+        "bldRest:47814"
+      ],
+      "method": "point-in-building",
+      "source": "https://gis.memphistn.gov/server/rest/services/Geocode/Locator_MemphisCityLimits/GeocodeServer/findAddressCandidates?f=json&SingleLine=2248%20Chelsea%20Ave.%2C%20Memphis%2C%20TN&outSR=4326&outFields=*&locationType=rooftop"
+    },
+    {
+      "key": "civic:f28",
+      "name": "Fire Station 2",
+      "buildings": [
+        "bldBig:8038"
+      ],
+      "method": "point-in-building",
+      "source": "https://gis.memphistn.gov/server/rest/services/Geocode/Locator_MemphisCityLimits/GeocodeServer/findAddressCandidates?f=json&SingleLine=474%20S.%20Main%20St.%2C%20Memphis%2C%20TN&outSR=4326&outFields=*&locationType=rooftop"
+    },
+    {
+      "key": "civic:f29",
+      "name": "Fire Station 32",
+      "buildings": [
+        "bldBig:18790"
+      ],
+      "method": "point-in-building",
+      "source": "https://gis.memphistn.gov/server/rest/services/Geocode/Locator_MemphisCityLimits/GeocodeServer/findAddressCandidates?f=json&SingleLine=1670%20Channel%20Ave.%2C%20Memphis%2C%20TN&outSR=4326&outFields=*&locationType=rooftop"
+    },
+    {
+      "key": "civic:f30",
+      "name": "Fire Station 39",
+      "buildings": [
+        "bldBig:1103"
+      ],
+      "method": "point-in-building",
+      "source": "https://gis.memphistn.gov/server/rest/services/Geocode/Locator_MemphisCityLimits/GeocodeServer/findAddressCandidates?f=json&SingleLine=1025%20E.%20Raines%20Rd.%2C%20Memphis%2C%20TN&outSR=4326&outFields=*&locationType=rooftop"
+    },
+    {
+      "key": "civic:f31",
+      "name": "Fire Station 42",
+      "buildings": [
+        "bldBig:3101"
+      ],
+      "method": "point-in-building",
+      "source": "https://gis.memphistn.gov/server/rest/services/Geocode/Locator_MemphisCityLimits/GeocodeServer/findAddressCandidates?f=json&SingleLine=3242%20Fontaine%20Rd.%2C%20Memphis%2C%20TN&outSR=4326&outFields=*&locationType=rooftop"
+    },
+    {
+      "key": "civic:f32",
+      "name": "Fire Station 43",
+      "buildings": [
+        "bldBig:146"
+      ],
+      "method": "point-in-building",
+      "source": "https://gis.memphistn.gov/server/rest/services/Geocode/Locator_MemphisCityLimits/GeocodeServer/findAddressCandidates?f=json&SingleLine=1253%20E.%20Holmes%20Rd.%2C%20Memphis%2C%20TN&outSR=4326&outFields=*&locationType=rooftop"
+    },
+    {
+      "key": "civic:f33",
+      "name": "Fire Station 52",
+      "buildings": [
+        "bldBig:1646"
+      ],
+      "method": "point-in-building",
+      "source": "https://gis.memphistn.gov/server/rest/services/Geocode/Locator_MemphisCityLimits/GeocodeServer/findAddressCandidates?f=json&SingleLine=6675%20Winchester%20Rd.%2C%20Memphis%2C%20TN&outSR=4326&outFields=*&locationType=rooftop"
+    },
+    {
+      "key": "civic:f34",
+      "name": "Fire Station 10",
+      "buildings": [
+        "bldBig:5916"
+      ],
+      "method": "point-in-building",
+      "source": "https://gis.memphistn.gov/server/rest/services/Geocode/Locator_MemphisCityLimits/GeocodeServer/findAddressCandidates?f=json&SingleLine=148%20S.%20Parkway%20W.%2C%20Memphis%2C%20TN&outSR=4326&outFields=*&locationType=rooftop"
+    },
+    {
+      "key": "civic:f35",
+      "name": "Fire Station 25",
+      "buildings": [
+        "bldBig:4390"
+      ],
+      "method": "point-in-building",
+      "source": "https://gis.memphistn.gov/server/rest/services/Geocode/Locator_MemphisCityLimits/GeocodeServer/findAddressCandidates?f=json&SingleLine=4735%20Willow%20Rd.%2C%20Memphis%2C%20TN&outSR=4326&outFields=*&locationType=rooftop"
+    },
+    {
+      "key": "civic:f36",
+      "name": "Fire Station 28",
+      "buildings": [
+        "bldBig:10362"
+      ],
+      "method": "point-in-building",
+      "source": "https://gis.memphistn.gov/server/rest/services/Geocode/Locator_MemphisCityLimits/GeocodeServer/findAddressCandidates?f=json&SingleLine=1510%20Chelsea%20Ave.%2C%20Memphis%2C%20TN&outSR=4326&outFields=*&locationType=rooftop"
+    },
+    {
+      "key": "civic:f37",
+      "name": "Fire Station 30",
+      "buildings": [
+        "bldBig:5132"
+      ],
+      "method": "point-in-building",
+      "source": "https://gis.memphistn.gov/server/rest/services/Geocode/Locator_MemphisCityLimits/GeocodeServer/findAddressCandidates?f=json&SingleLine=1150%20Getwell%20Rd.%2C%20Memphis%2C%20TN&outSR=4326&outFields=*&locationType=rooftop"
+    },
+    {
+      "key": "civic:f38",
+      "name": "Fire Station 35",
+      "buildings": [
+        "bldBig:2599"
+      ],
+      "method": "point-in-building",
+      "source": "https://gis.memphistn.gov/server/rest/services/Geocode/Locator_MemphisCityLimits/GeocodeServer/findAddressCandidates?f=json&SingleLine=3305%20S.%20Mendenhall%20Rd.%2C%20Memphis%2C%20TN&outSR=4326&outFields=*&locationType=rooftop"
+    },
+    {
+      "key": "civic:f39",
+      "name": "Fire Station 38",
+      "buildings": [
+        "bldBig:552"
+      ],
+      "method": "point-in-building",
+      "source": "https://gis.memphistn.gov/server/rest/services/Geocode/Locator_MemphisCityLimits/GeocodeServer/findAddressCandidates?f=json&SingleLine=4715%20Horn%20Lake%20Rd.%2C%20Memphis%2C%20TN&outSR=4326&outFields=*&locationType=rooftop"
+    },
+    {
+      "key": "civic:f40",
+      "name": "Fire Station 4",
+      "buildings": [
+        "bldBig:10912"
+      ],
+      "method": "point-in-building",
+      "source": "https://gis.memphistn.gov/server/rest/services/Geocode/Locator_MemphisCityLimits/GeocodeServer/findAddressCandidates?f=json&SingleLine=1460%20N.%20Second%20St.%2C%20Memphis%2C%20TN&outSR=4326&outFields=*&locationType=rooftop"
+    },
+    {
+      "key": "civic:f41",
+      "name": "Fire Station 41",
+      "buildings": [
+        "bldBig:4459"
+      ],
+      "method": "point-in-building",
+      "source": "https://gis.memphistn.gov/server/rest/services/Geocode/Locator_MemphisCityLimits/GeocodeServer/findAddressCandidates?f=json&SingleLine=2161%20Ridgeway%20Rd.%2C%20Memphis%2C%20TN&outSR=4326&outFields=*&locationType=rooftop"
+    },
+    {
+      "key": "civic:f42",
+      "name": "Fire Station 44",
+      "buildings": [
+        "bldBig:7599"
+      ],
+      "method": "point-in-building",
+      "source": "https://gis.memphistn.gov/server/rest/services/Geocode/Locator_MemphisCityLimits/GeocodeServer/findAddressCandidates?f=json&SingleLine=220%20N.%20Humphreys%20Blvd.%2C%20Memphis%2C%20TN&outSR=4326&outFields=*&locationType=rooftop"
+    },
+    {
+      "key": "civic:f43",
+      "name": "Fire Station 48",
+      "buildings": [
+        "bldBig:11143"
+      ],
+      "method": "point-in-building",
+      "source": "https://gis.memphistn.gov/server/rest/services/Geocode/Locator_MemphisCityLimits/GeocodeServer/findAddressCandidates?f=json&SingleLine=4985%20Raleigh%20LaGrange%20Rd.%2C%20Memphis%2C%20TN&outSR=4326&outFields=*&locationType=rooftop"
+    },
+    {
+      "key": "civic:f44",
+      "name": "Fire Station 58",
+      "buildings": [
+        "bldBig:17336"
+      ],
+      "method": "point-in-building",
+      "source": "https://gis.memphistn.gov/server/rest/services/Geocode/Locator_MemphisCityLimits/GeocodeServer/findAddressCandidates?f=json&SingleLine=8395%20Dexter%20Rd.%2C%20Memphis%2C%20TN&outSR=4326&outFields=*&locationType=rooftop"
+    },
+    {
+      "key": "civic:f45",
+      "name": "Fire Station 21",
+      "buildings": [
+        "bldBig:6163"
+      ],
+      "method": "point-in-building",
+      "source": "https://gis.memphistn.gov/server/rest/services/Geocode/Locator_MemphisCityLimits/GeocodeServer/findAddressCandidates?f=json&SingleLine=550%20S.%20Mendenhall%20Rd.%2C%20Memphis%2C%20TN&outSR=4326&outFields=*&locationType=rooftop"
+    },
+    {
+      "key": "civic:f46",
+      "name": "Fire Station 24",
+      "buildings": [
+        "bldBig:9348"
+      ],
+      "method": "point-in-building",
+      "source": "https://gis.memphistn.gov/server/rest/services/Geocode/Locator_MemphisCityLimits/GeocodeServer/findAddressCandidates?f=json&SingleLine=4472%20Powell%20Ave.%2C%20Memphis%2C%20TN&outSR=4326&outFields=*&locationType=rooftop"
+    },
+    {
+      "key": "civic:f47",
+      "name": "Fire Station 29",
+      "buildings": [
+        "bldBig:4610"
+      ],
+      "method": "point-in-building",
+      "source": "https://gis.memphistn.gov/server/rest/services/Geocode/Locator_MemphisCityLimits/GeocodeServer/findAddressCandidates?f=json&SingleLine=2147%20Elvis%20Presley%20Blvd.%2C%20Memphis%2C%20TN&outSR=4326&outFields=*&locationType=rooftop"
+    },
+    {
+      "key": "civic:f48",
+      "name": "Fire Station 33",
+      "buildings": [
+        "bldBig:2209"
+      ],
+      "method": "point-in-building",
+      "source": "https://gis.memphistn.gov/server/rest/services/Geocode/Locator_MemphisCityLimits/GeocodeServer/findAddressCandidates?f=json&SingleLine=2555%20Winchester%20Rd.%2C%20Memphis%2C%20TN&outSR=4326&outFields=*&locationType=rooftop"
+    },
+    {
+      "key": "civic:f49",
+      "name": "Fire Station 49",
+      "buildings": [
+        "bldBig:16398"
+      ],
+      "method": "point-in-building",
+      "source": "https://gis.memphistn.gov/server/rest/services/Geocode/Locator_MemphisCityLimits/GeocodeServer/findAddressCandidates?f=json&SingleLine=4351%20New%20Allen%20Rd.%2C%20Memphis%2C%20TN&outSR=4326&outFields=*&locationType=rooftop"
+    },
+    {
+      "key": "civic:f50",
+      "name": "Fire Station 7",
+      "buildings": [
+        "bldBig:8623"
+      ],
+      "method": "point-in-building",
+      "source": "https://gis.memphistn.gov/server/rest/services/Geocode/Locator_MemphisCityLimits/GeocodeServer/findAddressCandidates?f=json&SingleLine=1017%20Jefferson%20Ave.%2C%20Memphis%2C%20TN&outSR=4326&outFields=*&locationType=rooftop"
+    },
+    {
+      "key": "civic:f51",
+      "name": "Fire Station 22",
+      "buildings": [
+        "bldBig:4595"
+      ],
+      "method": "point-in-building",
+      "source": "https://gis.memphistn.gov/server/rest/services/Geocode/Locator_MemphisCityLimits/GeocodeServer/findAddressCandidates?f=json&SingleLine=2960%20Lamar%20Ave.%2C%20Memphis%2C%20TN&outSR=4326&outFields=*&locationType=rooftop"
+    },
+    {
+      "key": "civic:f52",
+      "name": "Fire Station 57",
+      "buildings": [
+        "bldBig:255"
+      ],
+      "method": "point-in-building",
+      "source": "https://gis.memphistn.gov/server/rest/services/Geocode/Locator_MemphisCityLimits/GeocodeServer/findAddressCandidates?f=json&SingleLine=4930%20Pleasant%20Hill%20Rd.%2C%20Memphis%2C%20TN&outSR=4326&outFields=*&locationType=rooftop"
+    },
+    {
+      "key": "civic:f53",
+      "name": "Fire Station 16",
+      "buildings": [
+        "bldBig:5825"
+      ],
+      "method": "point-in-building",
+      "source": "https://gis.memphistn.gov/server/rest/services/Geocode/Locator_MemphisCityLimits/GeocodeServer/findAddressCandidates?f=json&SingleLine=2203%20Lamar%20Ave.%2C%20Memphis%2C%20TN&outSR=4326&outFields=*&locationType=rooftop"
+    },
+    {
+      "key": "civic:f55",
+      "name": "Fire Station 5",
+      "buildings": [
+        "bldBig:8995",
+        "bldBig:9003",
+        "bldBig:9032"
+      ],
+      "method": "address-parcel",
+      "source": "https://gis.memphistn.gov/server/rest/services/Parcel/CERT_TAX_PARCELS/FeatureServer/0/query?f=json&geometry=-90.042184400392,35.145990231608&geometryType=esriGeometryPoint&inSR=4326&spatialRel=esriSpatialRelIntersects&outFields=PARCELID,PAR_ADRNO,PAR_ADDR1,LANDUSE&returnGeometry=true&outSR=4326",
+      "parcel": "023005  00005"
+    },
+    {
+      "key": "civic:h0",
+      "name": "Regional One Health",
+      "buildings": [
+        "bldBig:8699"
+      ],
+      "method": "point-in-building",
+      "source": "https://gis.memphistn.gov/server/rest/services/Geocode/Locator_MemphisCityLimits/GeocodeServer/findAddressCandidates?f=json&SingleLine=877%20Jefferson%20Ave.%2C%20Memphis%2C%20TN&outSR=4326&outFields=*&locationType=rooftop"
+    },
+    {
+      "key": "civic:h1",
+      "name": "Methodist University Hospital",
+      "buildings": [
+        "bldBig:8173"
+      ],
+      "method": "point-in-building",
+      "source": "https://gis.memphistn.gov/server/rest/services/Geocode/Locator_MemphisCityLimits/GeocodeServer/findAddressCandidates?f=json&SingleLine=1265%20Union%20Ave.%2C%20Memphis%2C%20TN&outSR=4326&outFields=*&locationType=rooftop"
+    },
+    {
+      "key": "civic:h2",
+      "name": "Le Bonheur Children's Hospital",
+      "buildings": [
+        "bldBig:8836"
+      ],
+      "method": "point-in-building",
+      "source": "https://gis.memphistn.gov/server/rest/services/Geocode/Locator_MemphisCityLimits/GeocodeServer/findAddressCandidates?f=json&SingleLine=848%20Adams%20Ave.%2C%20Memphis%2C%20TN&outSR=4326&outFields=*&locationType=rooftop"
+    },
+    {
+      "key": "civic:h3",
+      "name": "St. Jude Children's Research Hospital",
+      "buildings": [
+        "bldBig:9443"
+      ],
+      "method": "point-in-building",
+      "source": "https://gis.memphistn.gov/server/rest/services/Geocode/Locator_MemphisCityLimits/GeocodeServer/findAddressCandidates?f=json&SingleLine=262%20Danny%20Thomas%20Pl.%2C%20Memphis%2C%20TN&outSR=4326&outFields=*&locationType=rooftop"
+    },
+    {
+      "key": "civic:h4",
+      "name": "VA Medical Center",
+      "buildings": [
+        "bldBig:8774"
+      ],
+      "method": "point-in-building",
+      "source": "https://gis.memphistn.gov/server/rest/services/Geocode/Locator_MemphisCityLimits/GeocodeServer/findAddressCandidates?f=json&SingleLine=1030%20Jefferson%20Ave.%2C%20Memphis%2C%20TN&outSR=4326&outFields=*&locationType=rooftop"
+    },
+    {
+      "key": "civic:h5",
+      "name": "Baptist Memorial Hospital-Memphis",
+      "buildings": [
+        "bldBig:7348"
+      ],
+      "method": "point-in-building",
+      "source": "https://gis.memphistn.gov/server/rest/services/Geocode/Locator_MemphisCityLimits/GeocodeServer/findAddressCandidates?f=json&SingleLine=6019%20Walnut%20Grove%20Rd.%2C%20Memphis%2C%20TN&outSR=4326&outFields=*&locationType=rooftop"
+    },
+    {
+      "key": "civic:h6",
+      "name": "Baptist Memorial Hospital for Women",
+      "buildings": [
+        "bldBig:7166"
+      ],
+      "method": "point-in-building",
+      "source": "https://gis.memphistn.gov/server/rest/services/Geocode/Locator_MemphisCityLimits/GeocodeServer/findAddressCandidates?f=json&SingleLine=6225%20Humphreys%20Blvd.%2C%20Memphis%2C%20TN&outSR=4326&outFields=*&locationType=rooftop"
+    },
+    {
+      "key": "civic:h7",
+      "name": "Methodist North Hospital",
+      "buildings": [
+        "bldBig:16880"
+      ],
+      "method": "point-in-building",
+      "source": "https://gis.memphistn.gov/server/rest/services/Geocode/Locator_MemphisCityLimits/GeocodeServer/findAddressCandidates?f=json&SingleLine=3960%20New%20Covington%20Pike%2C%20Memphis%2C%20TN&outSR=4326&outFields=*&locationType=rooftop"
+    },
+    {
+      "key": "civic:h8",
+      "name": "Methodist South Hospital",
+      "buildings": [
+        "bldBig:983"
+      ],
+      "method": "point-in-building",
+      "source": "https://gis.memphistn.gov/server/rest/services/Geocode/Locator_MemphisCityLimits/GeocodeServer/findAddressCandidates?f=json&SingleLine=1300%20Wesley%20Dr.%2C%20Memphis%2C%20TN&outSR=4326&outFields=*&locationType=rooftop"
+    },
+    {
+      "key": "civic:h9",
+      "name": "Saint Francis Hospital-Memphis",
+      "buildings": [
+        "bldBig:4995"
+      ],
+      "method": "point-in-building",
+      "source": "https://gis.memphistn.gov/server/rest/services/Geocode/Locator_MemphisCityLimits/GeocodeServer/findAddressCandidates?f=json&SingleLine=5959%20Park%20Ave.%2C%20Memphis%2C%20TN&outSR=4326&outFields=*&locationType=rooftop"
+    },
+    {
+      "key": "civic:h10",
+      "name": "Delta Medical Center",
+      "buildings": [
+        "bldBig:3527"
+      ],
+      "method": "point-in-building",
+      "source": "https://gis.memphistn.gov/server/rest/services/Geocode/Locator_MemphisCityLimits/GeocodeServer/findAddressCandidates?f=json&SingleLine=3000%20Getwell%20Rd.%2C%20Memphis%2C%20TN&outSR=4326&outFields=*&locationType=rooftop"
+    }
+  ],
+  "unresolved": [
+    {
+      "key": "landmark:xai",
+      "name": "xAI Colossus Data Center",
+      "address": "3231 Paul R. Lowry Rd.",
+      "coordinates": [
+        -90.1551323897,
+        35.06055441455
+      ]
+    },
+    {
+      "key": "civic:p5",
+      "name": "Austin Peay Station",
+      "address": "3430 Austin Peay Hwy.",
+      "coordinates": [
+        -89.90964991502,
+        35.21740601641
+      ]
+    },
+    {
+      "key": "civic:f54",
+      "name": "Fire Station 1",
+      "address": "235 Chelsea Ave.",
+      "coordinates": [
+        -90.04103842659,
+        35.163086548058
+      ]
+    }
+  ]
+}

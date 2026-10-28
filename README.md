@@ -106,3 +106,15 @@ Open **Music** in the bottom action bar or **Music & volume** on the title scree
 Music starts after your first interaction, defaults to 22% volume, and remembers your music settings separately from game saves. Tracks crossfade over two seconds where Web Audio is available. Hidden tabs pause playback. Music settings temporarily stop game time without changing your pause preference. Audio failure does not block gameplay.
 
 Playback code is in `music.js`, settings styles in `music.css`, and the MP3 files and track listing in `assets/music/`. Music was AI-generated with Runway for this game. No third-party songs or artist recordings were supplied as references.
+
+## City and character redesign (v18)
+
+The city uses a daylight palette, warm masonry, varied neighborhood colors and decorative windows on linked civic buildings. These facades are stylized; the underlying outlines remain the municipal building footprints. Characters have larger cartoon heads and eyes, with expressions reflecting their opinion. Existing character appearance choices remain available, and the mayor's map marker shows their portrait.
+
+Named buildings can be hovered, highlighted and clicked to open their existing location actions. Shared buildings offer a choice of destinations. Building links respect the buildings and public-services layer switches and leave political map interaction intact. The Pyramid retains its special stepped shape and is directly clickable.
+
+`data/building-link-audit.json` records the links and unresolved sites. The current preview links 87 of 90 building-oriented locations, plus the Pyramid. Parks, neighborhoods, planned sites and other area destinations remain markers. xAI, Austin Peay Station and Fire Station 1 retain their markers pending an unambiguous footprint match; no arbitrary nearby building is substituted.
+
+Address corrections use the [City of Memphis address locator](https://gis.memphistn.gov/server/rest/services/Geocode/Locator_MemphisCityLimits/GeocodeServer). Parcel-based links use [City of Memphis tax parcels](https://gis.memphistn.gov/server/rest/services/Parcel/CERT_TAX_PARCELS/FeatureServer/0). Exact candidate responses and parcel boundaries are retained with the source URLs. Footprint containment confirms the spatial link, not a photorealistic reconstruction or a field survey.
+
+Rebuild links and decorative facades with `node tools/build-places.cjs`. `tools/resolve-addresses.ps1` and `tools/resolve-parcels.ps1` refresh public-source candidates for review. Run the local server, then `node tools/check-city.cjs` with Playwright installed to check selection, layers and mobile layout and capture previews. No saved-game format changes are required.
