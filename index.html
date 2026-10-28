@@ -365,6 +365,7 @@ button.seat:hover{border-color:var(--amber)}
 /* v15 */
 .lbl-hide{visibility:hidden!important;pointer-events:none!important}.lbl-dim .nm,.lbl-dim .cn{display:none!important}
 #hClout{display:inline-block;font:500 12px/1 'Barlow Condensed',Arial,sans-serif;color:var(--muted);margin-left:8px;cursor:pointer;letter-spacing:.03em;vertical-align:2px;padding:2px 5px;border:1px solid rgba(255,255,255,.12);border-radius:4px}#hClout b{font:inherit;font-weight:700}#hClout:hover{color:#e8eef4}#hClout:empty{display:none}
+.newslist{display:grid;gap:8px}.newsit small{display:block;color:var(--muted);font-size:11.5px}.newsit .nh{font:600 16px/1.25 Georgia,'Times New Roman',serif;color:#f0e9da;border-left:3px solid var(--muted);padding:2px 0 2px 8px;margin:3px 0}.newsit.front .nh{font-size:19px}
 #hovercard.touch{left:12px!important;right:12px!important;top:auto!important;bottom:calc(84px + env(safe-area-inset-bottom,0px))!important;width:auto!important;pointer-events:auto}
 .navrow.more-r{-webkit-mask-image:linear-gradient(90deg,#000 85%,transparent);mask-image:linear-gradient(90deg,#000 85%,transparent)}
 .navrow.more-l.more-r{-webkit-mask-image:linear-gradient(90deg,transparent,#000 10%,#000 85%,transparent);mask-image:linear-gradient(90deg,transparent,#000 10%,#000 85%,transparent)}
@@ -1283,7 +1284,7 @@ function resolve(ev,ci){S.stats=S.stats||{};if(ev.id!=='briefing')S.stats.resolv
   }else{
     const c=def.choices[ci];
     if(c.cost>=APPROP_MIN&&!c.vote&&!approp(c.cost,`"${def.title}"`,{lean:c.council||{},key:'ev:'+(ev.id||def.id)+':'+ci})){ev.denied=ev.denied||[];if(!ev.denied.includes(ci))ev.denied.push(ci);S.stats.resolved--;const dm=`The council voted down the money for "${def.title}". Pick another response or ask again later.`;save();toast(dm);refreshHUD();return dm}
-    if(c.cost)S.reserve-=c.cost;if(c.policy)S.policies[c.policy]=true;applyFx(S,c.fx);applyCouncil(S,c.council,def.title);applyNb(c.nb,def.title);
+    if(c.cost)S.reserve-=c.cost;if(c.policy)S.policies[c.policy]=true;applyFx(S,c.fx);applyCouncil(S,c.council,def.title);applyNb(c.nb,def.title);try{newsDecision(def,c)}catch(e){}
     if(c.vote){const res=rollVote(S,c.vote.lean,50);res.forEach(r=>{if(isCommitted(r.m))r.yes=true});clearCommits();const yes=res.filter(r=>r.yes).length;const pass=yes>=7;
       applyFx(S,(pass?c.vote.pass:c.vote.fail).fx);msg=`Council ${pass?'confirmed':'rejected'} your nominee ${yes}–${13-yes}.`}
     else msg=def.id==='briefing'?'Amber pins on the map mark places that need you. Click one.':`Decision made: ${c.label}.`;
@@ -1354,7 +1355,7 @@ function endOfMonth(){
   // new business arrives on random days through the month
   queueNewBusiness(report);
   if(S.y===2026&&S.m===11&&!S.used.mlgw_rates){const def=EVENTS.find(e=>e.id==='mlgw_rates');S.used.mlgw_rates=nowM();S.queue=S.queue||[];S.queue.push({ev:{id:'mlgw_rates',kind:'event',expires:2,born:nowM()},due:5+Math.floor(Math.random()*10)})}
-  const pout=projectsMonth(report);storiesMonth();try{civicMonth(report)}catch(e){console.warn('civic',e)}try{cloutMonth()}catch(e){}try{staffMonth(report)}catch(e){console.warn('staff',e)}try{charLifeMonth(report)}catch(e){console.warn('life',e)}try{succCheck()}catch(e){console.warn('succ',e)}upkeepMonth(report);dealsMonth(report);promisesMonth(report);if(S.camp){campaignMonth(report);purseMonth(report);householdMonth(report);storeMonth()}moneyMonth(report,pout&&pout.paid);
+  const pout=projectsMonth(report);storiesMonth();try{civicMonth(report)}catch(e){console.warn('civic',e)}try{cloutMonth()}catch(e){}try{sotcMonth(report)}catch(e){console.warn('sotc',e)}try{newsMonth(report)}catch(e){console.warn('news',e)}try{staffMonth(report)}catch(e){console.warn('staff',e)}try{charLifeMonth(report)}catch(e){console.warn('life',e)}try{succCheck()}catch(e){console.warn('succ',e)}upkeepMonth(report);dealsMonth(report);promisesMonth(report);if(S.camp){campaignMonth(report);purseMonth(report);householdMonth(report);storeMonth()}moneyMonth(report,pout&&pout.paid);
   prevMet=before;
   const head=`${MONTHS_L[(S.m+10)%12]} closed: approval ${Math.round(S.approval)}% (${S.approval>=before.approval?'+':'−'}${Math.abs(S.approval-before.approval).toFixed(1)}), reserve ${fmtM(S.reserve)}`;
   logIt(head);report.forEach(l=>logIt(l));
@@ -1758,7 +1759,7 @@ function openNeighbor(id){const n=S.nb[id],N=NEIGHBORS[id];if(!n)return;recomput
    </div>`,'nb'+id)}
 function mTraitChips(traits){return(traits||S.mayor.traits).map(t=>`<span class="trait" style="--tc:${MTRAITS[t].c}" title="${MTRAITS[t].n}: ${MTRAITS[t].d}">${MTRAITS[t].bg?'⌂ ':''}${MTRAITS[t].n}</span>`).join('')||'<span class="note">No traits</span>'}
 function openMayor(){const M=S.mayor;if(!M)return;const now=S.y*12+S.m;const cd=now-(M.trained??-99);const canTrain=cd>=2&&S.slots>0&&S.reserve>=0.05;
-  openPanel(`Your character · term ${S.term}`,`Mayor ${M.name}`,`<div class="row" style="margin-bottom:6px"><button class="btn" data-act="legacy">Your legacy and past mayors (Y)</button><button class="btn" data-act="platform">Your platform and clout (P)</button></div>
+  openPanel(`Your character · term ${S.term}`,`Mayor ${M.name}`,`<div class="row" style="margin-bottom:6px"><button class="btn" data-act="legacy">Your legacy and past mayors (Y)</button><button class="btn" data-act="platform">Your platform and clout (P)</button><button class="btn" data-act="news">The news (R)</button><button class="btn" data-act="sotc">State of the City (T)</button></div>
    <div class="char"><div>${portrait(M,104)}</div><div class="charinfo"><div class="note">Age ${M.age+(S.y-2026)} · Mayor of Memphis</div><div class="traits">${mTraitChips()}</div>
      <div class="note">Lifestyle focus: <b style="color:var(--amber)">${skillName(M.focus)}</b></div>
      <div class="row"><input id="mRename" maxlength="40" value="${M.name.replace(/"/g,'&quot;')}" aria-label="Your name" style="font:inherit;background:var(--panel2);border:1px solid var(--line);border-radius:4px;padding:4px 7px;color:var(--text);min-width:0;flex:1"><button class="btn" data-act="rename" style="padding:5px 10px">Rename</button></div><div class="row"><button class="btn" data-act="look">Change your look</button><button class="btn" data-act="promises">Your promises</button><button class="btn" data-act="household">Household${S.home?` · ${LMAP[S.home.id].n}`:''}</button><button class="btn" data-act="shop">Wardrobe${S.purse?` · $${Math.round(S.purse.cash).toLocaleString()}`:''}</button></div></div></div>
@@ -1815,7 +1816,7 @@ function openRegion(){recomputeAll(S);openPanel('Six neighboring cities','Region
 // ======================= BACK BUTTON & TABS =======================
 const NAV={stack:[],cur:null,busy:false,depth:0};const VIEWS={};
 const TABS=[['openDesk','Desk'],['openActions','Actions'],['openHQ','Campaign'],['openFinances','Money'],['openHousehold','Home'],['openMayor','Mayor'],['openCabinet','Cabinet'],['openOpinion','Opinion'],['openCouncil','Council'],['openRegion','Region'],['openBudget','Budget'],['openPolicies','Programs'],['openLedger','Ledger']];
-const TAB_OF={openPlatform:'openActions',openHousehold:'openHousehold',openMove:'openHousehold',openFinances:'openFinances',openHQ:'openHQ',openDonor:'openHQ',openShop:'openMayor',openLegacy:'openMayor',openCabinet:'openCabinet',openStaff:'openCabinet',openStore:'openHousehold',openCivic:'openActions',openCivicList:'openActions',openPromises:'openDesk',openDeal:'openActions',openLook:'openMayor',openDesk:'openDesk',openProject:'openDesk',openPlanner:'openActions',openActions:'openActions',openPropose:'openActions',openMayor:'openMayor',openOpinion:'openOpinion',openGroup:'openOpinion',openCouncil:'openCouncil',openWhip:'openCouncil',openCharacter:'openCouncil',openDistrict:'openCouncil',openRegion:'openRegion',openNeighbor:'openRegion',openBudget:'openBudget',openPolicies:'openPolicies',openLedger:'openLedger'};
+const TAB_OF={openPlatform:'openActions',openNews:'openActions',openSotc:'openActions',openHousehold:'openHousehold',openMove:'openHousehold',openFinances:'openFinances',openHQ:'openHQ',openDonor:'openHQ',openShop:'openMayor',openLegacy:'openMayor',openCabinet:'openCabinet',openStaff:'openCabinet',openStore:'openHousehold',openCivic:'openActions',openCivicList:'openActions',openPromises:'openDesk',openDeal:'openActions',openLook:'openMayor',openDesk:'openDesk',openProject:'openDesk',openPlanner:'openActions',openActions:'openActions',openPropose:'openActions',openMayor:'openMayor',openOpinion:'openOpinion',openGroup:'openOpinion',openCouncil:'openCouncil',openWhip:'openCouncil',openCharacter:'openCouncil',openDistrict:'openCouncil',openRegion:'openRegion',openNeighbor:'openRegion',openBudget:'openBudget',openPolicies:'openPolicies',openLedger:'openLedger'};
 function navWrap(name,fn){const w=function(...a){const sig=name+JSON.stringify(a);
     if(!NAV.busy&&NAV.cur&&NAV.cur.sig!==sig){NAV.stack.push(NAV.cur);if(NAV.stack.length>25)NAV.stack.shift()}
     NAV.cur={sig,name,a,title:''};NAV.depth++;let r;try{r=fn.apply(this,a)}finally{NAV.depth--}
@@ -1903,7 +1904,7 @@ function openActions(){closePanel();S.acts=S.acts||{};S.laws=S.laws||{};const sl
   const props=PROPOSALS.filter(p=>!S.laws[p.id]);
   openModal(`Mayor's actions · ${slots} meeting${slots===1?'':'s'} left this month · reserve ${fmtM(S.reserve)}`,'Take action',`
    <p class="note">You don't have to wait for problems to land on your desk. Pick a move; most use a meeting slot (3 a month) or have a cooldown.</p>
-   <div class="facts"><h4>Use your platform</h4><p class="note">Push the school district, the county, Nashville, MLGW, big employers and others you don't control. The more popular you are, the better your odds. Clout now: <b style="color:${cloutColor(clout())}">${Math.round(clout())} · ${cloutTier(clout())}</b>.</p><div class="row"><button class="btn primary" data-act="platform">Your platform (P)</button></div></div>
+   <div class="facts"><h4>Use your platform</h4><p class="note">Push the school district, the county, Nashville, MLGW, big employers and others you don't control. The more popular you are, the better your odds. Clout now: <b style="color:${cloutColor(clout())}">${Math.round(clout())} · ${cloutTier(clout())}</b>.</p><div class="row"><button class="btn primary" data-act="platform">Your platform (P)</button><button class="btn" data-act="news">The news (R)</button><button class="btn" data-act="sotc">State of the City (T)</button></div></div>
    <div class="facts"><h4>Police, fire, hospitals and schools</h4><p class="note">Visit stations, fund equipment and patrols, partner with hospitals, and help schools with tutoring, safe walks and repairs. Click any ★ police station, ▲ fire station, ✚ hospital or ✎ school on the map, or pick from a list.${(()=>{const n=Object.values(S.civic||{}).filter(c=>c.out).length;return n?` <b style="color:var(--bad)">${n} need${n===1?'s':''} attention.</b>`:''})()}</p>
     <div class="row"><button class="btn" data-civlist="police">★ Police stations</button><button class="btn" data-civlist="fire">▲ Fire stations</button><button class="btn" data-civlist="hospital">✚ Hospitals</button><button class="btn" data-civlist="school">✎ Schools</button></div></div>
    <div class="facts"><h4>Start a capital project</h4><p class="note">Projects go to the council, out to bid, then take months to build. You'll see them on the map the whole way. Up to 4 at a time.</p>
@@ -3812,6 +3813,11 @@ const GUIDE_MAYOR=[
  {id:'issue',t:'Handle a problem on the map',h:'Click an amber pin, or a desk item, and choose a response.',done:()=>((S.stats||{}).resolved||0)>0,go:()=>{const e=S.events.find(e=>e.kind==='event'&&e.id!=='briefing');if(e)openPlace(evAt(e));else openDesk()}},
  {id:'meet',t:'Meet a council member in private',h:'Open the Council, pick a member, and use one of your 3 monthly meetings.',done:()=>S.council.some(m=>m.met!=null&&m.met>=0),go:()=>openCouncil()},
  {id:'civic',t:'Visit a police station, fire station or hospital',h:'Click a ★, ▲ or ✚ on the map.',done:()=>Object.values(S.civic||{}).some(c=>Object.keys(c.acts||{}).length),go:()=>openCivicList('fire')},
+ {id:'school',t:'Visit a school',h:'Zoom in and click a ✎ school, or Actions (E) → ✎ Schools.',done:()=>Object.keys(S.civic||{}).some(id=>id[0]==='s'&&Object.keys(S.civic[id].acts||{}).length),go:()=>openCivicList('school')},
+ {id:'clout',t:'Use your clout',h:'Click "clout" next to Approval (or press P) and push for something you don\'t control, like the school district or Nashville.',done:()=>((S.stats||{}).push||0)>0,go:()=>openPlatform()},
+ {id:'news',t:'Read the news',h:'Five local outlets cover what you do (R). A press conference softens a rough month.',done:()=>!!(S.seen||{}).news,go:()=>openNews()},
+ {id:'approp',t:'Get the council to approve a big spend',h:'Spending $1M or more from the reserve needs 7 votes, and the button shows the likely tally. Try repairing a police station.',done:()=>((S.stats||{}).approp||0)>((S.stats||{}).apropNo||0),go:()=>openCivicList('police')},
+ {id:'sotc',t:'Give the State of the City',h:'Every January (T). Pick three priorities; pushes and spending toward them come easier, and you\'re judged on them a year later.',done:()=>!!S.sotc,go:()=>openSotc()},
  {id:'town',t:'Hold a town hall',h:'Actions (E) → Hold a town hall. Pick a district where approval is low.',done:()=>anyAct(/^th\d/),go:()=>openActions()},
  {id:'cab',t:'Check on your cabinet',h:'The Cabinet tab. Hover a face to see how they feel about you.',done:()=>!!(S.seen||{}).cabinet,go:()=>openCabinet()},
  {id:'proj',t:'Start a capital project',h:'Actions (E) → Start a capital project. It needs 7 council votes.',done:()=>(S.projects||[]).length>0,go:()=>openActions()},
@@ -4131,6 +4137,7 @@ function cloutParts(){const out=[];if(!S||!S.mayor||isCand())return out;
   if(E){const age=nowM()-(E.y*12+10);if(age>=0&&age<24){const v=Math.round(Math.max(0,E.share-50)*1.6*(1-age/24));if(v)out.push({t:`Mandate: won ${E.share}–${E.opp} in ${E.y}`,v})}}
   const mo=nowMonthsInOffice(S);if(mo>=0&&mo<6&&S.term<=1)out.push({t:'Honeymoon: first months in office',v:Math.round(10*(1-mo/6))});
   const ch=Math.round((mskill('cha')-8)*2);if(ch)out.push({t:'Charisma',v:ch});
+  const pr=pressPart();if(pr)out.push({t:'Press coverage',v:pr});
   const sp=Math.round(S.cloutSpent||0);if(sp)out.push({t:'Recently spent on public pushes',v:-sp});
   return out}
 function clout(){return clamp(cloutParts().reduce((a,x)=>a+x.v,0),0,100)}
@@ -4203,6 +4210,116 @@ function approp(amount,title,ctx){if(!S||amount<APPROP_MIN||isCand())return true
   if(!ok&&ctx.key){S.apropNo=S.apropNo||{};S.apropNo[ctx.key]=nowM()}
   const msg=`${ok?'The council approved':'The council voted down'} ${fmtM(amount)} from the reserve for ${title}, ${yes}–${13-yes}.${ok?'':' Nothing was spent.'}`;logIt(msg);
   try{sfx('gavel')}catch(e){}try{notify(ok?'good':'alert',ok?`Council approved ${fmtM(amount)}`:`Council said no to ${fmtM(amount)}`,msg,()=>openCouncil(),{silent:true})}catch(e){}return ok}
+// ======================= LOCAL NEWS =======================
+// Five (fictional) Memphis outlets cover what the mayor does. Each month the biggest stories run; good coverage lifts the
+// groups who read that outlet and builds clout, bad coverage does the opposite. A press conference softens a bad month.
+const OUTLETS=[
+ {id:'ledger',n:'The Bluff City Ledger',k:'Daily paper',reach:1.1,slant:0,aud:{owners:1,business:1,faith:0.6,working:0.4},tags:{fiscal:2,council:1.5,schools:1,projects:1}},
+ {id:'midsouth',n:'Mid-South Daily',k:'Online newsroom',reach:0.9,slant:0,aud:{young:1,parents:0.8,business:0.6,renters:0.4},tags:{schools:2,fiscal:1.2,council:1.2,transit:1}},
+ {id:'ch6',n:'Channel 6 Eyewitness News',k:'TV news',reach:1.2,slant:-0.2,aud:{working:1,faith:1,owners:0.6,parents:0.6,renters:0.6},tags:{crime:2.5,safety:2,weather:2,civic:1.2,streets:1}},
+ {id:'voice',n:'The Soulsville Voice',k:'Community paper',reach:0.8,slant:0,aud:{working:1,faith:1,renters:0.8,parents:0.6},tags:{neighborhoods:2,schools:1.2,jobs:1.5,blight:1.5,transit:1.2}},
+ {id:'weekly',n:'The River Bluff Weekly',k:'Alt-weekly',reach:0.6,slant:-0.3,aud:{young:1.2,renters:0.8},tags:{council:1.5,culture:2,transit:1.2,blight:1}}];
+const OUTMAP={};OUTLETS.forEach(o=>OUTMAP[o.id]=o);
+function newsAdd(tone,head,opts){if(!S||S.phase!=='mayor')return;opts=opts||{};S.newsQ=S.newsQ||[];S.newsQ.push({tone:clamp(tone,-2,2),head,dek:opts.dek||'',tag:opts.tag||'council',w:opts.w||1,y:S.y,m:S.m});if(S.newsQ.length>30)S.newsQ.splice(0,S.newsQ.length-30)}
+function pickOutlet(tag){let best=null,bv=-1;OUTLETS.forEach(o=>{const v=(o.tags[tag]||0.4)*(0.6+Math.random()*0.8);if(v>bv){bv=v;best=o}});return best}
+function pressPart(){return Math.round((S.press||0)*0.6)}
+function newsMonth(report){if(!S||S.phase!=='mayor')return;S.newsQ=S.newsQ||[];S.news=S.news||[];
+  // stories the city itself generates
+  const M=S.met;const snap=S.newsMet;const now=nowM();
+  if(!snap||now-snap.t>=3){if(snap){const dc=M.crime-snap.crime;if(Math.abs(dc)>=1.5)newsAdd(dc<0?1:-1.2,dc<0?`Violent crime is down this season`:`Violent crime is climbing again`,{tag:'crime',w:1.4,dek:`The crime index went from ${Math.round(snap.crime)} to ${Math.round(M.crime)}.`});
+      const ds=M.streets-snap.streets;if(Math.abs(ds)>=2)newsAdd(ds>0?0.8:-0.8,ds>0?`Drivers notice smoother streets`:`Potholes are winning`,{tag:'streets',w:1,dek:`Street condition went from ${Math.round(snap.streets)} to ${Math.round(M.streets)}.`});
+      const dt=M.transit-snap.transit;if(Math.abs(dt)>=2)newsAdd(dt>0?0.6:-0.8,dt>0?`Buses are running more often`:`Riders stranded as bus service slips`,{tag:'transit',w:0.8});}
+    S.newsMet={t:now,crime:M.crime,streets:M.streets,transit:M.transit}}
+  if(S.m===3||S.m===9)newsAdd((S.approval-50)/10,`Poll: ${Math.round(S.approval)}% approve of the mayor`,{tag:'council',w:1.2,dek:S.approval>=55?'Voters like the direction of the city.':S.approval>=45?'Memphians are split on the mayor.':'Voters are souring on City Hall.'});
+  {let worst=null,age=0;for(const id in S.civic||{}){const c=S.civic[id];if(!c.out)continue;const a=now-(c.outSince??c.outM??now);if(a>=2&&a>age){age=a;worst=id}}
+    if(worst&&Math.random()<0.6){const p=CIVMAP[worst];newsAdd(-1,`Months later, still broken at ${p.name}`,{tag:p.type==='school'?'schools':'civic',w:1.2,dek:S.civic[worst].out})}}
+  if(!S.newsQ.length)return;
+  const spin=S.spin&&now-S.spin<1;const comms=(()=>{try{return staffOpinion(staffOf('press'))}catch(e){return 0}})();
+  const picked=S.newsQ.slice().sort((a,b)=>b.w*Math.abs(b.tone)+b.w*0.3-(a.w*Math.abs(a.tone)+a.w*0.3)).slice(0,3);S.newsQ=[];
+  let total=0;const ran=[];
+  picked.forEach((st,i)=>{const o=pickOutlet(st.tag);let t=st.tone+o.slant;if(spin){t=t<0?t*(comms>30?0.4:0.55):t+0.3}const eff=t*o.reach*(i===0?1.2:0.8);total+=eff;
+    for(const g in o.aud)if(S.groups[g])addGroupMod(S.groups[g],'Local news coverage',eff*o.aud[g]*0.45);
+    const item={y:S.y,m:S.m,o:o.id,head:st.head,dek:st.dek,tone:+t.toFixed(2),front:i===0};S.news.unshift(item);ran.push(item)});
+  if(S.news.length>48)S.news.length=48;
+  S.press=clamp((S.press||0)*0.6+total*2.2,-25,25);S.spin=0;
+  const top=ran[0];if(top){report&&report.push(`${OUTMAP[top.o].n}: "${top.head}"`);try{notify(top.tone>=0.3?'good':top.tone<=-0.3?'bad':'info',OUTMAP[top.o].n,top.head,()=>openNews(),{silent:false})}catch(e){}}}
+function canPress(){if(isCand())return'Only the mayor';if(S.slots<=0)return'No meetings left this month';const t=S.pressConf;if(t!=null&&nowM()-t<2)return`Again in ${2-(nowM()-t)} mo`;return''}
+function doPressConf(){if(canPress())return;S.slots--;S.pressConf=nowM();S.spin=nowM();gainXP('cha',4);logIt('You held a press conference to get ahead of the story.');save();refreshHUD();toast('Press conference held. This month\'s bad stories will land softer, and good ones a bit better.');openNews()}
+function canInterview(){if(isCand())return'Only the mayor';if(S.slots<=0)return'No meetings left this month';const t=S.interview;if(t!=null&&nowM()-t<3)return`Again in ${3-(nowM()-t)} mo`;return''}
+function doInterview(oid){if(canInterview())return;const o=OUTMAP[oid];S.slots--;S.interview=nowM();const ok=Math.random()<clamp(0.45+(mskill('cha')-8)*0.04+(S.approval-50)/100,0.15,0.9);gainXP('cha',5);
+  newsAdd(ok?1.4:-1.2,ok?`Mayor makes the case for the city in a wide-ranging interview`:`Mayor stumbles over tough questions in interview`,{tag:Object.keys(o.tags)[0],w:2.2});
+  logIt(`Sit-down interview with ${o.n}: ${ok?'it went well':'it went badly'}.`);save();refreshHUD();toast(ok?`The ${o.n} interview went well. It runs this month.`:`The ${o.n} interview went badly. It runs this month.`);openNews()}
+function toneCol(t){return t>=0.3?'var(--good)':t<=-0.3?'var(--bad)':'var(--muted)'}
+function openNews(){closePanel();S.seen=S.seen||{};S.seen.news=1;const N=S.news||[],p=Math.round(S.press||0);const why=canPress(),wi=canInterview();
+  const pc=p>=5?'var(--good)':p<=-5?'var(--bad)':'var(--warn)';
+  openModal(`${S.slots} meeting${S.slots===1?'':'s'} left this month`,'The news',`
+   <div class="facts"><h4>Your press: <span style="color:${pc}">${p>0?'+':''}${p} · ${p>=12?'glowing':p>=5?'good':p>-5?'mixed':p>-12?'rough':'brutal'}</span></h4>
+    <p class="note">Five local outlets cover City Hall. Each month the biggest stories run: what you decide, council votes, pushes that work or fail, problems left broken, crime and the polls. Good coverage lifts the people who read that outlet and adds to your clout (now ${pressPart()>=0?'+':''}${pressPart()}); bad coverage does the opposite.</p>
+    <div class="row"><button class="btn primary" data-news="press" ${why?'disabled':''} title="${why||'Uses a meeting'}">Hold a press conference${why?` · ${why}`:''}</button>${typeof openSotc==='function'?`<button class="btn" data-act="sotc">State of the City</button>`:''}</div>
+    <div class="row" style="margin-top:6px;flex-wrap:wrap">${OUTLETS.map(o=>`<button class="btn" data-news="int" data-o="${o.id}" ${wi?'disabled':''} title="${wi||'Uses a meeting. Charisma and approval help.'}">Interview: ${o.n}</button>`).join('')}</div></div>
+   <div class="facts"><h4>Recent coverage</h4>${N.length?`<div class="newslist">${N.slice(0,18).map(n=>{const o=OUTMAP[n.o];return`<div class="newsit${n.front?' front':''}"><small><b>${o.n}</b> · ${o.k} · ${MONTHS[n.m-1]} ${n.y}${n.front?' · top story':''}</small><div class="nh" style="border-left-color:${toneCol(n.tone)}">${n.head}</div>${n.dek?`<small>${n.dek}</small>`:''}</div>`}).join('')}</div>`:'<p class="note">No stories yet. Coverage runs at the end of each month.</p>'}</div>`,true)}
+openNews=navWrap('openNews',openNews);
+document.addEventListener('click',e=>{const b=e.target.closest('[data-news],[data-act="news"]');if(!b||!S)return;e.preventDefault();e.stopImmediatePropagation();const k=b.dataset.news;if(k==='press'){doPressConf();return}if(k==='int'){doInterview(b.dataset.o);return}if(modalOpen){onClose=null;closeModal()}openNews()},true);
+// hooks: what makes news
+{const _ap=approp;approp=function(amount,title,ctx){const n0=(S.stats||{}).approp||0;const ok=_ap(amount,title,ctx);if(((S.stats||{}).approp||0)>n0){if(ok)newsAdd(0.4,`Council backs mayor's ${fmtM(amount)} request`,{tag:'council',w:0.7,dek:`For ${title}.`});else newsAdd(-1.4,`Council rebuffs mayor on ${fmtM(amount)}`,{tag:'council',w:1.6,dek:`Members voted down money for ${title}.`})}return ok}}
+{const _dp=doPush;doPush=function(id){const p=PUSHMAP[id];const n0=(S.stats||{}).push||0,w0=(S.stats||{}).pushWin||0;_dp(id);if(!p||((S.stats||{}).push||0)===n0)return;const ok=((S.stats||{}).pushWin||0)>w0;if(!ok&&Math.random()<0.5)return;
+  const tag={council:'council',mscs:'schools',buildings:'schools',county:'schools',state:'streets',mlgw:'fiscal',employers:'jobs',summer:'jobs',federal:'transit',region:'council',hospitals:'neighborhoods'}[id]||'council';
+  newsAdd(ok?1.3:-0.5,ok?`Mayor wins one: ${p.n.charAt(0).toLowerCase()+p.n.slice(1)}`:`Mayor's push falls flat: ${p.n.charAt(0).toLowerCase()+p.n.slice(1)}`,{tag,w:ok?1.3:0.8,dek:p.who})}}
+{const _fp=finishProject;finishProject=function(P,out){const r=_fp(P,out);try{newsAdd(1.3,`Ribbon cut: ${P.name} is finished`,{tag:'projects',w:1.4})}catch(e){}return r}}
+{const _th=doTownHall;doTownHall=function(d){const a=S.pop.d[d],sl=S.slots;_th(d);if(S.slots===sl)return;const up=S.pop.d[d]>=a;newsAdd(up?0.6:-1,up?`Mayor hears out District ${d} at town hall`:`District ${d} town hall turns heated`,{tag:'neighborhoods',w:up?0.7:1.2})}}
+function newsDecision(def,c){let v=0;for(const id in (c.grp||{}))v+=(GMAP[id]?GMAP[id].share/100:0)*c.grp[id];const fx=c.fx||{};v+=-(fx.crime||0)*0.3+(fx.streets||0)*0.2-(fx.blight||0)*0.2+(fx.mood||0)*0.3;
+  if(Math.abs(v)<0.25)return;const tg=(def.tags||[])[0];const tag={safety:'crime',education:'schools',budget:'fiscal',housing:'blight',transit:'transit',jobs:'jobs',streets:'streets'}[tg]||tg||'council';
+  newsAdd(clamp(v,-1.6,1.6),v>0?`Praise for the mayor's call on "${def.title.replace(/[?.]$/,'')}"`:`Critics pan the mayor's call on "${def.title.replace(/[?.]$/,'')}"`,{tag,w:0.9+Math.min(1,Math.abs(v)/2),dek:`The mayor chose to ${c.label.charAt(0).toLowerCase()+c.label.slice(1).replace(/\.$/,'')}.`})}
+// ======================= STATE OF THE CITY =======================
+// Each January the mayor gives a State of the City speech and names three priorities for the year. Pushes and spending
+// toward them come easier. Next January the city checks whether you delivered, and so does the press.
+const SOTC_PRI=[
+ {id:'safety',n:'Public safety',d:'Fewer shootings, more officers, faster response.',lean:'safety',met:'crime',dir:-1,thr:4,grp:['faith','owners','working'],push:[],tags:['crime','safety','civic']},
+ {id:'streets',n:'Fix the streets',d:'Repave, fill potholes, light the dark streets.',lean:'streets',met:'streets',dir:1,thr:6,grp:['owners','working'],push:['state'],tags:['streets']},
+ {id:'schools',n:'Kids and schools',d:'Reading, tutoring, safe routes and summer jobs.',lean:'education',met:'reading',dir:1,thr:1.5,grp:['parents','young'],push:['mscs','buildings','county','summer'],tags:['schools']},
+ {id:'jobs',n:'Good jobs',d:'Local hiring, job training and new employers.',lean:'jobs',met:'jobs',dir:1,thr:4,grp:['working','business'],push:['employers','summer','region'],tags:['jobs']},
+ {id:'blight',n:'Blight and housing',d:'Tear down dangerous houses, fill vacant lots with homes.',lean:'blight',met:'blight',dir:-1,thr:6,grp:['owners','renters'],push:['buildings'],tags:['blight','neighborhoods']},
+ {id:'transit',n:'Buses that work',d:'More frequent buses and routes that reach jobs.',lean:'transit',met:'transit',dir:1,thr:5,grp:['renters','young'],push:['federal'],tags:['transit']},
+ {id:'fiscal',n:'Balanced books',d:'Build the reserve and hold the line on taxes.',lean:'fiscal',met:'resPct',dir:1,thr:3,grp:['business','owners'],push:['mlgw'],tags:['fiscal']},
+ {id:'health',n:'Healthy neighborhoods',d:'Clinics, violence intervention and health fairs.',lean:'safety',met:'crime',dir:-1,thr:2,grp:['working','faith'],push:['hospitals'],tags:['neighborhoods']}];
+const SOTCMAP={};SOTC_PRI.forEach(p=>SOTCMAP[p.id]=p);
+function sotcVal(p){return p.met==='resPct'?S.reserve/annualSpend(S)*100:S.met[p.met]}
+function sotcActive(){return S&&S.sotc&&S.sotc.y===S.y&&S.phase==='mayor'?S.sotc.pri:[]}
+function sotcPush(p){return sotcActive().some(id=>SOTCMAP[id].push.includes(p.id))}
+function sotcDue(){return!!(S&&S.phase==='mayor'&&S.m<=2&&(!S.sotc||S.sotc.y<S.y)&&!S.sotcSkip?.[S.y])}
+// pushes and spending toward your priorities
+{const _po=pushOdds;pushOdds=function(p){return clamp(_po(p)+(sotcPush(p)?0.08:0),0.05,0.95)}}
+{const _pw=pushWhy;pushWhy=function(p){const w=_pw(p);if(w==='Not enough clout right now'&&sotcPush(p)&&clout()>=p.cost*0.35)return'';return w}}
+{const _dp=doPush;doPush=function(id){const p=PUSHMAP[id];if(p&&sotcPush(p)&&!pushWhy(p)){const c0=p.cost;p.cost=Math.round(c0*0.7);try{_dp(id)}finally{p.cost=c0}return}_dp(id)}}
+{const _as=apropScore;apropScore=function(m,ctx){let s=_as(m,ctx);const L=ctx.lean||{};if(sotcActive().some(id=>L[SOTCMAP[id].lean]>0))s+=4;return s}}
+function openSotc(){closePanel();const due=sotcDue(),cur=S.sotc&&S.sotc.y===S.y?S.sotc:null;S._sotcPick=S._sotcPick||[];
+  const last=(S.sotcHist||[]).slice(-1)[0];
+  openModal(due?'Give your speech by the end of February':cur?`Given ${MONTHS_L[cur.m-1]} ${cur.y}`:'Next speech in January','State of the City',`
+   ${cur?`<div class="facts"><h4>Your priorities for ${cur.y}</h4><div class="opl">${cur.pri.map(id=>{const p=SOTCMAP[id],v0=cur.base[id],v=sotcVal(p),d=(v-v0)*p.dir;return`<div><span>${p.n}<br><small class="note">Goal: ${p.dir>0?'raise':'lower'} ${({resPct:'the reserve (as a share of spending)',crime:'the violent crime index',streets:'street condition',reading:'reading proficiency',jobs:'the jobs climate',blight:'the blight index',transit:'transit service'})[p.met]} by ${p.thr} points by next January</small></span><b style="color:${d>=p.thr?'var(--good)':d>0?'var(--warn)':'var(--bad)'}">${d>=0?'+':''}${d.toFixed(1)} of ${p.thr}</b></div>`}).join('')}</div>
+     <p class="note">Pushes toward these cost 30% less clout and have better odds. Spending toward them gets about 4 more points of council support per member. Next January, voters judge whether you delivered.</p></div>`:''}
+   ${due?`<div class="facts"><h4>Pick three priorities for ${S.y}</h4><p class="note">This is the year's big speech. Pick what you'll be judged on next January. Picking things the city can actually move this year matters.</p>
+     <div class="choices">${SOTC_PRI.map(p=>{const on=S._sotcPick.includes(p.id);return`<button class="choice${on?' on':''}" data-sotc="${p.id}" style="${on?'border-color:var(--amber)':''}"><b>${on?'✓ ':''}${p.n}</b><small>${p.d} · Speaks to: ${p.grp.map(g=>GMAP[g]?GMAP[g].n:g).join(', ')}</small></button>`}).join('')}</div>
+     <div class="row"><button class="btn primary" data-sotcgo="1" ${S._sotcPick.length===3?'':'disabled'}>Give the speech (${S._sotcPick.length} of 3)</button></div></div>`:''}
+   ${last?`<div class="facts"><h4>Last year: ${last.y}</h4><div class="opl">${last.res.map(r=>`<div><span>${SOTCMAP[r.id].n}</span><b style="color:${r.ok?'var(--good)':'var(--bad)'}">${r.ok?'Delivered':'Fell short'}</b></div>`).join('')}</div></div>`:''}
+   ${!due&&!cur&&!last?'<p class="note">The State of the City speech comes every January. You\'ll get a reminder.</p>':''}`,true)}
+openSotc=navWrap('openSotc',openSotc);
+function giveSotc(){const pick=(S._sotcPick||[]).slice(0,3);if(pick.length!==3||!sotcDue())return;const base={};pick.forEach(id=>base[id]=sotcVal(SOTCMAP[id]));S.sotc={y:S.y,m:S.m,pri:pick,base};S._sotcPick=[];
+  pick.forEach(id=>SOTCMAP[id].grp.forEach(g=>S.groups[g]&&addGroupMod(S.groups[g],'State of the City speech',1)));gainXP('cha',8);
+  const ok=Math.random()<clamp(0.55+(mskill('cha')-8)*0.04,0.25,0.9);newsAdd(ok?1.2:0.2,ok?`Mayor lays out a clear agenda: ${pick.map(id=>SOTCMAP[id].n.toLowerCase()).join(', ')}`:`Mayor's speech heavy on promises, light on details`,{tag:SOTCMAP[pick[0]].tags[0],w:1.8});
+  S.approval=cityApproval(S);logIt(`State of the City: ${pick.map(id=>SOTCMAP[id].n).join(', ')}.`);try{sfx('good')}catch(e){}save();refreshHUD();toast('Speech given. Your priorities are set for the year.');openSotc()}
+function sotcMonth(report){if(!S||S.phase!=='mayor')return;
+  // judge last year's speech in January
+  if(S.m===1&&S.sotc&&S.sotc.y<S.y&&!S.sotc.judged){const res=S.sotc.pri.map(id=>{const p=SOTCMAP[id];const d=(sotcVal(p)-S.sotc.base[id])*p.dir;return{id,d:+d.toFixed(1),ok:d>=p.thr}});S.sotc.judged=true;
+    const kept=res.filter(r=>r.ok).length;res.forEach(r=>{const p=SOTCMAP[r.id];p.grp.forEach(g=>S.groups[g]&&addGroupMod(S.groups[g],r.ok?'Delivered on the State of the City':'Fell short on the State of the City',r.ok?2:-1.5))});
+    S.sotcHist=(S.sotcHist||[]).concat([{y:S.sotc.y,res}]).slice(-8);if(S.reign){S.reign.sotcKept=(S.reign.sotcKept||0)+kept;S.reign.sotcMissed=(S.reign.sotcMissed||0)+(3-kept)}
+    newsAdd(kept>=2?1.3:kept===1?-0.4:-1.4,kept===3?`A year later, the mayor delivered on all three promises`:kept===2?`Mayor delivered on most of last year's agenda`:kept===1?`Mayor delivered on just one of three priorities`:`A year later, none of the mayor's priorities moved`,{tag:'council',w:2});
+    report.push(`State of the City scorecard: delivered ${kept} of 3 (${res.map(r=>`${SOTCMAP[r.id].n} ${r.ok?'✓':'✗'}`).join(', ')}).`)}
+  if(S.m===1&&sotcDue()){try{notify('event','State of the City','Time for this year\'s speech. Pick three priorities by the end of February.',()=>openSotc())}catch(e){}}
+  if(S.m===3&&S.sotc?.y!==S.y&&!(S.sotcSkip||{})[S.y]){S.sotcSkip=S.sotcSkip||{};S.sotcSkip[S.y]=true;newsAdd(-1,'Mayor skips the State of the City',{tag:'council',w:1.4});report.push('You skipped the State of the City speech this year.')}}
+document.addEventListener('click',e=>{const b=e.target.closest('[data-sotc],[data-sotcgo],[data-act="sotc"]');if(!b||!S)return;e.preventDefault();e.stopImmediatePropagation();
+  if(b.dataset.sotc){S._sotcPick=S._sotcPick||[];const id=b.dataset.sotc,i=S._sotcPick.indexOf(id);if(i>=0)S._sotcPick.splice(i,1);else if(S._sotcPick.length<3)S._sotcPick.push(id);openSotc();return}
+  if(b.dataset.sotcgo){giveSotc();return}if(modalOpen){onClose=null;closeModal()}openSotc()},true);
+window.addEventListener('keydown',e=>{if(!S||!S.started||!$('start').hidden||modalOpen||(e.target&&e.target.tagName==='INPUT'))return;const k=e.key.toLowerCase();if(k==='r'){e.preventDefault();closePanel();openNews()}else if(k==='t'){e.preventDefault();closePanel();openSotc()}});
 function openLedger(){const L=S.log||[];openPanel('Everything that has happened, newest first','Ledger',L.length?`<div class="logl">${L.map(x=>`<div><span>${x.d}</span><p style="margin:0">${x.t}</p></div>`).join('')}</div>`:'<p class="note">Nothing yet. Start the clock with Space or ▶.</p>','ledger')}
 function openPolicies(){const ks=Object.keys(POLICIES);
   openPanel('Ongoing programs you control','Your initiatives',`<p>Mid-year, these are paid from the reserve fund. In April they go into the budget you send the council.</p>
@@ -4219,7 +4336,7 @@ function election(next){
   save()}
 function summary(){const M=S.met;return`<div class="facts"><h4>Your record</h4><ul><li>Approval: ${Math.round(S.approval)}%</li><li>Sworn officers: ${Math.round(M.officers).toLocaleString()} (started at 1,917)</li><li>Violent crime index: ${M.crime.toFixed(0)} (started at 88)</li><li>MSCS reading proficiency: ${M.reading.toFixed(1)}% (started at 25.7%)</li><li>Reserve fund: ${fmtM(S.reserve)} (started at $96.0M)</li><li>Property tax: $${S.taxRate.toFixed(2)} (started at $3.39)</li></ul></div>`}
 function showEnd(){openModal('Game over','Your time in office is over',`${summary()}<div class="row"><button class="btn primary" data-act="newgame">Run again</button></div>`)}
-function openHelp(){closePanel();openModal('How to play','Guide',`<div class="row" style="margin-bottom:6px"><button class="btn" data-slotopen="1">Save and load (G)</button><button class="btn" data-act="legacy">Mayors of Memphis (Y)</button><button class="btn" data-act="platform">Your platform and clout (P)</button></div>
+function openHelp(){closePanel();openModal('How to play','Guide',`<div class="row" style="margin-bottom:6px"><button class="btn" data-slotopen="1">Save and load (G)</button><button class="btn" data-act="legacy">Mayors of Memphis (Y)</button><button class="btn" data-act="platform">Your platform and clout (P)</button><button class="btn" data-act="news">The news (R)</button><button class="btn" data-act="sotc">State of the City (T)</button></div>
   <div class="facts"><h4>Controls</h4><ul><li>WASD or the arrow keys pan the map; hold Shift to pan faster. Moving the mouse to the edge of the screen scrolls too (turn it off under Layers). You can also drag.</li><li>Scroll or pinch to zoom toward the cursor; Q and Z (or the + and − buttons on the right) zoom too, and Home shows the whole city. F, or the ◉ button, finds your mayor: the gold marker is at City Hall on weekdays, home on weekends, and wherever you go to act.</li><li>Hover any face or name (on a phone, press and hold) for a quick character card with their opinion of you and why. Click for the full page. News comes to you from a person: your cabinet for their departments, the local council member for neighborhood problems, a suburban mayor for regional ones.</li><li>People act on their own. Council members have allies and rivals (shown on their cards): allies vote together, so locking in one with a favor or a hook pulls their allies your way, and how an ally feels about you rubs off. Feuds, voting pacts, your opponent courting members, endorsement requests, cabinet requests and scandals arrive as ♟ People events. Ignoring them costs you, and some end up in your opponent's ads. An ambitious cabinet member may quietly build support for their own run; if you don't catch it, they quit and back your opponent.</li><li>Your cabinet (Cabinet tab) runs the city: chief of staff, police and fire chiefs, finance, public works, housing, economic development, MLGW, MATA and communications. Meet them, praise them or replace them. Unhappy ones leak to reporters; very unhappy ones quit.</li><li>Police stations (★), fire stations (▲) and hospitals (✚) are on the map. Click one to visit, fund equipment or programs, or fix problems there. Turn them off under Layers.</li><li>Scroll or pinch to zoom toward the cursor. Zoomed out you get the political map, with each council district in its own color. Zoom in and the camera tilts down into the 3D city.</li><li>Click a landmark or amber pin to open it. Click a district or precinct when those layers are on.</li><li>Time runs day by day. Space pauses and resumes; + and − (or the pips by the date) set speed 1–5. New business arrives on random days and pauses the game (turn that off under Layers). Each month closes on its last day and goes into the Ledger. N skips to the end of the month. B opens the budget, C the council, O public opinion, L the map layers. Keys 1–7 switch map modes: City, Political, Council opinion, Street condition, MPD precincts, Region, Public opinion.</li><li>Every menu has tabs along the top (Mayor, Opinion, Council, Region, Budget, Programs, Ledger) and a ← Back button that returns to the screen you came from. Backspace also goes back; Esc closes.</li></ul></div>
   <div class="facts"><h4>Two ways to start</h4><ul><li><b>Start as mayor</b>: you take office in October 2026 with a year to go before the election.</li><li><b>Run for mayor</b>: you're a Memphian with a day job (pastor, nurse, teacher, small business owner and more) in March 2027. Pick three platform planks, knock doors, meet community leaders, speak out, raise money, run ads, win forums and debates, and take on the sitting mayor in October. Name recognition starts low; voters who don't know you won't vote for you. If you win, you're sworn in on January 1 and your platform becomes your promise list.</li></ul></div>
   <div class="facts"><h4>After your term</h4><ul><li>The game goes on. Mayors can serve two terms. In your second term, a few months into the election year, you choose whom to endorse: a council ally, someone from your cabinet, or a newcomer. Your approval and your campaign carry them. If they win, you keep playing as the new mayor.</li><li>If you lose an election, or your successor does, you can keep playing as the winner, skip ahead and run again as a new candidate, or start over. The Mayors of Memphis in your game are listed as you go.</li></ul></div>
