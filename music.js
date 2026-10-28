@@ -102,7 +102,7 @@
     const c = channels[next];
     c.token = token;
     c.audio.pause();
-    c.audio.src = `assets/music/${tracks[target][0]}`;
+    c.audio.src = `assets/music/${tracks[target][0]}?v=17-full`;
     c.audio.loop = target !== 'victory';
     gain(c, 0);
     try {
