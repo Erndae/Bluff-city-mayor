@@ -1,11 +1,11 @@
 /* Named locations share the same footprint for rendering, hover and selection. */
 window.BCBuildings = (() => {
-  let map, state, openPlace, openCivic, byKey = new Map(), hoverId, selectedId;
+  let map, state, openPlace, openCivic, byKey = new Map(), hoverId, selectedIds=[];
   const ids = ['places-flat', 'places-3d', 'places-outline', 'places-windows'];
   const allowed = () => map && state()?.layers.bld && (state()?.mode || 'real') === 'real';
-  const color = ['case', ['boolean',['feature-state','selected'],false], '#ffe27b', ['boolean',['feature-state','hover'],false], '#fff0ba', ['get','color']];
+  const color = ['case', ['boolean',['feature-state','selected'],false], '#ffe27b', ['boolean',['feature-state','hover'],false], '#fff0ba', ['boolean',['feature-state','worn'],false], '#937966', ['boolean',['feature-state','renewed'],false], '#8ed4bd', ['get','color']];
   function set(id, prop, value) { if(id != null && map?.getSource('named-buildings')) map.setFeatureState({source:'named-buildings',id},{[prop]:value}); }
-  function select(key) { const f=byKey.get(key);set(selectedId,'selected',false);selectedId=f?.id;set(selectedId,'selected',true); }
+  function select(key) { selectedIds.forEach(id=>set(id,'selected',false));selectedIds=(byKey.get(key)||[]).map(f=>f.id);selectedIds.forEach(id=>set(id,'selected',true)); }
   function hit(point) {
     if(!allowed() || !map.getLayer('places-flat'))return null;
     const layers=['places-flat','places-3d','pyramid-flat','pyramid-3d'].filter(id=>map.getLayer(id));
@@ -47,12 +47,12 @@ window.BCBuildings = (() => {
     if(!response.ok)throw new Error('Named buildings '+response.status);
     const data=await response.json();
     options.onAnchors?.(data.anchors || []);
-    for(const f of data.features)for(const key of JSON.parse(f.properties.keys))byKey.set(key,f);
+    for(const f of data.features)for(const key of JSON.parse(f.properties.keys))byKey.set(key,[...(byKey.get(key)||[]),f]);
     map.addSource('named-buildings',{type:'geojson',data,tolerance:0.1});
     map.addLayer({id:'places-flat',type:'fill',source:'named-buildings',minzoom:12,maxzoom:13.5,paint:{'fill-color':color,'fill-opacity':.95}});
     map.addLayer({id:'places-3d',type:'fill-extrusion',source:'named-buildings',minzoom:13.5,paint:{'fill-extrusion-color':color,'fill-extrusion-height':['interpolate',['linear'],['zoom'],13.5,0,14.2,['+', ['get','height'],.3]],'fill-extrusion-opacity':1,'fill-extrusion-vertical-gradient':true}});
     map.addLayer({id:'places-outline',type:'line',source:'named-buildings',minzoom:12,paint:{'line-color':'#fff1bf','line-width':['case',['boolean',['feature-state','selected'],false],3,1.2],'line-opacity':.9}});
-    sync();
+    sync();window.BCLife?.sync();
     // Facade decoration is optional: failure leaves the clickable footprints intact.
     try {
       const r=await fetch('data/building-details.json?v=18');if(!r.ok)throw new Error(r.status);
@@ -61,5 +61,6 @@ window.BCBuildings = (() => {
       sync();
     }catch(e){console.warn('Facade details unavailable',e);}
   }
-  return {install,sync,hit,hover,click,select};
+  function conditions(values){for(const [key,v] of Object.entries(values))for(const f of byKey.get(key)||[])for(const [prop,value] of Object.entries(v))set(f.id,prop,value);}
+  return {install,sync,hit,hover,click,select,conditions};
 })();

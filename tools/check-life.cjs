@@ -1,0 +1,55 @@
+const {chromium}=require('playwright');
+const assert=require('node:assert/strict');
+const fs=require('node:fs');
+(async()=>{
+ const browser=await chromium.launch({headless:true,channel:'msedge'});
+ try{
+ const page=await browser.newPage({viewport:{width:1440,height:1000}}),errors=[];
+ page.on('pageerror',e=>errors.push(e.message));
+ await page.route('**/favicon.ico',r=>r.fulfill({status:204}));
+ await page.goto('http://127.0.0.1:8765/',{waitUntil:'domcontentloaded'});
+ await page.waitForFunction(()=>window.BCLife&&map?.getLayer('places-3d'),null,{timeout:60000});
+ await page.evaluate(()=>{beginTerm(newCR());onClose=null;closeModal();closePanel();navReset();$('start').hidden=true;S.paused=true;S.reserve=200;delete S.life;refreshHUD();});
+ const repaired=await page.evaluate(()=>{const p=Object.values(CIVMAP).find(p=>p.type==='police');civState(p.id).out='Roof leak';S.life.facilities[p.id].condition=30;const before=S.reserve;doCivic(p.id,'fix');return {id:p.id,delta:S.reserve-before,condition:S.life.facilities[p.id].condition,count:S.life.history.length,officers:S.life.history[0].changes.find(c=>c.name==='Police officers')?.delta};});
+ assert(Math.abs(repaired.delta+1.2)<1e-9);assert.equal(repaired.condition,58);assert.equal(repaired.count,1);assert.equal(repaired.officers,6);
+ await page.locator('#lifeReport').waitFor({state:'visible'});
+ fs.mkdirSync('preview',{recursive:true});await page.screenshot({path:'preview/decision-report.png'});
+ await page.getByRole('button',{name:'Close report',exact:true}).click();
+ const blocked=await page.evaluate(id=>{doCivic(id,'fix');return S.life.history.length;},repaired.id);assert.equal(blocked,1);
+ await page.evaluate(()=>{onClose=null;closeModal();openCharacter(0);});
+ await page.locator('[data-life-talk="council:0"][data-topic="priority"]').click();
+ assert.match(await page.locator('#lifeReport').innerText(),/District/);
+ await page.getByRole('button',{name:'Close report',exact:true}).click();
+ await page.evaluate(()=>{closePanel();openStaff('police');});
+ await page.locator('[data-life-talk="staff:police"][data-topic="priority"]').click();
+ assert.match(await page.locator('#lifeReport').innerText(),/police station/);
+ await page.getByRole('button',{name:'Close report',exact:true}).click();
+ await page.screenshot({path:'preview/character-conversation.png'});
+ await page.evaluate(async()=>{onClose=null;closeModal();closePanel();const scenes=await(await fetch('data/neighborhood-scenes.json')).json(),s=scenes.find(s=>s.homes.length);S.projects=[{id:'life-test',type:'housing',d:1,name:'Neighborhood Renewal',site:{name:s.name,lon:s.center[0],lat:s.center[1]},stage:'build',progress:.4,cost:5,budget:5,spent:2,fund:'cash',months:6,scope:1,delays:0,paused:false,log:[],sat:80}];renderProjects();BCLife.sync();map.jumpTo({center:s.center,zoom:16,pitch:45});});
+ await page.waitForFunction(()=>map.getSource('life-homes')._data.features.length>0);
+ assert.equal(await page.evaluate(()=>map.getSource('life-homes')._data.features[0].properties.phase),'build');
+ await page.waitForTimeout(1500);await page.screenshot({path:'preview/construction.png'});
+ await page.evaluate(()=>{S.projects[0].paused=true;refreshHUD();});assert.equal(await page.evaluate(()=>BCLife.phase(S.projects[0])),'paused');
+ await page.evaluate(()=>{Object.assign(S.projects[0],{paused:false,stage:'done',done:nowM()});refreshHUD();});
+ assert.equal(await page.evaluate(()=>map.getSource('life-homes')._data.features[0].properties.phase),'done');
+ await page.evaluate(()=>{S.projects[0].sat=25;refreshHUD();});assert.equal(await page.evaluate(()=>map.getSource('life-homes')._data.features[0].properties.phase),'worn');
+ await page.evaluate(()=>{S.layers.bld=false;applyLayers();});assert.equal(await page.evaluate(()=>map.getLayoutProperty('life-homes','visibility')),'none');
+ await page.evaluate(()=>{S.layers.bld=true;applyLayers();save();});
+ const history=await page.evaluate(()=>JSON.parse(localStorage.getItem(KEY)).life.history.length);assert.equal(history,1);
+ const extra=await page.evaluate(()=>{const ev={kind:'request',mi:0,pr:'streets',d:1,id:'test-request',born:nowM(),expires:2};S.events.push(ev);resolve(ev,0);return {count:S.life.history.length,delta:S.life.history[0].reserveDelta};});assert.equal(extra.count,2);assert(extra.delta<0);
+ await page.getByRole('button',{name:'Close report',exact:true}).click();
+ await page.evaluate(()=>{S.projects=[];S._plan={type:'housing',d:1,si:0,fund:'cash'};sendProject();});
+ assert.equal(await page.evaluate(()=>S.life.history.length),3);
+ await page.getByRole('button',{name:'Close report',exact:true}).click();
+ await page.evaluate(()=>{S.projects[0].stage='build';openProject(S.projects[0].id);});
+ await page.locator('[data-act=projpause]').click();assert.equal(await page.evaluate(()=>S.projects[0].paused),true);
+ await page.getByRole('button',{name:'Close report',exact:true}).click();
+ await page.evaluate(()=>{Object.assign(S.projects[0],{stage:'done',paused:false,done:nowM(),sat:80});openProject(S.projects[0].id);});
+ await page.locator('[data-act=maintcut]').click();assert.equal(await page.evaluate(()=>S.projects[0].maintCut),true);
+ await page.getByRole('button',{name:'Close report',exact:true}).click();
+ await page.setViewportSize({width:390,height:844});await page.evaluate(()=>{openCivic(Object.values(CIVMAP).find(p=>p.type==='police').id);});
+ await page.screenshot({path:'preview/building-mobile.png'});assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth),false);
+ assert.deepEqual(errors,[]);console.log('PASS: repairs, cooldown, measured receipts, conversations, construction, completion, neglect, layer toggle, saved history and mobile layout.');
+ }finally{await browser.close();}
+})().catch(e=>{console.error(e);process.exitCode=1;});
+

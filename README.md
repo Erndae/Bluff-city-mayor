@@ -4,6 +4,16 @@ A city-management game set in Memphis, Tennessee. You play the mayor. You handle
 
 **Play it:** https://erndae.github.io/Bluff-city-mayor/ (once GitHub Pages is turned on, see below)
 
+## v22: A city that responds
+
+Projects show crews, paused work, finished improvements, and wear when satisfaction falls. Completed roads get fresh pavement markings; rehab projects recolor small sets of nearby real footprints as simulated homes. Those selections do not identify real vacant properties.
+
+Police and fire stations now track building condition separately from service readiness, with repairs, monthly wear, and location decision history. Landmarks show active funding and waiting decisions. Council and cabinet profiles offer personality-based dialogue and priorities.
+
+Event choices, civic actions, project proposals, construction pauses, and upkeep decisions produce reports of measured changes, reactions, and follow-up commitments. Open **Decisions** to revisit the latest 40 reports. This history is included in existing saves. Conversations are free advice and do not create promises.
+
+Validation: `tools/check-city.cjs` and `tools/check-life.cjs` exercise the game using Playwright with Microsoft Edge and a local server on port 8765.
+
 ## How to play
 
 | Control | What it does |

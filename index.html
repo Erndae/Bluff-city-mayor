@@ -451,7 +451,8 @@ details.analysis{margin-top:6px}details.analysis summary{cursor:pointer;color:va
 .card.story{border-left:3px solid #5aa7d8}.storytag{font-family:var(--f-label);font-weight:600;font-size:11.5px;letter-spacing:.1em;text-transform:uppercase;color:#5aa7d8;margin-bottom:2px}
 @media (max-width:640px){.grow{grid-template-columns:30px minmax(0,1fr) 44px;}.grow .gbar,.grow .gst{display:none}}
 </style>
-<link rel="stylesheet" href="city-design.css?v=18">
+<link rel="stylesheet" href="city-design.css?v=22">
+<link rel="stylesheet" href="city-life.css?v=22">
 
 <div id="app">
   <div id="map" aria-label="Map of Memphis"></div>
@@ -567,7 +568,7 @@ details.analysis{margin-top:6px}details.analysis summary{cursor:pointer;color:va
 (function(){const urls=['https://cdn.jsdelivr.net/npm/maplibre-gl@4.7.1/dist/maplibre-gl.js','https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js'];let k=0;
   function next(){if(k>=urls.length){window.__mlFail=true;window.dispatchEvent(new Event('mlready'));return}const s=document.createElement('script');s.src=urls[k++];s.onload=()=>window.dispatchEvent(new Event('mlready'));s.onerror=next;document.head.appendChild(s)}next()})();
 </script>
-<script src="city-buildings.js?v=18"></script>
+<script src="city-buildings.js?v=22"></script>
 <script>
 "use strict";
 // ======================= PLACES =======================
@@ -1252,7 +1253,7 @@ function updateClock(){if(!S)return;$('hDate').textContent=dateStr();const c=$('
   $('speeds').innerHTML=[1,2,3,4,5].map(v=>`<button data-speed="${v}" class="${v<=S.speed?'on':''}" aria-label="Speed ${v}" title="Speed ${v}"></button>`).join('');
   const pb=$('bPlay');if(pb)pb.innerHTML=S.paused?'▶ Resume <kbd>Space</kbd>':'⏸ Pause <kbd>Space</kbd>'}
 let tAcc=0;
-function timeStep(dt){if(!S||!S.started||S.paused||S.over||modalOpen||window.BCMusic?.settingsOpen||!$('start').hidden){tAcc=0;return}
+function timeStep(dt){if(!S||!S.started||S.paused||S.over||modalOpen||window.BCLife?.isOpen||window.BCMusic?.settingsOpen||!$('start').hidden){tAcc=0;return}
   tAcc+=dt*SPEEDS[S.speed||2];let guard=0;while(tAcc>=1&&guard++<24){tAcc-=1;dayTick();if(S.paused||modalOpen){tAcc=0;break}}}
 // Skip ahead to the end of the month (N).
 function advance(){if(S.over){showEnd();return}releaseQueued(true);
@@ -1297,7 +1298,7 @@ function enact(s,p){DIVS.forEach(d=>{s.enacted[d.id]=p.divs[d.id];s.ratio[d.id]=
 // Voter groups. Each has a share of residents, turnout, home districts, concerns and an approval of you.
 // Citywide approval is the turnout-weighted average of the groups; each council district's approval comes from the groups that live there.
 // Shares, district mix and turnout are modeled, loosely grounded in Memphis demographics; they are not survey data.
-const VERSION='v21';
+const VERSION='v22';
 const GROUPS=[
  {id:'working',sh:'Working families',n:'Working families',ic:'⚒',c:'#f2a93b',share:24,turn:.5,start:56,w:{jobs:1,safety:.8,transit:.5},
   d:'Hourly workers in logistics, warehouses, health care and service jobs. The biggest bloc in the city.',dm:{1:1.1,2:.8,3:1.3,4:1.2,5:.6,6:1.2,7:1.1}},
@@ -1511,7 +1512,7 @@ function openPlace(at){
   const pl=placeOf(at);
   const evs=S.events.map((e,i)=>[e,i]).filter(([e])=>evAt(e)===at);
   if(pl.lmk){const L=LM[at];const{f,acts}=lmkInfo(L);
-    openPanel(L.addr,L.name,`${evs.map(([e,i])=>eventCard(e,i)).join('')}<div class="note">${whereLine(L.lon,L.lat)}</div>${f.length?`<div class="facts"><h4>About this place</h4><ul>${f.map(x=>`<li>${x}</li>`).join('')}</ul></div>`:''}${acts}${!evs.length&&!acts?'<p class="note">Nothing needs you here right now.</p>':''}`,at)}
+    openPanel(L.addr,L.name,`${window.BCLife?.landmark(L)||''}${evs.map(([e,i])=>eventCard(e,i)).join('')}<div class="note">${whereLine(L.lon,L.lat)}</div>${f.length?`<div class="facts"><h4>About this place</h4><ul>${f.map(x=>`<li>${x}</li>`).join('')}</ul></div>`:''}${acts}${!evs.length&&!acts?'<p class="note">Nothing needs you here right now.</p>':''}`,at)}
   else openPanel('Neighborhood',pl.name,evs.length?evs.map(([e,i])=>eventCard(e,i)).join(''):'<p class="note">Nothing needs you here right now.</p>',at);
 }
 function flyTo(at,open){const pl=placeOf(at);camFly({center:[pl.lon,pl.lat],zoom:Math.max(map?map.getZoom():15,15.2),speed:1.4});if(open)openPlace(at)}
@@ -1601,6 +1602,7 @@ function openCharacter(i){const m=S.council[i];if(!m)return;recompute(m);const n
      <div class="opbig" style="color:${opColor(m.opinion)}">${fmtOp(m.opinion)}<small>Opinion of you</small></div>
      <div class="note">Age ${m.age} · Lives in District ${hd}${m.d>7?` · elected from Super District ${m.d}`:''}</div>
      <div class="traits">${traitChips(m)}</div></div></div>
+   ${window.BCLife?.character(m,'council:'+i)||''}
    <div class="facts"><h4>Why they feel this way</h4><div class="opl">${parts.length?parts.map(x=>`<div><span>${x.t}</span><b class="${x.v>0?'up':'down'}">${fmtOp(x.v)}</b></div>`).join(''):'<div><span>No strong feelings yet</span><b>0</b></div>'}</div></div>
    ${reElectionBlock(m)}
    ${relBlock(i)}
@@ -1975,24 +1977,27 @@ function finishProject(P,out){const T=PTYPES[P.type];P.stage='done';goTo(P.site.
   if(P.type==='housing')startStory('hs',{n:P.site.name,d:P.d,pid:P.id})}
 function markRoadFixed(P){if(!map||!map.getSource('pci'))return;RAW.pci.a.forEach((a,i)=>{if(a[1]===P.d&&a[3]&&titleCase(a[3])===P.site.name)map.setFeatureState({source:'pci',id:i+1},{fixed:true})})}
 function restoreFixedRoads(){(S.projects||[]).filter(p=>p.type==='road'&&p.stage==='done').forEach(markRoadFixed)}
-function projGeo(){const feats=[];(S.projects||[]).filter(p=>p.stage!=='rejected').forEach(P=>{const st=P.stage==='done'?'done':P.stage==='build'?'build':'plan';
+function projGeo(){const feats=[];(S.projects||[]).filter(p=>p.stage!=='rejected').forEach(P=>{const st=window.BCLife?.phase(P)||(P.stage==='done'?'done':P.stage==='build'?'build':'plan');
   if(P.type==='road'){const G=pciGeo();const lines=[];RAW.pci.a.forEach((a,i)=>{if(a[1]===P.d&&a[3]&&titleCase(a[3])===P.site.name)(G[i]||[]).forEach(l=>lines.push(l))});if(lines.length)feats.push({type:'Feature',properties:{st,t:'road'},geometry:{type:'MultiLineString',coordinates:lines}})}
   else if(P.type==='park'){const p=parkGeo()[P.site.park];if(p)feats.push({type:'Feature',properties:{st,t:'park'},geometry:{type:'MultiPolygon',coordinates:p.parts.map(r=>[r])}})}
   else{const r=230,ring=[];for(let k=0;k<=32;k++){const a=k/32*Math.PI*2;ring.push([P.site.lon+Math.cos(a)*r/91054,P.site.lat+Math.sin(a)*r/110950])}feats.push({type:'Feature',properties:{st,t:'housing'},geometry:{type:'Polygon',coordinates:[ring]}})}});
   return{type:'FeatureCollection',features:feats}}
 let projMarkers=[];
 function renderProjects(){if(!mapReady||!map)return;if(!map.getSource('projects')){map.addSource('projects',{type:'geojson',data:projGeo()});
-    const C=['match',['get','st'],'done','#5cc28d','build','#f2a93b','#9fb0bf'];
+    const C=['match',['get','st'],'done','#5cc28d','worn','#937966','paused','#929a9b','build','#f2a93b','#9fb0bf'];
     map.addLayer({id:'proj-fill',type:'fill',source:'projects',filter:['==',['geometry-type'],'Polygon'],paint:{'fill-color':C,'fill-opacity':['match',['get','st'],'done',.38,.22]}});
     map.addLayer({id:'proj-outline',type:'line',source:'projects',filter:['==',['geometry-type'],'Polygon'],paint:{'line-color':C,'line-width':2,'line-dasharray':[2,1.5]}});
     map.addLayer({id:'proj-road-glow',type:'line',source:'projects',filter:['==',['get','t'],'road'],layout:{'line-cap':'round','line-join':'round'},paint:{'line-color':C,'line-width':['interpolate',['linear'],['zoom'],11,4,16,14],'line-opacity':.28,'line-blur':2}});
     map.addLayer({id:'proj-road',type:'line',source:'projects',filter:['==',['get','t'],'road'],layout:{'line-cap':'round','line-join':'round'},paint:{'line-color':C,'line-width':['interpolate',['linear'],['zoom'],11,1.6,16,5]}});
+    map.addLayer({id:'proj-road-paving',type:'line',source:'projects',filter:['all',['==',['get','t'],'road'],['==',['get','st'],'done']],paint:{'line-color':'#455563','line-width':['interpolate',['linear'],['zoom'],11,1.6,16,5]}});
+    map.addLayer({id:'proj-road-markings',type:'line',source:'projects',filter:['all',['==',['get','t'],'road'],['==',['get','st'],'done']],minzoom:14,paint:{'line-color':'#fff2bc','line-width':1,'line-dasharray':[3,4]}});
     restoreFixedRoads()}
   else map.getSource('projects').setData(projGeo());
   projMarkers.forEach(m=>m.remove());projMarkers=[];
   (S.projects||[]).filter(p=>p.stage!=='rejected').forEach(P=>{const T=PTYPES[P.type],el=document.createElement('button');const iss=S.events.filter(e=>e.kind==='projx'&&e.pid===P.id).length;
     el.className='projpin '+P.stage;el.title=P.name;el.setAttribute('aria-label',P.name);const pct=Math.round(P.progress*100),R=13,Cc=2*Math.PI*R;
     el.innerHTML=P.stage==='done'?`<span class="pi" style="background:var(--good)">✓</span><span class="pn">${T.ic} ${P.name}</span>`:`<svg width="34" height="34" viewBox="0 0 34 34"><circle cx="17" cy="17" r="15" fill="#0d1822" stroke="${T.c}" stroke-width="1.5"/><circle cx="17" cy="17" r="${R}" fill="none" stroke="rgba(255,255,255,.12)" stroke-width="3"/><circle cx="17" cy="17" r="${R}" fill="none" stroke="#f2a93b" stroke-width="3" stroke-dasharray="${(Cc*pct/100).toFixed(1)} ${Cc.toFixed(1)}" transform="rotate(-90 17 17)"/><text x="17" y="21.5" text-anchor="middle" font-size="13" fill="${T.c}">${T.ic}</text></svg>${iss?'<b class="pbad">!</b>':''}<span class="pn">${P.stage==='council'?'Awaiting council':P.stage==='design'?'Out to bid':pct+'%'} · ${P.name}</span>`;
+    el.innerHTML=(window.BCLife?.projectArt(P)||'')+el.innerHTML;
     el.addEventListener('click',ev=>{ev.stopPropagation();openProject(P.id)});projMarkers.push(new maplibregl.Marker({element:el,anchor:'center'}).setLngLat([P.site.lon,P.site.lat]).addTo(map))});
   const show=S.layers.bld!==false;projMarkers.forEach(m=>m.getElement().style.display=show?'':'none')}
 function projStageLabel(P){if(P.paused)return'Paused · '+Math.round(P.progress*100)+'% built';return P.stage==='council'?`Awaiting council vote (~${daysLeftWord(P.due)})`:P.stage==='design'?'Out to bid':P.stage==='build'?`Under construction · ${Math.round(P.progress*100)}%`:P.stage==='done'?'Finished':'Rejected by the council'}
@@ -2001,6 +2006,7 @@ function openProject(id){const P=projById(id);if(!P)return;const T=PTYPES[P.type
   const iss=S.events.map((e,i)=>[e,i]).filter(([e])=>e.kind==='projx'&&e.pid===P.id);const left=P.stage==='build'?Math.ceil((1-P.progress)*P.months):P.stage==='design'?P.months+1:P.stage==='council'?P.months+1:0;
   const m=memberFor(P.d);
   openPanel(`${T.ic} ${T.n} · District ${P.d}`,P.name,`${iss.map(([e,i])=>eventCard(e,i)).join('')}
+   ${window.BCLife?.projectPanel(P)||''}
    <div class="pstages">${['Council approval','Bidding','Construction','Complete'].map((n,i)=>`<span class="${P.stage==='rejected'?'':i<si?'past':i===si?'now':''}">${n}</span>`).join('')}</div>
    <div class="pbar"><i style="width:${Math.round(P.progress*100)}%"></i></div>
    <div class="opl"><div><span>Status</span><b>${projStageLabel(P)}</b></div>${left?`<div><span>Expected to finish</span><b>${left} month${left===1?'':'s'}</b></div>`:''}
@@ -2855,12 +2861,13 @@ const CIV_ACTS={
   {id:'jobs',n:'Partner on job training',d:'Train residents for hospital jobs: aides, techs, food service.',cost:0.3,cd:12,fx:(p,c)=>{S.jobsBoost+=0.6;S.met.jobs+=0.3;addGroupMod(S.groups.working,'Hospital job training',1.5);addGroupMod(S.groups.business,'Hospital job training',0.5);c.lvl=clamp(c.lvl+10,0,100);gainXP('stew',4);return`${p.name} will train and hire residents.`}}]};
 function civCan(p,a){if(isCand())return'Only the mayor can do this';const c=civState(p.id);if(civCd(p.id,a.id,a.cd))return`Again in ${civCd(p.id,a.id,a.cd)} mo`;if(a.slot&&S.slots<=0)return'No meetings left this month';if(a.cost&&S.reserve<a.cost+20)return'Reserve too low (keep $20M for emergencies)';return''}
 function doCivic(id,aid){const p=CIVMAP[id];if(!p)return;const a=CIV_ACTS[p.type].find(x=>x.id===aid);if(!a||civCan(p,a))return;const c=civState(id);const d=districtAt(p.lon,p.lat);
-  if(a.slot)S.slots--;if(a.cost){S.reserve-=a.cost}c.acts[aid]=nowM();try{const ch=p.type==='police'?'police':p.type==='fire'?'fire':null;if(ch)addMod(staffOf(ch),a.cost?'You put money into their stations':'You visited their people',a.cost?4:2)}catch(e){}const msg=a.fx(p,c,d);S.approval=cityApproval(S);recomputeAll(S);
+  if(p.type==='hospital')civFixHospital(id);if(a.slot)S.slots--;if(a.cost){S.reserve-=a.cost}c.acts[aid]=nowM();try{const ch=p.type==='police'?'police':p.type==='fire'?'fire':null;if(ch)addMod(staffOf(ch),a.cost?'You put money into their stations':'You visited their people',a.cost?4:2)}catch(e){}const msg=a.fx(p,c,d);S.approval=cityApproval(S);recomputeAll(S);
   goTo(p.lon,p.lat,p.name,3);logIt(`${a.n} at ${p.name}${a.cost?` (${fmtM(a.cost)} from the reserve)`:''}.`);save();refreshHUD();renderCivic();toast(msg);openCivic(id)}
 function civLevelName(t){return t==='police'?'Officer morale':t==='fire'?'Readiness':'Partnership with the city'}
 function openCivic(id){const p=CIVMAP[id];if(!p)return;const T=CIV[p.type],c=civState(id);closePanel();const d=districtAt(p.lon,p.lat),pr=precinctAt(p.lon,p.lat);const m=d?memberFor(d):null;
   const lv=Math.round(c.lvl),hs=p.type==='hospital'?-25:0,col=lv>=65+hs?'var(--good)':lv>=45+hs?'var(--warn)':'var(--bad)';
   openModal(`${T.n} · ${p.addr}`,p.name,`
+   ${window.BCLife?.civic(p)||''}
    ${p.about?`<p>${p.about}</p>`:''}
    ${c.out?`<div class="facts" style="border-color:var(--bad)"><h4 style="color:var(--bad)">Problem here</h4><p style="margin:0">${c.out}</p></div>`:''}
    <div class="facts"><div class="opl">
@@ -2902,7 +2909,7 @@ function renderCivic(){if(!mapReady||!S)return;if(!civMarkers.length){for(const 
     civMarkers.push({m:new maplibregl.Marker({element:el,anchor:'center'}).setLngLat([p.lon,p.lat]).addTo(map),el,p})})}
   const on=S.layers.civic!==false,z=map.getZoom();civMarkers.forEach(o=>{const c=civState(o.p.id);o.el.classList.toggle('out',!!c.out);const minZ=o.p.type==='fire'?11.4:10.2;o.el.style.display=on&&(z>=minZ||c.out)?'':'none';o.el.classList.toggle('named',z>=13.2)})}
 document.addEventListener('click',e=>{const b=e.target.closest('[data-civ],[data-civlist],[data-civ-open],[data-civfly]');if(!b||!S)return;e.preventDefault();
-  if(b.dataset.civ){if(CIVMAP[b.dataset.civ].type==='hospital')civFixHospital(b.dataset.civ);doCivic(b.dataset.civ,b.dataset.ca);return}
+  if(b.dataset.civ){doCivic(b.dataset.civ,b.dataset.ca);return}
   if(b.dataset.civlist){openCivicList(b.dataset.civlist);return}
   if(b.dataset.civOpen){openCivic(b.dataset.civOpen);return}
   if(b.dataset.civfly){const p=CIVMAP[b.dataset.civfly];onClose=null;closeModal();navReset();camFly({center:[p.lon,p.lat],zoom:15.2})}});
@@ -3020,6 +3027,7 @@ function openStaff(id){const s=staffOf(id),D=STAFFMAP[id];closePanel();const o=s
      <div class="opbig" style="color:${opColor(o)}">${fmtOp(o)}<small>Opinion of you</small></div>
      <div class="note">Age ${s.age} · in the job ${now-s.since<1?'since this month':`${now-s.since} month${now-s.since===1?'':'s'}`}</div>
      <div class="traits">${traitChips(s)}</div><p class="note" style="margin-bottom:0">${D.about}</p></div></div>
+   ${window.BCLife?.character(s,'staff:'+id)||''}
    <div class="facts"><h4>Why they feel this way</h4><div class="opl">${parts.length?parts.map(x=>`<div><span>${x.t}</span><b class="${x.v>0?'up':'down'}">${fmtOp(x.v)}</b></div>`).join(''):'<div><span>No strong feelings yet</span><b>0</b></div>'}</div>
     <p class="note">Unhappy cabinet members talk to reporters. Very unhappy ones quit and blame you.</p></div>
    <div class="facts"><h4>What you can do</h4><div class="choices">
@@ -3749,7 +3757,7 @@ const keysDown=new Set();const mouse={x:0,y:0,in:false,btn:false};let flying=fal
 const pitchFor=z=>z<=11.2?0:z>=16.2?56:(z-11.2)/5*56;
 function camFly(o){if(!map)return;flying=true;map.flyTo({center:o.center,zoom:o.zoom,pitch:pitchFor(o.zoom),bearing:0,speed:o.speed||1.3,curve:1.42,essential:true});map.once('moveend',()=>{flying=false})}
 function camLoop(t){const dt=Math.min(.05,lastT?(t-lastT)/1000:0);lastT=t;timeStep(dt);
-  if(map&&mapReady&&S&&S.started&&!modalOpen&&$('start').hidden){
+  if(map&&mapReady&&S&&S.started&&!modalOpen&&!window.BCLife?.isOpen&&$('start').hidden){
     let dx=0,dy=0;
     if(keysDown.has('w')||keysDown.has('arrowup'))dy-=1;if(keysDown.has('s')||keysDown.has('arrowdown'))dy+=1;
     if(keysDown.has('a')||keysDown.has('arrowleft'))dx-=1;if(keysDown.has('d')||keysDown.has('arrowright'))dx+=1;
@@ -3893,7 +3901,7 @@ document.addEventListener('click',e=>{
   else if(a==='savepromises'){if((S._pp||[]).length===3){choosePromises(S._pp);delete S._pp;save();refreshHUD();navReset();closeModal();toast('Your promises are public. Track them on the Mayor\'s Desk.');let skip=false;try{skip=localStorage.getItem('bcm-nomoneyintro')==='1'}catch(e){}if(!skip&&!S.seenMoneyIntro)openMoneyIntro()}}
   else if(a==='negotiate')openDeal(b.dataset.key,+b.dataset.k);
   else if(a==='dealaccept'||a==='dealcounter'||a==='dealrefuse')dealAction(a,b.dataset.key,+b.dataset.k);
-  else if(a==='maintcut'||a==='maintrestore'){const P=projById(b.dataset.id);if(P){P.maintCut=a==='maintcut';plog(P,P.maintCut?'You cut its upkeep budget.':'You restored its upkeep budget.');logIt(`${P.maintCut?'Cut':'Restored'} upkeep on ${P.name}.`);save();refreshHUD();openProject(P.id)}}
+  else if(a==='maintcut'||a==='maintrestore'){const P=projById(b.dataset.id);if(P){const receipt=window.BCLife?.snapshot();P.maintCut=a==='maintcut';plog(P,P.maintCut?'You cut its upkeep budget.':'You restored its upkeep budget.');logIt(`${P.maintCut?'Cut':'Restored'} upkeep on ${P.name}.`);save();refreshHUD();openProject(P.id);if(receipt)BCLife.record(receipt,(P.maintCut?'Cut':'Restored')+' upkeep · '+P.name,'The annual upkeep budget has changed.','project:'+P.id,[fmtM(PMAINT[P.type]*(P.scope||1))+' per year '+(P.maintCut?'saved; satisfaction and benefits will decline.':'restored; satisfaction will recover over time.')])}}
   else if(a==='plan'){navReset();onClose=null;if(modalOpen)closeModal();openPlanner(b.dataset.type)}
   else if(a==='plantype')openPlanner(b.dataset.type,S._plan&&S._plan.d,0,S._plan&&S._plan.fund);
   else if(a==='planD')openPlanner(S._plan.type,+b.dataset.d,0,S._plan.fund);
@@ -3901,7 +3909,7 @@ document.addEventListener('click',e=>{
   else if(a==='planFund')openPlanner(S._plan.type,S._plan.d,S._plan.si,b.dataset.f);
   else if(a==='sendproj')sendProject();
   else if(a==='openproj'){closeModal();deskGo('proj:'+b.dataset.id)}
-  else if(a==='projpause'){const P=projById(b.dataset.id);if(P){P.paused=!P.paused;plog(P,P.paused?'You paused construction to save money. Neighbors are not happy.':'Construction resumed.');logIt(`${P.paused?'Paused':'Resumed'} ${P.name}.`);save();refreshHUD();openProject(P.id)}}
+  else if(a==='projpause'){const P=projById(b.dataset.id);if(P){const receipt=window.BCLife?.snapshot();P.paused=!P.paused;plog(P,P.paused?'You paused construction to save money. Neighbors are not happy.':'Construction resumed.');logIt(`${P.paused?'Paused':'Resumed'} ${P.name}.`);save();refreshHUD();openProject(P.id);if(receipt)BCLife.record(receipt,(P.paused?'Paused':'Resumed')+' · '+P.name,'The construction schedule has changed.','project:'+P.id,[P.paused?'Construction progress and spending stop until you resume work.':'Construction progress and spending resume during the monthly simulation.'])}}
   else if(a==='outlook')openOutlook();
   else if(a==='projgo'){const P=projById(b.dataset.id);if(P)camFly({center:[P.site.lon,P.site.lat],zoom:15.4,speed:1.4})}
   else if(a==='actions'){navReset();onClose=null;if(modalOpen)closeModal();openActions()}
@@ -4049,6 +4057,7 @@ window.bluffMusicContext = () => {
 window.claude?.hot?.snapshot?.(()=>({S}));
 window.claude?.hot?.ready?window.claude.hot.ready(start):start(window.claude?.hot?.data??{});
 </script>
+<script src="city-life.js?v=22"></script>
 <script src="music.js?v=21"></script>
 </body>
 </html>
