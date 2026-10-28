@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="description" content="Create your mayor and govern Memphis in real time on a map with a real map of the city.">
 <title>Bluff City Mayor</title>
-<link rel="stylesheet" href="music.css?v=23">
+<link rel="stylesheet" href="music.css?v=24">
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -455,8 +455,8 @@ details.analysis{margin-top:6px}details.analysis summary{cursor:pointer;color:va
 .card.story{border-left:3px solid #5aa7d8}.storytag{font-family:var(--f-label);font-weight:600;font-size:11.5px;letter-spacing:.1em;text-transform:uppercase;color:#5aa7d8;margin-bottom:2px}
 @media (max-width:640px){.grow{grid-template-columns:30px minmax(0,1fr) 44px;}.grow .gbar,.grow .gst{display:none}}
 </style>
-<link rel="stylesheet" href="city-design.css?v=23">
-<link rel="stylesheet" href="city-life.css?v=23">
+<link rel="stylesheet" href="city-design.css?v=24">
+<link rel="stylesheet" href="city-life.css?v=24">
 
 <div id="app">
   <div id="map" aria-label="Map of Memphis"></div>
@@ -504,7 +504,7 @@ details.analysis{margin-top:6px}details.analysis summary{cursor:pointer;color:va
     <button class="btn primary" data-act="pause" id="bPlay">▶ Resume <kbd>Space</kbd></button>
   </nav>
   <div class="status" id="status">Loading map…</div>
-  <div class="credit"><span class="ver" id="verTag">v23</span></div>
+  <div class="credit"><span class="ver" id="verTag">v24</span></div>
   <div class="tip" id="tip" hidden></div>
   <div class="toast" id="toast" role="status"></div>
   <section class="panel" id="panel" hidden aria-live="polite">
@@ -539,7 +539,7 @@ details.analysis{margin-top:6px}details.analysis summary{cursor:pointer;color:va
         <button class="btn" id="bLoad" hidden>Continue saved term</button>
       </div>
       <div id="slotList" hidden></div>
-      <p class="note startv">Version <b class="ver" id="verStart">v23</b></p>
+      <p class="note startv">Version <b class="ver" id="verStart">v24</b></p>
     </div>
     <div class="startbox create" id="create" hidden>
       <h2>Create your mayor</h2>
@@ -574,7 +574,7 @@ details.analysis{margin-top:6px}details.analysis summary{cursor:pointer;color:va
 (function(){const urls=['https://cdn.jsdelivr.net/npm/maplibre-gl@4.7.1/dist/maplibre-gl.js','https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js'];let k=0;
   function next(){if(k>=urls.length){window.__mlFail=true;window.dispatchEvent(new Event('mlready'));return}const s=document.createElement('script');s.src=urls[k++];s.onload=()=>window.dispatchEvent(new Event('mlready'));s.onerror=next;document.head.appendChild(s)}next()})();
 </script>
-<script src="city-buildings.js?v=23"></script>
+<script src="city-buildings.js?v=24"></script>
 <script>
 "use strict";
 // ======================= PLACES =======================
@@ -1129,6 +1129,17 @@ const REQUESTS={
  fiscal:{t:d=>'Order an outside audit of city overtime spending',cost:0.25,fx:{},why:'They want proof the money goes where it should.'},
  oversight:{t:d=>'Publish MPD use-of-force data every quarter',cost:0.1,fx:{mood:0.3},why:'Residents keep asking for it at community meetings.',side:{safety:-2}},
 };
+// Each kind of request comes in several versions, so a member who keeps pushing the same priority asks for different things.
+const REQ_ALTS={
+ streets:[d=>[`Repave ${roadIn(d)} in District ${d}`,'Their constituents call about it every week.'],d=>[`Fix the sidewalks near District ${d} schools`,'Kids walk in the street because the sidewalks are broken.'],d=>[`Add turn lanes on ${roadIn(d)}`,'Rush-hour backups stretch for blocks.'],d=>[`Replace the District ${d} storm drains that keep clogging`,'Every hard rain floods the same intersections.']],
+ safety:[d=>[`Fund extra patrol overtime in District ${d}`,'A string of break-ins has neighbors scared.'],d=>[`Put cameras at the worst District ${d} intersections`,'Residents want evidence when something happens.'],d=>[`Fund a youth summer night program in District ${d}`,'They want teenagers somewhere safe after dark.'],d=>[`Hire a District ${d} community liaison officer`,'Neighbors want one officer they know by name.']],
+ education:[d=>[`Open the District ${d} branch library on Sundays`,'Parents want somewhere for kids to study on weekends.'],d=>[`Fund after-school tutoring at District ${d} community centers`,'Teachers say kids fall behind between 3 and 6 p.m.'],d=>[`Buy laptops for the District ${d} library`,'Students line up for the few computers there are.'],d=>[`Start a District ${d} summer reading challenge`,'Reading scores drop every summer.']],
+ blight:[d=>[`Demolish 15 condemned houses in District ${d}`,'The houses have sat open for years.'],d=>[`Clear overgrown vacant lots in District ${d}`,'Weeds are taller than the kids.'],d=>[`Fund a District ${d} paint-and-repair program for seniors`,'Older homeowners can\'t keep up with repairs.'],d=>[`Board up and secure vacant buildings in District ${d}`,'Squatters started a fire last month.']],
+ transit:[d=>[`Add bus shelters along District ${d} routes`,'Riders wait in the rain and the heat.'],d=>[`Restore Sunday bus service in District ${d}`,'Church and weekend workers have no way to get there.'],d=>[`Add sidewalks to the District ${d} bus stops`,'People stand in the ditch waiting for the bus.'],d=>[`Run a District ${d} shuttle to the nearest grocery store`,'The nearest store is two bus transfers away.']],
+ jobs:[d=>[`Sponsor a District ${d} job fair and small-business grants`,'They promised it on the campaign trail.'],d=>[`Fund a District ${d} summer jobs program for teens`,'Teenagers want work, not just programs.'],d=>[`Fix up the District ${d} commercial strip`,'Half the storefronts are empty.'],d=>[`Start a District ${d} trades apprenticeship`,'Contractors can\'t find electricians and plumbers.']],
+ labor:[d=>[`Approve weekend overtime for cleanup crews in District ${d}`,'City workers in the district asked them to push for it.'],d=>[`Replace the District ${d} sanitation trucks that keep breaking down`,'Pickups are days late.'],d=>[`Hire more District ${d} park maintenance staff`,'The parks crew is half what it was.']],
+ fiscal:[d=>['Order an outside audit of city overtime spending','They want proof the money goes where it should.'],d=>['Publish every city contract online','They want residents to see where the money goes.'],d=>['Review the city\'s fleet costs','They think the city has too many cars sitting idle.']],
+ oversight:[d=>['Publish MPD use-of-force data every quarter','Residents keep asking for it at community meetings.'],d=>['Create a civilian review of police complaints','Complaints go in and nothing comes out.'],d=>['Put body-camera policies on the city website','People want to know when cameras are on.']]};
 const POORROADS={};
 function titleCase(t){return t.toLowerCase().replace(/\b\w/g,c=>c.toUpperCase()).replace(/\bSt\b/,'St.').replace(/\bAve\b/,'Ave.').replace(/\bRd\b/,'Rd.').replace(/\bUs\b/,'US').replace(/\bDr Martin/,'Dr. Martin')}
 function roadIn(d){const l=POORROADS[d];return l&&l.length?l[Math.floor(Math.random()*Math.min(4,l.length))]:'the worst stretch of arterial'}
@@ -1155,19 +1166,20 @@ function placeOf(at){
   if(at.startsWith('town:')){const id=at.slice(5),g=GEO.nb[id],N=NEIGHBORS[id];const c=g?g.c:[-89.82,35.2];return{lat:c[1],lon:c[0],lmk:null,name:N.city,town:id}}
   if(at.startsWith('dist:')){const d=+at.slice(5),c=districtCenter(d)||[LM.cityhall.lon,LM.cityhall.lat];return{lat:c[1],lon:c[0],lmk:null,name:`District ${d}`}}
   if(at.startsWith('proj:')){const P=projById(at.slice(5));if(P)return{lat:P.site.lat,lon:P.site.lon,lmk:null,name:P.name,proj:P.id};return{lat:LM.cityhall.lat,lon:LM.cityhall.lon,lmk:null,name:'Project'}}
+  if(at.startsWith('xy:')){const[a,b,...n]=at.slice(3).split(',');return{lat:+a,lon:+b,lmk:null,name:n.join(',')||'Here'}}
   if(at.startsWith('point:')){const p=POINTS[at.slice(6)];return{lat:p[0],lon:p[1],lmk:null,name:p[2]}}
   const L=LM[at];return{lat:L.lat,lon:L.lon,lmk:L.id,name:L.short||L.name}}
 function evAt(ev){if(ev.at)return ev.at;if(ev.kind==='projx')return'proj:'+ev.pid;if(ev.kind==='request')return'dist:'+ev.d;if(ev.kind==='ordinance'||ev.kind==='budget'||ev.kind==='memo')return'cityhall';return EVENTS.find(e=>e.id===ev.id).at}
 function spawn(s,def,extra){const ev={id:def.id,kind:'event',expires:3,born:s.y*12+s.m,...(extra||{})};s.events.push(ev);s.used[def.id]=s.y*12+s.m;return ev}
-function evDef(ev){if(ev.kind==='char')return null;if(ev.kind==='ordinance')return ORDINANCES.find(o=>o.id===ev.id);if(ev.kind==='budget'||ev.kind==='request'||ev.kind==='memo'||ev.kind==='projx')return null;return EVENTS.find(e=>e.id===ev.id)}
+function evDef(ev){if(ev.kind==='char')return null;if(ev.id&&ev.id.startsWith('tpl:'))return tplDef(ev);if(ev.kind==='ordinance')return ORDINANCES.find(o=>o.id===ev.id);if(ev.kind==='budget'||ev.kind==='request'||ev.kind==='memo'||ev.kind==='projx')return null;return EVENTS.find(e=>e.id===ev.id)}
 function evTitle(ev){if(ev.kind==='char'){const T=CHAR_TYPES[ev.type];return T?T.title(ev):'People'}if(ev.kind==='projx'){const P=projById(ev.pid),I=PISSUES.find(x=>x.id===ev.iss);return`${P?P.name:'Project'}: ${I?I.t:'trouble'}`}if(ev.kind==='request')return`${S.council[ev.mi].name.split(' ').pop()} asks: ${ev.text}`;if(ev.kind==='memo')return`Confidential memo: ${S.council[ev.mi].name}`;if(ev.kind==='budget')return`Write the FY${fyOf(S)+1} budget`;if(ev.kind==='ordinance')return'Ordinance: '+evDef(ev).title;return evDef(ev).title}
 function maybeSpawn(s,report){
   const now=s.y*12+s.m;const active=new Set(s.events.map(e=>e.id));
-  const pool=EVENTS.filter(e=>!e.scripted&&!e.special&&!active.has(e.id)&&(!s.used[e.id]||now-s.used[e.id]>=12)&&(!e.months||e.months.includes(s.m))&&!(e.id==='mpd_staffing'&&s.policies.recruit));
+  const pool=EVENTS.filter(e=>!e.scripted&&!e.special&&!active.has(e.id)&&(!s.used[e.id]||now-s.used[e.id]>=(e.cd||(e.months?12:24)))&&(!e.months||e.months.includes(s.m))&&(!e.from||s.y>=e.from)&&(!e.when||e.when(s))&&!(e.id==='mpd_staffing'&&s.policies.recruit));
   const n=s.events.length<5?(Math.random()<.45?2:1):0;
-  for(let k=0;k<n&&pool.length;k++){const def=pool.splice(Math.floor(Math.random()*pool.length),1)[0];spawn(s,def);report.push(`New: ${def.title} (${placeOf(def.at).name})`)}
+  for(let k=0;k<n;k++){if(Math.random()<0.4||!pool.length){spawnTemplate(s,report);continue}const def=pool.splice(Math.floor(Math.random()*pool.length),1)[0];const ev=spawn(s,def,def.atf?{at:def.atf(s)}:undefined);report.push(`New: ${def.title} (${placeOf(evAt(ev)).name})`)}
   if(Math.random()<.3&&!s.events.some(e=>e.kind==='ordinance')){
-    const pool2=ORDINANCES.filter(o=>!s.used['ord_'+o.id]||now-s.used['ord_'+o.id]>=18);
+    const pool2=ORDINANCES.filter(o=>!s.used['ord_'+o.id]||now-s.used['ord_'+o.id]>=36);
     if(pool2.length){const o=pool2[Math.floor(Math.random()*pool2.length)];s.used['ord_'+o.id]=now;
       const votes=s.council.map(m=>({m,yes:(s.groups?issueScore(m,o,false):50+leanFor(m,o.lean))+rnd(-8,8)>=50}));const yes=votes.filter(v=>v.yes).length;
       if(yes>=7){s.events.push({id:o.id,kind:'ordinance',expires:2,born:now,yes,votes:votes.map(v=>v.yes)});
@@ -1178,7 +1190,8 @@ function maybeSpawn(s,report){
   const asking=new Set(s.events.filter(e=>e.kind==='request').map(e=>e.mi));
   if(asking.size<2&&Math.random()<0.55){const cand=s.council.map((m,i)=>i).filter(i=>!asking.has(i)&&(!s.used['rq'+i]||now-s.used['rq'+i]>=4));
     if(cand.length){const i=cand[Math.floor(Math.random()*cand.length)],m=s.council[i];const pk=Object.entries(weights(m)).sort((a,b)=>b[1]-a[1]).map(x=>x[0]);const pr=Math.random()<.7?pk[0]:pk[Math.min(1,pk.length-1)];
-      const d=homeOf(m),R=REQUESTS[pr]||REQUESTS.streets;s.events.push({kind:'request',id:'rq_'+i,mi:i,pr,d,text:R.t(d),born:now,expires:2});s.used['rq'+i]=now;
+      const d=homeOf(m),R=REQUESTS[pr]||REQUESTS.streets;const A=REQ_ALTS[pr]||[];const vk='rqv'+i+pr;const vi=(s.used[vk]||0)%Math.max(1,A.length);s.used[vk]=(s.used[vk]||0)+1;const tw=A.length?A[vi](d):[R.t(d),R.why];
+      s.events.push({kind:'request',id:'rq_'+i,mi:i,pr,d,text:tw[0],why:tw[1],born:now,expires:2});s.used['rq'+i]=now;
       report.push(`${m.name} (${m.seat}) has a request for you. It's pinned in District ${d}.`)}}
   // the inspector general turns up leverage
   if(!s.events.some(e=>e.kind==='memo')&&now-(s.used.memo||-99)>=5&&Math.random()<0.14+Math.max(0,mskill('intr')-6)*0.008){const cand=s.council.map((m,i)=>i).filter(i=>!s.council[i].hook);
@@ -1305,7 +1318,7 @@ function enact(s,p){DIVS.forEach(d=>{s.enacted[d.id]=p.divs[d.id];s.ratio[d.id]=
 // Voter groups. Each has a share of residents, turnout, home districts, concerns and an approval of you.
 // Citywide approval is the turnout-weighted average of the groups; each council district's approval comes from the groups that live there.
 // Shares, district mix and turnout are modeled, loosely grounded in Memphis demographics; they are not survey data.
-const VERSION='v23';
+const VERSION='v24';
 const GROUPS=[
  {id:'working',sh:'Working families',n:'Working families',ic:'⚒',c:'#f2a93b',share:24,turn:.5,start:56,w:{jobs:1,safety:.8,transit:.5},
   d:'Hourly workers in logistics, warehouses, health care and service jobs. The biggest bloc in the city.',dm:{1:1.1,2:.8,3:1.3,4:1.2,5:.6,6:1.2,7:1.1}},
@@ -1461,7 +1474,7 @@ function eventCard(ev,idx){
   const left=ev.expires-((S.y*12+S.m)-ev.born);
   if(ev.kind==='request'){const m=S.council[ev.mi],R=REQUESTS[ev.pr]||REQUESTS.streets;recompute(m);
     return`<div class="card rq"><div class="who"><button class="ptbtn" data-char="${ev.mi}">${portrait(m,58)}</button><div><div class="ttl">${m.name} has a request</div><div class="note">${m.seat} · opinion <b style="color:${opColor(m.opinion)}">${fmtOp(m.opinion)}</b>${m.favors?` · owes you ${m.favors}`:''}</div><div class="due">${left<=1?'Answer this month':`Answer within ${left} months`}</div></div></div>
-     <p>"${ev.text}." ${R.why}</p>
+     <p>"${ev.text}." ${ev.why||R.why}</p>
      <div class="choices"><button class="choice" data-ev="${idx}" data-ci="0"><b>Grant it</b><small>${[R.cost?fmtM(-R.cost)+' reserves':'',describe({fx:R.fx}),'They owe you a favor','Opinion +12',R.cost>=1?'Frugal members see pork (−3)':'',R.side?'Annoys public-safety members':''].filter(Boolean).join(' · ')}</small></button>
      <button class="choice" data-ev="${idx}" data-ci="1"><b>Turn it down</b><small>Opinion −12 · ignoring it costs −8</small></button></div></div>`}
   if(ev.kind==='memo'){const m=S.council[ev.mi];recompute(m);
@@ -2439,7 +2452,7 @@ function endorsementFor(g){const E=ENDORSERS.find(x=>x.g===g.id);return E?S.camp
 // Offices work where the race is close: a district where you're far ahead or far behind gets little from one.
 function districtCloseness(d){return clamp(1-Math.abs(dApp(d)-50)/14,0.15,1)}
 function officeReach(g){const offs=Object.keys(S.camp.offices||{}).map(Number);if(!offs.length)return 0;let a=0,t=0;for(let d=1;d<=7;d++){const c=dComp(d)[g.id];t+=c;if(offs.includes(d))a+=c*districtCloseness(d)}return a/t}
-const CHALLENGER_EDGE=10; // voters give a fresh face the benefit of the doubt; a sitting mayor runs on the record
+const CHALLENGER_EDGE=7; // voters give a fresh face the benefit of the doubt; a sitting mayor runs on the record
 function groupSupport(g,o){o=o||{};const G=S.groups[g.id],R=S.rival||{champs:[]},rc=R.camp||{};const champ=R.champs.includes(g.id);const SUCC=S.term>=2&&!isCand();
   let b=(SUCC?20+G.app*0.66+(S.succ?S.succ.bonus:-4):G.app)+(S.mayor&&!SUCC?(mskill('cha')-8)*0.4:0)-(champ?(isCand()?3:6):0)-(isCand()||SUCC?0:CHALLENGER_EDGE);
   if(!o.noAds)b+=(S.camp.boost[g.id]||0);
@@ -3158,7 +3171,7 @@ const STAFF_ASKS={
  cos:{t:'wants a cabinet retreat',d:'A day away from City Hall to settle turf fights. Uses a meeting.',cost:0,slot:true,fx:()=>{STAFF_DEF.forEach(D=>addMod(staffOf(D.id),'Cabinet retreat',5))},ok:'The retreat cooled some tempers.'}};
 const CHAR_TYPES={
  feud:{w:3,title:ev=>`Feud: ${S.council[ev.a].name.split(' ').pop()} vs. ${S.council[ev.b].name.split(' ').pop()}`,
-  gen(){const pairs=[];relInit();for(const k in S.rel)if(S.rel[k]==='rival'){const[a,b]=k.split('-').map(Number);pairs.push([a,b])}if(!pairs.length)return null;const[a,b]=pairs[Math.floor(Math.random()*pairs.length)];return{a,b,at:'cityhall'}},
+  gen(){const pairs=[];relInit();S.used=S.used||{};for(const k in S.rel)if(S.rel[k]==='rival'&&(!S.used['feud'+k]||nowM()-S.used['feud'+k]>=20)){const[a,b]=k.split('-').map(Number);pairs.push([a,b,k])}if(!pairs.length)return null;const[a,b,k]=pairs[Math.floor(Math.random()*pairs.length)];S.used['feud'+k]=nowM();return{a,b,at:'cityhall'}},
   body:ev=>{const A=S.council[ev.a],B=S.council[ev.b];return`${A.name} and ${B.name} traded insults in committee and both want you on their side. Reporters are asking whose side you're on.`},
   who:ev=>[['char',ev.a],['char',ev.b]],
   choices:[{l:ev=>`Side with ${S.council[ev.a].name.split(' ').pop()}`,s:ev=>`${S.council[ev.a].name.split(' ').pop()} +14 · ${S.council[ev.b].name.split(' ').pop()} −14`,do:ev=>{addMod(S.council[ev.a],'You took my side',14);addMod(S.council[ev.b],'You sided against me',-14);return`You backed ${S.council[ev.a].name}.`}},
@@ -3189,7 +3202,7 @@ const CHAR_TYPES={
    {l:()=>'Stay neutral',s:()=>'They −8',do:ev=>{S.endorsed=S.endorsed||{};S.endorsed[ev.a]='no';addMod(S.council[ev.a],'Refused to endorse me',-8);return'You stayed out of their race.'}}],
   ignore:ev=>{addMod(S.council[ev.a],'Ignored my endorsement request',-6)}},
  ask:{w:4,title:ev=>`${staffOf(ev.sid).name.split(' ').pop()} ${STAFF_ASKS[ev.sid].t}`,
-  gen(){const ids=Object.keys(STAFF_ASKS).filter(id=>!(S.asked||{})[id]||nowM()-S.asked[id]>=8);if(!ids.length)return null;const id=ids[Math.floor(Math.random()*ids.length)];S.asked=S.asked||{};S.asked[id]=nowM();return{sid:id,at:STAFF_AT[id]||'cityhall'}},
+  gen(){const ids=Object.keys(STAFF_ASKS).filter(id=>!(S.asked||{})[id]||nowM()-S.asked[id]>=20);if(!ids.length)return null;const id=ids[Math.floor(Math.random()*ids.length)];S.asked=S.asked||{};S.asked[id]=nowM();return{sid:id,at:STAFF_AT[id]||'cityhall'}},
   body:ev=>{const s=staffOf(ev.sid),A=STAFF_ASKS[ev.sid];return`Your ${STAFFMAP[ev.sid].role.toLowerCase()}, ${s.name}, ${A.t}. ${A.d}`},
   who:ev=>[['staff',ev.sid]],
   choices:[{l:()=>'Approve it',s:ev=>{const A=STAFF_ASKS[ev.sid];return`${A.cost>0?fmtM(-A.cost)+' reserve · ':A.cost<0?'+'+fmtM(-A.cost)+' reserve · ':''}${A.slot?'Uses a meeting · ':''}${staffOf(ev.sid).name.split(' ').pop()} +15`},need:ev=>{const A=STAFF_ASKS[ev.sid];return(!A.slot||S.slots>0)&&S.reserve-Math.max(0,A.cost)>=5},do:ev=>{const A=STAFF_ASKS[ev.sid];if(A.slot)S.slots--;S.reserve-=A.cost;A.fx();addMod(staffOf(ev.sid),'You backed my request',15);return A.ok}},
@@ -3512,6 +3525,217 @@ function guideBox(){const G=guideInit();if(!G||G.off)return'';const L=guideList(
 const _renderDesk=renderDesk;renderDesk=function(){_renderDesk();try{const b=guideBox();if(b)$('desk').insertAdjacentHTML('afterbegin',b)}catch(e){}};
 document.addEventListener('click',e=>{const g=e.target.closest('[data-guide],[data-guideoff]');if(!g||!S)return;e.preventDefault();e.stopPropagation();
   if(g.dataset.guideoff){S.guide.off=true;save();renderDesk();toast('Goals hidden.');return}const q=guideList().find(x=>x.id===g.dataset.guide);if(q){if(modalOpen){onClose=null;closeModal()}try{q.go()}catch(err){}}},true);
+
+// ======================= MORE OF WHAT HAPPENS IN A CITY =======================
+// Seasonal events come back each year at their time of year. Others appear when the city is in a certain state,
+// or only in later years. Neighborhood templates generate problems on real streets and in real neighborhoods.
+const rsv=s=>s.reserve/annualSpend(s)*100;
+const MORE_EVENTS=[
+ // ---- seasons ----
+ {id:'ice_storm',title:'Ice storm: thousands without power',at:'mlgw',tags:['safety'],months:[1,2],cd:12,
+  body:(s,ev)=>`Freezing rain brought down tree limbs and power lines across the city. MLGW says ${Math.round(40+hash(ev.born,7)*90)},000 customers are dark, and the temperature tonight is 19°F.`,
+  choices:[{label:'Open warming centers in libraries and community centers',cost:0.4,fx:{mood:1.5},grp:{renters:3,faith:2,owners:1},council:{all:2}},
+   {label:'Pay for overtime salt and tree crews',cost:0.7,fx:{streets:0.5,mood:1},grp:{owners:2,working:2},council:{streets:3,fiscal:-1}},
+   {label:'Let MLGW and the county handle it',fx:{mood:-1.5},grp:{renters:-2,working:-2},council:{all:-2}}],
+  ignore:{fx:{mood:-2},council:{all:-3}}},
+ {id:'boil_water',title:'Boil-water notice after the freeze',at:'mlgw',tags:['safety'],months:[1,2,3],cd:24,when:s=>Math.random()<0.6,
+  body:()=>'Water mains cracked in the cold and pressure dropped citywide. MLGW issued a boil-water notice, and hospitals are trucking in water.',
+  choices:[{label:'Hand out bottled water at fire stations',cost:0.3,fx:{mood:1},grp:{renters:2,parents:2,faith:1},council:{all:1}},
+   {label:'Push MLGW to speed up main replacement, even with a rate increase',fx:{mlgwgw:0.02,mood:0.5},grp:{owners:1,business:1,working:-1},council:{streets:3}},
+   {label:'Blame MLGW publicly',fx:{mood:-0.5},grp:{working:1},council:{all:-1}}],
+  ignore:{fx:{mood:-1.5},council:{all:-2}}},
+ {id:'river_rising',title:'The Mississippi is rising',at:'xy:35.1660,-90.0585,Harbor Town',tags:['safety'],months:[3,4,5],cd:12,when:()=>Math.random()<0.55,
+  body:()=>'The river gauge at Memphis is forecast near flood stage. Low parts of Harbor Town, Riverside Drive and Tom Lee Park could take water.',
+  choices:[{label:'Sandbag and close Riverside Drive early',cost:0.5,fx:{mood:0.5},grp:{owners:1,business:-1},council:{safety:3}},
+   {label:'Wait for the Corps of Engineers forecast',fx:{},council:{fiscal:1}},
+   {label:'Build a permanent floodwall study into the capital plan',cost:0.3,fx:{mood:0.5},grp:{owners:1,business:1},council:{streets:2,fiscal:-1}}],
+  ignore:{fx:{mood:-1,blight:0.5},council:{safety:-2}}},
+ {id:'tornado',title:'Tornado touches down',at:'dist:4',atf:()=>'dist:'+(1+Math.floor(Math.random()*7)),tags:['safety'],months:[3,4,5,11],cd:24,when:()=>Math.random()<0.35,
+  body:()=>'An overnight tornado tore roofs off homes and dropped trees on cars. Nobody was killed, but whole blocks are without power and covered in debris.',
+  choices:[{label:'Send emergency debris crews right away',cost:1.2,fx:{blight:-1,mood:2},grp:{working:3,owners:2,faith:2},council:{all:3}},
+   {label:'Wait for federal disaster money',fx:{blight:1,mood:-1},grp:{working:-2},council:{fiscal:2,all:-1}},
+   {label:'Organize volunteer cleanup days with churches',cost:0.1,fx:{mood:1},grp:{faith:3,parents:1},council:{all:1}}],
+  ignore:{fx:{blight:1.5,mood:-2},council:{all:-3}}},
+ {id:'mim',title:'Memphis in May wants more city help',at:'xy:35.1468,-90.0520,Tom Lee Park',tags:['jobs'],months:[3,4],cd:12,
+  body:()=>'The festival is weeks away. Organizers want the city to cover police overtime, sanitation and shuttle service, and they promise a big weekend for hotels and restaurants.',
+  choices:[{label:'Cover police, sanitation and shuttles',cost:0.6,fx:{jobs:0.4,mood:0.5,revenue:0.3},grp:{business:2,young:2},council:{jobs:2,fiscal:-1}},
+   {label:'Bill the festival for the full cost',fx:{revenue:0.2},grp:{business:-2},council:{fiscal:2}},
+   {label:'Split the cost',cost:0.3,fx:{jobs:0.2},grp:{business:1},council:{fiscal:1}}],
+  ignore:{fx:{mood:-0.5},council:{jobs:-1}}},
+ {id:'elvis_week',title:'Elvis Week crowds on Elvis Presley Blvd.',at:'graceland',tags:['jobs'],months:[7,8],cd:12,
+  body:()=>'Tens of thousands of fans are coming for Elvis Week. Whitehaven neighbors want the boulevard cleaned up and traffic handled; Graceland wants the city to look its best.',
+  choices:[{label:'Clean up the corridor and run shuttles',cost:0.3,fx:{jobs:0.3,blight:-0.3},grp:{business:1,working:1},council:{jobs:2}},
+   {label:'Repave the worst stretch of the boulevard',cost:1.5,fx:{streets:1,jobs:0.3},grp:{working:2,owners:1},council:{streets:3,fiscal:-1}},
+   {label:'Leave it to Graceland',fx:{},grp:{working:-1},council:{all:-1}}],
+  ignore:{fx:{mood:-0.3},council:{jobs:-1}}},
+ {id:'heat_wave',title:'Heat wave: the heat index tops 110°F',at:'library',tags:['safety'],months:[6,7,8],cd:12,when:()=>Math.random()<0.7,
+  body:s=>`A week of extreme heat. Older residents without air conditioning are most at risk, and ${s.y>=2032?'the grid is straining harder than in past summers':'MLGW is warning about demand'}.`,
+  choices:[{label:'Open cooling centers and run buses to them',cost:0.3,fx:{mood:1},grp:{renters:2,owners:1,faith:1},council:{all:1}},
+   {label:'Ask MLGW to pause shutoffs for unpaid bills',fx:{mood:1},grp:{working:2,renters:2,business:-1},council:{labor:2}},
+   {label:'Run public service announcements',cost:0.05,fx:{},council:{}}],
+  ignore:{fx:{mood:-1.5},council:{all:-2}}},
+ {id:'school_open',title:'Not enough crossing guards for the first day of school',at:'mscs',tags:['education'],months:[7,8],cd:12,
+  body:()=>'MSCS opens next week and the city is short dozens of school crossing guards. Parents are posting videos of kids crossing busy roads.',
+  choices:[{label:'Hire temporary crossing guards',cost:0.4,fx:{},grp:{parents:3,faith:1},council:{education:3}},
+   {label:'Assign police officers on overtime',cost:0.2,fx:{crime:0.3},grp:{parents:2},council:{safety:-1,education:2}},
+   {label:'Ask MSCS to pay for it',fx:{county:-3},grp:{parents:-1},council:{fiscal:2}}],
+  ignore:{fx:{mood:-1},council:{education:-3}}},
+ {id:'holiday',title:'Holiday shelters are full',at:'cityhall',months:[12],cd:12,
+  body:()=>'Shelters are turning people away on the coldest nights, and churches are asking the city to open a gym or two through New Year\'s.',
+  choices:[{label:'Open two community center gyms overnight',cost:0.2,fx:{mood:1},grp:{faith:3,renters:2},council:{all:1}},
+   {label:'Give a grant to the shelters to expand',cost:0.3,fx:{mood:0.5},grp:{faith:2,renters:1},council:{fiscal:-1}},
+   {label:'Leave it to the shelters and churches',fx:{},grp:{faith:-2},council:{}}],
+  ignore:{fx:{mood:-1},council:{all:-1}}},
+ // ---- the state of the city ----
+ {id:'violent_weekend',title:'A violent weekend',at:'dist:3',atf:()=>'dist:'+[1,2,3,4,5,6,7].sort((a,b)=>dApp(a)-dApp(b))[Math.floor(Math.random()*3)],tags:['safety'],cd:10,when:s=>s.met.crime>90,
+  body:s=>`Several shootings over one weekend, including a teenager. The violent crime index is ${Math.round(s.met.crime)}, and residents are asking what the city is doing.`,
+  choices:[{label:'Flood the area with patrols for a month',cost:0.5,fx:{crime:-1.5},grp:{owners:2,faith:1,renters:-2,young:-2},council:{safety:4,oversight:-3}},
+   {label:'Fund violence interrupters from the neighborhood',cost:0.6,fx:{crime:-1},grp:{faith:3,renters:2},council:{safety:2,oversight:2}},
+   {label:'Set a summer curfew for teenagers',fx:{crime:-0.8},grp:{owners:2,parents:-1,young:-3},council:{safety:2,oversight:-4}}],
+  ignore:{fx:{crime:1,mood:-2},council:{safety:-4}}},
+ {id:'pothole_flood',title:'Pothole complaints swamp 311',at:'pw',tags:['streets'],months:[2,3,4],cd:12,when:s=>s.met.streets<42,
+  body:s=>`After the winter freeze and thaw, 311 logged thousands of pothole reports in a month. Street condition is ${Math.round(s.met.streets)} out of 100.`,
+  choices:[{label:'Weekend pothole blitz on overtime',cost:1,fx:{streets:1.5,mood:0.5},grp:{owners:2,working:1},council:{streets:4,fiscal:-1}},
+   {label:'Contract out the backlog',cost:1.5,fx:{streets:2.2},grp:{owners:2,labor:-2},council:{streets:4,labor:-3}},
+   {label:'Fix the worst first and live with the rest',fx:{streets:0.3},grp:{owners:-1},council:{streets:-1}}],
+  ignore:{fx:{streets:-0.5,mood:-1},council:{streets:-3}}},
+ {id:'credit_watch',title:'A ratings agency puts Memphis on watch',at:'cityhall',tags:['jobs'],cd:18,when:s=>rsv(s)<6,
+  body:s=>`With the reserve at ${rsv(s).toFixed(1)}% of spending, an agency put the city's credit rating on watch for a downgrade. A downgrade would make every bond cost more.`,
+  choices:[{label:'Commit to rebuilding the reserve: freeze new spending',fx:{revenue:0.5,mood:-0.5},grp:{business:2,owners:1,labor:-2},council:{fiscal:5,all:-1}},
+   {label:'Present a multi-year plan to the agency',fx:{},council:{fiscal:2}},
+   {label:'Argue the city is fine',fx:{revenue:-1.5},grp:{business:-1},council:{fiscal:-3}}],
+  ignore:{fx:{revenue:-2},council:{fiscal:-3}}},
+ {id:'surplus',title:'The council wants to spend the surplus',at:'cityhall',tags:['jobs'],cd:18,when:s=>rsv(s)>14,
+  body:s=>`The reserve is ${rsv(s).toFixed(1)}% of spending, well above the usual target. Council members have ideas for it.`,
+  choices:[{label:'One-time money for street repaving',cost:6,fx:{streets:3,mood:1},grp:{owners:2,working:2},council:{streets:5,fiscal:-2}},
+   {label:'One-time grants for neighborhood projects in every district',cost:4,fx:{blight:-1,mood:1},grp:{faith:1,renters:1},council:{all:3,fiscal:-2}},
+   {label:'Keep it in the reserve',fx:{},grp:{business:1},council:{fiscal:3,all:-1}}],
+  ignore:{council:{all:-1}}},
+ {id:'bus_breakdowns',title:'MATA buses keep breaking down',at:'mata',tags:['transit'],cd:14,when:s=>s.met.transit<40,
+  body:s=>`A third of MATA's buses are out of service on some days, and riders wait an hour or more. Transit service is ${Math.round(s.met.transit)} out of 100.`,
+  choices:[{label:'Emergency money to buy and repair buses',cost:2,fx:{transit:3},grp:{renters:3,working:2},council:{transit:5,fiscal:-2}},
+   {label:'Contract shuttles on the worst routes',cost:0.8,fx:{transit:1.2},grp:{renters:2,labor:-1},council:{transit:3}},
+   {label:'Tell MATA to manage with what it has',fx:{transit:-0.5},grp:{renters:-2},council:{transit:-3,fiscal:1}}],
+  ignore:{fx:{transit:-1,mood:-1},council:{transit:-3}}},
+ {id:'layoffs',title:'A distribution center announces layoffs',at:'airport',tags:['jobs'],cd:14,when:s=>s.met.jobs<52,
+  body:()=>'A logistics company near the airport will lay off about 400 workers in 60 days. Workers want help; the company wants a tax break to keep the rest.',
+  choices:[{label:'Run a job fair and retraining program',cost:0.4,fx:{jobs:0.5,mood:0.5},grp:{working:3,labor:1},council:{jobs:3}},
+   {label:'Offer a tax break to keep the remaining jobs',fx:{jobs:1,revenue:-0.6},grp:{business:2,owners:-1},council:{jobs:3,fiscal:-2}},
+   {label:'Stay out of it',fx:{jobs:-0.5},grp:{working:-2},council:{jobs:-2}}],
+  ignore:{fx:{jobs:-0.8,mood:-1},council:{jobs:-2}}},
+ {id:'expansion',title:'A manufacturer wants to expand here',at:'xy:35.0480,-89.9820,Airways corridor',tags:['jobs'],cd:20,when:s=>s.met.jobs>=60,
+  body:()=>'A medical device maker wants to add 250 jobs at its plant if the city fast-tracks permits and helps with a road.',
+  choices:[{label:'Fast-track permits and build the road',cost:1.5,fx:{jobs:1.5,revenue:0.5},grp:{working:2,business:2},council:{jobs:4,fiscal:-1}},
+   {label:'Fast-track permits only',fx:{jobs:0.8},grp:{business:1},council:{jobs:2}},
+   {label:'Treat it like any other application',fx:{},grp:{business:-1},council:{jobs:-1}}],
+  ignore:{fx:{},council:{jobs:-1}}},
+ {id:'reading_gain',title:'Reading scores are up: what next?',at:'mscs',tags:['education'],cd:14,months:[6,7,8],when:s=>s.met.reading>=29,
+  body:s=>`MSCS reading proficiency reached ${s.met.reading.toFixed(1)}%. Teachers credit summer tutoring and library programs and want them to keep going.`,
+  choices:[{label:'Expand summer reading to every library branch',cost:0.5,fx:{reading:0.5,mood:0.5},grp:{parents:3,faith:1},council:{education:4,fiscal:-1}},
+   {label:'Hold a public celebration with the teachers',cost:0.05,fx:{mood:1},grp:{parents:2},council:{education:1}},
+   {label:'Take the credit and move on',fx:{mood:0.3},grp:{parents:-1},council:{education:-1}}],
+  ignore:{council:{education:-1}}},
+ {id:'vacant_fire',title:'Another vacant house fire',at:'dist:6',atf:()=>'dist:'+(1+Math.floor(Math.random()*7)),tags:['blight'],cd:10,when:s=>s.met.blight>55,
+  body:()=>'A fire in an abandoned house spread to the occupied home next door. Neighbors say they reported the vacant house a year ago.',
+  choices:[{label:'Speed up demolition of the worst vacant houses',cost:0.8,fx:{blight:-1.5},grp:{faith:2,owners:2,renters:1},council:{blight:4,fiscal:-1}},
+   {label:'Fine absentee owners and seize the worst properties',fx:{blight:-0.8,revenue:0.3},grp:{owners:1,business:-1},council:{blight:3,fiscal:1}},
+   {label:'Board them up for now',cost:0.2,fx:{blight:-0.3},council:{blight:1}}],
+  ignore:{fx:{blight:0.8,mood:-1},council:{blight:-3}}},
+ {id:'protest',title:'Protesters at City Hall',at:'cityhall',cd:12,when:s=>s.approval<42,
+  body:(s,ev)=>`A few hundred people are outside City Hall. Your approval is ${Math.round(s.approval)}%. Their signs are about ${['police stops','MLGW bills','potholes','school closings'][Math.floor(hash(ev.born,5)*4)]}.`,
+  choices:[{label:'Go outside and talk with them',fx:{mood:1.5},grp:{renters:2,young:2},council:{oversight:2}},
+   {label:'Invite their leaders to a meeting next week',fx:{mood:0.5},grp:{renters:1,young:1},council:{}},
+   {label:'Stay inside and let police manage the crowd',fx:{mood:-1},grp:{owners:1,young:-3,renters:-2},council:{oversight:-3,safety:1}}],
+  ignore:{fx:{mood:-1.5},council:{all:-1}}},
+ {id:'officer_exits',title:'Officers are leaving for suburban departments',at:'mpd',tags:['safety'],cd:14,when:s=>s.met.officers<1880,
+  body:s=>`MPD is down to ${Math.round(s.met.officers).toLocaleString()} officers. Germantown, Collierville and Bartlett are hiring away experienced officers with higher pay.`,
+  choices:[{label:'Retention bonuses for officers who stay',cost:2,fx:{officers:25},grp:{owners:1,labor:2},council:{safety:4,fiscal:-2}},
+   {label:'Take-home cars and tuition help',cost:1,fx:{officers:12},grp:{labor:1},council:{safety:2}},
+   {label:'Hire civilians for desk jobs instead',cost:0.5,fx:{officers:6},grp:{},council:{oversight:2,safety:-1}}],
+  ignore:{fx:{officers:-10},council:{safety:-3}}},
+ // ---- later years ----
+ {id:'ev_fleet',title:'Switching the city fleet to electric',at:'pw',tags:['streets'],from:2029,cd:30,
+  body:()=>'Electric trucks and cars now cost about the same over their lifetime. Public Works wants to start switching the fleet, but the first chargers cost money up front.',
+  choices:[{label:'Start with chargers at the Bellevue yard',cost:1.5,fx:{revenue:0.4},grp:{young:2,business:1},council:{fiscal:-1}},
+   {label:'Replace vehicles as they wear out',fx:{revenue:0.1},council:{fiscal:1}},
+   {label:'Not yet',fx:{},grp:{young:-1},council:{}}],
+  ignore:{council:{}}},
+ {id:'water_mains',title:'Century-old water mains are failing',at:'mlgw',tags:['streets'],from:2031,cd:30,
+  body:()=>'Main breaks are up sharply. MLGW wants a 10-year replacement program paid for with higher water rates, and street repairs will follow every dig.',
+  choices:[{label:'Back the program and the rate increase',fx:{mlgwgw:0.04,streets:-0.5,mood:-0.5},grp:{owners:1,business:1,working:-1},council:{streets:3}},
+   {label:'Back a smaller program',fx:{mlgwgw:0.015},council:{streets:1}},
+   {label:'Oppose any rate increase',fx:{mood:0.5},grp:{working:1,renters:1},council:{streets:-2}}],
+  ignore:{council:{streets:-1}}},
+ {id:'auto_trucks',title:'Self-driving trucks at the logistics hubs',at:'airport',tags:['jobs'],from:2033,cd:30,
+  body:()=>'Distribution companies want to run driverless trucks between the airport, the rail yards and the warehouses. Drivers\' unions are alarmed.',
+  choices:[{label:'Allow it with a city fee that funds driver retraining',fx:{jobs:0.5,revenue:0.6},grp:{business:2,labor:-2,working:-1},council:{jobs:2,labor:-2}},
+   {label:'Allow it with no conditions',fx:{jobs:0.8,revenue:0.3},grp:{business:3,labor:-4,working:-2},council:{jobs:2,labor:-4}},
+   {label:'Ask the state to slow it down',fx:{jobs:-0.3},grp:{labor:3,working:1,business:-2},council:{labor:3,jobs:-1}}],
+  ignore:{council:{jobs:-1}}},
+ {id:'arena_lease',title:'FedExForum lease talks',at:'forum',tags:['jobs'],from:2034,cd:48,
+  body:()=>'The Grizzlies\' arena lease is up for renegotiation. The team wants a big renovation paid mostly with public money; other cities would love an NBA team.',
+  choices:[{label:'Agree to a major public renovation',cost:8,fx:{jobs:1,mood:2},grp:{young:3,business:3,owners:-1},council:{jobs:3,fiscal:-4}},
+   {label:'Negotiate a 50-50 split',cost:4,fx:{jobs:0.5,mood:1},grp:{young:2,business:1},council:{jobs:2,fiscal:-1}},
+   {label:'Hold firm on public money',fx:{mood:-2},grp:{young:-3,business:-2,owners:1},council:{fiscal:3,jobs:-2}}],
+  ignore:{fx:{mood:-1},council:{jobs:-2}}},
+ {id:'bridge_repair',title:'The old Mississippi River bridge needs work',at:'xy:35.1295,-90.0705,Memphis-Arkansas Bridge',tags:['streets'],from:2030,cd:36,
+  body:()=>'Inspectors flagged the I-55 bridge. Repairs are a state and federal job, but closures will snarl South Memphis traffic for months.',
+  choices:[{label:'Pay for detour signals and traffic officers',cost:0.4,fx:{mood:0.5},grp:{working:1,business:1},council:{streets:2}},
+   {label:'Lobby Nashville and Washington to speed it up',fx:{},council:{streets:1}},
+   {label:'Let TDOT handle it',fx:{mood:-0.5},council:{}}],
+  ignore:{fx:{mood:-0.5},council:{streets:-1}}},
+ {id:'tech_campus',title:'A tech company eyes the Medical District',at:'xy:35.1415,-90.0300,Medical District',tags:['jobs'],from:2030,cd:30,
+  body:()=>'A health-data company wants to build a campus near the hospitals, with 600 jobs, if the city helps with land and a 10-year tax break.',
+  choices:[{label:'Offer the land and the tax break',fx:{jobs:2,revenue:-0.8},grp:{young:3,business:2,renters:-1},council:{jobs:4,fiscal:-2}},
+   {label:'Offer the land, but no tax break',fx:{jobs:1},grp:{young:2,business:1},council:{jobs:2}},
+   {label:'No special deals',fx:{},grp:{young:-1},council:{fiscal:1,jobs:-1}}],
+  ignore:{council:{jobs:-1}}},
+ {id:'aging_engines',title:'Fire engines past their service life',at:'fire',tags:['safety'],from:2032,cd:30,
+  body:()=>'Half the city\'s engines are older than their recommended life. The fire chief wants a replacement schedule.',
+  choices:[{label:'Buy 10 new engines over 2 years',cost:6,fx:{mood:0.5},grp:{owners:2,labor:2},council:{safety:4,fiscal:-3}},
+   {label:'Buy 4 now',cost:2.5,fx:{},grp:{owners:1,labor:1},council:{safety:2,fiscal:-1}},
+   {label:'Keep repairing the old ones',cost:0.5,fx:{},grp:{labor:-1},council:{safety:-2}}],
+  ignore:{council:{safety:-2}}},
+ {id:'heat_grid',title:'Record heat pushes the grid to its limit',at:'mlgw',tags:['safety'],from:2032,months:[7,8],cd:24,
+  body:()=>'Rolling blackouts are possible this afternoon. MLGW is asking big users to cut back and wants the city to lead by example.',
+  choices:[{label:'Close city offices early and open cooling centers',cost:0.2,fx:{mood:1},grp:{renters:2,owners:1},council:{all:1}},
+   {label:'Back MLGW\'s plan for more solar and storage',fx:{mlgw:0.01,mood:0.5},grp:{young:2,business:1},council:{}},
+   {label:'Say it\'s MLGW\'s problem',fx:{mood:-1},council:{all:-1}}],
+  ignore:{fx:{mood:-1.5},council:{all:-1}}}];
+// ---- neighborhood templates: real streets and neighborhoods ----
+function pickPlace(kind){const d=1+Math.floor(Math.random()*7);const hs=hoodsIn(d);const h=hs.length?hs[Math.floor(Math.random()*hs.length)]:null;
+  if(kind==='road'){const rs=(POORROADS[d]||[]);if(!rs.length)return null;const nm=rs[Math.floor(Math.random()*Math.min(6,rs.length))];const o=siteOptions('road',d).find(x=>x.name===nm)||siteOptions('road',d)[0];if(!o||districtAt(o.lon,o.lat)!==d)return null;return{d,road:o.name,hood:h?h[0]:`District ${d}`,lat:o.lat,lon:o.lon}}
+  if(!h)return null;return{d,hood:h[0],lat:h[1]+(Math.random()-.5)*0.006,lon:h[2]+(Math.random()-.5)*0.008}}
+const TEMPLATES={
+ sinkhole:{place:'road',title:p=>`Sinkhole on ${p.road}`,tags:['streets'],body:p=>`A sinkhole opened on ${p.road} in ${p.hood} after a water line broke underneath. One lane is closed and a car's front wheel went in.`,
+  choices:[{label:'Emergency repair this week',cost:0.4,fx:{streets:0.4},local:3,council:{streets:2}},{label:'Fence it off and schedule the fix',cost:0.1,fx:{},local:-1,council:{}},{label:'Send the bill to MLGW',fx:{},local:0,council:{fiscal:1}}],ignore:{fx:{streets:-0.2},council:{streets:-1}}},
+ dumping:{place:'hood',title:p=>`Illegal dumping in ${p.hood}`,tags:['blight'],body:p=>`Tires, mattresses and construction debris keep showing up on vacant lots in ${p.hood}. Neighbors have the license plate of one truck.`,
+  choices:[{label:'Send a cleanup crew',cost:0.15,fx:{blight:-0.4},local:2,council:{blight:2}},{label:'Install cameras and prosecute dumpers',cost:0.3,fx:{blight:-0.6,crime:-0.1},local:2,council:{blight:2,oversight:-1}},{label:'Organize a neighborhood cleanup day',cost:0.02,fx:{blight:-0.2},local:1,grp:{faith:1},council:{}}],ignore:{fx:{blight:0.3},council:{blight:-1}}},
+ lights:{place:'road',title:p=>`Streetlights out along ${p.road}`,tags:['safety'],body:p=>`A long stretch of ${p.road} has been dark for weeks. ${p.hood} residents say it isn't safe to walk to the bus stop at night.`,
+  choices:[{label:'Pay a contractor to fix them now',cost:0.2,fx:{crime:-0.2},local:3,council:{safety:2}},{label:'Push MLGW to move it up its list',fx:{},local:1,council:{}},{label:'Add it to next year\'s budget',fx:{},local:-1,council:{fiscal:1}}],ignore:{fx:{crime:0.1},council:{safety:-1}}},
+ speeding:{place:'road',title:p=>`Speeding on ${p.road}`,tags:['safety'],body:p=>`Drivers treat ${p.road} through ${p.hood} like a highway. A child was clipped by a car last week.`,
+  choices:[{label:'Install speed humps and crosswalks',cost:0.15,fx:{},local:3,grp:{parents:1},council:{streets:1}},{label:'Speed cameras',fx:{revenue:0.2},local:1,grp:{young:-1},council:{oversight:-2,fiscal:1}},{label:'Ask MPD for traffic enforcement',fx:{crime:0.1},local:1,council:{safety:1}}],ignore:{council:{streets:-1}}},
+ school_bldg:{place:'hood',title:p=>`An empty school building in ${p.hood}`,tags:['blight'],body:p=>`MSCS closed a school in ${p.hood} years ago and the building is now a target for scrappers. The neighborhood wants it back in use.`,
+  choices:[{label:'Turn it into a community center',cost:1.5,fx:{blight:-0.8,mood:0.5},local:4,grp:{parents:2,faith:1},council:{blight:3,fiscal:-1}},{label:'Help sell it to a developer for housing',fx:{blight:-0.5,revenue:0.3},local:1,grp:{renters:-1,business:1},council:{blight:2}},{label:'Board it up and keep it secure',cost:0.1,fx:{},local:-1,council:{}}],ignore:{fx:{blight:0.4},council:{blight:-1}}},
+ flooding:{place:'road',months:[3,4,5,6],title:p=>`Flash flooding on ${p.road}`,tags:['streets'],body:p=>`Every heavy rain, ${p.road} in ${p.hood} floods curb to curb and water gets into homes.`,
+  choices:[{label:'Fund a drainage project',cost:1,fx:{streets:0.3},local:4,council:{streets:3,fiscal:-1}},{label:'Clean the storm drains now',cost:0.15,fx:{},local:2,council:{streets:1}},{label:'Put up high-water signs',cost:0.02,fx:{},local:-1,council:{}}],ignore:{council:{streets:-1}}},
+ ask:{place:'hood',title:p=>`${p.hood} neighbors want a ${p.thing}`,tags:['blight'],body:p=>`The ${p.hood} neighborhood association has a plan and a petition for a ${p.thing}. They say they'll maintain it.`,
+  choices:[{label:'Fund it',cost:0.3,fx:{mood:0.5},local:4,grp:{parents:1},council:{all:1}},{label:'Match what they raise',cost:0.12,fx:{},local:2,council:{}},{label:'Not this year',fx:{},local:-2,council:{}}],ignore:{council:{}}},
+ grocery:{place:'hood',title:p=>`The grocery store in ${p.hood} is closing`,tags:['jobs'],body:p=>`The only full grocery store in ${p.hood} will close next month. The nearest one will be a bus transfer away.`,
+  choices:[{label:'Offer the chain a deal to stay',cost:1,fx:{jobs:0.2},local:4,grp:{working:1,renters:2},council:{jobs:2,fiscal:-1}},{label:'Fund a weekly mobile market',cost:0.2,fx:{},local:2,grp:{renters:1},council:{}},{label:'Let the market decide',fx:{},local:-3,grp:{renters:-1},council:{}}],ignore:{fx:{mood:-0.5},council:{}}},
+ dogs:{place:'hood',title:p=>`Loose dogs in ${p.hood}`,tags:['safety'],body:p=>`A pack of loose dogs chased kids walking home in ${p.hood}. Memphis Animal Services says its shelter is full.`,
+  choices:[{label:'Fund extra animal control sweeps and shelter space',cost:0.2,fx:{},local:3,grp:{parents:1},council:{safety:1}},{label:'Free spay and neuter clinics',cost:0.1,fx:{},local:2,council:{}},{label:'Tell residents to call 311',fx:{},local:-2,council:{}}],ignore:{council:{}}},
+ cars:{place:'hood',title:p=>`Abandoned cars piling up in ${p.hood}`,tags:['blight'],body:p=>`Dozens of abandoned cars line the streets in ${p.hood}, some for months.`,
+  choices:[{label:'Run a towing sweep',cost:0.1,fx:{blight:-0.3},local:2,council:{blight:1}},{label:'Ticket and tow on a schedule',fx:{revenue:0.05,blight:-0.2},local:1,council:{}},{label:'Leave it to complaints',fx:{},local:-1,council:{}}],ignore:{council:{}}}};
+const ASK_THINGS=['community garden','splash pad','covered bus stop','dog park','walking trail','basketball court lights'];
+const _tplCache={};
+function tplDef(ev){const key=ev.id+'|'+JSON.stringify(ev.p);if(_tplCache[key])return _tplCache[key];const T=TEMPLATES[ev.id.slice(4)];if(!T)return null;const p=ev.p;
+  const def={id:ev.id,title:T.title(p),at:ev.at,tags:T.tags,body:()=>T.body(p),choices:T.choices.map(c=>({...c})),ignore:T.ignore};_tplCache[key]=def;return def}
+function spawnTemplate(s,report){const now=s.y*12+s.m;const keys=Object.keys(TEMPLATES).filter(k=>(!s.used['tpl:'+k]||now-s.used['tpl:'+k]>=5)&&(!TEMPLATES[k].months||TEMPLATES[k].months.includes(s.m))&&!s.events.some(e=>e.id==='tpl:'+k));if(!keys.length)return;
+  const k=keys[Math.floor(Math.random()*keys.length)],T=TEMPLATES[k];const p=pickPlace(T.place);if(!p)return;if(k==='ask')p.thing=ASK_THINGS[Math.floor(Math.random()*ASK_THINGS.length)];
+  const ev={id:'tpl:'+k,kind:'event',p,at:`xy:${p.lat.toFixed(5)},${p.lon.toFixed(5)},${p.road||p.hood}`,expires:2,born:now};s.events.push(ev);s.used['tpl:'+k]=now;if(report)report.push(`New: ${T.title(p)} (${p.hood})`)}
+
+EVENTS.push(...MORE_EVENTS);
 
 function openLedger(){const L=S.log||[];openPanel('Everything that has happened, newest first','Ledger',L.length?`<div class="logl">${L.map(x=>`<div><span>${x.d}</span><p style="margin:0">${x.t}</p></div>`).join('')}</div>`:'<p class="note">Nothing yet. Start the clock with Space or ▶.</p>','ledger')}
 function openPolicies(){const ks=Object.keys(POLICIES);
@@ -4125,7 +4349,7 @@ window.bluffMusicContext = () => {
 window.claude?.hot?.snapshot?.(()=>({S}));
 window.claude?.hot?.ready?window.claude.hot.ready(start):start(window.claude?.hot?.data??{});
 </script>
-<script src="city-life.js?v=23"></script>
-<script src="music.js?v=23"></script>
+<script src="city-life.js?v=24"></script>
+<script src="music.js?v=24"></script>
 </body>
 </html>
