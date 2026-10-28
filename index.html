@@ -3,9 +3,9 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="description" content="Create your mayor and govern Memphis in real time on a map built from City of Memphis GIS data.">
+<meta name="description" content="Create your mayor and govern Memphis in real time on a map with a real map of the city.">
 <title>Bluff City Mayor</title>
-<link rel="stylesheet" href="music.css?v=17">
+<link rel="stylesheet" href="music.css?v=18">
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -358,6 +358,20 @@ button.seat:hover{border-color:var(--amber)}
   .actions .btn.act{border-color:var(--amber);color:var(--amber)}
 .choices .choice small{white-space:normal}
 /* v15 */
+.evwho{display:flex;flex-direction:row;align-items:center;gap:10px;margin:0 0 8px;padding:6px 8px;background:rgba(255,255,255,.03);border:1px solid var(--line);border-radius:6px}
+.evwho-n{display:flex;flex-direction:column;line-height:1.2}.evwho-n b{font-size:14px}.evwho-n small{font-size:11px;color:var(--muted)}
+#hovercard{position:fixed;z-index:200;width:290px;max-width:calc(100vw - 16px);background:linear-gradient(180deg,#1c3042,#13212d);border:1px solid var(--amber);border-radius:8px;padding:10px 12px;box-shadow:0 10px 30px rgba(0,0,0,.6);pointer-events:none;font-size:13px}
+#hovercard[hidden]{display:none}
+.hc-top{display:grid;grid-template-columns:auto 1fr auto;gap:10px;align-items:center}
+.hc-id{display:flex;flex-direction:column;line-height:1.25}.hc-id b{font-size:15px}.hc-id small{color:var(--muted);font-size:11.5px}
+.hc-op{font:700 22px/1 var(--f-mono);text-align:center}.hc-op small{display:block;font:500 10px/1.4 var(--f-body);color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
+#hovercard .traits{margin:8px 0 2px}
+.hc-why{margin-top:8px;border-top:1px solid var(--line);padding-top:6px}.hc-why div{display:flex;justify-content:space-between;gap:8px;padding:1px 0}.hc-why span{color:var(--muted)}
+.hc-why b.up{color:var(--good)}.hc-why b.down{color:var(--bad)}
+.hc-tag{display:inline-block;font-size:11px;padding:1px 6px;border-radius:9px;border:1px solid var(--line);margin:6px 4px 0 0}.hc-tag.bad{border-color:var(--bad);color:var(--bad)}.hc-tag.good{border-color:var(--good);color:var(--good)}
+.hc-pr{margin-top:6px;color:var(--muted);font-size:12px}
+.hc-sk{display:grid;grid-template-columns:repeat(3,1fr);gap:4px;margin-top:8px}.hc-sk span{display:flex;justify-content:space-between;background:rgba(255,255,255,.04);padding:2px 6px;border-radius:4px}.hc-sk small{color:var(--muted);font-size:10.5px}
+.hc-foot{margin-top:8px;font-size:11px;color:var(--amber)}
 .civ{display:flex;align-items:center;gap:4px;border:0;background:none;padding:0;cursor:pointer;transform:translateY(0)}
 .civ .ci{width:20px;height:20px;border-radius:5px;display:grid;place-items:center;font-size:12px;font-weight:700;border:1.5px solid #0d1822;box-shadow:0 1px 4px rgba(0,0,0,.6);line-height:1}
 .civ-police .ci{background:#4a7fe0;color:#fff}.civ-fire .ci{background:#e0533f;color:#fff;font-size:10px}.civ-hospital .ci{background:#f2f5f8;color:#d23b3b;font-size:14px}
@@ -468,7 +482,7 @@ details.analysis{margin-top:6px}details.analysis summary{cursor:pointer;color:va
     <button class="btn primary" data-act="pause" id="bPlay">▶ Resume <kbd>Space</kbd></button>
   </nav>
   <div class="status" id="status">Loading map…</div>
-  <div class="credit"><span class="ver" id="verTag">v17</span></div>
+  <div class="credit"><span class="ver" id="verTag">v18</span></div>
   <div class="tip" id="tip" hidden></div>
   <div class="toast" id="toast" role="status"></div>
   <section class="panel" id="panel" hidden aria-live="polite">
@@ -501,7 +515,7 @@ details.analysis{margin-top:6px}details.analysis summary{cursor:pointer;color:va
         <button class="btn" data-music-open>Music &amp; volume</button>
         <button class="btn" id="bLoad" hidden>Continue saved term</button>
       </div>
-      <p class="note startv">Version <b class="ver" id="verStart">v17</b></p>
+      <p class="note startv">Version <b class="ver" id="verStart">v18</b></p>
     </div>
     <div class="startbox create" id="create" hidden>
       <h2>Create your mayor</h2>
@@ -1244,7 +1258,7 @@ function endOfMonth(){
   // new business arrives on random days through the month
   queueNewBusiness(report);
   if(S.y===2026&&S.m===11&&!S.used.mlgw_rates){const def=EVENTS.find(e=>e.id==='mlgw_rates');S.used.mlgw_rates=nowM();S.queue=S.queue||[];S.queue.push({ev:{id:'mlgw_rates',kind:'event',expires:2,born:nowM()},due:5+Math.floor(Math.random()*10)})}
-  const pout=projectsMonth(report);storiesMonth();try{civicMonth(report)}catch(e){console.warn('civic',e)}upkeepMonth(report);dealsMonth(report);promisesMonth(report);if(S.camp){campaignMonth(report);purseMonth(report);householdMonth(report);storeMonth()}moneyMonth(report,pout&&pout.paid);
+  const pout=projectsMonth(report);storiesMonth();try{civicMonth(report)}catch(e){console.warn('civic',e)}try{staffMonth(report)}catch(e){console.warn('staff',e)}upkeepMonth(report);dealsMonth(report);promisesMonth(report);if(S.camp){campaignMonth(report);purseMonth(report);householdMonth(report);storeMonth()}moneyMonth(report,pout&&pout.paid);
   prevMet=before;
   const head=`${MONTHS_L[(S.m+10)%12]} closed: approval ${Math.round(S.approval)}% (${S.approval>=before.approval?'+':'−'}${Math.abs(S.approval-before.approval).toFixed(1)}), reserve ${fmtM(S.reserve)}`;
   logIt(head);report.forEach(l=>logIt(l));
@@ -1261,7 +1275,7 @@ function enact(s,p){DIVS.forEach(d=>{s.enacted[d.id]=p.divs[d.id];s.ratio[d.id]=
 // Voter groups. Each has a share of residents, turnout, home districts, concerns and an approval of you.
 // Citywide approval is the turnout-weighted average of the groups; each council district's approval comes from the groups that live there.
 // Shares, district mix and turnout are modeled, loosely grounded in Memphis demographics; they are not survey data.
-const VERSION='v17';
+const VERSION='v18';
 const GROUPS=[
  {id:'working',sh:'Working families',n:'Working families',ic:'⚒',c:'#f2a93b',share:24,turn:.5,start:56,w:{jobs:1,safety:.8,transit:.5},
   d:'Hourly workers in logistics, warehouses, health care and service jobs. The biggest bloc in the city.',dm:{1:1.1,2:.8,3:1.3,4:1.2,5:.6,6:1.2,7:1.1}},
@@ -1434,7 +1448,7 @@ function eventCard(ev,idx){
     <button class="choice" data-ev="${idx}" data-ci="1"><b>Veto it</b><small>Override vote follows · ${describe(def.veto)}${commitCount()?` · ${commitCount()} vote${commitCount()===1?'':'s'} committed to you`:''}</small></button></div>
     <p class="note">Projected override if you veto: <b class="${(()=>{const n=overrideRoll(m=>ovOrdScore(m,def),true).filter(r=>r.yes).length;return n>=7?'down':'up'})()}">${overrideRoll(m=>ovOrdScore(m,def),true).filter(r=>r.yes).length} of 13</b> vote to override (7 needed). Members committed to you sustain your veto.</p><div class="row"><button class="btn" data-act="whip">Whip the override vote first</button></div></div>`}
   const pl=placeOf(evAt(ev));
-  return`<div class="card${def.story?' story':''}">${def.story?`<div class="storytag">❖ ${STORY_NAMES[def.story]}</div>`:''}<div class="ttl">${def.title}</div>${ev.id!=='briefing'?`<div class="due">${left<=1?'Respond this month':`Respond within ${left} months`}</div>`:''}
+  return`<div class="card${def.story?' story':''}">${def.story?`<div class="storytag">❖ ${STORY_NAMES[def.story]}</div>`:''}${presenterBlock(ev,def)}<div class="ttl">${def.title}</div>${ev.id!=='briefing'?`<div class="due">${left<=1?'Respond this month':`Respond within ${left} months`}</div>`:''}
    <div class="where">${pl.town?`City of ${NEIGHBORS[pl.town].city} · Mayor ${S.nb[pl.town].name} · relations <b style="color:${opColor(S.nb[pl.town].opinion)}">${fmtOp(S.nb[pl.town].opinion)}</b>`:whereLine(pl.lon,pl.lat)}</div>
    <p>${def.body(S,ev)}</p>${def.fact?`<div class="note"><b>Background:</b> ${def.fact}</div>`:''}
    <div class="choices">${def.choices.map((c,ci)=>`<button class="choice" data-ev="${idx}" data-ci="${ci}"><b>${c.label}</b><small>${describe(c)||'No major effects'}</small></button>`).join('')}</div></div>`}
@@ -1701,8 +1715,8 @@ function openRegion(){recomputeAll(S);openPanel('Six neighboring cities','Region
 
 // ======================= BACK BUTTON & TABS =======================
 const NAV={stack:[],cur:null,busy:false,depth:0};const VIEWS={};
-const TABS=[['openDesk','Desk'],['openActions','Actions'],['openHQ','Campaign'],['openFinances','Money'],['openHousehold','Home'],['openMayor','Mayor'],['openOpinion','Opinion'],['openCouncil','Council'],['openRegion','Region'],['openBudget','Budget'],['openPolicies','Programs'],['openLedger','Ledger']];
-const TAB_OF={openHousehold:'openHousehold',openMove:'openHousehold',openFinances:'openFinances',openHQ:'openHQ',openDonor:'openHQ',openShop:'openMayor',openStore:'openHousehold',openCivic:'openActions',openCivicList:'openActions',openPromises:'openDesk',openDeal:'openActions',openLook:'openMayor',openDesk:'openDesk',openProject:'openDesk',openPlanner:'openActions',openActions:'openActions',openPropose:'openActions',openMayor:'openMayor',openOpinion:'openOpinion',openGroup:'openOpinion',openCouncil:'openCouncil',openWhip:'openCouncil',openCharacter:'openCouncil',openDistrict:'openCouncil',openRegion:'openRegion',openNeighbor:'openRegion',openBudget:'openBudget',openPolicies:'openPolicies',openLedger:'openLedger'};
+const TABS=[['openDesk','Desk'],['openActions','Actions'],['openHQ','Campaign'],['openFinances','Money'],['openHousehold','Home'],['openMayor','Mayor'],['openCabinet','Cabinet'],['openOpinion','Opinion'],['openCouncil','Council'],['openRegion','Region'],['openBudget','Budget'],['openPolicies','Programs'],['openLedger','Ledger']];
+const TAB_OF={openHousehold:'openHousehold',openMove:'openHousehold',openFinances:'openFinances',openHQ:'openHQ',openDonor:'openHQ',openShop:'openMayor',openCabinet:'openCabinet',openStaff:'openCabinet',openStore:'openHousehold',openCivic:'openActions',openCivicList:'openActions',openPromises:'openDesk',openDeal:'openActions',openLook:'openMayor',openDesk:'openDesk',openProject:'openDesk',openPlanner:'openActions',openActions:'openActions',openPropose:'openActions',openMayor:'openMayor',openOpinion:'openOpinion',openGroup:'openOpinion',openCouncil:'openCouncil',openWhip:'openCouncil',openCharacter:'openCouncil',openDistrict:'openCouncil',openRegion:'openRegion',openNeighbor:'openRegion',openBudget:'openBudget',openPolicies:'openPolicies',openLedger:'openLedger'};
 function navWrap(name,fn){const w=function(...a){const sig=name+JSON.stringify(a);
     if(!NAV.busy&&NAV.cur&&NAV.cur.sig!==sig){NAV.stack.push(NAV.cur);if(NAV.stack.length>25)NAV.stack.shift()}
     NAV.cur={sig,name,a,title:''};NAV.depth++;let r;try{r=fn.apply(this,a)}finally{NAV.depth--}
@@ -2813,7 +2827,7 @@ const CIV_ACTS={
   {id:'jobs',n:'Partner on job training',d:'Train residents for hospital jobs: aides, techs, food service.',cost:0.3,cd:12,fx:(p,c)=>{S.jobsBoost+=0.6;S.met.jobs+=0.3;addGroupMod(S.groups.working,'Hospital job training',1.5);addGroupMod(S.groups.business,'Hospital job training',0.5);c.lvl=clamp(c.lvl+10,0,100);gainXP('stew',4);return`${p.name} will train and hire residents.`}}]};
 function civCan(p,a){const c=civState(p.id);if(civCd(p.id,a.id,a.cd))return`Again in ${civCd(p.id,a.id,a.cd)} mo`;if(a.slot&&S.slots<=0)return'No meetings left this month';if(a.cost&&S.reserve<a.cost+5)return'Reserve too low';return''}
 function doCivic(id,aid){const p=CIVMAP[id];if(!p)return;const a=CIV_ACTS[p.type].find(x=>x.id===aid);if(!a||civCan(p,a))return;const c=civState(id);const d=districtAt(p.lon,p.lat);
-  if(a.slot)S.slots--;if(a.cost){S.reserve-=a.cost}c.acts[aid]=nowM();const msg=a.fx(p,c,d);S.approval=cityApproval(S);recomputeAll(S);
+  if(a.slot)S.slots--;if(a.cost){S.reserve-=a.cost}c.acts[aid]=nowM();try{const ch=p.type==='police'?'police':p.type==='fire'?'fire':null;if(ch)addMod(staffOf(ch),a.cost?'You put money into their stations':'You visited their people',a.cost?4:2)}catch(e){}const msg=a.fx(p,c,d);S.approval=cityApproval(S);recomputeAll(S);
   goTo(p.lon,p.lat,p.name,3);logIt(`${a.n} at ${p.name}${a.cost?` (${fmtM(a.cost)} from the reserve)`:''}.`);save();refreshHUD();renderCivic();toast(msg);openCivic(id)}
 function civLevelName(t){return t==='police'?'Officer morale':t==='fire'?'Readiness':'Partnership with the city'}
 function openCivic(id){const p=CIVMAP[id];if(!p)return;const T=CIV[p.type],c=civState(id);closePanel();const d=districtAt(p.lon,p.lat),pr=precinctAt(p.lon,p.lat);const m=d?memberFor(d):null;
@@ -2941,6 +2955,104 @@ function openStore(cat){storeInit();cat=cat||'home';closePanel();const P=S.purse
 openStore=navWrap('openStore',openStore);
 document.addEventListener('click',e=>{const b=e.target.closest('[data-buy],[data-store]');if(!b||!S)return;e.preventDefault();if(b.dataset.buy)doBuy(b.dataset.buy);else openStore(b.dataset.store)});
 
+// ======================= YOUR CABINET =======================
+// The people who run the city for you. They bring you news, have opinions of you, and can be replaced.
+const STAFF_DEF=[
+ {id:'cos',role:'Chief of Staff',name:'Renee Holloway',g:'f',age:51,traits:['loyal','pragmatic'],frame:'#c9a15a',div:null,about:'Runs your schedule and the seventh floor of City Hall. Hears everything first.'},
+ {id:'police',role:'Police Chief',name:'Marcus Ellery',g:'m',age:54,traits:['stubborn'],frame:'#4a7fe0',div:'police',about:'Came up through the ranks. Protective of his officers and his budget.'},
+ {id:'fire',role:'Fire Chief',name:'Dolores Banks',g:'f',age:58,traits:['pragmatic'],frame:'#e0533f',div:'fire',about:'Thirty years on engines and ambulances. Watches response times and aging trucks.'},
+ {id:'cfo',role:'Chief Financial Officer',name:'Anand Mehta',g:'m',age:47,traits:['frugal'],frame:'#e6c547',div:'fin',about:'Guards the reserve fund and the city\'s credit rating.'},
+ {id:'pw',role:'Public Works Director',name:'Curtis Odom',g:'m',age:60,traits:['gregarious'],frame:'#f2a93b',div:'pw',about:'Paving crews, sanitation trucks and storm drains. Knows every pothole by name.'},
+ {id:'hcd',role:'Housing Director',name:'Tamika Rhodes',g:'f',age:44,traits:['reformer'],frame:'#5cc28d',div:'hcd',about:'Fights blight and runs the city\'s home repair and rehab programs.'},
+ {id:'edge',role:'Economic Development Chief',name:'Lauren Kessler',g:'f',age:39,traits:['ambitious'],frame:'#b98ee6',div:'grants',about:'Courts employers and negotiates tax breaks. Has her own ambitions.'},
+ {id:'mlgw',role:'MLGW President',name:'Gerald Pickens',g:'m',age:62,traits:['stubborn','frugal'],frame:'#5aa7d8',div:null,about:'Runs the city-owned utility: power, gas and water for the whole county.'},
+ {id:'mata',role:'MATA Chief Executive',name:'Victor Lassiter',g:'m',age:49,traits:['pragmatic'],frame:'#3fa7a0',div:null,about:'Runs the buses and trolleys on a thin budget.'},
+ {id:'press',role:'Communications Director',name:'Jalen Price',g:'m',age:33,traits:['gregarious'],frame:'#9caab4',div:null,about:'Writes your statements and handles reporters.'}];
+const STAFFMAP=Object.fromEntries(STAFF_DEF.map(d=>[d.id,d]));
+const NEWNAMES={f:['Angela','Keisha','Monica','Carla','Denise','Erin','Priya','Lena','Yvette','Sharon'],m:['Andre','Terrence','Brian','Luis','Calvin','Derek','Omar','Wesley','Reggie','Paul'],l:['Washington','Coleman','Harper','Reyes','Whitaker','Sutton','Boyd','Langford','Mercer','Dunbar','Ingram','Pruitt']};
+function staffInit(){if(!S)return;S.staff=S.staff||{};STAFF_DEF.forEach(d=>{if(!S.staff[d.id])S.staff[d.id]={id:d.id,name:d.name,g:d.g,age:d.age,traits:d.traits.slice(),frame:d.frame,mods:[{t:'You kept them on',v:15,perm:true}],since:nowM()}})}
+function staffOf(id){staffInit();const s=S.staff[id];s.role=STAFFMAP[id].role;return s}
+function staffParts(s){const parts=[];(s.traits||[]).forEach(t=>{if(TRAITS[t]&&TRAITS[t].base)parts.push({t:TRAITS[t].n+' (trait)',v:TRAITS[t].base})});
+  const a=approvalMod();if(a)parts.push({t:`Your approval rating (${Math.round(S.approval)}%)`,v:Math.round(a*0.5)});
+  const D=STAFFMAP[s.id];if(D.div&&S.ratio&&S.ratio[D.div]){const v=Math.round((S.ratio[D.div]-1)*120);if(v)parts.push({t:v>0?'You gave their department more money':'You cut their department',v:clamp(v,-25,25)})}
+  if(s.id==='cfo'){const pct=S.reserve/annualSpend(S)*100;if(pct<8)parts.push({t:`Reserve below 8% (${pct.toFixed(1)}%)`,v:-12});else if(pct>=12)parts.push({t:'Healthy reserve',v:6})}
+  s.mods.forEach(x=>{const v=Math.round(x.v);if(v)parts.push({t:x.t,v})});return parts.sort((a,b)=>Math.abs(b.v)-Math.abs(a.v))}
+function staffOpinion(s){return clamp(Math.round(staffParts(s).reduce((a,x)=>a+x.v,0)),-100,100)}
+function staffMonth(report){staffInit();for(const id in S.staff){const s=S.staff[id];decayMods(s);const o=staffOpinion(s);
+  if(o<=-25&&Math.random()<0.18){S.mood-=1;const t=`${s.name}, your ${STAFFMAP[id].role.toLowerCase()}, is telling reporters off the record that City Hall is a mess. Public mood ▼`;report.push(t);logIt(t)}
+  if(o<=-50&&Math.random()<0.25){const t=`${s.name} resigned as ${STAFFMAP[id].role.toLowerCase()} and blamed you on the way out.`;report.push(t);logIt(t);replaceStaff(id,true)}}}
+function replaceStaff(id,quit){const old=S.staff[id];const g=Math.random()<.5?'f':'m';const pick=a=>a[Math.floor(Math.random()*a.length)];
+  const tr=Object.keys(TRAITS).filter(t=>t!=='wardboss');const traits=[pick(tr)];
+  S.staff[id]={id,name:`${pick(NEWNAMES[g])} ${pick(NEWNAMES.l)}`,g,age:36+Math.floor(Math.random()*24),traits,frame:STAFFMAP[id].frame,mods:[{t:'You appointed them',v:25,perm:true}],since:nowM()};
+  if(!quit){S.mood-=0.5;if(id==='police'||id==='fire')addGroupMod(S.groups.labor,`You fired the ${STAFFMAP[id].role.toLowerCase()}`,-2);logIt(`You replaced ${old.name} with ${S.staff[id].name} as ${STAFFMAP[id].role.toLowerCase()}.`)}
+  return S.staff[id]}
+function openStaff(id){const s=staffOf(id),D=STAFFMAP[id];closePanel();const o=staffOpinion(s),parts=staffParts(s);const now=nowM();
+  const canMeet=s.met!==now&&S.slots>0;
+  openModal(D.role,s.name,`<div class="char"><div>${portrait(s,104)}</div><div class="charinfo">
+     <div class="opbig" style="color:${opColor(o)}">${fmtOp(o)}<small>Opinion of you</small></div>
+     <div class="note">Age ${s.age} · in the job ${now-s.since<1?'since this month':`${now-s.since} month${now-s.since===1?'':'s'}`}</div>
+     <div class="traits">${traitChips(s)}</div><p class="note" style="margin-bottom:0">${D.about}</p></div></div>
+   <div class="facts"><h4>Why they feel this way</h4><div class="opl">${parts.length?parts.map(x=>`<div><span>${x.t}</span><b class="${x.v>0?'up':'down'}">${fmtOp(x.v)}</b></div>`).join(''):'<div><span>No strong feelings yet</span><b>0</b></div>'}</div>
+    <p class="note">Unhappy cabinet members talk to reporters. Very unhappy ones quit and blame you.</p></div>
+   <div class="facts"><h4>What you can do</h4><div class="choices">
+    <button class="choice" data-staffact="meet" data-staff="${id}" ${canMeet?'':'disabled'}><b>Meet one on one</b><small>${s.met===now?'Already met this month':S.slots<=0?'No meetings left this month':'Uses a meeting · opinion +'+(has(s,'gregarious')?12:8)}</small></button>
+    <button class="choice" data-staffact="praise" data-staff="${id}" ${cdLeft('praise_'+id,6)?'disabled':''}><b>Praise them in public</b><small>${cdLeft('praise_'+id,6)?`Again in ${cdLeft('praise_'+id,6)} mo`:'Opinion +10 · the people they serve notice a little'}</small></button>
+    <button class="choice" data-staffact="fire" data-staff="${id}"><b>Replace them</b><small>Appoint someone new who starts out grateful (+25). Public mood dips${id==='police'||id==='fire'?', and city unions take it badly':''}.</small></button></div></div>`,true)}
+openStaff=navWrap('openStaff',openStaff);
+function openCabinet(){staffInit();closePanel();openModal('The people who run the city for you','Your cabinet',`<div class="minis" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px">${STAFF_DEF.map(D=>{const s=staffOf(D.id),o=staffOpinion(s);return`<button class="mini" data-staff="${D.id}" style="display:flex;flex-direction:column;align-items:center;gap:4px;padding:8px">${portrait(s,64)}<span><b>${s.name}</b></span><small class="note" style="text-align:center">${D.role}</small><b style="color:${opColor(o)}">${fmtOp(o)}</b></button>`}).join('')}</div>
+  <p class="note">Hover any face for a quick card. Cabinet members bring you news from their departments.</p>`,true)}
+openCabinet=navWrap('openCabinet',openCabinet);
+document.addEventListener('click',e=>{const b=e.target.closest('[data-staff]');if(!b||!S)return;e.preventDefault();e.stopPropagation();hideHover();const id=b.dataset.staff,s=staffOf(id),a=b.dataset.staffact;
+  if(!a){if(modalOpen){onClose=null;closeModal()}openStaff(id);return}
+  if(a==='meet'&&s.met!==nowM()&&S.slots>0){S.slots--;s.met=nowM();addMod(s,'Met with you privately',has(s,'gregarious')?12:8);gainXP('dip',4);toast(`You met with ${s.name}.`)}
+  else if(a==='praise'&&!cdLeft('praise_'+id,6)){markAct('praise_'+id);addMod(s,'You praised them in public',10);S.mood+=0.3;toast(`You praised ${s.name} at a press conference.`)}
+  else if(a==='fire'){const n=replaceStaff(id,false);toast(`${n.name} is your new ${STAFFMAP[id].role.toLowerCase()}.`)}
+  save();refreshHUD();openStaff(id)},true);
+
+// ======================= WHO BRINGS YOU EACH EVENT =======================
+const AT_STAFF={mpd:'police',swtwin:'police',fire:'fire',oem:'fire',mlgw:'mlgw',pw:'pw',mata:'mata',xai:'edge',airport:'edge',forum:'edge',beale:'edge',liberty:'edge',pyramid:'edge',graceland:'edge',cityhall:'cos',county:'cos',mscs:'cos',library:'cos',parkway:'cos',uofm:'cos',zoo:'cos',ncrm:'press'};
+const STORY_STAFF={dc:'edge',pt:'police',hs:'hcd'};
+function presenterFor(ev,def){const at=evAt(ev);
+  if(def&&def.story&&STORY_STAFF[def.story])return{kind:'staff',id:STORY_STAFF[def.story]};
+  if(at.startsWith('town:'))return{kind:'nb',id:at.slice(5)};
+  if(at.startsWith('proj:'))return{kind:'staff',id:'pw'};
+  if(AT_STAFF[at])return{kind:'staff',id:AT_STAFF[at]};
+  const pl=placeOf(at);const d=districtAt(pl.lon,pl.lat);const m=d&&memberFor(d);if(m)return{kind:'char',id:S.council.indexOf(m),d};
+  return{kind:'staff',id:'cos'}}
+function presenterBlock(ev,def){let P;try{P=presenterFor(ev,def)}catch(e){return''}let who,role,attr,o;
+  if(P.kind==='staff'){who=staffOf(P.id);role=STAFFMAP[P.id].role;attr=`data-staff="${P.id}"`;o=staffOpinion(who)}
+  else if(P.kind==='nb'){who=S.nb[P.id];recompute(who);role=`Mayor of ${NEIGHBORS[P.id].city}`;attr=`data-nb="${P.id}"`;o=who.opinion}
+  else{who=S.council[P.id];recompute(who);role=`Council Member, District ${P.d}`;attr=`data-char="${P.id}"`;o=who.opinion}
+  return`<div class="evwho"><button class="ptbtn" ${attr}>${portrait(who,60)}</button><div class="evwho-n"><small style="text-transform:uppercase;letter-spacing:.06em;color:var(--amber)">Brought to you by</small><b>${who.name}</b><small>${role}</small><small style="color:${opColor(o)}">Opinion ${fmtOp(o)}</small></div></div>`}
+
+// ======================= HOVER CARDS =======================
+// Hover any face or name for a quick character card. Click to open the full page.
+let hoverT=null,hoverEl=null;
+function charCard(kind,id){let who,role,o,parts,extra='',click='Click for their full page';
+  if(kind==='char'){who=S.council[+id];if(!who)return'';recompute(who);parts=opinionParts(who);o=who.opinion;role=who.seat;
+    const tags=[];if(S.rival&&S.rival.k===+id)tags.push('<span class="hc-tag bad">Running against you</span>');if(who.limited)tags.push('<span class="hc-tag">Term-limited</span>');if(who.favors)tags.push(`<span class="hc-tag good">Owes you ${who.favors} favor${who.favors===1?'':'s'}</span>`);if(who.hook)tags.push('<span class="hc-tag good">You hold a hook</span>');
+    extra=tags.join('')+`<div class="hc-pr">Cares about: ${Object.entries(weights(who)).sort((a,b)=>b[1]-a[1]).slice(0,3).map(([p])=>PRIO_LABEL[p]).join(', ')}</div>`}
+  else if(kind==='nb'){who=S.nb[id];if(!who)return'';recompute(who);parts=opinionParts(who);o=who.opinion;role=`Mayor of ${NEIGHBORS[id].city}`}
+  else if(kind==='staff'){who=staffOf(id);parts=staffParts(who);o=staffOpinion(who);role=STAFFMAP[id].role}
+  else if(kind==='me'){who=S.mayor;if(!who)return'';role='Mayor of Memphis';o=null;parts=[];click='Click for your character page';
+    extra=`<div class="hc-sk">${['dip','stew','intr','safe','learn','cha'].map(k=>`<span><small>${({dip:'Diplomacy',stew:'Stewardship',intr:'Intrigue',safe:'Public Safety',learn:'Learning',cha:'Charisma'})[k]}</small><b>${mskill(k)}</b></span>`).join('')}</div><div class="hc-pr">Approval ${Math.round(S.approval)}% · Term ${S.term||1}${S.mayorAt?` · Now at ${S.mayorAt.label}`:''}</div>`}
+  if(!who)return'';
+  return`<div class="hc-top">${portrait(who,64)}<div class="hc-id"><b>${who.name}</b><small>${role}</small>${who.age?`<small>Age ${who.age}</small>`:''}</div>${o!=null?`<div class="hc-op" style="color:${opColor(o)}">${fmtOp(o)}<small>opinion</small></div>`:''}</div>
+   ${kind!=='me'&&(who.traits||[]).length?`<div class="traits">${traitChips(who,true)}</div>`:''}${extra}
+   ${parts&&parts.length?`<div class="hc-why">${parts.slice(0,4).map(x=>`<div><span>${x.t}</span><b class="${x.v>0?'up':'down'}">${fmtOp(x.v)}</b></div>`).join('')}${parts.length>4?`<div class="note">and ${parts.length-4} more</div>`:''}</div>`:''}
+   <div class="hc-foot">${click}</div>`}
+function hoverTarget(el){const t=el.closest&&el.closest('[data-char],[data-nb],[data-staff],#mchip');if(!t)return null;if(t.dataset.staffact)return null;
+  if(t.id==='mchip')return{t,kind:'me',id:0};if(t.dataset.char!=null&&t.dataset.char!=='')return{t,kind:'char',id:t.dataset.char};if(t.dataset.nb)return{t,kind:'nb',id:t.dataset.nb};if(t.dataset.staff)return{t,kind:'staff',id:t.dataset.staff};return null}
+function showHover(h){if(!S||!S.started)return;let html='';try{html=charCard(h.kind,h.id)}catch(e){return}if(!html)return;let el=$('hovercard');if(!el){el=document.createElement('div');el.id='hovercard';document.body.appendChild(el)}
+  el.innerHTML=html;el.hidden=false;const r=h.t.getBoundingClientRect(),W=window.innerWidth,H=window.innerHeight,cw=el.offsetWidth,ch=el.offsetHeight;
+  let x=r.right+10,y=r.top;if(x+cw>W-8)x=r.left-cw-10;if(x<8)x=Math.max(8,Math.min(W-cw-8,r.left));if(y+ch>H-8)y=H-ch-8;if(y<8)y=8;
+  if(x<r.right&&x+cw>r.left&&y<r.bottom&&y+ch>r.top)y=r.bottom+8>H-ch?r.top-ch-8:r.bottom+8;el.style.left=x+'px';el.style.top=Math.max(8,y)+'px';hoverEl=h.t}
+function hideHover(){clearTimeout(hoverT);hoverT=null;hoverEl=null;const el=$('hovercard');if(el)el.hidden=true}
+if(!window.matchMedia||!window.matchMedia('(hover: none)').matches){
+  document.addEventListener('mouseover',e=>{const h=hoverTarget(e.target);if(!h){return}if(h.t===hoverEl)return;clearTimeout(hoverT);hoverT=setTimeout(()=>showHover(h),220)});
+  document.addEventListener('mouseout',e=>{const h=hoverTarget(e.target);if(!h)return;if(e.relatedTarget&&h.t.contains(e.relatedTarget))return;hideHover()});
+  document.addEventListener('mousedown',hideHover,true);document.addEventListener('wheel',hideHover,{passive:true});window.addEventListener('keydown',hideHover)}
+
 function openLedger(){const L=S.log||[];openPanel('Everything that has happened, newest first','Ledger',L.length?`<div class="logl">${L.map(x=>`<div><span>${x.d}</span><p style="margin:0">${x.t}</p></div>`).join('')}</div>`:'<p class="note">Nothing yet. Start the clock with Space or ▶.</p>','ledger')}
 function openPolicies(){const ks=Object.keys(POLICIES);
   openPanel('Ongoing programs you control','Your initiatives',`<p>Mid-year, these are paid from the reserve fund. In April they go into the budget you send the council.</p>
@@ -2958,7 +3070,7 @@ function election(next){
 function summary(){const M=S.met;return`<div class="facts"><h4>Your record</h4><ul><li>Approval: ${Math.round(S.approval)}%</li><li>Sworn officers: ${Math.round(M.officers).toLocaleString()} (started at 1,917)</li><li>Violent crime index: ${M.crime.toFixed(0)} (started at 88)</li><li>MSCS reading proficiency: ${M.reading.toFixed(1)}% (started at 25.7%)</li><li>Reserve fund: ${fmtM(S.reserve)} (started at $96.0M)</li><li>Property tax: $${S.taxRate.toFixed(2)} (started at $3.39)</li></ul></div>`}
 function showEnd(){openModal('Game over','Your time in office is over',`${summary()}<div class="row"><button class="btn primary" data-act="newgame">Run again</button></div>`)}
 function openHelp(){closePanel();openModal('How to play','Guide',`
-  <div class="facts"><h4>Controls</h4><ul><li>WASD or the arrow keys pan the map; hold Shift to pan faster. Moving the mouse to the edge of the screen scrolls too (turn it off under Layers). You can also drag.</li><li>Scroll or pinch to zoom toward the cursor; Q and Z (or the + and − buttons on the right) zoom too, and Home shows the whole city. F, or the ◉ button, finds your mayor: the gold marker is at City Hall on weekdays, home on weekends, and wherever you go to act.</li><li>Police stations (★), fire stations (▲) and hospitals (✚) are on the map. Click one to visit, fund equipment or programs, or fix problems there. Turn them off under Layers.</li><li>Scroll or pinch to zoom toward the cursor. Zoomed out you get the political map, with each council district in its own color. Zoom in and the camera tilts down into the 3D city.</li><li>Click a landmark or amber pin to open it. Click a district or precinct when those layers are on.</li><li>Time runs day by day. Space pauses and resumes; + and − (or the pips by the date) set speed 1–5. New business arrives on random days and pauses the game (turn that off under Layers). Each month closes on its last day and goes into the Ledger. N skips to the end of the month. B opens the budget, C the council, O public opinion, L the map layers. Keys 1–7 switch map modes: City, Political, Council opinion, Street condition, MPD precincts, Region, Public opinion.</li><li>Every menu has tabs along the top (Mayor, Opinion, Council, Region, Budget, Programs, Ledger) and a ← Back button that returns to the screen you came from. Backspace also goes back; Esc closes.</li></ul></div>
+  <div class="facts"><h4>Controls</h4><ul><li>WASD or the arrow keys pan the map; hold Shift to pan faster. Moving the mouse to the edge of the screen scrolls too (turn it off under Layers). You can also drag.</li><li>Scroll or pinch to zoom toward the cursor; Q and Z (or the + and − buttons on the right) zoom too, and Home shows the whole city. F, or the ◉ button, finds your mayor: the gold marker is at City Hall on weekdays, home on weekends, and wherever you go to act.</li><li>Hover any face or name (council members, suburban mayors, your cabinet, your own portrait) for a quick character card with their opinion of you and why. Click for the full page. News comes to you from a person: your cabinet for their departments, the local council member for neighborhood problems, a suburban mayor for regional ones.</li><li>Your cabinet (Cabinet tab) runs the city: chief of staff, police and fire chiefs, finance, public works, housing, economic development, MLGW, MATA and communications. Meet them, praise them or replace them. Unhappy ones leak to reporters; very unhappy ones quit.</li><li>Police stations (★), fire stations (▲) and hospitals (✚) are on the map. Click one to visit, fund equipment or programs, or fix problems there. Turn them off under Layers.</li><li>Scroll or pinch to zoom toward the cursor. Zoomed out you get the political map, with each council district in its own color. Zoom in and the camera tilts down into the 3D city.</li><li>Click a landmark or amber pin to open it. Click a district or precinct when those layers are on.</li><li>Time runs day by day. Space pauses and resumes; + and − (or the pips by the date) set speed 1–5. New business arrives on random days and pauses the game (turn that off under Layers). Each month closes on its last day and goes into the Ledger. N skips to the end of the month. B opens the budget, C the council, O public opinion, L the map layers. Keys 1–7 switch map modes: City, Political, Council opinion, Street condition, MPD precincts, Region, Public opinion.</li><li>Every menu has tabs along the top (Mayor, Opinion, Council, Region, Budget, Programs, Ledger) and a ← Back button that returns to the screen you came from. Backspace also goes back; Esc closes.</li></ul></div>
   <div class="facts"><h4>The campaign and your money</h4><p class="note"><a href="#" data-act="moneyintro">Show the three-accounts introduction again</a></p><ul><li>You keep three separate accounts: the city treasury (the reserve fund, for services and projects), your campaign fund (for ads, staff, polls and rallies) and your personal money (your salary).</li><li>Campaign HQ (K): raise money from small donors and major donors (who expect things in return), buy ads that promote your record, defend it or attack your opponent, hire organizers, open field offices, poll the race and ask groups for endorsements. Your opponent raises and spends too.</li><li>Endorsements are decided July to September 2027, debates are September 9 and 23, and Election Day is Thursday, October 7, 2027. The vote comes from each population group's support and turnout, so money amplifies your record but can't replace it.</li><li>Your salary ($170,817 a year; $14,234.75 a month before deductions, about $9,600 after deductions) pays into a personal account. Spend it on optional wardrobe items, or put up to $25,000 into your campaign.</li></ul></div>
   <div class="facts"><h4>Projects, stories and your desk</h4><ul><li>Start a capital project from Actions: repave a poorly rated road, rehab vacant homes in a neighborhood, or renovate a park. It goes to the council, out to bid, then takes months to build, with delays you have to handle. Pay from reserves month by month or borrow with bonds. You'll see each project on the map, and finished roads turn green in the street condition map.</li><li>Some decisions start stories that come back months later: backing a data center deal, ordering hot-spot patrols, or deciding who gets rehabbed homes. How they end goes on your public record, and your opponent uses that record in the election.</li><li>The Mayor's Desk (left side, or press I) gathers urgent decisions, council votes, projects and developing stories. Click any item to go there. Choose what pauses the clock from the full desk.</li></ul></div>
   <div class="facts"><h4>Taking action</h4><ul><li>Press E or click Actions to make your own moves at any time: propose ordinances to the council, sign executive orders, hold town halls in a district, meet with community leaders, hold press conferences and, in election years, rally your supporters.</li><li>Before you send an ordinance, you see a projected vote. Each member weighs their own priorities, their voters, their backers and how they feel about you, so some will vote against what their district wants. Lock in votes with favors and hooks.</li></ul></div>
@@ -3492,6 +3604,6 @@ window.bluffMusicContext = () => {
 window.claude?.hot?.snapshot?.(()=>({S}));
 window.claude?.hot?.ready?window.claude.hot.ready(start):start(window.claude?.hot?.data??{});
 </script>
-<script src="music.js?v=17-full"></script>
+<script src="music.js?v=18"></script>
 </body>
 </html>
