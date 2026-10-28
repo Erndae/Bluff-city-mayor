@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="description" content="Create your mayor and govern Memphis in real time on a map with a real map of the city.">
 <title>Bluff City Mayor</title>
-<link rel="stylesheet" href="music.css?v=18">
+<link rel="stylesheet" href="music.css?v=19">
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -371,6 +371,7 @@ button.seat:hover{border-color:var(--amber)}
 .hc-tag{display:inline-block;font-size:11px;padding:1px 6px;border-radius:9px;border:1px solid var(--line);margin:6px 4px 0 0}.hc-tag.bad{border-color:var(--bad);color:var(--bad)}.hc-tag.good{border-color:var(--good);color:var(--good)}
 .hc-pr{margin-top:6px;color:var(--muted);font-size:12px}
 .hc-sk{display:grid;grid-template-columns:repeat(3,1fr);gap:4px;margin-top:8px}.hc-sk span{display:flex;justify-content:space-between;background:rgba(255,255,255,.04);padding:2px 6px;border-radius:4px}.hc-sk small{color:var(--muted);font-size:10.5px}
+.evfaces{display:flex;gap:6px;flex-wrap:wrap}.evfaces .evwho{flex:1 1 180px}
 .hc-foot{margin-top:8px;font-size:11px;color:var(--amber)}
 .civ{display:flex;align-items:center;gap:4px;border:0;background:none;padding:0;cursor:pointer;transform:translateY(0)}
 .civ .ci{width:20px;height:20px;border-radius:5px;display:grid;place-items:center;font-size:12px;font-weight:700;border:1.5px solid #0d1822;box-shadow:0 1px 4px rgba(0,0,0,.6);line-height:1}
@@ -482,7 +483,7 @@ details.analysis{margin-top:6px}details.analysis summary{cursor:pointer;color:va
     <button class="btn primary" data-act="pause" id="bPlay">▶ Resume <kbd>Space</kbd></button>
   </nav>
   <div class="status" id="status">Loading map…</div>
-  <div class="credit"><span class="ver" id="verTag">v18</span></div>
+  <div class="credit"><span class="ver" id="verTag">v19</span></div>
   <div class="tip" id="tip" hidden></div>
   <div class="toast" id="toast" role="status"></div>
   <section class="panel" id="panel" hidden aria-live="polite">
@@ -515,7 +516,7 @@ details.analysis{margin-top:6px}details.analysis summary{cursor:pointer;color:va
         <button class="btn" data-music-open>Music &amp; volume</button>
         <button class="btn" id="bLoad" hidden>Continue saved term</button>
       </div>
-      <p class="note startv">Version <b class="ver" id="verStart">v18</b></p>
+      <p class="note startv">Version <b class="ver" id="verStart">v19</b></p>
     </div>
     <div class="startbox create" id="create" hidden>
       <h2>Create your mayor</h2>
@@ -1131,8 +1132,8 @@ function placeOf(at){
   const L=LM[at];return{lat:L.lat,lon:L.lon,lmk:L.id,name:L.short||L.name}}
 function evAt(ev){if(ev.at)return ev.at;if(ev.kind==='projx')return'proj:'+ev.pid;if(ev.kind==='request')return'dist:'+ev.d;if(ev.kind==='ordinance'||ev.kind==='budget'||ev.kind==='memo')return'cityhall';return EVENTS.find(e=>e.id===ev.id).at}
 function spawn(s,def,extra){const ev={id:def.id,kind:'event',expires:3,born:s.y*12+s.m,...(extra||{})};s.events.push(ev);s.used[def.id]=s.y*12+s.m;return ev}
-function evDef(ev){if(ev.kind==='ordinance')return ORDINANCES.find(o=>o.id===ev.id);if(ev.kind==='budget'||ev.kind==='request'||ev.kind==='memo'||ev.kind==='projx')return null;return EVENTS.find(e=>e.id===ev.id)}
-function evTitle(ev){if(ev.kind==='projx'){const P=projById(ev.pid),I=PISSUES.find(x=>x.id===ev.iss);return`${P?P.name:'Project'}: ${I?I.t:'trouble'}`}if(ev.kind==='request')return`${S.council[ev.mi].name.split(' ').pop()} asks: ${ev.text}`;if(ev.kind==='memo')return`Confidential memo: ${S.council[ev.mi].name}`;if(ev.kind==='budget')return`Write the FY${fyOf(S)+1} budget`;if(ev.kind==='ordinance')return'Ordinance: '+evDef(ev).title;return evDef(ev).title}
+function evDef(ev){if(ev.kind==='char')return null;if(ev.kind==='ordinance')return ORDINANCES.find(o=>o.id===ev.id);if(ev.kind==='budget'||ev.kind==='request'||ev.kind==='memo'||ev.kind==='projx')return null;return EVENTS.find(e=>e.id===ev.id)}
+function evTitle(ev){if(ev.kind==='char'){const T=CHAR_TYPES[ev.type];return T?T.title(ev):'People'}if(ev.kind==='projx'){const P=projById(ev.pid),I=PISSUES.find(x=>x.id===ev.iss);return`${P?P.name:'Project'}: ${I?I.t:'trouble'}`}if(ev.kind==='request')return`${S.council[ev.mi].name.split(' ').pop()} asks: ${ev.text}`;if(ev.kind==='memo')return`Confidential memo: ${S.council[ev.mi].name}`;if(ev.kind==='budget')return`Write the FY${fyOf(S)+1} budget`;if(ev.kind==='ordinance')return'Ordinance: '+evDef(ev).title;return evDef(ev).title}
 function maybeSpawn(s,report){
   const now=s.y*12+s.m;const active=new Set(s.events.map(e=>e.id));
   const pool=EVENTS.filter(e=>!e.scripted&&!e.special&&!active.has(e.id)&&(!s.used[e.id]||now-s.used[e.id]>=12)&&(!e.months||e.months.includes(s.m))&&!(e.id==='mpd_staffing'&&s.policies.recruit));
@@ -1169,6 +1170,7 @@ function describe(c){const out=[];if(c.cost)out.push(`${fmtM(-c.cost)} reserves`
   return out.join(' · ')}
 function resolve(ev,ci){try{const pl=placeOf(evAt(ev));if(pl&&pl.lon)goTo(pl.lon,pl.lat,pl.name,2)}catch(e){}
   if(ev.kind==='projx')return resolveProjIssue(ev,ci);
+  if(ev.kind==='char')return resolveChar(ev,ci);
   const def=evDef(ev);let msg='';
   if(ev.kind==='request'){const m=S.council[ev.mi],R=REQUESTS[ev.pr]||REQUESTS.streets;
     if(ci===0){S.reserve-=R.cost;applyFx(S,R.fx);if(R.side)applyCouncil(S,R.side,'Gave in to '+m.name.split(' ').pop());m.favors=(m.favors||0)+1;addMod(m,'Granted my request',12+(mHas('compassionate')?4:0));bumpPlace('dist:'+ev.d,3);gainXP('dip',5);
@@ -1200,6 +1202,7 @@ function expire(s,report){const now=s.y*12+s.m;
   s.events=s.events.filter(ev=>{if(ev.kind==='budget'||ev.id==='briefing')return true;if(now-ev.born<ev.expires)return true;
     if(ev.kind==='request'){const m=s.council[ev.mi];addMod(m,'Ignored my request',-8);bumpPlace('dist:'+ev.d,-1);report.push(`You never answered ${m.name}'s request.`);return false}
     if(ev.kind==='memo')return false;
+    if(ev.kind==='char'){const T=CHAR_TYPES[ev.type];try{if(T&&T.ignore)T.ignore(ev);report.push(`Unanswered: ${T?T.title(ev):'a personal matter'}.`)}catch(e){}return false}
     if(ev.kind==='projx'){const P=projById(ev.pid),I=PISSUES.find(x=>x.id===ev.iss);if(P&&I){P.delays=(P.delays||0)+1;P.months+=I.slip;plog(P,`${I.t}. Nobody decided, so it slipped ${I.slip} month${I.slip===1?'':'s'}.`);report.push(`${P.name} slipped while the problem sat on your desk.`)}return false}
     const def=evDef(ev);if(ev.kind==='ordinance'){applyFx(s,def.sign.fx);applyGroupReact(def.grp,`Became law unsigned: ${def.title}`,0.8);report.push(`"${def.title}" became law without your signature.`)}
     else{const ig=def.ignore||{};applyFx(s,ig.fx);bumpPlace(evAt(ev),-2);if(def.story)storyChoice(def,ig,ev);applyCouncil(s,ig.council,`Ignored: ${def.title}`);applyNb(ig.nb,`Ignored: ${def.title}`);report.push(`Unanswered: ${def.title}. People noticed.`)}
@@ -1258,7 +1261,7 @@ function endOfMonth(){
   // new business arrives on random days through the month
   queueNewBusiness(report);
   if(S.y===2026&&S.m===11&&!S.used.mlgw_rates){const def=EVENTS.find(e=>e.id==='mlgw_rates');S.used.mlgw_rates=nowM();S.queue=S.queue||[];S.queue.push({ev:{id:'mlgw_rates',kind:'event',expires:2,born:nowM()},due:5+Math.floor(Math.random()*10)})}
-  const pout=projectsMonth(report);storiesMonth();try{civicMonth(report)}catch(e){console.warn('civic',e)}try{staffMonth(report)}catch(e){console.warn('staff',e)}upkeepMonth(report);dealsMonth(report);promisesMonth(report);if(S.camp){campaignMonth(report);purseMonth(report);householdMonth(report);storeMonth()}moneyMonth(report,pout&&pout.paid);
+  const pout=projectsMonth(report);storiesMonth();try{civicMonth(report)}catch(e){console.warn('civic',e)}try{staffMonth(report)}catch(e){console.warn('staff',e)}try{charLifeMonth(report)}catch(e){console.warn('life',e)}upkeepMonth(report);dealsMonth(report);promisesMonth(report);if(S.camp){campaignMonth(report);purseMonth(report);householdMonth(report);storeMonth()}moneyMonth(report,pout&&pout.paid);
   prevMet=before;
   const head=`${MONTHS_L[(S.m+10)%12]} closed: approval ${Math.round(S.approval)}% (${S.approval>=before.approval?'+':'−'}${Math.abs(S.approval-before.approval).toFixed(1)}), reserve ${fmtM(S.reserve)}`;
   logIt(head);report.forEach(l=>logIt(l));
@@ -1275,7 +1278,7 @@ function enact(s,p){DIVS.forEach(d=>{s.enacted[d.id]=p.divs[d.id];s.ratio[d.id]=
 // Voter groups. Each has a share of residents, turnout, home districts, concerns and an approval of you.
 // Citywide approval is the turnout-weighted average of the groups; each council district's approval comes from the groups that live there.
 // Shares, district mix and turnout are modeled, loosely grounded in Memphis demographics; they are not survey data.
-const VERSION='v18';
+const VERSION='v19';
 const GROUPS=[
  {id:'working',sh:'Working families',n:'Working families',ic:'⚒',c:'#f2a93b',share:24,turn:.5,start:56,w:{jobs:1,safety:.8,transit:.5},
   d:'Hourly workers in logistics, warehouses, health care and service jobs. The biggest bloc in the city.',dm:{1:1.1,2:.8,3:1.3,4:1.2,5:.6,6:1.2,7:1.1}},
@@ -1441,6 +1444,7 @@ function eventCard(ev,idx){
      <button class="choice" data-ev="${idx}" data-ci="1"><b>Quietly tell them you buried it</b><small>They owe you a favor · Opinion +14</small></button>
      <button class="choice" data-ev="${idx}" data-ci="2"><b>Refer it to the ethics commission</b><small>Opinion −35 · Reformers approve (+6) · Public mood ▲</small></button></div></div>`}
   if(ev.kind==='projx')return projIssueCard(ev,idx);
+  if(ev.kind==='char')return charEventCard(ev,idx);
   const def=evDef(ev);
   if(ev.kind==='ordinance'){return`<div class="card"><div class="ttl">Ordinance: ${def.title}</div><div class="due">Passed ${ev.yes}–${13-ev.yes} · becomes law without your signature in ${left} month${left===1?'':'s'}</div>
     <p>You can sign it or veto it. If you veto, the council can override with a simple majority: 7 of 13 votes, the same number it took to pass.</p>
@@ -1580,6 +1584,7 @@ function openCharacter(i){const m=S.council[i];if(!m)return;recompute(m);const n
      <div class="traits">${traitChips(m)}</div></div></div>
    <div class="facts"><h4>Why they feel this way</h4><div class="opl">${parts.length?parts.map(x=>`<div><span>${x.t}</span><b class="${x.v>0?'up':'down'}">${fmtOp(x.v)}</b></div>`).join(''):'<div><span>No strong feelings yet</span><b>0</b></div>'}</div></div>
    ${reElectionBlock(m)}
+   ${relBlock(i)}
    <div class="facts"><h4>Cares about</h4><div class="row">${Object.entries(weights(m)).sort((a,b)=>b[1]-a[1]).map(([p])=>`<span class="pill">${PRIO_LABEL[p]}</span>`).join('')}</div>
      <p class="note">Decisions that touch these move their opinion. ${m.d<=7?'They vote on everything, but care most about District '+m.d+'.':'They answer to half the city, but live in District '+hd+'.'}</p></div>
    <div class="facts"><h4>Leverage</h4><div class="opl"><div><span>Favors they owe you</span><b>${m.favors||0}</b></div><div><span>Hook</span><b>${m.hook?'Yes':'None'}</b></div></div>
@@ -2811,7 +2816,7 @@ function civAvg(type){const L=CIV[type].list;return L.reduce((a,p)=>a+civState(p
 const CIV_ACTS={
  police:[
   {id:'rollcall',n:'Visit roll call',d:'Thank the shift, hear what officers need. Uses a meeting.',slot:true,cd:3,fx:(p,c)=>{c.lvl=clamp(c.lvl+8,0,100);addGroupMod(S.groups.labor,'Mayor shows up for officers',1.5);gainXP('safe',6);return`Officers at ${p.name} appreciated the visit. Morale there is ${Math.round(c.lvl)}.`}},
-  {id:'ot',n:'Fund overtime patrols here',d:'Extra patrols in this precinct for a month.',cost:0.4,cd:2,fx:(p,c,d)=>{S.met.crime=clamp(S.met.crime-0.8,40,140);if(d)S.pop.d[d]=clamp(S.pop.d[d]+1,-20,20);addGroupMod(S.groups.faith,'More patrols in the neighborhood',1);addGroupMod(S.groups.renters,'More patrols in the neighborhood',-0.5);gainXP('safe',4);return`Overtime patrols are out around ${p.name}. Residents noticed; some renters worry about stops.`}},
+  {id:'ot',n:'Fund overtime patrols here',d:'Extra patrols in this precinct for a month.',cost:0.5,cd:2,fx:(p,c,d)=>{S.civOT=S.civOT||{};const n=Object.values(S.civOT).filter(t=>nowM()-t<2).length;S.civOT[p.id]=nowM();S.met.crime=clamp(S.met.crime-0.6/(1+n*0.6),40,140);if(d)S.pop.d[d]=clamp(S.pop.d[d]+1,-20,20);addGroupMod(S.groups.faith,'More patrols in the neighborhood',1);addGroupMod(S.groups.renters,'More patrols in the neighborhood',-0.5);gainXP('safe',4);return`Overtime patrols are out around ${p.name}. Residents noticed; some renters worry about stops.`}},
   {id:'meeting',n:'Host a community meeting',d:'Residents and officers in the same room. Goes well with good morale.',slot:true,cd:4,fx:(p,c,d)=>{const ok=Math.random()<0.45+c.lvl/200+(mskill('dip')-8)*0.03;if(d){S.pop.d[d]=clamp(S.pop.d[d]+(ok?3:-1),-20,20);const m=memberFor(d);if(m)addMod(m,ok?'Police-community meeting in my district':'Rough police meeting in my district',ok?4:-2)}gainXP('dip',6);
     if(ok){addGroupMod(S.groups.working,'Police and residents talking',1.5);return`The meeting at ${p.name} went well. People left with names and phone numbers.`}addGroupMod(S.groups.renters,'Heated police meeting',-1);return`The meeting at ${p.name} got heated. Residents brought up stops and slow response times.`}},
   {id:'fix',n:'Repair and update the station',d:'New HVAC, locker rooms, cameras. Helps keep officers from leaving.',cost:1.2,cd:18,fx:(p,c)=>{c.lvl=clamp(c.lvl+18,0,100);c.out=false;S.met.officers+=6;return`Repairs at ${p.name} are under way. Fewer officers say they're looking at suburban departments.`}}],
@@ -2822,10 +2827,10 @@ const CIV_ACTS={
   {id:'fix',n:'Repair the station',d:'Roof, bay doors, living quarters.',cost:0.6,cd:12,fx:(p,c)=>{c.lvl=clamp(c.lvl+12,0,100);c.out=false;return`Repairs at ${p.name} are done.`}}],
  hospital:[
   {id:'tour',n:'Tour the hospital',d:'Meet staff and patients. Uses a meeting.',slot:true,cd:3,fx:(p,c,d)=>{if(d)S.pop.d[d]=clamp(S.pop.d[d]+1.5,-20,20);addGroupMod(S.groups.working,'Mayor visits hospital workers',1);gainXP('dip',5);c.lvl=clamp(c.lvl+5,0,100);return`You toured ${p.name}. Staff talked about staffing and the uninsured patients they see.`}},
-  {id:'hvip',n:'Fund a violence intervention team',d:'Counselors meet shooting victims at the bedside to stop retaliation. Works best at a trauma center.',cost:0.8,cd:12,fx:(p,c)=>{const k=p.tag==='trauma'?1.6:p.tag==='kids'?1:0.6;S.met.crime=clamp(S.met.crime-k,40,140);c.lvl=clamp(c.lvl+15,0,100);addGroupMod(S.groups.faith,'Hospital violence intervention',1.5);addGroupMod(S.groups.working,'Hospital violence intervention',1);gainXP('safe',6);addRecord({t:`Funded violence intervention at ${p.name}`,good:['faith','working'],bad:[],kind:'act'});return`A violence intervention team starts at ${p.name}.`}},
+  {id:'hvip',n:'Fund a violence intervention team',d:'Counselors meet shooting victims at the bedside to stop retaliation. Works best at a trauma center.',cost:0.8,cd:12,fx:(p,c)=>{S.hvip=S.hvip||{};const n=Object.values(S.hvip).filter(t=>nowM()-t<12).length;S.hvip[p.id]=nowM();const k=(p.tag==='trauma'?1.3:p.tag==='kids'?0.5:0.35)/(1+n*0.5);S.met.crime=clamp(S.met.crime-k,40,140);c.lvl=clamp(c.lvl+15,0,100);addGroupMod(S.groups.faith,'Hospital violence intervention',1.5);addGroupMod(S.groups.working,'Hospital violence intervention',1);gainXP('safe',6);addRecord({t:`Funded violence intervention at ${p.name}`,good:['faith','working'],bad:[],kind:'act'});return`A violence intervention team starts at ${p.name}.`}},
   {id:'fair',n:'Sponsor a community health fair',d:'Free screenings and sign-ups for coverage.',cost:0.1,cd:6,fx:(p,c,d)=>{if(d)S.pop.d[d]=clamp(S.pop.d[d]+2,-20,20);['working','renters','faith'].forEach(g=>addGroupMod(S.groups[g],'Free health fair',1));c.lvl=clamp(c.lvl+5,0,100);return`Hundreds came to the health fair at ${p.name}.`}},
   {id:'jobs',n:'Partner on job training',d:'Train residents for hospital jobs: aides, techs, food service.',cost:0.3,cd:12,fx:(p,c)=>{S.jobsBoost+=0.6;S.met.jobs+=0.3;addGroupMod(S.groups.working,'Hospital job training',1.5);addGroupMod(S.groups.business,'Hospital job training',0.5);c.lvl=clamp(c.lvl+10,0,100);gainXP('stew',4);return`${p.name} will train and hire residents.`}}]};
-function civCan(p,a){const c=civState(p.id);if(civCd(p.id,a.id,a.cd))return`Again in ${civCd(p.id,a.id,a.cd)} mo`;if(a.slot&&S.slots<=0)return'No meetings left this month';if(a.cost&&S.reserve<a.cost+5)return'Reserve too low';return''}
+function civCan(p,a){const c=civState(p.id);if(civCd(p.id,a.id,a.cd))return`Again in ${civCd(p.id,a.id,a.cd)} mo`;if(a.slot&&S.slots<=0)return'No meetings left this month';if(a.cost&&S.reserve<a.cost+20)return'Reserve too low (keep $20M for emergencies)';return''}
 function doCivic(id,aid){const p=CIVMAP[id];if(!p)return;const a=CIV_ACTS[p.type].find(x=>x.id===aid);if(!a||civCan(p,a))return;const c=civState(id);const d=districtAt(p.lon,p.lat);
   if(a.slot)S.slots--;if(a.cost){S.reserve-=a.cost}c.acts[aid]=nowM();try{const ch=p.type==='police'?'police':p.type==='fire'?'fire':null;if(ch)addMod(staffOf(ch),a.cost?'You put money into their stations':'You visited their people',a.cost?4:2)}catch(e){}const msg=a.fx(p,c,d);S.approval=cityApproval(S);recomputeAll(S);
   goTo(p.lon,p.lat,p.name,3);logIt(`${a.n} at ${p.name}${a.cost?` (${fmtM(a.cost)} from the reserve)`:''}.`);save();refreshHUD();renderCivic();toast(msg);openCivic(id)}
@@ -2861,7 +2866,7 @@ function civicMonth(report){S.civic=S.civic||{};
     const p=L.slice().sort((a,b)=>civState(a.id).lvl-civState(b.id).lvl)[Math.floor(Math.random()*Math.min(6,L.length))];const c=civState(p.id);const msgs=CIV_PROBLEMS[t];c.out=msgs[Math.floor(Math.random()*msgs.length)];c.lvl=clamp(c.lvl-(t==='hospital'?0:10),0,100);c.outM=nowM();
     report.push(`${p.name}: ${c.out}`);logIt(`${p.name}: ${c.out}`)}}
   // problems left alone cost you
-  for(const id in S.civic){const c=S.civic[id];if(c.out&&nowM()-(c.outM||nowM())>=2){const p=CIVMAP[id];if(!p)continue;const d=districtAt(p.lon,p.lat);if(d){S.pop.d[d]=clamp(S.pop.d[d]-1,-20,20);const m=memberFor(d);if(m)addMod(m,`${p.name} left in disrepair`,-2)}c.outM=nowM()-1;if(p.type==='hospital'){c.out=false;continue}}}
+  for(const id in S.civic){const c=S.civic[id];if(c.out&&nowM()-(c.outM||nowM())>=2){const p=CIVMAP[id];if(!p)continue;const d=districtAt(p.lon,p.lat);if(d){S.pop.d[d]=clamp(S.pop.d[d]-1.5,-20,20);const m=memberFor(d);if(m)addMod(m,`${p.name} left in disrepair`,-3)}addMod(staffOf(p.type==='police'?'police':p.type==='fire'?'fire':'cos'),`${p.name} left broken`,-3);c.outM=nowM()-1;if(p.type==='hospital'){c.out=false;continue}}}
   const pm=civAvg('police'),fr=civAvg('fire');S.met.crime=clamp(S.met.crime-(pm-55)*0.02,40,140);S.met.officers+=Math.round((pm-55)*0.15);
   if(fr>=65){addGroupMod(S.groups.owners,'Fire stations in good shape',0.3)}else if(fr<45){addGroupMod(S.groups.owners,'Run-down fire stations',-0.4);addGroupMod(S.groups.working,'Run-down fire stations',-0.3)}
   renderCivic()}
@@ -2970,7 +2975,7 @@ const STAFF_DEF=[
  {id:'press',role:'Communications Director',name:'Jalen Price',g:'m',age:33,traits:['gregarious'],frame:'#9caab4',div:null,about:'Writes your statements and handles reporters.'}];
 const STAFFMAP=Object.fromEntries(STAFF_DEF.map(d=>[d.id,d]));
 const NEWNAMES={f:['Angela','Keisha','Monica','Carla','Denise','Erin','Priya','Lena','Yvette','Sharon'],m:['Andre','Terrence','Brian','Luis','Calvin','Derek','Omar','Wesley','Reggie','Paul'],l:['Washington','Coleman','Harper','Reyes','Whitaker','Sutton','Boyd','Langford','Mercer','Dunbar','Ingram','Pruitt']};
-function staffInit(){if(!S)return;S.staff=S.staff||{};STAFF_DEF.forEach(d=>{if(!S.staff[d.id])S.staff[d.id]={id:d.id,name:d.name,g:d.g,age:d.age,traits:d.traits.slice(),frame:d.frame,mods:[{t:'You kept them on',v:15,perm:true}],since:nowM()}})}
+function staffInit(){if(!S)return;S.staff=S.staff||{};STAFF_DEF.forEach(d=>{if(!S.staff[d.id])S.staff[d.id]={id:d.id,name:d.name,g:d.g,age:d.age,traits:d.traits.slice(),frame:d.frame,mods:[{t:'You kept them on',v:6,perm:true}],since:nowM()}})}
 function staffOf(id){staffInit();const s=S.staff[id];s.role=STAFFMAP[id].role;return s}
 function staffParts(s){const parts=[];(s.traits||[]).forEach(t=>{if(TRAITS[t]&&TRAITS[t].base)parts.push({t:TRAITS[t].n+' (trait)',v:TRAITS[t].base})});
   const a=approvalMod();if(a)parts.push({t:`Your approval rating (${Math.round(S.approval)}%)`,v:Math.round(a*0.5)});
@@ -2979,8 +2984,8 @@ function staffParts(s){const parts=[];(s.traits||[]).forEach(t=>{if(TRAITS[t]&&T
   s.mods.forEach(x=>{const v=Math.round(x.v);if(v)parts.push({t:x.t,v})});return parts.sort((a,b)=>Math.abs(b.v)-Math.abs(a.v))}
 function staffOpinion(s){return clamp(Math.round(staffParts(s).reduce((a,x)=>a+x.v,0)),-100,100)}
 function staffMonth(report){staffInit();for(const id in S.staff){const s=S.staff[id];decayMods(s);const o=staffOpinion(s);
-  if(o<=-25&&Math.random()<0.18){S.mood-=1;const t=`${s.name}, your ${STAFFMAP[id].role.toLowerCase()}, is telling reporters off the record that City Hall is a mess. Public mood ▼`;report.push(t);logIt(t)}
-  if(o<=-50&&Math.random()<0.25){const t=`${s.name} resigned as ${STAFFMAP[id].role.toLowerCase()} and blamed you on the way out.`;report.push(t);logIt(t);replaceStaff(id,true)}}}
+  if(o<=-25&&Math.random()<0.18){S.mood-=1;addRecord({t:`Leaks from your ${STAFFMAP[id].role.toLowerCase()}`,kind:'staff',bad:[],camp:{d:-0.4,t:`Your own ${STAFFMAP[id].role.toLowerCase()} says City Hall is a mess.`}});const t=`${s.name}, your ${STAFFMAP[id].role.toLowerCase()}, is telling reporters off the record that City Hall is a mess. Public mood ▼`;report.push(t);logIt(t)}
+  if(o<=-50&&Math.random()<0.25){addRecord({t:`${s.name} quit and blamed you`,kind:'staff',bad:[],camp:{d:-0.6,t:`${s.name}, who quit your cabinet, says you can't run a city.`}});const t=`${s.name} resigned as ${STAFFMAP[id].role.toLowerCase()} and blamed you on the way out.`;report.push(t);logIt(t);replaceStaff(id,true)}}}
 function replaceStaff(id,quit){const old=S.staff[id];const g=Math.random()<.5?'f':'m';const pick=a=>a[Math.floor(Math.random()*a.length)];
   const tr=Object.keys(TRAITS).filter(t=>t!=='wardboss');const traits=[pick(tr)];
   S.staff[id]={id,name:`${pick(NEWNAMES[g])} ${pick(NEWNAMES.l)}`,g,age:36+Math.floor(Math.random()*24),traits,frame:STAFFMAP[id].frame,mods:[{t:'You appointed them',v:25,perm:true}],since:nowM()};
@@ -3031,9 +3036,10 @@ let hoverT=null,hoverEl=null;
 function charCard(kind,id){let who,role,o,parts,extra='',click='Click for their full page';
   if(kind==='char'){who=S.council[+id];if(!who)return'';recompute(who);parts=opinionParts(who);o=who.opinion;role=who.seat;
     const tags=[];if(S.rival&&S.rival.k===+id)tags.push('<span class="hc-tag bad">Running against you</span>');if(who.limited)tags.push('<span class="hc-tag">Term-limited</span>');if(who.favors)tags.push(`<span class="hc-tag good">Owes you ${who.favors} favor${who.favors===1?'':'s'}</span>`);if(who.hook)tags.push('<span class="hc-tag good">You hold a hook</span>');
-    extra=tags.join('')+`<div class="hc-pr">Cares about: ${Object.entries(weights(who)).sort((a,b)=>b[1]-a[1]).slice(0,3).map(([p])=>PRIO_LABEL[p]).join(', ')}</div>`}
+    extra=tags.join('')+`<div class="hc-pr">Cares about: ${Object.entries(weights(who)).sort((a,b)=>b[1]-a[1]).slice(0,3).map(([p])=>PRIO_LABEL[p]).join(', ')}</div>`;
+    const al=relList(+id,'ally'),rv=relList(+id,'rival');if(al.length||rv.length)extra+=`<div class="hc-pr">${al.length?`Allies: ${al.map(k=>S.council[k].name.split(' ').pop()).join(', ')}`:''}${al.length&&rv.length?' · ':''}${rv.length?`<span style="color:var(--bad)">Rivals: ${rv.map(k=>S.council[k].name.split(' ').pop()).join(', ')}</span>`:''}</div>`}
   else if(kind==='nb'){who=S.nb[id];if(!who)return'';recompute(who);parts=opinionParts(who);o=who.opinion;role=`Mayor of ${NEIGHBORS[id].city}`}
-  else if(kind==='staff'){who=staffOf(id);parts=staffParts(who);o=staffOpinion(who);role=STAFFMAP[id].role}
+  else if(kind==='staff'){who=staffOf(id);parts=staffParts(who);o=staffOpinion(who);role=STAFFMAP[id].role;extra=schemeLine(id)}
   else if(kind==='me'){who=S.mayor;if(!who)return'';role='Mayor of Memphis';o=null;parts=[];click='Click for your character page';
     extra=`<div class="hc-sk">${['dip','stew','intr','safe','learn','cha'].map(k=>`<span><small>${({dip:'Diplomacy',stew:'Stewardship',intr:'Intrigue',safe:'Public Safety',learn:'Learning',cha:'Charisma'})[k]}</small><b>${mskill(k)}</b></span>`).join('')}</div><div class="hc-pr">Approval ${Math.round(S.approval)}% · Term ${S.term||1}${S.mayorAt?` · Now at ${S.mayorAt.label}`:''}</div>`}
   if(!who)return'';
@@ -3053,6 +3059,127 @@ if(!window.matchMedia||!window.matchMedia('(hover: none)').matches){
   document.addEventListener('mouseout',e=>{const h=hoverTarget(e.target);if(!h)return;if(e.relatedTarget&&h.t.contains(e.relatedTarget))return;hideHover()});
   document.addEventListener('mousedown',hideHover,true);document.addEventListener('wheel',hideHover,{passive:true});window.addEventListener('keydown',hideHover)}
 
+// ======================= LIVING CHARACTERS =======================
+// Council members have allies and rivals, vote in blocs, feud, get courted by your opponent and ask for endorsements.
+// Cabinet members ask for things, get caught in scandals, and the ambitious ones scheme.
+function relKey(a,b){return a<b?a+'-'+b:b+'-'+a}
+function relInit(){if(!S||S.rel)return;S.rel={};const C=S.council,n=C.length;const sc=[];
+  for(let a=0;a<n;a++)for(let b=a+1;b<n;b++){const A=C[a],B=C[b];let v=(hash(a*13+b,5)-.5)*2;
+    if(homeOf(A)===homeOf(B))v+=0.6;if(A.d>7&&A.d===B.d)v+=0.4;if(has(A,'reformer')&&has(B,'reformer'))v+=0.8;if(has(A,'frugal')&&has(B,'frugal'))v+=0.6;
+    if(has(A,'ambitious')&&has(B,'ambitious'))v-=1.2;if((has(A,'frugal')&&has(B,'wardboss'))||(has(B,'frugal')&&has(A,'wardboss')))v-=0.7;if(has(A,'vengeful')||has(B,'vengeful'))v-=0.3;
+    sc.push({a,b,v})}
+  sc.sort((x,y)=>y.v-x.v);const cnt={};const ok=(x)=>(cnt[x.a]||0)<2&&(cnt[x.b]||0)<2;
+  let al=0;for(const x of sc){if(al>=5)break;if(ok(x)){S.rel[relKey(x.a,x.b)]='ally';cnt[x.a]=(cnt[x.a]||0)+1;cnt[x.b]=(cnt[x.b]||0)+1;al++}}
+  let rv=0;for(const x of sc.slice().reverse()){if(rv>=4)break;if(!S.rel[relKey(x.a,x.b)]&&ok(x)){S.rel[relKey(x.a,x.b)]='rival';cnt[x.a]=(cnt[x.a]||0)+1;cnt[x.b]=(cnt[x.b]||0)+1;rv++}}}
+function relOf(a,b){relInit();return S.rel[relKey(a,b)]}
+function relList(i,t){relInit();const out=[];S.council.forEach((m,k)=>{if(k!==i&&S.rel[relKey(i,k)]===t)out.push(k)});return out}
+function setRel(a,b,t){relInit();if(t)S.rel[relKey(a,b)]=t;else delete S.rel[relKey(a,b)]}
+// Allies pull each other's opinion of you; rivals push the other way.
+const _opinionParts=opinionParts;
+opinionParts=function(m){const parts=_opinionParts(m);if(!S||!S.council)return parts;const i=S.council.indexOf(m);if(i<0||!S.rel)return parts;
+  relList(i,'ally').forEach(k=>{const o=S.council[k];const v=Math.round(clamp((o.opinion||0)*0.15,-6,6));if(v)parts.push({t:`Their ally ${o.name} ${v>0?'likes':'distrusts'} you`,v})});
+  relList(i,'rival').forEach(k=>{const o=S.council[k];const v=Math.round(clamp(-(o.opinion||0)*0.1,-4,4));if(v)parts.push({t:`Their rival ${o.name} ${o.opinion>0?'is close to':'opposes'} you`,v})});
+  return parts.sort((a,b)=>Math.abs(b.v)-Math.abs(a.v))};
+// Voting blocs: members follow committed allies.
+function blocBonus(m){if(!S||!S.rel||!S.commit)return 0;const i=S.council.indexOf(m);if(i<0||S.commit[i])return 0;let b=0;
+  relList(i,'ally').forEach(k=>{if(S.commit[k])b+=7});relList(i,'rival').forEach(k=>{if(S.commit[k])b-=3});return b}
+const _issueScore=issueScore;issueScore=function(m,o,withMayor){return _issueScore(m,o,withMayor)+(withMayor?blocBonus(m):0)};
+const _budgetScore=budgetScore;budgetScore=function(s,m,p,c){return _budgetScore(s,m,p,c)+blocBonus(m)};
+function relBlock(i){const al=relList(i,'ally'),rv=relList(i,'rival');const nm=k=>`<a href="#" data-char="${k}">${S.council[k].name}</a>`;
+  return`<div class="facts"><h4>Allies and rivals</h4><div class="opl"><div><span>Allies</span><b>${al.length?al.map(nm).join(', '):'None'}</b></div><div><span>Rivals</span><b>${rv.length?rv.map(nm).join(', '):'None'}</b></div></div>
+   <p class="note">Allies follow each other: lock in one with a favor or a hook and their allies lean your way too. How their allies feel about you rubs off on them.</p></div>`}
+
+// ---------- cabinet schemes ----------
+function schemeTick(report){staffInit();S.scheme=S.scheme||null;
+  if(!S.scheme){const amb=STAFF_DEF.map(d=>staffOf(d.id)).find(s=>has(s,'ambitious'));if(amb)S.scheme={id:amb.id,name:amb.name,prog:0,found:false}}
+  const sc=S.scheme;if(!sc)return;const s=S.staff[sc.id];if(!s||s.name!==sc.name){S.scheme=null;return}
+  const o=staffOpinion(s);sc.prog=clamp(sc.prog+5+Math.max(0,(20-o))*0.15+(S.approval<45?3:0)+Math.random()*4,0,100);
+  if(!sc.found&&sc.prog>=35&&Math.random()<0.35+mskill('intr')*0.02){sc.found=true;queueChar({type:'scheme',sid:sc.id},report)}
+  if(sc.prog>=100){const R=S.rival;report.push(`${s.name} quit as ${STAFFMAP[sc.id].role.toLowerCase()}${R?` and endorsed ${R.name}`:''}. Their donors went too.`);logIt(`${s.name} quit${R?` and endorsed ${R.name}`:''}.`);
+    if(R&&R.camp){R.camp.cash+=80;R.camp.raised+=80}addRecord({t:`${s.name} quit to back your opponent`,kind:'staff',bad:['business'],camp:{d:-1,t:`Your former ${STAFFMAP[sc.id].role.toLowerCase()} ${s.name} is campaigning against you.`}});S.mood-=1.5;addGroupMod(S.groups.business,`${s.name} walked out on you`,-2);replaceStaff(sc.id,true);S.scheme=null}}
+function schemeLine(id){const sc=S.scheme;if(!sc||sc.id!==id||!sc.found)return'';return`<span class="hc-tag bad">Building support for their own run (${Math.round(sc.prog)}%)</span>`}
+
+// ---------- character events ----------
+const SCANDALS=['questions about hiring a relative for a city job','travel expenses that look padded','a city contract that went to a friend\'s firm','deleted emails a reporter asked for'];
+const STAFF_ASKS={
+ police:{t:'wants a new academy class',d:'Another 40 recruits at the training academy.',cost:2.5,fx:()=>{S.met.officers+=20},ok:'The academy class is funded. MPD gets 20 more officers now and more next year.'},
+ fire:{t:'wants new ladder trucks',d:'Replace the oldest trucks at the five worst-equipped stations.',cost:1.8,fx:()=>{CIV.fire.list.slice().sort((a,b)=>civState(a.id).lvl-civState(b.id).lvl).slice(0,5).forEach(p=>{const c=civState(p.id);c.lvl=clamp(c.lvl+15,0,100);c.out=false})},ok:'New trucks go to the five stations that needed them most.'},
+ cfo:{t:'wants a hiring freeze',d:'Hold open jobs empty outside public safety to protect the reserve.',cost:-3,fx:()=>{addGroupMod(S.groups.labor,'Hiring freeze',-2)},ok:'The freeze saves about $3M. City unions are not happy.'},
+ pw:{t:'wants overtime for a pothole blitz',d:'Weekend crews on the worst streets for a month.',cost:1,fx:()=>{S.met.streets+=1.2;addGroupMod(S.groups.owners,'Pothole blitz',1)},ok:'Weekend crews are out patching.'},
+ hcd:{t:'wants money to tear down dangerous vacant houses',d:'Demolish about 120 of the worst vacant structures.',cost:1.2,fx:()=>{S.met.blight-=1.8;addGroupMod(S.groups.faith,'Blight demolition',1)},ok:'Demolition crews start next week.'},
+ edge:{t:'wants you to back a tax break for a warehouse operator',d:'A 10-year abatement for a distribution center with about 300 jobs.',cost:0,fx:()=>{S.jobsBoost+=1;S.revBoost-=1;addGroupMod(S.groups.business,'Warehouse deal',2);addGroupMod(S.groups.owners,'Another tax break',-1)},ok:'The deal goes to the board with your support.'},
+ mlgw:{t:'wants your support for a 3% rate increase',d:'MLGW says it needs the money for aging gas lines.',cost:0,fx:()=>{applyFx(S,{mlgw:0.03});addGroupMod(S.groups.working,'Higher MLGW bills',-1.5);addGroupMod(S.groups.renters,'Higher MLGW bills',-1.5)},ok:'You back the increase. Bills go up 3%.'},
+ mata:{t:'wants money to restore cut bus routes',d:'Bring back three routes cut in past budgets.',cost:1.5,fx:()=>{S.met.transit+=2.5;addGroupMod(S.groups.renters,'Bus routes restored',1.5)},ok:'Three routes come back next month.'},
+ press:{t:'wants a media push on your record',d:'Radio spots and a neighborhood newsletter about what the city has done.',cost:0.2,fx:()=>{S.mood+=1},ok:'The push runs all month.'},
+ cos:{t:'wants a cabinet retreat',d:'A day away from City Hall to settle turf fights. Uses a meeting.',cost:0,slot:true,fx:()=>{STAFF_DEF.forEach(D=>addMod(staffOf(D.id),'Cabinet retreat',5))},ok:'The retreat cooled some tempers.'}};
+const CHAR_TYPES={
+ feud:{w:3,title:ev=>`Feud: ${S.council[ev.a].name.split(' ').pop()} vs. ${S.council[ev.b].name.split(' ').pop()}`,
+  gen(){const pairs=[];relInit();for(const k in S.rel)if(S.rel[k]==='rival'){const[a,b]=k.split('-').map(Number);pairs.push([a,b])}if(!pairs.length)return null;const[a,b]=pairs[Math.floor(Math.random()*pairs.length)];return{a,b,at:'cityhall'}},
+  body:ev=>{const A=S.council[ev.a],B=S.council[ev.b];return`${A.name} and ${B.name} traded insults in committee and both want you on their side. Reporters are asking whose side you're on.`},
+  who:ev=>[['char',ev.a],['char',ev.b]],
+  choices:[{l:ev=>`Side with ${S.council[ev.a].name.split(' ').pop()}`,s:ev=>`${S.council[ev.a].name.split(' ').pop()} +14 · ${S.council[ev.b].name.split(' ').pop()} −14`,do:ev=>{addMod(S.council[ev.a],'You took my side',14);addMod(S.council[ev.b],'You sided against me',-14);return`You backed ${S.council[ev.a].name}.`}},
+   {l:ev=>`Side with ${S.council[ev.b].name.split(' ').pop()}`,s:ev=>`${S.council[ev.b].name.split(' ').pop()} +14 · ${S.council[ev.a].name.split(' ').pop()} −14`,do:ev=>{addMod(S.council[ev.b],'You took my side',14);addMod(S.council[ev.a],'You sided against me',-14);return`You backed ${S.council[ev.b].name}.`}},
+   {l:()=>'Broker a truce',s:()=>'Uses a meeting · Diplomacy decides it · success makes them allies',need:()=>S.slots>0,do:ev=>{S.slots--;gainXP('dip',8);const ok=Math.random()<0.25+mskill('dip')*0.03;if(ok){setRel(ev.a,ev.b,null);addMod(S.council[ev.a],'Brokered a truce',6);addMod(S.council[ev.b],'Brokered a truce',6);return'They shook hands in your office. The feud is over.'}addMod(S.council[ev.a],'Meddled in my business',-3);addMod(S.council[ev.b],'Meddled in my business',-3);return'The truce talks fell apart. Both resent the meddling.'}}],
+  ignore:ev=>{addMod(S.council[ev.a],'You stayed out of it',-2);addMod(S.council[ev.b],'You stayed out of it',-2)}},
+ pact:{w:2,title:ev=>`Voting pact: ${S.council[ev.a].name.split(' ').pop()} and ${S.council[ev.b].name.split(' ').pop()}`,
+  gen(){const C=S.council;const free=[];for(let a=0;a<C.length;a++)for(let b=a+1;b<C.length;b++)if(!relOf(a,b)&&relList(a,'ally').length<2&&relList(b,'ally').length<2&&Math.abs(C[a].opinion-C[b].opinion)<25)free.push([a,b]);if(!free.length)return null;const[a,b]=free[Math.floor(Math.random()*free.length)];return{a,b,at:'cityhall'}},
+  body:ev=>{const A=S.council[ev.a],B=S.council[ev.b];return`${A.name} and ${B.name} have started voting together and trading support for each other's district projects. A two-member bloc can swing a close vote.`},
+  who:ev=>[['char',ev.a],['char',ev.b]],
+  choices:[{l:()=>'Court them both',s:ev=>`Uses a meeting · both +8 · they become allies`,need:()=>S.slots>0,do:ev=>{S.slots--;setRel(ev.a,ev.b,'ally');addMod(S.council[ev.a],'Mayor courted our bloc',8);addMod(S.council[ev.b],'Mayor courted our bloc',8);gainXP('dip',5);return'They left your office as allies, and friendlier to you.'}},
+   {l:()=>'Let it happen',s:()=>'They become allies',do:ev=>{setRel(ev.a,ev.b,'ally');return'The new bloc forms on its own.'}},
+   {l:()=>'Quietly split them up',s:()=>'Intrigue decides it · success makes them rivals · failure: both −8',do:ev=>{gainXP('intr',8);if(Math.random()<0.25+mskill('intr')*0.035){setRel(ev.a,ev.b,'rival');return'A few well-placed words, and the pact collapsed into a grudge.'}addMod(S.council[ev.a],'Tried to split our pact',-8);addMod(S.council[ev.b],'Tried to split our pact',-8);setRel(ev.a,ev.b,'ally');return'They found out what you were doing. The pact holds, and both are angry.'}}],
+  ignore:ev=>{setRel(ev.a,ev.b,'ally')}},
+ poach:{w:3,title:ev=>`${S.rival?S.rival.name.split(' ').pop():'Your opponent'} is courting ${S.council[ev.a].name.split(' ').pop()}`,
+  gen(){if(!S.rival||monthsToElection()>12||monthsToElection()<0)return null;const C=S.council.map((m,k)=>({m,k})).filter(x=>x.k!==S.rival.k&&Math.abs(x.m.opinion)<30);if(!C.length)return null;const x=C[Math.floor(Math.random()*C.length)];return{a:x.k,at:'cityhall'}},
+  body:ev=>`${S.rival.name} took ${S.council[ev.a].name} to lunch and asked for an endorsement. ${S.council[ev.a].name.split(' ')[0]} hasn't said yes yet.`,
+  who:ev=>[['char',ev.a],['char',S.rival.k]],
+  choices:[{l:()=>'Fund a project in their district',s:()=>'$1.0M reserve · they +12 and owe you a favor · frugal members −3',need:()=>S.reserve>=6,do:ev=>{const m=S.council[ev.a];S.reserve-=1;addMod(m,'Mayor delivered for my district',12);m.favors=(m.favors||0)+1;S.council.forEach(o=>{if(o!==m&&has(o,'frugal'))addMod(o,'Pork-barrel spending',-3)});return`${m.name} stays with you, and owes you one.`}},
+   {l:()=>'Remind them who has the votes',s:()=>'Intrigue decides it · works: +4 · fails: −10',do:ev=>{const m=S.council[ev.a];gainXP('intr',6);if(Math.random()<0.3+mskill('intr')*0.03){addMod(m,'Knows where power is',4);return`${m.name} decided not to cross you.`}addMod(m,'Mayor threatened me',-10);return`${m.name} didn't like being leaned on.`}},
+   {l:()=>'Let it go',s:()=>'They −8 · their allies −3',do:ev=>{charLost(ev.a);return`${S.council[ev.a].name} is leaning toward your opponent.`}}],
+  ignore:ev=>charLost(ev.a)},
+ endorse:{w:2,title:ev=>`${S.council[ev.a].name.split(' ').pop()} asks for your endorsement`,
+  gen(){if(monthsToElection()>9||monthsToElection()<1)return null;S.endorsed=S.endorsed||{};const C=S.council.map((m,k)=>({m,k})).filter(x=>!x.m.limited&&!S.endorsed[x.k]&&(!S.rival||x.k!==S.rival.k)&&x.m.opinion>-15);if(!C.length)return null;const x=C[Math.floor(Math.random()*C.length)];return{a:x.k,at:'cityhall'}},
+  body:ev=>{const m=S.council[ev.a],d=homeOf(m);return`${m.name} is up for re-election too and wants your name on their mailers. Your approval in District ${d} is ${Math.round(dApp(d))}%.${dApp(d)<45?' Being tied to you might not help them, and their opponent will say so.':''}`},
+  who:ev=>[['char',ev.a]],
+  choices:[{l:()=>'Endorse them',s:ev=>`They +18 and owe you a favor · their rivals −8`,do:ev=>{const m=S.council[ev.a];S.endorsed=S.endorsed||{};S.endorsed[ev.a]=true;addMod(m,'Mayor endorsed me',18);m.favors=(m.favors||0)+1;relList(ev.a,'rival').forEach(k=>addMod(S.council[k],`Endorsed my rival ${m.name}`,-8));return`You endorsed ${m.name}.`}},
+   {l:()=>'Stay neutral',s:()=>'They −8',do:ev=>{S.endorsed=S.endorsed||{};S.endorsed[ev.a]='no';addMod(S.council[ev.a],'Refused to endorse me',-8);return'You stayed out of their race.'}}],
+  ignore:ev=>{addMod(S.council[ev.a],'Ignored my endorsement request',-6)}},
+ ask:{w:4,title:ev=>`${staffOf(ev.sid).name.split(' ').pop()} ${STAFF_ASKS[ev.sid].t}`,
+  gen(){const ids=Object.keys(STAFF_ASKS).filter(id=>!(S.asked||{})[id]||nowM()-S.asked[id]>=8);if(!ids.length)return null;const id=ids[Math.floor(Math.random()*ids.length)];S.asked=S.asked||{};S.asked[id]=nowM();return{sid:id,at:STAFF_AT[id]||'cityhall'}},
+  body:ev=>{const s=staffOf(ev.sid),A=STAFF_ASKS[ev.sid];return`Your ${STAFFMAP[ev.sid].role.toLowerCase()}, ${s.name}, ${A.t}. ${A.d}`},
+  who:ev=>[['staff',ev.sid]],
+  choices:[{l:()=>'Approve it',s:ev=>{const A=STAFF_ASKS[ev.sid];return`${A.cost>0?fmtM(-A.cost)+' reserve · ':A.cost<0?'+'+fmtM(-A.cost)+' reserve · ':''}${A.slot?'Uses a meeting · ':''}${staffOf(ev.sid).name.split(' ').pop()} +15`},need:ev=>{const A=STAFF_ASKS[ev.sid];return(!A.slot||S.slots>0)&&S.reserve-Math.max(0,A.cost)>=5},do:ev=>{const A=STAFF_ASKS[ev.sid];if(A.slot)S.slots--;S.reserve-=A.cost;A.fx();addMod(staffOf(ev.sid),'You backed my request',15);return A.ok}},
+   {l:()=>'Turn it down',s:ev=>`${staffOf(ev.sid).name.split(' ').pop()} −12`,do:ev=>{addMod(staffOf(ev.sid),'You turned me down',-12);return`You said no to ${staffOf(ev.sid).name}.`}}],
+  ignore:ev=>addMod(staffOf(ev.sid),'You never answered me',-15)},
+ scandal:{w:2,title:ev=>`Trouble for ${ev.k==='staff'?staffOf(ev.sid).name:S.council[ev.a].name}`,
+  gen(){const pick=SCANDALS[Math.floor(Math.random()*SCANDALS.length)];if(Math.random()<0.6){const ids=STAFF_DEF.map(d=>d.id);const id=ids[Math.floor(Math.random()*ids.length)];return{k:'staff',sid:id,what:pick,at:STAFF_AT[id]||'cityhall'}}
+    const C=S.council.map((m,k)=>({m,k})).filter(x=>x.m.opinion>=0);if(!C.length)return null;const x=C[Math.floor(Math.random()*C.length)];return{k:'char',a:x.k,what:pick,at:'cityhall'}},
+  body:ev=>ev.k==='staff'?`The Commercial Appeal is reporting on ${ev.what} involving ${staffOf(ev.sid).name}, your ${STAFFMAP[ev.sid].role.toLowerCase()}. Reporters want to know if you stand by them.`:`Reporters are digging into ${ev.what} involving ${S.council[ev.a].name}, one of your friendlier votes on the council. You're being asked whether you still work with them.`,
+  who:ev=>ev.k==='staff'?[['staff',ev.sid]]:[['char',ev.a]],
+  choices:[{l:()=>'Stand by them',s:ev=>`They +20 · public mood ▼${ev.k==='char'?' · reformers −4':''}`,do:ev=>{if(ev.k==='staff')addMod(staffOf(ev.sid),'Stood by me',20);else{addMod(S.council[ev.a],'Stood by me',20);S.council.forEach(o=>{if(has(o,'reformer'))addMod(o,'Covered for a colleague',-4)})}S.mood-=1.2;addRecord({t:`Stood by ${ev.k==='staff'?staffOf(ev.sid).name:S.council[ev.a].name} during ${ev.what}`,good:[],bad:['young'],kind:'char',camp:{d:-0.4,t:`Your opponent asks why you defended ${ev.k==='staff'?staffOf(ev.sid).name:S.council[ev.a].name}.`}});return'You stood by them. Some voters wonder why.'}},
+   {l:ev=>ev.k==='staff'?'Order an independent review':'Keep your distance until it\'s settled',s:ev=>ev.k==='staff'?'$0.15M · cleared: they +10, mood ▲ · not cleared: they resign':'They −10 · public mood ▲',do:ev=>{if(ev.k==='staff'){S.reserve-=0.15;if(Math.random()<0.6){addMod(staffOf(ev.sid),'Cleared by the review',10);S.mood+=0.5;return'The review cleared them.'}const n=staffOf(ev.sid).name;replaceStaff(ev.sid,true);S.mood+=0.3;return`The review found problems. ${n} resigned.`}addMod(S.council[ev.a],'Kept me at arm\'s length',-10);S.mood+=0.5;return'You kept your distance.'}},
+   {l:ev=>ev.k==='staff'?'Ask them to resign':'Call for them to step down',s:ev=>ev.k==='staff'?'Replace them now · reformers +3':'They −30 · their allies −6 · reformers +6 · mood ▲',do:ev=>{S.council.forEach(o=>{if(has(o,'reformer'))addMod(o,'Cleaned house',ev.k==='staff'?3:6)});if(ev.k==='staff'){const n=staffOf(ev.sid).name;replaceStaff(ev.sid,false);return`${n} is out.`}const m=S.council[ev.a];addMod(m,'Called for my resignation',-30);relList(ev.a,'ally').forEach(k=>addMod(S.council[k],`Turned on my ally ${m.name}`,-6));S.mood+=1;return`You called on ${m.name} to step down. They won't.`}}],
+  ignore:ev=>{S.mood-=1.2;addRecord({t:`Said nothing about ${ev.what}`,kind:'char',bad:[],camp:{d:-0.4,t:`Your opponent says you dodged questions about ${ev.what}.`}})}},
+ scheme:{w:0,title:ev=>`${staffOf(ev.sid).name} is building support for a run`,
+  body:ev=>{const s=staffOf(ev.sid);return`Your chief of staff hears that ${s.name}, your ${STAFFMAP[ev.sid].role.toLowerCase()}, has been meeting donors and council members on the city's dime. If this keeps up, they'll quit and take their backers to your opponent.`},
+  who:ev=>[['staff',ev.sid],['staff','cos']],
+  choices:[{l:()=>'Confront them',s:()=>'Their plans reset · they −10 · may quit',do:ev=>{const s=staffOf(ev.sid);addMod(s,'You confronted me',-10);if(S.scheme)S.scheme.prog=0;if(Math.random()<0.3){replaceStaff(ev.sid,true);S.scheme=null;return`${s.name} denied everything and resigned the next day.`}return`${s.name} denied it. The meetings stopped, for now.`}},
+   {l:()=>'Give them a bigger role',s:()=>'They +18 · their plans slow down',do:ev=>{addMod(staffOf(ev.sid),'Promoted to a bigger role',18);if(S.scheme)S.scheme.prog=Math.max(0,S.scheme.prog-35);return'They seem satisfied. For now.'}},
+   {l:()=>'Replace them now',s:()=>'Appoint someone new · public mood dips',do:ev=>{const n=staffOf(ev.sid).name;replaceStaff(ev.sid,false);S.scheme=null;return`${n} is gone before they could make their move.`}}],
+  ignore:ev=>{if(S.scheme)S.scheme.prog+=10}}};
+const STAFF_AT={police:'mpd',fire:'fire',mlgw:'mlgw',pw:'pw',mata:'mata',edge:'cityhall',cfo:'cityhall',hcd:'cityhall',press:'cityhall',cos:'cityhall'};
+function charLost(a){const m=S.council[a];if(S.rival&&S.rival.camp&&monthsToElection()<=6){S.rival.camp.cash+=25;addRecord({t:`${m.name} endorsed your opponent`,kind:'char',bad:[],camp:{d:-0.3,t:`Councilmember ${m.name} appears in your opponent's ads.`}})}addMod(m,`${S.rival?S.rival.name.split(' ').pop():'Your opponent'} made a better pitch`,-8);relList(a,'ally').forEach(k=>addMod(S.council[k],`Ally ${m.name.split(' ').pop()} drifted away from you`,-3))}
+function queueChar(spec,report){const T=CHAR_TYPES[spec.type];const ev={kind:'char',at:'cityhall',...spec,born:nowM(),expires:2,id:'char_'+spec.type+'_'+Math.floor(Math.random()*1e6)};S.queue=S.queue||[];S.queue.push({ev,due:Math.min(daysIn(S.y,S.m),S.day+2+Math.floor(Math.random()*12))})}
+function charLifeMonth(report){relInit();schemeTick(report);const open=S.events.filter(e=>e.kind==='char').length+(S.queue||[]).filter(q=>q.ev.kind==='char').length;if(open>=2)return;
+  const n=Math.random()<0.65?(Math.random()<0.25?2:1):0;for(let i=0;i<n;i++){const pool=Object.entries(CHAR_TYPES).filter(([k,T])=>T.w>0);let tot=pool.reduce((a,[,T])=>a+T.w,0),r=Math.random()*tot;let pick=pool[0];for(const p of pool){r-=p[1].w;if(r<=0){pick=p;break}}
+    const spec=pick[1].gen();if(spec)queueChar({type:pick[0],...spec},report)}}
+function charWho(kind,id){if(kind==='staff'){const s=staffOf(id);return{who:s,role:STAFFMAP[id].role,attr:`data-staff="${id}"`,o:staffOpinion(s)}}const m=S.council[id];recompute(m);return{who:m,role:m.seat+(S.rival&&S.rival.k===+id?' · your opponent':''),attr:`data-char="${id}"`,o:m.opinion}}
+function charEventCard(ev,idx){const T=CHAR_TYPES[ev.type];if(!T)return'';const left=ev.expires-(nowM()-ev.born);
+  const faces=T.who(ev).map(([k,id])=>{const w=charWho(k,id);return`<div class="evwho"><button class="ptbtn" ${w.attr}>${portrait(w.who,60)}</button><div class="evwho-n"><b>${w.who.name}</b><small>${w.role}</small><small style="color:${opColor(w.o)}">Opinion ${fmtOp(w.o)}</small></div></div>`}).join('');
+  return`<div class="card char-ev"><div class="storytag">♟ People</div><div class="evfaces">${faces}</div><div class="ttl">${T.title(ev)}</div><div class="due">${left<=1?'Respond this month':`Respond within ${left} months`}</div>
+   <p>${T.body(ev)}</p><div class="choices">${T.choices.map((c,ci)=>{const ok=!c.need||c.need(ev);return`<button class="choice" data-ev="${idx}" data-ci="${ci}" ${ok?'':'disabled'}><b>${c.l(ev)}</b><small>${c.s(ev)}${ok?'':' · not possible right now'}</small></button>`}).join('')}</div></div>`}
+function resolveChar(ev,ci){const T=CHAR_TYPES[ev.type],c=T&&T.choices[ci];if(!c||(c.need&&!c.need(ev)))return'';const msg=c.do(ev)||'';S.events=S.events.filter(e=>e!==ev);recomputeAll(S);S.approval=cityApproval(S);logIt(`${T.title(ev)}: ${msg}`);save();toast(msg);refreshHUD();return msg}
+
 function openLedger(){const L=S.log||[];openPanel('Everything that has happened, newest first','Ledger',L.length?`<div class="logl">${L.map(x=>`<div><span>${x.d}</span><p style="margin:0">${x.t}</p></div>`).join('')}</div>`:'<p class="note">Nothing yet. Start the clock with Space or ▶.</p>','ledger')}
 function openPolicies(){const ks=Object.keys(POLICIES);
   openPanel('Ongoing programs you control','Your initiatives',`<p>Mid-year, these are paid from the reserve fund. In April they go into the budget you send the council.</p>
@@ -3070,7 +3197,7 @@ function election(next){
 function summary(){const M=S.met;return`<div class="facts"><h4>Your record</h4><ul><li>Approval: ${Math.round(S.approval)}%</li><li>Sworn officers: ${Math.round(M.officers).toLocaleString()} (started at 1,917)</li><li>Violent crime index: ${M.crime.toFixed(0)} (started at 88)</li><li>MSCS reading proficiency: ${M.reading.toFixed(1)}% (started at 25.7%)</li><li>Reserve fund: ${fmtM(S.reserve)} (started at $96.0M)</li><li>Property tax: $${S.taxRate.toFixed(2)} (started at $3.39)</li></ul></div>`}
 function showEnd(){openModal('Game over','Your time in office is over',`${summary()}<div class="row"><button class="btn primary" data-act="newgame">Run again</button></div>`)}
 function openHelp(){closePanel();openModal('How to play','Guide',`
-  <div class="facts"><h4>Controls</h4><ul><li>WASD or the arrow keys pan the map; hold Shift to pan faster. Moving the mouse to the edge of the screen scrolls too (turn it off under Layers). You can also drag.</li><li>Scroll or pinch to zoom toward the cursor; Q and Z (or the + and − buttons on the right) zoom too, and Home shows the whole city. F, or the ◉ button, finds your mayor: the gold marker is at City Hall on weekdays, home on weekends, and wherever you go to act.</li><li>Hover any face or name (council members, suburban mayors, your cabinet, your own portrait) for a quick character card with their opinion of you and why. Click for the full page. News comes to you from a person: your cabinet for their departments, the local council member for neighborhood problems, a suburban mayor for regional ones.</li><li>Your cabinet (Cabinet tab) runs the city: chief of staff, police and fire chiefs, finance, public works, housing, economic development, MLGW, MATA and communications. Meet them, praise them or replace them. Unhappy ones leak to reporters; very unhappy ones quit.</li><li>Police stations (★), fire stations (▲) and hospitals (✚) are on the map. Click one to visit, fund equipment or programs, or fix problems there. Turn them off under Layers.</li><li>Scroll or pinch to zoom toward the cursor. Zoomed out you get the political map, with each council district in its own color. Zoom in and the camera tilts down into the 3D city.</li><li>Click a landmark or amber pin to open it. Click a district or precinct when those layers are on.</li><li>Time runs day by day. Space pauses and resumes; + and − (or the pips by the date) set speed 1–5. New business arrives on random days and pauses the game (turn that off under Layers). Each month closes on its last day and goes into the Ledger. N skips to the end of the month. B opens the budget, C the council, O public opinion, L the map layers. Keys 1–7 switch map modes: City, Political, Council opinion, Street condition, MPD precincts, Region, Public opinion.</li><li>Every menu has tabs along the top (Mayor, Opinion, Council, Region, Budget, Programs, Ledger) and a ← Back button that returns to the screen you came from. Backspace also goes back; Esc closes.</li></ul></div>
+  <div class="facts"><h4>Controls</h4><ul><li>WASD or the arrow keys pan the map; hold Shift to pan faster. Moving the mouse to the edge of the screen scrolls too (turn it off under Layers). You can also drag.</li><li>Scroll or pinch to zoom toward the cursor; Q and Z (or the + and − buttons on the right) zoom too, and Home shows the whole city. F, or the ◉ button, finds your mayor: the gold marker is at City Hall on weekdays, home on weekends, and wherever you go to act.</li><li>Hover any face or name (council members, suburban mayors, your cabinet, your own portrait) for a quick character card with their opinion of you and why. Click for the full page. News comes to you from a person: your cabinet for their departments, the local council member for neighborhood problems, a suburban mayor for regional ones.</li><li>People act on their own. Council members have allies and rivals (shown on their cards): allies vote together, so locking in one with a favor or a hook pulls their allies your way, and how an ally feels about you rubs off. Feuds, voting pacts, your opponent courting members, endorsement requests, cabinet requests and scandals arrive as ♟ People events. Ignoring them costs you, and some end up in your opponent's ads. An ambitious cabinet member may quietly build support for their own run; if you don't catch it, they quit and back your opponent.</li><li>Your cabinet (Cabinet tab) runs the city: chief of staff, police and fire chiefs, finance, public works, housing, economic development, MLGW, MATA and communications. Meet them, praise them or replace them. Unhappy ones leak to reporters; very unhappy ones quit.</li><li>Police stations (★), fire stations (▲) and hospitals (✚) are on the map. Click one to visit, fund equipment or programs, or fix problems there. Turn them off under Layers.</li><li>Scroll or pinch to zoom toward the cursor. Zoomed out you get the political map, with each council district in its own color. Zoom in and the camera tilts down into the 3D city.</li><li>Click a landmark or amber pin to open it. Click a district or precinct when those layers are on.</li><li>Time runs day by day. Space pauses and resumes; + and − (or the pips by the date) set speed 1–5. New business arrives on random days and pauses the game (turn that off under Layers). Each month closes on its last day and goes into the Ledger. N skips to the end of the month. B opens the budget, C the council, O public opinion, L the map layers. Keys 1–7 switch map modes: City, Political, Council opinion, Street condition, MPD precincts, Region, Public opinion.</li><li>Every menu has tabs along the top (Mayor, Opinion, Council, Region, Budget, Programs, Ledger) and a ← Back button that returns to the screen you came from. Backspace also goes back; Esc closes.</li></ul></div>
   <div class="facts"><h4>The campaign and your money</h4><p class="note"><a href="#" data-act="moneyintro">Show the three-accounts introduction again</a></p><ul><li>You keep three separate accounts: the city treasury (the reserve fund, for services and projects), your campaign fund (for ads, staff, polls and rallies) and your personal money (your salary).</li><li>Campaign HQ (K): raise money from small donors and major donors (who expect things in return), buy ads that promote your record, defend it or attack your opponent, hire organizers, open field offices, poll the race and ask groups for endorsements. Your opponent raises and spends too.</li><li>Endorsements are decided July to September 2027, debates are September 9 and 23, and Election Day is Thursday, October 7, 2027. The vote comes from each population group's support and turnout, so money amplifies your record but can't replace it.</li><li>Your salary ($170,817 a year; $14,234.75 a month before deductions, about $9,600 after deductions) pays into a personal account. Spend it on optional wardrobe items, or put up to $25,000 into your campaign.</li></ul></div>
   <div class="facts"><h4>Projects, stories and your desk</h4><ul><li>Start a capital project from Actions: repave a poorly rated road, rehab vacant homes in a neighborhood, or renovate a park. It goes to the council, out to bid, then takes months to build, with delays you have to handle. Pay from reserves month by month or borrow with bonds. You'll see each project on the map, and finished roads turn green in the street condition map.</li><li>Some decisions start stories that come back months later: backing a data center deal, ordering hot-spot patrols, or deciding who gets rehabbed homes. How they end goes on your public record, and your opponent uses that record in the election.</li><li>The Mayor's Desk (left side, or press I) gathers urgent decisions, council votes, projects and developing stories. Click any item to go there. Choose what pauses the clock from the full desk.</li></ul></div>
   <div class="facts"><h4>Taking action</h4><ul><li>Press E or click Actions to make your own moves at any time: propose ordinances to the council, sign executive orders, hold town halls in a district, meet with community leaders, hold press conferences and, in election years, rally your supporters.</li><li>Before you send an ordinance, you see a projected vote. Each member weighs their own priorities, their voters, their backers and how they feel about you, so some will vote against what their district wants. Lock in votes with favors and hooks.</li></ul></div>
@@ -3604,6 +3731,6 @@ window.bluffMusicContext = () => {
 window.claude?.hot?.snapshot?.(()=>({S}));
 window.claude?.hot?.ready?window.claude.hot.ready(start):start(window.claude?.hot?.data??{});
 </script>
-<script src="music.js?v=18"></script>
+<script src="music.js?v=19"></script>
 </body>
 </html>
