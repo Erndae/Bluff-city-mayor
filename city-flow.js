@@ -71,7 +71,7 @@
   const tracked={cdoors:'Knocked doors',cmeet:'Met community leaders',cspeak:'Spoke on an issue',poll:'Commissioned a poll',fundraiser:'Held a grassroots fundraiser',ad:'Launched campaign advertising',org:'Changed campaign staffing',office:'Changed a campaign office',seek:'Requested an endorsement',townhall:'Held a town hall',meetgroup:'Met a community group',meet:'Met a council member',exec:'Issued an executive order'};
   window.addEventListener('click',e=>{const b=e.target.closest('[data-act],[data-doors]');if(!b||b.disabled||!S?.started||!BCLife)return;const title=b.hasAttribute('data-doors')?'Knocked doors':tracked[b.dataset.act];if(!title)return;
     const before=BCLife.snapshot(),owner=S,last=S.life?.history?.[0]?.id;
-    setTimeout(()=>{if(S!==owner||S.life?.history?.[0]?.id!==last)return;const after=BCLife.snapshot();if(!changed(before,after))return;BCLife.record(before,title,'Your action is complete. Review the changes below.','campaign',[]);renderDesk();});
+    setTimeout(()=>{if(S!==owner||S.life?.history?.[0]?.id!==last)return;const after=BCLife.snapshot();if(!changed(before,after))return;const routine=['Knocked doors','Met community leaders','Spoke on an issue','Commissioned a poll','Held a grassroots fundraiser','Requested an endorsement','Changed campaign staffing','Changed a campaign office','Held a town hall','Met a community group','Met a council member'].includes(title);if(routine)window.__bcQuiet=true;BCLife.record(before,title,'Your action is complete. Review the changes below.','campaign',[]);renderDesk();});
   },true);
   renderNav();if(S?.started)renderDesk();renderNextChip();
 })(typeof window!=='undefined'?window:globalThis);
