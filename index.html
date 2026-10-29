@@ -392,6 +392,14 @@ button.seat:hover{border-color:var(--amber)}
 #hSlots{display:flex!important;align-items:center;gap:5px;pointer-events:auto;cursor:pointer;font-size:11.5px;color:var(--text);margin-top:2px;white-space:nowrap}#hSlots.empty{color:var(--muted)}
 .pips{display:inline-flex;gap:3px}.pips i{width:8px;height:8px;border-radius:50%;border:1.5px solid var(--amber);display:inline-block}.pips i.on{background:var(--amber)}.pips.big i{width:16px;height:16px}
 .bankbig{display:flex;align-items:center;gap:12px}.bankbig small{display:block;color:var(--muted)}.bankrow{grid-template-columns:minmax(0,1fr) auto!important;padding:7px 0!important;border-bottom:1px solid var(--line)!important}.bankrow small{display:block}
+#mgrpop{position:fixed;left:316px;bottom:78px;width:min(420px,calc(100vw - 340px));z-index:45;background:#13202c;border:1px solid #5aa7d8;border-radius:12px;padding:12px 14px;box-shadow:0 12px 34px rgba(0,0,0,.55);color:var(--text);max-height:calc(100vh - 180px);overflow:auto}
+#mgrpop[hidden]{display:none}#mgrpop.in{animation:mpIn .35s ease-out}@keyframes mpIn{from{transform:translateY(24px);opacity:0}to{transform:none;opacity:1}}
+.mp-top{display:flex;gap:10px;align-items:flex-start}.mp-top .pt{flex:none;border-radius:8px}.mp-who{flex:1;min-width:0}.mp-who small{display:block;color:#5aa7d8;font-size:12px}.mp-who b{display:block;font-size:17px;line-height:1.2;margin:2px 0}.mp-phase{font-family:var(--f-label);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--amber)}
+.mp-x{background:none;border:0;color:var(--muted);font-size:22px;cursor:pointer;line-height:1}.mp-say{margin:10px 0;font-size:14.5px;line-height:1.45;font-style:italic}
+.mp-moves{display:grid;gap:6px}.mp-move{text-align:left;background:rgba(90,167,216,.08);border:1px solid rgba(90,167,216,.35);border-radius:8px;padding:8px 10px;color:var(--text);cursor:pointer;font:inherit}.mp-move b{display:block;font-size:14.5px}.mp-move small{display:block;color:var(--muted);font-size:12.5px;margin-top:2px}.mp-move:hover{border-color:#8cc8ef}
+.mp-foot{display:flex;gap:8px;justify-content:flex-end;margin-top:10px}
+#mgrface{position:absolute;right:16px;top:300px;z-index:4;display:flex;align-items:center;gap:8px;background:rgba(13,24,34,.94);border:1px solid #5aa7d8;border-radius:30px;padding:3px 12px 3px 3px;color:var(--text);cursor:pointer;font:600 13px var(--f-body);box-shadow:0 2px 8px rgba(0,0,0,.4)}#mgrface[hidden]{display:none}#mgrface .pt{border-radius:50%;width:40px;height:40px;object-fit:cover}
+@media (max-width:860px){#mgrpop{left:10px;right:10px;width:auto;bottom:calc(140px + env(safe-area-inset-bottom,0px));max-height:62vh}#mgrface{top:auto;bottom:calc(150px + env(safe-area-inset-bottom,0px));right:10px;padding:3px}#mgrface span{display:none}}
 #hovercard.touch{left:12px!important;right:12px!important;top:auto!important;bottom:calc(84px + env(safe-area-inset-bottom,0px))!important;width:auto!important;pointer-events:auto}
 .navrow.more-r{-webkit-mask-image:linear-gradient(90deg,#000 85%,transparent);mask-image:linear-gradient(90deg,#000 85%,transparent)}
 .navrow.more-l.more-r{-webkit-mask-image:linear-gradient(90deg,transparent,#000 10%,#000 85%,transparent);mask-image:linear-gradient(90deg,transparent,#000 10%,#000 85%,transparent)}
@@ -4683,6 +4691,72 @@ openBank=navWrap('openBank',openBank);
 document.addEventListener('click',e=>{const b=e.target.closest('[data-bank],#hSlots');if(!b||!S)return;e.preventDefault();e.stopImmediatePropagation();if(b.id==='hSlots'){openBank();return}const f=BANK_GO[+b.dataset.bank];if(modalOpen){onClose=null;closeModal()}try{f&&f()}catch(err){}},true);
 {const _uc=updateClock;updateClock=function(){_uc();try{renderBank()}catch(e){}}}
 {const _rh=refreshHUD;refreshHUD=function(...a){const r=_rh.apply(this,a);try{const h=document.querySelector('#deskTitle');if(h&&S)h.firstChild.textContent=deskName()+' '}catch(e){}return r}}
+// ======================= THE CAMPAIGN MANAGER STEPS IN =======================
+// Your manager reads the race and pops up with a winning strategy: where you stand, what phase the race is in, and the
+// two or three moves that matter most right now, in their own voice. They check in every two weeks, after every poll,
+// when the opponent attacks, when your numbers slip, and before the debates. Tap their face any time to ask.
+function campPhase(){const mo=monthsToElection();return mo>8?{id:'early',n:'Early race',d:'Get known and build a war chest.'}:mo>4?{id:'mid',n:'Middle of the race',d:'Win over groups and lock in endorsements.'}:mo>1?{id:'late',n:'Final stretch',d:'Ads, field offices and the debates.'}:{id:'gotv',n:'Get out the vote',d:'Make sure your supporters show up.'}}
+function campStanding(){const C=S.camp||{};const lp=(C.polls||[]).slice(-1)[0];const sup=Math.round(S.approval);
+  if(lp){const them=Math.round(100-lp.you-lp.und);return{you:lp.you,them,und:lp.und,lead:lp.you-them,src:`your last poll (${lp.when})`}}
+  return{you:sup,them:null,lead:isCand()?sup-50:sup-50,src:'our own read (no poll yet)'}}
+function weakGroup(){return GROUPS.slice().filter(g=>S.groups[g.id]).sort((a,b)=>b.share*(55-S.groups[b.id].app)-a.share*(55-S.groups[a.id].app))[0]}
+function topIssue(g){return Object.entries(g.w).sort((a,b)=>b[1]-a[1])[0][0]}
+function campStrategy(){const m=curMgr();if(!m||!S.camp)return null;const C=S.camp,ph=campPhase(),st=campStanding(),mo=monthsToElection(),cand=isCand();const moves=[];
+  const add=(pri,t,why,go,tag)=>moves.push({pri:pri+(m.focus.test(t+' '+why)?10:0),t,why,go,tag});
+  const wg=weakGroup(),iss=wg?topIssue(wg):'jobs';let wd=null,wv=999;for(let d=1;d<=7;d++){if(cdLeft('kd'+d,2))continue;const v=dApp(d);if(v<wv){wv=v;wd=d}}
+  const closeD=[1,2,3,4,5,6,7].filter(d=>districtCloseness(d)>=0.7&&!C.offices[d]);const sl=S.slots>0;
+  if(cand&&S.cand&&S.cand.rec<0.55)add(70,'Get your name out','Only about '+Math.round(S.cand.rec*100)+'% of voters know who you are. Nobody votes for a stranger.',()=>openHQ(),'rec');
+  if(!(C.polls||[]).length||nowM()-((C.polls||[]).slice(-1)[0].m||0)>=3)add(55,'Run a poll','We\'re flying blind. A poll tells us which groups and districts to work.',()=>openHQ());
+  if(sl&&wd)add(ph.id==='early'||ph.id==='mid'?62:58,`Knock doors in District ${wd}`,`It's our weakest district right now (${Math.round(wv)}%).`,()=>openHQ());
+  if(wg&&sl&&(cand?!cdLeft('cg'+wg.id,3):true))add(60,`Win over ${wg.n.toLowerCase()}`,`They're ${Math.round(S.groups[wg.id].app)}% with us and they're ${wg.share}% of the city. They care most about ${PRIO_LABEL[iss].toLowerCase()}.`,()=>cand?openActions():openGroup(wg.id));
+  if(cand&&!cdLeft('cspeak',1))add(57,`Speak out on ${PRIO_LABEL[iss].toLowerCase()}`,`It's what ${wg?wg.n.toLowerCase():'the voters we need'} care about most.`,()=>openActions());
+  if(sl&&(!cdLeft('fr_small',1)||!cdLeft('fr_big',2))&&(C.cash<(ph.id==='late'?150:250)))add(ph.id==='early'?66:52,'Raise money now',`We have $${Math.round(C.cash)}K. We'll want about $${ph.id==='late'?150:250}K for ads in the final months.`,()=>openHQ());
+  if(S.m<7&&ph.id!=='early'&&sl&&Object.keys(C.seek||{}).length<3)add(63,'Ask for endorsements before July','Endorsements are decided July to September. Ask the groups closest to us now.',()=>openHQ());
+  if((ph.id==='late'||ph.id==='gotv')&&C.cash>=50)add(75,'Put ads on the air','This is when ads count most. Run our strongest message, and answer their attacks.',()=>openHQ());
+  if(S.rival&&S.rival.camp&&S.rival.camp.attack&&(S.rival.camp.ads||0)>0&&(ph.id==='late'||ph.id==='gotv'))add(68,'Answer their attack','They\'re hitting us on: '+S.rival.camp.attack.t+' A defense ad blunts it.',()=>openHQ());
+  if((ph.id==='late')&&closeD.length&&C.cash>=40)add(64,`Open an office in District ${closeD[0]}`,`It's a close race there. An office pays off most where it's tight.`,()=>openHQ());
+  if((ph.id==='late'||ph.id==='gotv')&&C.organizers<3&&C.cash>=30)add(60,'Hire field organizers','They turn our supporters into voters, especially renters and young people.',()=>openHQ());
+  if(S.m>=7&&S.m<=9&&mo<=4&&(C.prep||0)<3&&sl)add(66,'Practice for the debates','The debates are in September. Every practice widens your margin for error.',()=>openHQ());
+  if(S.m===9&&[1,2].some(n=>!(C.debates||{})[n]||!C.debates[n].done))add(80,'Debate night is coming','Pick answers that fit the question and nail the delivery.',()=>openHQ());
+  moves.sort((a,b)=>b.pri-a.pri);
+  const lead=st.lead,them=S.rival?S.rival.name.split(' ').pop():'the other side';
+  const read=st.them!=null?(lead>=4?`We're up ${lead.toFixed(0)} on ${them} in ${st.src}. Don't coast.`:lead>=0?`We're barely ahead of ${them} in ${st.src}. It's a coin flip.`:lead>-6?`We're down ${Math.abs(lead).toFixed(0)} to ${them} in ${st.src}. Very winnable.`:`We're down ${Math.abs(lead).toFixed(0)} to ${them} in ${st.src}. We need to change the race.`)
+    :(cand?`You're at about ${st.you}% support. ${st.you<40?'We have ground to make up.':'We\'re in this.'}`:`Your approval is ${st.you}%. ${st.you>=55?'That\'s a strong place to run from.':st.you>=48?'That\'s a toss-up re-election.':'Re-election is in danger.'}`);
+  const style={money:'Money buys the airwaves. ',field:'We win this on porches. ',media:'Know the numbers, tell the story. ',coalition:'Bring the community with us. ',debate:'Win the argument. '}[m.id]||'';
+  return{m,ph,read,style,moves:moves.slice(0,3),mo:Math.round(mo)}}
+// the pop-up
+let MGR_GO=[];
+function mgrPop(reason,opts){opts=opts||{};if(S&&S.started&&(modalOpen||TUT||document.querySelector('dialog[open]'))){const tries=(opts.tries||0)+1;if(tries<40)setTimeout(()=>mgrPop(reason,{...opts,tries}),1500);return}const P=campStrategy();if(!P||!S.started)return;MGR_GO=P.moves.map(x=>x.go);let el=$('mgrpop');if(!el){el=document.createElement('div');el.id='mgrpop';el.setAttribute('role','dialog');document.body.appendChild(el)}
+  const days=Math.max(0,Math.round(daysToElection()));
+  el.innerHTML=`<div class="mp-top">${mgrFace(P.m,58)}<div class="mp-who"><small>${P.m.name} · your campaign manager</small><b>${reason||'Here\'s the plan'}</b><span class="mp-phase">${P.ph.n} · ${days} days to Election Day</span></div><button class="mp-x" data-mgrpop="x" aria-label="Close">×</button></div>
+   <p class="mp-say">“${P.read} ${P.style}${P.ph.d}”</p>
+   <div class="mp-moves">${P.moves.map((x,i)=>`<button class="mp-move" data-mgrgo="${i}"><b>${i+1}. ${x.t}</b><small>${x.why}</small></button>`).join('')||'<p class="note">Nothing urgent. Keep the clock running and I\'ll check back.</p>'}</div>
+   <div class="mp-foot"><button class="btn" data-mgrpop="x">Got it</button><button class="btn" data-act="hq">Campaign HQ</button></div>`;
+  el.hidden=false;el.classList.remove('in');void el.offsetWidth;el.classList.add('in');try{sfx('open')}catch(e){}
+  S.mgrLast=nowM()*40+S.day;if(opts.pause){S.paused=true;try{updateClock()}catch(e){}}}
+function mgrPopClose(){const el=$('mgrpop');if(el)el.hidden=true}
+document.addEventListener('click',e=>{const b=e.target.closest('[data-mgrpop],[data-mgrgo],#mgrface');if(!b)return;e.preventDefault();e.stopImmediatePropagation();
+  if(b.id==='mgrface'){if(!$('mgrpop')||$('mgrpop').hidden)mgrPop('What I\'d do right now');else mgrPopClose();return}
+  if(b.dataset.mgrpop==='x'){mgrPopClose();return}const f=MGR_GO[+b.dataset.mgrgo];mgrPopClose();try{if(modalOpen){onClose=null;closeModal()}closePanel();f&&f()}catch(err){}},true);
+document.addEventListener('click',e=>{const b=e.target.closest('#mgrpop [data-act="hq"]');if(b)setTimeout(mgrPopClose,0)});
+// a face on screen you can tap any time
+function renderMgrFace(){let f=$('mgrface');const m=curMgr();const show=!!(m&&S&&S.started&&$('start').hidden&&S.camp);if(!f){f=document.createElement('button');f.id='mgrface';f.setAttribute('aria-label','Ask your campaign manager');$('app').appendChild(f)}
+  f.hidden=!show;if(show&&f._id!==m.id){f._id=m.id;f.innerHTML=`${mgrFace(m,40)}<span>Ask ${m.name.split(' ')[0]==='Rev.'?'Rev. Booker':m.name.split(' ')[0]}</span>`}}
+{const _rh=refreshHUD;refreshHUD=function(...a){const r=_rh.apply(this,a);try{renderMgrFace()}catch(e){}return r}}
+// when they step in
+{const _hm=hireMgr;hireMgr=function(id){_hm(id);setTimeout(()=>{if(S.promises){S.mgrIntro=1;mgrPop('Here\'s how we win')}},900)}}
+{const _ad=advisorDaily;advisorDaily=function(){_ad();if(!S||!curMgr()||!S.camp)return;const sinceDays=(nowM()*40+S.day)-(S.mgrLast||0);
+  // every two weeks, on the 1st and the 15th
+  if((S.day===1||S.day===15)&&sinceDays>=10){mgrPop(S.day===1?`${MONTHS_L[S.m-1]} plan`:'Mid-month check-in');return}
+  // the slide: support fell 2+ points since the last check
+  const sup=S.approval;if(S.mgrSup!=null&&sup<=S.mgrSup-2&&sinceDays>=5){S.mgrSup=sup;mgrPop('We\'re slipping. Here\'s the fix',{pause:true});return}if(S.mgrSup==null||sinceDays>=14)S.mgrSup=sup;
+  // debate week
+  if(S.m===9&&(S.day===DEBATE_DAYS[0]-5||S.day===DEBATE_DAYS[1]-5))mgrPop('Debate in five days',{pause:true})}}
+{const _rp=runPoll;runPoll=function(kind){const n=((S.camp||{}).polls||[]).length;_rp(kind);if(curMgr()&&((S.camp||{}).polls||[]).length>n)setTimeout(()=>mgrPop('What the poll tells us'),400)}}
+// the opponent's attack ads
+{const _rm=rivalMonth;rivalMonth=function(report){const a0=S.rival&&S.rival.camp?S.rival.camp.ads||0:0;_rm(report);const a1=S.rival&&S.rival.camp?S.rival.camp.ads||0:0;if(curMgr()&&a1>a0&&S.mgrAtk!==nowM()){S.mgrAtk=nowM();setTimeout(()=>mgrPop(`${S.rival.name.split(' ').pop()} is on the air. Here's our answer`,{pause:true}),600)}}}
+
+{const _cp2=choosePromises;choosePromises=function(ids){_cp2(ids);if(curMgr()&&!S.mgrIntro){S.mgrIntro=1;setTimeout(()=>{if(S&&S.started)mgrPop('Here\'s how we win')},1200)}}}
 function openLedger(){const L=S.log||[];openPanel('Everything that has happened, newest first','Ledger',L.length?`<div class="logl">${L.map(x=>`<div><span>${x.d}</span><p style="margin:0">${x.t}</p></div>`).join('')}</div>`:'<p class="note">Nothing yet. Start the clock with Space or ▶.</p>','ledger')}
 function openPolicies(){const ks=Object.keys(POLICIES);
   openPanel('Ongoing programs you control','Your initiatives',`<p>Mid-year, these are paid from the reserve fund. In April they go into the budget you send the council.</p>
