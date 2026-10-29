@@ -67,11 +67,18 @@ window.BCBuildings = (() => {
     // Facade decoration is optional: failure leaves the clickable footprints intact.
     try {
       const r=await fetch('data/building-details.json?v=25.5');if(!r.ok)throw new Error(r.status);
-      map.addSource('building-details',{type:'geojson',data:await r.json(),tolerance:0});
+      map.addSource('building-details',{type:'geojson',data:await r.json().then(d=>{d.features.forEach((f,i)=>f.properties.lightGroup=i%7);return d}),tolerance:0});
       map.addLayer({id:'places-windows',type:'fill-extrusion',source:'building-details',minzoom:15.2,paint:{'fill-extrusion-color':['get','color'],'fill-extrusion-base':['get','base'],'fill-extrusion-height':['get','top'],'fill-extrusion-opacity':1}});
       sync();
     }catch(e){console.warn('Facade details unavailable',e);}
   }
+  function animate(time){
+    if(!allowed()||!map.getLayer('places-windows')||state()?.paused)return;
+    const mix=(a,b,t)=>Math.round(a+(b-a)*t),colors=[];
+    for(let i=0;i<7;i++){const t=.5+.5*Math.sin(time*.18+i*1.7);colors.push('rgb('+mix(75,255,t)+','+mix(108,225,t)+','+mix(119,160,t)+')');}
+    // Only the lit window panes change; doors, signs and facade colors stay intact.
+    map.setPaintProperty('places-windows','fill-extrusion-color',['case',['==',['get','color'],'#ffe1a0'],['match',['get','lightGroup'],0,colors[0],1,colors[1],2,colors[2],3,colors[3],4,colors[4],5,colors[5],colors[6]],['get','color']]);
+  }
   function conditions(values){for(const [key,v] of Object.entries(values))for(const f of byKey.get(key)||[])for(const [prop,value] of Object.entries(v))set(f.id,prop,value);}
-  return {prepare,isSuperseded,isNamed:(layer,index)=>namedIds.has(`${layer}:${index}`),install,sync,hit,hover,click,select,conditions};
+  return {prepare,isSuperseded,isNamed:(layer,index)=>namedIds.has(`${layer}:${index}`),install,sync,animate,hit,hover,click,select,conditions};
 })();

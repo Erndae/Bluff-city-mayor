@@ -19,13 +19,14 @@ assert.equal(new Set(data.superseded).size,data.superseded.length);
 // multi-building selection, location actions and disabled/political map modes.
 (async()=>{
  const sources=new Map(),layers=new Map(),states=new Map(),visits=[],requests=[];
- let target,anchors;
+ let target,anchors,paintUpdates=[];
  const state={layers:{bld:true,civic:true},mode:'real'};
- const map={addSource:(id,v)=>sources.set(id,v),getSource:id=>sources.get(id),addLayer:l=>layers.set(l.id,l),getLayer:id=>layers.get(id),setFeatureState:(f,v)=>states.set(f.id,{...states.get(f.id),...v}),setLayoutProperty:(id,k,v)=>{layers.get(id).layout={...layers.get(id).layout,[k]:v}},setFilter:(id,f)=>{layers.get(id).filter=f},queryRenderedFeatures:()=>target?[target]:[]};
+ const map={setPaintProperty:(id,key,value)=>paintUpdates.push({id,key,value}),addSource:(id,v)=>sources.set(id,v),getSource:id=>sources.get(id),addLayer:l=>layers.set(l.id,l),getLayer:id=>layers.get(id),setFeatureState:(f,v)=>states.set(f.id,{...states.get(f.id),...v}),setLayoutProperty:(id,k,v)=>{layers.get(id).layout={...layers.get(id).layout,[k]:v}},setFilter:(id,f)=>{layers.get(id).filter=f},queryRenderedFeatures:()=>target?[target]:[]};
  const ctx={window:{},console,fetch:async url=>{requests.push(url);return{ok:true,json:async()=>read(url.split('?')[0])}}};
  vm.createContext(ctx);vm.runInContext(fs.readFileSync('city-buildings.js','utf8'),ctx);
  const b=ctx.window.BCBuildings;
  await b.prepare();await b.install({map,state:()=>state,openPlace:id=>visits.push('landmark:'+id),openCivic:id=>visits.push('civic:'+id),onAnchors:a=>anchors=a});
+ b.animate(0);b.animate(12);assert.equal(paintUpdates.length,2);assert.notEqual(JSON.stringify(paintUpdates[0].value),JSON.stringify(paintUpdates[1].value));state.paused=true;b.animate(14);assert.equal(paintUpdates.length,2);state.paused=false;
  assert.equal(requests.filter(u=>u.includes('named-buildings')).length,1,'Preparation must be shared');assert.equal(anchors.length,data.anchors.length);
  for(const id of data.superseded){const [layer,n]=id.split(':');assert(b.isSuperseded(layer,Number(n)));}
  assert(!b.isSuperseded('bldBig',-1));

@@ -4,6 +4,14 @@ A city-management game set in Memphis, Tennessee. You play the mayor. You handle
 
 **Play it:** https://erndae.github.io/Bluff-city-mayor/ (once GitHub Pages is turned on, see below)
 
+## v26.6: Living houses and buildings
+
+Homes keep their pitched roofs and varied exterior colors. Larger unnamed buildings now have eight exterior color choices, flat roof surfaces with raised edges, window rows and glazed entrances. Real footprint boundaries and measured building heights are retained; named landmarks retain their existing designs and visit links. Decorative architecture remains stylized.
+
+At close zoom, window lights slowly brighten and dim in different groups across homes, commercial buildings and named public buildings. Ambient movement stops when the game is paused, the Buildings layer is off, the tab is hidden or reduced motion is requested. It has no effect on game time, money, votes or saves. Roof meshes use the existing viewport grid and work batches; animation changes shader time rather than rebuilding geometry.
+
+Validation: `node tools/check-houses.cjs` and `node tools/check-building-links.cjs` cover geometry, renderer lifecycle, lighting pause/resume and reduced-motion rules, named-window paint updates, and all 90 destination links. The automated browser has WebGL disabled; geometry is reviewed separately with a software projection.
+
 ## v26.3: A clearer next move
 
 The main controls and menu tabs now have four destinations: **City, Budget, People, and Campaign**. City contains the weekly focus, full desk, available actions, decision history, and expandable reports/settings. Budget keeps city and personal finances together; People groups residents, council, cabinet, your character and neighboring mayors. Keyboard shortcuts, campaign-manager strategy and the full Campaign HQ remain available.

@@ -590,7 +590,7 @@ details.analysis{margin-top:6px}details.analysis summary{cursor:pointer;color:va
     <button class="btn primary" data-act="pause" id="bPlay"><svg class="ico" viewBox="0 0 12 12" aria-hidden="true"><path d="M3.2 1.6v8.8l7.2-4.4z" fill="currentColor"/></svg> Resume <kbd>Space</kbd></button>
   </nav>
   <div class="status" id="status">Loading map…</div>
-  <div class="credit"><span class="ver" id="verTag">v26.5</span></div>
+  <div class="credit"><span class="ver" id="verTag">v26.6</span></div>
   <div class="tip" id="tip" hidden></div>
   <div class="toast" id="toast" role="status"></div>
   <section class="panel" id="panel" hidden aria-live="polite">
@@ -618,7 +618,7 @@ details.analysis{margin-top:6px}details.analysis summary{cursor:pointer;color:va
         <button class="btn" data-music-open>Music &amp; volume</button>
       </div>
       <div id="slotList" hidden></div>
-      <p class="note startv">Version <b class="ver" id="verStart">v26.5</b></p>
+      <p class="note startv">Version <b class="ver" id="verStart">v26.6</b></p>
     </div>
     <div class="startbox create" id="create" hidden>
       <h2>Create your mayor</h2>
@@ -653,8 +653,8 @@ details.analysis{margin-top:6px}details.analysis summary{cursor:pointer;color:va
 (function(){const urls=['https://cdn.jsdelivr.net/npm/maplibre-gl@4.7.1/dist/maplibre-gl.js','https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js'];let k=0;
   function next(){if(k>=urls.length){window.__mlFail=true;window.dispatchEvent(new Event('mlready'));return}const s=document.createElement('script');s.src=urls[k++];s.onload=()=>window.dispatchEvent(new Event('mlready'));s.onerror=next;document.head.appendChild(s)}next()})();
 </script>
-<script src="city-buildings.js?v=25.6"></script>
-<script src="city-houses.js?v=25.6b"></script>
+<script src="city-buildings.js?v=26.6"></script>
+<script src="city-houses.js?v=26.6"></script>
 <script>
 "use strict";
 // ======================= LOADING SCREEN =======================
@@ -1408,7 +1408,7 @@ function enact(s,p){DIVS.forEach(d=>{s.enacted[d.id]=p.divs[d.id];s.ratio[d.id]=
 // Voter groups. Each has a share of residents, turnout, home districts, concerns and an approval of you.
 // Citywide approval is the turnout-weighted average of the groups; each council district's approval comes from the groups that live there.
 // Shares, district mix and turnout are modeled, loosely grounded in Memphis demographics; they are not survey data.
-const VERSION='v26.5';
+const VERSION='v26.6';
 const GROUPS=[
  {id:'working',sh:'Working families',n:'Working families',ic:'⚒︎',c:'#f2a93b',share:24,turn:.5,start:56,w:{jobs:1,safety:.8,transit:.5},
   d:'Hourly workers in logistics, warehouses, health care and service jobs. The biggest bloc in the city.',dm:{1:1.1,2:.8,3:1.3,4:1.2,5:.6,6:1.2,7:1.1}},
@@ -4834,9 +4834,10 @@ const BUILD={
     if(isPyramid(f[i])||window.BCBuildings?.isSuperseded(k,i))continue;
     const h=Math.max(3,Math.round((a[i]||0)*.3048)),houseId=(k==='bldCore'?1000000:2000000)+i;
     const house=!window.BCBuildings?.isNamed(k,i)&&window.BCHouses?.isHouse(f[i],h),look=house?window.BCHouses.style(houseId):null;
-    feats.push(f[i]);props.push(look?{h:look.height,wall:look.wall,houseId}:{h});}}
+    const building=!house&&!window.BCBuildings?.isNamed(k,i)?window.BCHouses?.buildingStyle(houseId,h):null;
+    feats.push(f[i]);props.push(look?{h:look.height,wall:look.wall,houseId}:building?{h,wall:building.wall,architectureId:houseId}:{h});}}
     const data=fcPoly(feats,i=>props[i]);for(const f of data.features)if(f.properties.houseId)houses.push(f);
-    window.BCHouses?.ingest(houses);delete RAW.bldBig;delete RAW.bldCore;return data},
+    window.BCHouses?.ingest(houses);window.BCHouses?.ingest(data.features.filter(f=>f.properties.architectureId),'building');delete RAW.bldBig;delete RAW.bldCore;return data},
   pyramid:()=>pyramidFC(),
   bhomes:()=>{const r=fcPoly(decodeLayer(RAW.bldRest.g),i=>window.BCHouses?.style(i+1)||{wall:'#d3b49b',height:4.5});r.features=r.features.filter(f=>!window.BCBuildings?.isSuperseded('bldRest',f.id-1));window.BCHouses?.ingest(r.features.filter(f=>!window.BCBuildings?.isNamed('bldRest',f.id-1)));delete RAW.bldRest;return r},
 };

@@ -46,3 +46,15 @@ for(const m of html.matchAll(/<script(?:\s[^>]*)?>([\s\S]*?)<\/script>/g))if(m[1
  state.layers.bld=true;houses.sync();zoom=14;layer.render(gl,matrix);assert.equal(draws,1,'Citywide zoom must hide detailed roofs');zoom=16;layer.render(gl,matrix);assert.equal(draws,2);
  layer.onRemove(map,gl);assert.equal(handlers.size,0);console.log('PASS: renderer uploads, coordinate axes, zoom, building toggle, and cleanup.');
 })().catch(e=>{console.error(e);process.exitCode=1});
+
+// Commercial architecture and the ambient animation clock.
+for(const h of [4,18,70])for(const r of [[[0,0],[24,0],[24,18],[0,18]],[[0,0],[24,0],[24,8],[12,8],[12,18],[0,18]]]){
+ const m=H.buildingMesh(r,42,h,true);assert(m.length>0&&m.length%18===0);assert(m.every(Number.isFinite));
+ let highest=0;for(let i=2;i<m.length;i+=6)highest=Math.max(highest,m[i]);assert(Math.abs(highest-(h+.55))<.001,'Roof coping must align with the building height');
+ const base=H.buildingMesh(r,42,h,false);assert(m.length>base.length,'Close zoom must add doors and window rows');
+}
+assert(new Set(Array.from({length:100},(_,i)=>H.buildingStyle(i,30).wall)).size>=6);
+const clock=H.motionClock();clock.step(0,false);assert.equal(clock.step(100,true),.1);assert.equal(clock.step(200,false),.1);assert.equal(clock.step(100000,false),.1);assert.equal(clock.step(100100,true),.2,'Resume must not jump ahead through paused time');
+const moving={started:true,paused:false,over:false,layers:{bld:true}};assert(H.motionAllowed(moving,16,false,false));
+for(const [s,z,hidden,reduced] of [[{...moving,paused:true},16,false,false],[{...moving,layers:{bld:false}},16,false,false],[moving,12,false,false],[moving,16,true,false],[moving,16,false,true],[{...moving,started:false},16,false,false]])assert(!H.motionAllowed(s,z,hidden,reduced));
+console.log('PASS: commercial roof heights, facade detail, varied colors, paused/resumed lighting, layer/zoom/visibility/reduced-motion gating.');
