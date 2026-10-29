@@ -304,6 +304,12 @@ button.seat:hover{border-color:var(--amber)}
 .startbox h1 span{display:block;color:var(--text);font-size:.42em;letter-spacing:.3em;margin-top:8px;text-shadow:none}
 .startbox p{margin:0;line-height:1.55;max-width:60ch;color:#d9d1c1}
 .keys{display:grid;grid-template-columns:auto 1fr;gap:5px 14px;font-size:14px}
+#intro .lede{font-size:16px;margin:4px 0 14px}
+.paths{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px}
+.path{text-align:left;display:flex;flex-direction:column;gap:4px;padding:14px;border:1px solid var(--line);border-radius:6px;background:var(--panel2,rgba(255,255,255,.04));color:inherit;font:inherit;cursor:pointer}
+.path b{font-size:17px;color:var(--amber)}.path small{font-size:13px;opacity:.8;line-height:1.35}
+.path:hover,.path:focus-visible{border-color:var(--amber)}.path.primary{border-color:var(--amber)}
+@media (max-width:560px){.paths{grid-template-columns:1fr}}
 .keys kbd{font-family:var(--f-mono);font-size:12px;border:1px solid var(--line);border-radius:3px;padding:1px 6px;color:var(--amber);justify-self:start}
 
 @media (max-width:860px){
@@ -584,7 +590,7 @@ details.analysis{margin-top:6px}details.analysis summary{cursor:pointer;color:va
     <button class="btn primary" data-act="pause" id="bPlay"><svg class="ico" viewBox="0 0 12 12" aria-hidden="true"><path d="M3.2 1.6v8.8l7.2-4.4z" fill="currentColor"/></svg> Resume <kbd>Space</kbd></button>
   </nav>
   <div class="status" id="status">Loading map…</div>
-  <div class="credit"><span class="ver" id="verTag">v26.3</span></div>
+  <div class="credit"><span class="ver" id="verTag">v26.5</span></div>
   <div class="tip" id="tip" hidden></div>
   <div class="toast" id="toast" role="status"></div>
   <section class="panel" id="panel" hidden aria-live="polite">
@@ -602,24 +608,17 @@ details.analysis{margin-top:6px}details.analysis summary{cursor:pointer;color:va
   <div id="start">
     <div class="startbox" id="intro">
       <h1>Bluff City<span>MAYOR</span></h1>
-      <p>You were sworn in as Mayor of Memphis. It's October 2026, four months into fiscal year 2027: a $906 million operating budget, a $3.39 property tax rate and a $96 million rainy-day fund. Thirteen council members hold the purse. The next city election is October 2027.</p>
-      <p>The map is your city: every street and building, the river, council districts and police precincts, plus the police stations, fire stations and hospitals you oversee. Problems pop up as amber pins around town. Click one to deal with it, write the FY2028 budget in April, get 7 votes in June, and win in October.</p>
-      <div class="keys">
-        <kbd>WASD · arrows</kbd><span>Pan the map (hold Shift to go faster), or push the mouse to the screen edge</span>
-        <kbd>Scroll · Q Z</kbd><span>Zoom toward the cursor (Q out, Z in, Home for the whole city). Zoom out for the political map of council districts; zoom in and the city tilts into 3D</span>
-        <kbd>Click</kbd><span>Open a landmark, issue pin, district, police station, fire station or hospital</span>
-        <kbd>F</kbd><span>Find your mayor. The gold marker shows where you are right now</span>
-        <kbd>Space · + −</kbd><span>Pause and resume time, change speed (1–5). N skips to the end of the month</span>
-        <kbd>B · C · V · L</kbd><span>Budget office · Council chamber · Whip count · Map layers</span>
+      <p class="lede">Run Memphis, or run for it. The map is the real city: every street, district and station.</p>
+      <div class="paths">
+        <button class="path primary" id="bRun"><b>Run for mayor</b><small>Start as a candidate. Hire a campaign manager, win voters and beat the incumbent in October 2027.</small></button>
+        <button class="path" id="bNew"><b>Start as mayor</b><small>You were just sworn in. Pass a budget, work the council and win re-election.</small></button>
       </div>
       <div class="row">
-        <button class="btn primary" id="bRun">Run for mayor</button>
-        <button class="btn" id="bNew">Start as mayor</button>
+        <button class="btn primary" id="bLoad" hidden>Continue saved game</button>
         <button class="btn" data-music-open>Music &amp; volume</button>
-        <button class="btn" id="bLoad" hidden>Continue saved term</button>
       </div>
       <div id="slotList" hidden></div>
-      <p class="note startv">Version <b class="ver" id="verStart">v26.3</b></p>
+      <p class="note startv">Version <b class="ver" id="verStart">v26.5</b></p>
     </div>
     <div class="startbox create" id="create" hidden>
       <h2>Create your mayor</h2>
@@ -1409,7 +1408,7 @@ function enact(s,p){DIVS.forEach(d=>{s.enacted[d.id]=p.divs[d.id];s.ratio[d.id]=
 // Voter groups. Each has a share of residents, turnout, home districts, concerns and an approval of you.
 // Citywide approval is the turnout-weighted average of the groups; each council district's approval comes from the groups that live there.
 // Shares, district mix and turnout are modeled, loosely grounded in Memphis demographics; they are not survey data.
-const VERSION='v26.3';
+const VERSION='v26.5';
 const GROUPS=[
  {id:'working',sh:'Working families',n:'Working families',ic:'⚒︎',c:'#f2a93b',share:24,turn:.5,start:56,w:{jobs:1,safety:.8,transit:.5},
   d:'Hourly workers in logistics, warehouses, health care and service jobs. The biggest bloc in the city.',dm:{1:1.1,2:.8,3:1.3,4:1.2,5:.6,6:1.2,7:1.1}},
@@ -3847,7 +3846,7 @@ const anyAct=re=>Object.keys(S.acts||{}).some(k=>re.test(k));
 const GUIDE_MAYOR=[
  {id:'brief',t:'Read your chief of staff\'s briefing',h:'Open City Hall and answer the briefing.',done:()=>!S.events.some(e=>e.id==='briefing'),go:()=>openPlace('cityhall')},
  {id:'prom',t:'Make your three promises',h:'They become your record in the next election.',done:()=>!!S.promises,go:()=>openPromises()},
- {id:'clock',t:'Start the clock',h:'Press Space or ▶ Resume. Time runs day by day; + and − change the speed.',done:()=>!S.paused||S.day>=5||nowM()>(S.guide.m0||0),go:()=>setPaused(false)},
+ {id:'clock',t:'Start the clock',h:'Tap ▶ Resume. Time runs day by day; + and − change the speed.',done:()=>!S.paused||S.day>=5||nowM()>(S.guide.m0||0),go:()=>setPaused(false)},
  {id:'issue',t:'Handle a problem on the map',h:'Click an amber pin, or a desk item, and choose a response.',done:()=>((S.stats||{}).resolved||0)>0,go:()=>{const e=S.events.find(e=>e.kind==='event'&&e.id!=='briefing');if(e)openPlace(evAt(e));else openDesk()}},
  {id:'meet',t:'Meet a council member in private',h:'Open the Council, pick a member, and use one of your 3 monthly meetings.',done:()=>S.council.some(m=>m.met!=null&&m.met>=0),go:()=>openCouncil()},
  {id:'civic',t:'Visit a police station, fire station or hospital',h:'Click a ★, ▲ or ✚ on the map.',done:()=>Object.values(S.civic||{}).some(c=>Object.keys(c.acts||{}).length),go:()=>openCivicList('fire')},
@@ -3863,7 +3862,7 @@ const GUIDE_MAYOR=[
  {id:'budget',t:'Send the council your budget in April',h:'In April, open the Budget office and submit.',done:()=>S.stage==='submitted'||S.stage==='adopted'||!!S.pending||(S.fyIndex||0)>(S.guide.fy0||0),go:()=>openBudget()}];
 const GUIDE_CAND=[
  {id:'plat',t:'Choose your platform',h:'Three planks. If you win, they become your promises.',done:()=>!!S.promises,go:()=>openPromises()},
- {id:'clock',t:'Start the clock',h:'Press Space or ▶ Resume.',done:()=>!S.paused||S.day>=5||nowM()>(S.guide.m0||0),go:()=>setPaused(false)},
+ {id:'clock',t:'Start the clock',h:'Tap ▶ Resume.',done:()=>!S.paused||S.day>=5||nowM()>(S.guide.m0||0),go:()=>setPaused(false)},
  {id:'doors',t:'Knock doors in a district',h:'Actions (E) → Knock doors. It builds support and name recognition.',done:()=>anyAct(/^kd\d/),go:()=>openActions()},
  {id:'leaders',t:'Meet community leaders',h:'Actions (E) → Meet community leaders.',done:()=>anyAct(/^cg/),go:()=>openActions()},
  {id:'fund',t:'Hold a grassroots fundraiser',h:'Campaign HQ (K). Money pays for ads, organizers and polls.',done:()=>anyAct(/^fr_/),go:()=>openHQ()},
@@ -5304,7 +5303,7 @@ function refreshStartButtons(){const n=latestSlot(),m=n?slotMeta()[n]:null;const
 // ======================= BOOT =======================
 function beginTerm(cr,quiet){S=newState();const c=cr||newCR();S.mayor={...c,look:{...(c.look||defaultLook(c.g))},name:(c.name||'Mayor').trim(),skills:{...c.skills},traits:[...c.traits],xp:{},trained:-99,frame:'#f2a93b'};$('start').classList.remove('creating');$('app').classList.remove('pre');assignHomes();initGroups(S);recomputeAll(S);S.started=true;try{S.city0=legacySnap();reignStart(S.mayor,false)}catch(e){}spawn(S,EVENTS[0],{expires:99});queueNewBusiness(null);pickRival();campInit(S);homeInit(S);S.mf={r0:S.reserve};save();$('start').hidden=true;prevMet=null;applyLayers();refreshHUD();
   S.phase='mayor';camFly({center:[LM.cityhall.lon,LM.cityhall.lat],zoom:quiet?13:15.6,speed:0.9});if(quiet)return;setTimeout(()=>tutStart('mayor',()=>{if(!S.promises)openPromises();setTimeout(()=>{if(!modalOpen)openPlace('cityhall')},1700)}),700);
-  toast(`Sworn in, Mayor ${S.mayor.name.split(' ').pop()}. Time is paused: read your briefing, then press Space or ▶.`)}
+  toast(`Sworn in, Mayor ${S.mayor.name.split(' ').pop()}. Time is paused until you press ▶.`)}
 // ---- character creation ----
 const SKINS=['#5a3825','#6b4226','#8d5524','#a8693f','#c68642','#e0ac69','#f1c27d','#ffdbac'],HAIRC=['#17110d','#2c1d13','#3d281a','#5a3d26','#8a6440','#b9b4ab'];
 let CR=null;
