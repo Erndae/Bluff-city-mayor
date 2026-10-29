@@ -383,6 +383,12 @@ button.seat:hover{border-color:var(--amber)}
 .mgrlist{display:grid;gap:10px}.mgrc{display:grid;grid-template-columns:64px minmax(0,1fr) auto;gap:12px;align-items:start;border:1px solid var(--line);border-radius:8px;padding:10px;background:rgba(255,255,255,.02)}.mgrc.cur{border-color:#5aa7d8}
 .mgr-b b{font-size:16px}.mgr-b small{display:block;color:#5aa7d8;font-size:12.5px;margin-bottom:4px}.mgr-b p{margin:3px 0;font-size:13.5px;line-height:1.4}.mgr-b p.good{color:var(--good)}.mgr-b p.bad{color:#e8944f}.mgr-a{display:flex;flex-direction:column;align-items:flex-end;gap:6px}.mgr-sal{font-family:var(--f-mono);color:var(--bad);font-size:13px;white-space:nowrap}
 @media (max-width:640px){.mgrc{grid-template-columns:52px minmax(0,1fr)}.mgrc .pt{width:52px}.mgr-a{grid-column:1/-1;flex-direction:row;justify-content:space-between;align-items:center}}
+.gico{width:1.05em;height:1.05em;vertical-align:-.15em;display:inline-block;flex:none}.gic .gico{width:62%;height:62%}
+.hqjump{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 10px}.hqjump .btn{padding:5px 10px;font-size:13px}
+.dstage{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:10px;align-items:center;margin-bottom:10px}.dpod{display:flex;flex-direction:column;align-items:center;gap:2px;min-width:64px}.dpod b{font-size:13px}.dpod span{font-family:var(--f-mono);font-size:22px;color:var(--amber)}
+.droom{text-align:center}.droom small{display:block;color:var(--muted);font-size:11.5px}.dbar{position:relative;height:10px;border-radius:5px;margin:4px 0;background:linear-gradient(90deg,var(--bad),#3a4652 45%,#3a4652 55%,var(--good))}.dbar i{position:absolute;top:-3px;width:4px;height:16px;background:#fff;border-radius:2px;transform:translateX(-50%);transition:left .4s}
+.dq{border-left:3px solid var(--amber);padding:4px 0 4px 10px;margin:6px 0 10px}.dq small{color:var(--amber);font-family:var(--f-label);letter-spacing:.12em;text-transform:uppercase;font-size:11px}.dq p{margin:2px 0 0;font-size:16px}
+.dmeter{position:relative;height:30px;border-radius:15px;background:#22303d;border:1px solid var(--line);margin:14px 0}.dmeter .zone{position:absolute;top:0;bottom:0;background:rgba(46,158,91,.55);border-radius:4px}.dmeter .mark{position:absolute;top:-4px;width:6px;height:38px;background:#fff;border-radius:3px;transform:translateX(-50%);box-shadow:0 0 6px rgba(255,255,255,.6)}
 #hovercard.touch{left:12px!important;right:12px!important;top:auto!important;bottom:calc(84px + env(safe-area-inset-bottom,0px))!important;width:auto!important;pointer-events:auto}
 .navrow.more-r{-webkit-mask-image:linear-gradient(90deg,#000 85%,transparent);mask-image:linear-gradient(90deg,#000 85%,transparent)}
 .navrow.more-l.more-r{-webkit-mask-image:linear-gradient(90deg,transparent,#000 10%,#000 85%,transparent);mask-image:linear-gradient(90deg,transparent,#000 10%,#000 85%,transparent)}
@@ -4367,8 +4373,7 @@ const TUT_MAYOR=[
  {sel:'#hCouncil',up:1,t:()=>'The council',b:()=>'Thirteen members; 7 votes pass anything, including your budget in June. Meet them privately, deliver for their districts, and keep their favor.'},
  {sel:'#desk',mob:'.actions [data-act="desk"]',t:()=>'Mayor\'s Desk',b:()=>'Everything waiting on you, your getting-started goals and <b>What to do next</b>. When you\'re not sure what to do, look here.'},
  {t:()=>'The map',b:()=>'Amber pins are problems waiting for a decision: click one. ★ police, ▲ fire, ✚ hospitals and ✎ schools are places you can visit. Drag to move, scroll or pinch to zoom.'},
- {sel:'.actions [data-act="actions"]',t:()=>'Take action',b:()=>'Actions (E): start capital projects, sign executive orders, hold town halls, use your platform, read the news and give the State of the City.'},
- {t:()=>'Your first steps',b:()=>'1. Make three promises. They become your record on Election Day.<br>2. Read your chief of staff\'s briefing at City Hall.<br>3. Press ▶ and handle what comes in. The Desk will keep telling you what\'s next.'}];
+ {sel:'.actions [data-act="actions"]',t:()=>'Take action',b:()=>'Actions (E): start capital projects, sign executive orders, hold town halls, use your platform, read the news and give the State of the City.'}];
 const TUT_CAND=[
  {t:()=>`Welcome, ${S.mayor.name}`,b:()=>`You're a community member running for mayor against <b>Mayor ${S.rival?S.rival.name:'the incumbent'}</b>. Election Day is <b>Thursday, October 7, 2027</b>. Win more votes than the mayor and the job is yours.`},
  {t:()=>'You\'re not in office yet',b:()=>'As a candidate you\'re an ordinary citizen. You can\'t vote on anything, spend city money, direct the council or the cabinet. Those buttons stay grayed out until you win. Your tools are the campaign.'},
@@ -4376,8 +4381,7 @@ const TUT_CAND=[
  {sel:'.actions [data-act="actions"]',t:()=>'Meet voters',b:()=>'Actions (E): knock doors in a district, meet community groups and give speeches on the issues. Each uses one of your 3 meetings a month.'},
  {sel:'.actions [data-act="hq"]',t:()=>'Campaign HQ',b:()=>'Campaign HQ (K): raise money, run polls and ads, hire organizers, open offices and ask groups for endorsements. Ads work best in the last three months.'},
  {sel:'#desk',mob:'.actions [data-act="desk"]',t:()=>'Your desk',b:()=>'Candidate forums and debates show up here, along with <b>What to do next</b>.'},
- {sel:'#clock',t:()=>'Time',b:()=>'Press ▶ (or Space) to let days pass. Forums and debates pause the clock for you. Your campaign manager checks in every Monday, and four days before the month ends pauses the clock if you still have meetings left. One unused meeting carries over.'},
- {t:()=>'Your first steps',b:()=>'1. Hire a campaign manager. Each one is strong at something different, and they\'ll suggest your next moves.<br>2. Pick your three-plank platform.<br>3. Raise money, knock doors where you\'re weakest, then put ads on the air as Election Day nears.'}];
+ {sel:'#clock',t:()=>'Time',b:()=>'Press ▶ (or Space) to let days pass. Forums and debates pause the clock for you. Your campaign manager checks in every Monday, and four days before the month ends pauses the clock if you still have meetings left. One unused meeting carries over.'}];
 let TUT=null;
 function tutTarget(st){if(!st.sel)return null;const mob=window.innerWidth<=860;let el=mob&&st.mob?document.querySelector(st.mob):document.querySelector(st.sel);
   for(let i=0;el&&i<(st.up||0);i++)el=el.parentElement;if(!el||!el.offsetParent)return null;try{const strip=el.closest('.actions');if(strip&&strip.scrollWidth>strip.clientWidth&&el.id!=='bPlay'){strip.scrollLeft=Math.max(0,el.offsetLeft-strip.clientWidth/2+el.offsetWidth/2)}else el.scrollIntoView({block:'nearest',inline:'nearest'})}catch(e){}const r=el.getBoundingClientRect();return r.width&&r.height?r:null}
@@ -4550,6 +4554,97 @@ function advisorDaily(){if(!S||!S.started||S.over)return;const A=advisor();if(!A
   if(S.day===1)for(const key in S.brief)if(!key.includes(String(k)))delete S.brief[key]}
 {const _dt=dayTick;dayTick=function(){_dt();try{advisorDaily()}catch(e){console.warn('advisor',e)}}}
 document.addEventListener('change',e=>{if(e.target&&e.target.hasAttribute&&e.target.hasAttribute('data-brief-off')&&S){S.briefOff=e.target.checked;save()}});
+// ======================= CAMPAIGN, CLEANED UP =======================
+// Group icons drawn as simple line icons (phones were turning the old symbols into color emoji).
+{const sv=(p)=>`<svg class="gico" viewBox="0 0 16 16" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">${p}</svg>`;
+ const IC={working:sv('<circle cx="5.5" cy="4.5" r="2"/><circle cx="11" cy="5.5" r="1.6"/><path d="M2 14v-2.5a3.5 3.5 0 0 1 7 0V14M8.5 14v-2a2.5 2.5 0 0 1 5 0v2"/>'),
+  owners:sv('<path d="M2.5 7.5 8 3l5.5 4.5M4 6.5V13h8V6.5M6.8 13v-3.2h2.4V13"/>'),
+  renters:sv('<rect x="2.5" y="2.5" width="11" height="9" rx="1.5"/><path d="M2.5 7h11M5 11.5v2M11 11.5v2"/><circle cx="5" cy="9.3" r=".5" fill="currentColor"/><circle cx="11" cy="9.3" r=".5" fill="currentColor"/>'),
+  parents:sv('<path d="M8 4.5c-1.6-1.2-3.6-1.4-5.5-1v9c1.9-.4 3.9-.2 5.5 1 1.6-1.2 3.6-1.4 5.5-1v-9c-1.9-.4-3.9-.2-5.5 1zM8 4.5v9"/>'),
+  faith:sv('<path d="M8 1.5v3M6.6 3h2.8M4 14V8l4-3 4 3v6M3 14h10M7 14v-2.5h2V14"/>'),
+  young:sv('<path d="M3 6h8v4.5A2.5 2.5 0 0 1 8.5 13h-3A2.5 2.5 0 0 1 3 10.5zM11 7.2h.8a1.6 1.6 0 0 1 0 3.2H11M5 2.5v1.5M7 2.5v1.5M9 2.5v1.5"/>'),
+  business:sv('<rect x="2" y="5" width="12" height="8.5" rx="1.2"/><path d="M5.8 5V3.5h4.4V5M2 9h12"/>'),
+  labor:sv('<path d="M2.5 11.5a5.5 5.5 0 0 1 11 0zM2 11.5h12M7 6.2V4.5h2v1.7"/>')};
+ GROUPS.forEach(g=>{if(IC[g.id])g.ic=IC[g.id]})}
+// What to do next: only suggest raising money when a fundraiser is actually available.
+{const _ns=nextSteps;nextSteps=function(){let L=_ns();if(S&&S.camp){const canRaise=S.slots>0&&(!cdLeft('fr_small',1)||!cdLeft('fr_big',2));if(!canRaise)L=L.filter(x=>x.t!=='Raise money')}return L}}
+// Monday notes: don't repeat the same advice two weeks running.
+{const _ad=advisorDaily;advisorDaily=function(){const dow=S?new Date(S.y,S.m-1,S.day).getDay():0;if(dow===1&&S){const top=nextSteps()[0];if(top&&S.lastNote===top.t){S.brief=S.brief||{};S.brief['wk'+nowM()+'_'+S.day]=1}else if(top)S.lastNote=top.t}return _ad()}}
+// ---------- door to door, for candidates and for a mayor running again ----------
+function mayorDoors(d){if(cdLeft('kd'+d,2)||S.slots<=0)return;S.slots--;markAct('kd'+d);const v=2.2*mgrMul('field');S.pop.d[d]=clamp(S.pop.d[d]+v,-20,20);const mix=dComp(d);
+  GROUPS.forEach(g=>{const w=clamp(mix[g.id]/(g.share/100),0.3,2);if(w>1)addGroupMod(S.groups[g.id],`Mayor knocked doors in District ${d}`,0.5*w*mgrMul('field'))});
+  try{const c=districtCenter(d);goTo(c[0],c[1],`Doors, District ${d}`,2)}catch(e){}gainXP('cha',4);S.approval=cityApproval(S);logIt(`You knocked doors in District ${d}.`);save();refreshHUD();toast(`You spent the day knocking doors in District ${d}.`)}
+function doorsHTML(){const slots=S.slots;return`<div class="facts" id="hq-doors"><h4>Go door to door</h4><p class="note">Knock doors in one district. It does the most with the groups who live there. Uses a meeting; each district once every 2 months.${curMgr()&&curMgr().id==='field'?' Marcus makes every door count more.':''}</p>
+   <div class="row" style="flex-wrap:wrap">${[1,2,3,4,5,6,7].map(d=>{const cd=cdLeft('kd'+d,2);return`<button class="btn" data-doors="${d}" ${cd||slots<=0?'disabled':''} title="${cd?`Again in ${cd} mo`:''}">District ${d} <small style="color:${apColor(dApp(d))}">${Math.round(dApp(d))}%</small></button>`}).join('')}</div>${slots<=0?'<p class="note">No meetings left this month.</p>':''}</div>`}
+document.addEventListener('click',e=>{const b=e.target.closest('[data-doors]');if(!b||!S)return;e.preventDefault();e.stopImmediatePropagation();if(isCand()&&!curMgr()){toast('Hire a campaign manager first.');openMgr();return}
+  const d=+b.dataset.doors;if(isCand())candDoors(d);else mayorDoors(d);if(modalOpen&&/Campaign HQ/.test($('mTitle').textContent))openHQ();},true);
+// ---------- Campaign HQ: one place, quick jumps, plain-language staff and offices ----------
+function officesHTML(){const C=S.camp;const n=C.organizers;
+  const row=d=>{const cl=districtCloseness(d),open=!!C.offices[d];const how=cl>=0.7?['Close race','an office helps a lot here','var(--warn)']:cl>=0.4?['Competitive','an office helps some','var(--muted)']:[dApp(d)>=50?'You\'re well ahead':'You\'re far behind','an office won\'t change much','var(--muted)'];
+    return`<div class="drow adrow" style="cursor:default"><span><b>District ${d}</b> · <span style="color:${how[2]}">${how[0]}</span><small class="note"> · ${how[1]}</small></span><button class="btn ${open?'primary':''}" data-act="office" data-d="${d}">${open?'✓ Office open · close it':'Open an office'}</button></div>`};
+  return`<div class="facts" id="hq-staff"><h4>Field organizers</h4><p class="note">Organizers make sure the people who already support you actually vote, especially renters, young people and working families, who often stay home. Each costs <span style="color:var(--bad)">−$4K a month</span>.</p>
+   <div class="row" style="align-items:center"><b style="font-size:18px">${n} on staff</b><button class="btn primary" data-act="org" data-d="1" ${n>=10?'disabled':''}>Hire an organizer</button><button class="btn" data-act="org" data-d="-1" ${n<=0?'disabled':''}>Let one go</button></div></div>
+   <div class="facts" id="hq-offices"><h4>Field offices</h4><p class="note">An office persuades and turns out voters in its district. Each costs <span style="color:var(--bad)">−$6K a month</span>. Put them where the race is close.</p><div class="dlist">${[1,2,3,4,5,6,7].map(row).join('')}</div></div>`}
+function debatesHTML(){const e=electionDate();const ds=S.camp.debates||{};const prep=S.camp.prep||0;
+  return`<div class="facts" id="hq-debates"><h4>Debates</h4><p class="note">Two televised debates with ${S.rival?S.rival.name:'your opponent'}, on September ${DEBATE_DAYS[0]} and ${DEBATE_DAYS[1]}, ${e.y}. Each one is four rounds: pick how to answer, then nail the delivery. Winning moves undecided voters. Practice widens your margin for error (practice level ${prep} of 3).</p>
+   <div class="dlist">${[1,2].map(n=>{const D=ds[n];return`<div class="drow" style="cursor:default;grid-template-columns:minmax(0,1fr) auto"><span>Debate ${n} · September ${DEBATE_DAYS[n-1]}</span><b style="color:${D&&D.done?(D.you>D.them?'var(--good)':'var(--bad)'):'var(--muted)'}">${D&&D.done?(D.you>D.them?'You won':'You lost')+` ${D.you}–${D.them}`:'Coming up'}</b></div>`}).join('')}</div>
+   <div class="row"><button class="btn primary" data-dbt="practice" ${S.slots<=0?'disabled':''}>Practice with your team (uses a meeting)</button></div></div>`}
+{const _hq=openHQ;openHQ=function(...a){const r=_hq.apply(this,a);try{const body=$('mBody');if(!body||!modalOpen||!S.camp)return r;
+   // staff and offices: replace the old block
+   const old=[...body.querySelectorAll('.facts')].find(f=>/Staff and offices/.test((f.querySelector('h4')||{}).textContent||''));if(old)old.outerHTML=officesHTML();
+   const ads=[...body.querySelectorAll('.facts')].find(f=>/^Ads/.test((f.querySelector('h4')||{}).textContent||''));if(ads)ads.id='hq-ads';
+   const poll=[...body.querySelectorAll('.facts')].find(f=>/poll/i.test((f.querySelector('h4')||{}).textContent||''));if(poll)poll.id='hq-poll';
+   const endo=[...body.querySelectorAll('.facts')].find(f=>/Endorsements/.test((f.querySelector('h4')||{}).textContent||''));if(endo)endo.id='hq-endorse';
+   const money=[...body.querySelectorAll('.facts')].find(f=>/Raise money|Fundrais/i.test((f.querySelector('h4')||{}).textContent||''));if(money)money.id='hq-money';
+   const mgr=body.querySelector('.mgrline');const anchor=mgr||body.firstElementChild;
+   if(isCand()||monthsToElection()<=12){anchor.insertAdjacentHTML('afterend',doorsHTML());}
+   (endo||body.lastElementChild).insertAdjacentHTML('afterend',debatesHTML());
+   const jumps=[['hq-doors','Doors'],['hq-money','Money'],['hq-poll','Polls'],['hq-ads','Ads'],['hq-staff','Organizers'],['hq-offices','Offices'],['hq-endorse','Endorsements'],['hq-debates','Debates']].filter(([id])=>body.querySelector('#'+id));
+   (mgr||anchor).insertAdjacentHTML(mgr?'afterend':'beforebegin',`<div class="hqjump">${jumps.map(([id,l])=>`<button class="btn" data-hqjump="${id}">${l}</button>`).join('')}${isCand()?'<button class="btn" data-act="actions">Groups and speeches</button>':''}</div>`)}catch(e){console.warn('hq',e)}return r}}
+document.addEventListener('click',e=>{const b=e.target.closest('[data-hqjump]');if(!b)return;e.preventDefault();const el=document.getElementById(b.dataset.hqjump);if(el)el.scrollIntoView({behavior:'smooth',block:'start'})});
+// ---------- the debate mini-game ----------
+// Four rounds. Each round: choose an approach that fits the question, then stop the delivery meter in the green.
+// The room meter shows who's winning; undecided voters follow the winner.
+const DBT_APPROACH=[{id:'defend',n:'Defend your record',d:'Strong when you have results to point to.'},{id:'pivot',n:'Pivot to your plan',d:'Safer when the question is about a weak spot.'},{id:'attack',n:'Hit back',d:'Works on your opponent\'s signature issue.'},{id:'story',n:'Tell a Memphis story',d:'A family, a block, a business. Rarely wrong, rarely a knockout.'}];
+let DBT=null,dbtRAF=null;
+function dbtQuestions(){const t=debateTopics();const close=S.promises&&S.promises.length?{t:'Closing statement: why should Memphis vote for you?',closing:true}:{t:'Closing statement',closing:true};
+  const mid={t:`A question about ${PRIO_LABEL[(S.rival&&S.rival.plat&&S.rival.plat[1])||'jobs'].toLowerCase()}: what would you actually do in your first 100 days?`,good:'pivot',bad:'attack'};
+  return[t[0],t[1],mid,close]}
+function dbtFace(p){try{return portrait({...p,frame:p.frame||'#8a96a3'},54)}catch(e){return''}}
+function dbtStage(){const D=DBT,R=S.rival||{name:'Opponent'};const room=clamp(D.room,-10,10);return`<div class="dstage"><div class="dpod">${dbtFace(S.mayor)}<b>You</b><span>${D.you}</span></div>
+   <div class="droom"><small>The room</small><div class="dbar"><i style="left:${50+room*5}%"></i></div><small>${room>1?'Leaning your way':room<-1?`Leaning ${R.name.split(' ').pop()}'s way`:'Even'}</small></div>
+   <div class="dpod">${dbtFace(R)}<b>${R.name?R.name.split(' ').pop():'Opponent'}</b><span>${D.them}</span></div></div>`}
+function openDebate(n,practice){if(!S.camp)return;cancelAnimationFrame(dbtRAF);
+  if(!practice){S.camp.debates[n]=S.camp.debates[n]||{done:false};if(S.camp.debates[n].done){dbtResult(n);return}}
+  if(!DBT||DBT.n!==n||DBT.practice!==!!practice)DBT={n,practice:!!practice,round:0,you:0,them:0,room:0,step:'pick',qs:dbtQuestions(),log:[]};setPaused(true);dbtRender()}
+function dbtRender(){const D=DBT;const q=D.qs[D.round];const R=S.rival||{name:'Your opponent'};cancelAnimationFrame(dbtRAF);
+  const head=`${D.practice?'Practice debate':'Debate '+D.n+' of 2'} · round ${D.round+1} of 4`;
+  if(D.step==='pick'){const opts=q.closing?(S.promises||[]).map(p=>({id:'close:'+p.id,n:`Close on: ${PMAP[p.id].n}`,d:`Speaks to ${PMAP[p.id].grp.map(g=>GMAP[g].n.toLowerCase()).join(', ')}`})):DBT_APPROACH;
+    openModal(head,'Debate',`${dbtStage()}<div class="dq"><small>Moderator</small><p>${q.t}</p></div>${D.last?`<p class="note">${D.last}</p>`:''}<div class="choices">${(opts.length?opts:DBT_APPROACH).map(o=>`<button class="choice" data-dbt="pick" data-c="${o.id}"><b>${o.n}</b><small>${o.d}</small></button>`).join('')}</div>`,true);return}
+  if(D.step==='deliver'){const w=dbtZone();openModal(head,'Debate',`${dbtStage()}<div class="dq"><small>Your answer</small><p>${D.pickName}. Now deliver it: tap when the marker is in the green.</p></div>
+    <div class="dmeter" id="dmeter"><i class="zone" style="left:${50-w/2}%;width:${w}%"></i><i class="mark" id="dmark"></i></div><div class="row" style="justify-content:center"><button class="btn primary" data-dbt="deliver" style="min-width:180px;font-size:17px">Deliver</button></div>`,true);
+    const t0=performance.now(),sp=0.0016+D.round*0.00035;const tick=t=>{const m=$('dmark');if(!m||!DBT||DBT.step!=='deliver')return;D.pos=(Math.sin((t-t0)*sp)+1)/2*100;m.style.left=D.pos+'%';dbtRAF=requestAnimationFrame(tick)};dbtRAF=requestAnimationFrame(tick);return}}
+function dbtZone(){return clamp(16+(mskill('cha')-8)*1.2+(S.camp.prep||0)*3+(curMgr()&&curMgr().id==='debate'?8:0),10,40)}
+function dbtPick(c){const D=DBT,q=D.qs[D.round];D.pick=c;if(c.startsWith('close:')){const P=PMAP[c.slice(6)];D.pickName=`You close on ${P.n.toLowerCase()}`}else D.pickName=DBT_APPROACH.find(a=>a.id===c).n;D.step='deliver';dbtRender()}
+function dbtDeliver(){const D=DBT,q=D.qs[D.round];cancelAnimationFrame(dbtRAF);const off=Math.abs((D.pos??50)-50),half=dbtZone()/2;
+  const deliv=off<=half*0.35?3:off<=half?2:off<=half*1.8?1:0;let fit=1;
+  if(q.closing){const P=PMAP[D.pick.slice(6)];const unhappy=GROUPS.slice().sort((a,b)=>(isCand()?(b.share*(60-S.groups[b.id].app)):b.share*(60-S.groups[b.id].app))-(a.share*(60-S.groups[a.id].app)))[0];fit=P&&P.grp.includes(unhappy.id)?3:2}
+  else if(D.pick==='story')fit=1.5;else fit=D.pick===q.good?3:D.pick===q.bad?-1:1;
+  const mine=Math.max(0,Math.round(fit+deliv+(mskill('cha')-8)*0.1+rnd(-0.6,0.6)));const theirs=Math.max(0,Math.round(2.6+rnd(-1,1.6)+(q.good==='attack'&&D.pick==='attack'?-0.8:0)));
+  D.you+=mine;D.them+=theirs;D.room+=(mine-theirs)*1.2;const R=S.rival||{name:'Your opponent'};
+  D.last=`${['Your answer fell flat.','You got your point across.','A strong answer.','That one brought the room to its feet.'][deliv]} ${fit>=3?'It fit the question perfectly.':fit<=-1?'But it was the wrong move for that question.':''} You +${mine}, ${R.name.split(' ').pop()} +${theirs}.`;
+  try{sfx(mine>=theirs?'good':'bad')}catch(e){}D.round++;if(D.round>=4){dbtFinish();return}D.step='pick';dbtRender()}
+function dbtFinish(){const D=DBT;if(D.practice){S.camp.prep=Math.min(3,(S.camp.prep||0)+1);gainXP('cha',6);save();openModal('Practice debate','Practice is over',`${dbtStage()}<p>${D.you>D.them?'You won the practice round.':'Your team says you\'re getting there.'} Your practice level is now ${S.camp.prep} of 3: the green zone on the delivery meter is wider in the real debates.</p><div class="row"><button class="btn primary" data-act="hq">Back to Campaign HQ</button></div>`,true);DBT=null;return}
+  const n=D.n;const res=S.camp.debates[n]={done:true,you:D.you,them:D.them};const m=D.you-D.them;const bonus=clamp(m*0.18,-1.5,1.8);S.camp.debate=(S.camp.debate||0)+bonus;res.bonus=bonus;
+  const R=S.rival||{name:'your opponent'};clog(`Debate ${n}: ${m>0?'you won':m<0?'you lost':'a draw'}, ${D.you}–${D.them}.`);logIt(`Debate ${n} with ${R.name}: ${m>0?'you won':m<0?'you lost':'a draw'}, ${D.you}–${D.them}.`);
+  if(inOffice())newsAdd(m>0?1.2:m<0?-1.2:0,m>0?`Mayor wins debate ${n}`:m<0?`${R.name} gets the better of the mayor in debate ${n}`:`Debate ${n} ends in a draw`,{tag:'council',w:1.8});gainXP('cha',8);DBT=null;save();refreshHUD();dbtResult(n)}
+function dbtResult(n){const D=S.camp.debates[n];const R=S.rival||{name:'your opponent'};const m=D.you-D.them;
+  openModal(`Debate ${n} · September ${DEBATE_DAYS[n-1]}`,m>0?'You won the debate':m<0?'You lost the debate':'The debate was a draw',`<div class="dstage"><div class="dpod">${dbtFace(S.mayor)}<b>You</b><span>${D.you}</span></div><div class="droom"><small>Snap poll of undecided voters</small><b style="font-size:22px;color:${m>0?'var(--good)':m<0?'var(--bad)':'var(--muted)'}">${m>0?'You':m<0?R.name.split(' ').pop():'Even'}</b></div><div class="dpod">${dbtFace(R)}<b>${R.name.split(' ').pop()}</b><span>${D.them}</span></div></div>
+   <p>${m>0?`Undecided voters leaned your way: <b style="color:var(--good)">+${(D.bonus||0).toFixed(1)} points</b> on Election Day.`:m<0?`Undecided voters leaned toward ${R.name}: <b style="color:var(--bad)">${(D.bonus||0).toFixed(1)} points</b> on Election Day.`:'No change among undecided voters.'}</p><div class="row"><button class="btn primary" data-act="close">Back to the campaign</button></div>`,true)}
+document.addEventListener('click',e=>{const b=e.target.closest('[data-dbt]');if(!b||!S)return;e.preventDefault();e.stopImmediatePropagation();const k=b.dataset.dbt;
+  if(k==='resume'){openDebate(+b.dataset.n);return}if(k==='pick'){dbtPick(b.dataset.c);return}if(k==='deliver'){dbtDeliver();return}
+  if(k==='practice'){if(S.slots<=0){toast('No meetings left this month.');return}if(isCand()&&!curMgr()){toast('Hire a campaign manager first.');openMgr();return}S.slots--;DBT=null;openDebate(0,true)}},true);
+window.addEventListener('keydown',e=>{if(DBT&&DBT.step==='deliver'&&(e.key===' '||e.key==='Enter')){e.preventDefault();e.stopImmediatePropagation();dbtDeliver()}},true);
 function openLedger(){const L=S.log||[];openPanel('Everything that has happened, newest first','Ledger',L.length?`<div class="logl">${L.map(x=>`<div><span>${x.d}</span><p style="margin:0">${x.t}</p></div>`).join('')}</div>`:'<p class="note">Nothing yet. Start the clock with Space or ▶.</p>','ledger')}
 function openPolicies(){const ks=Object.keys(POLICIES);
   openPanel('Ongoing programs you control','Your initiatives',`<p>Mid-year, these are paid from the reserve fund. In April they go into the budget you send the council.</p>
