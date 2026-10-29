@@ -304,6 +304,13 @@ button.seat:hover{border-color:var(--amber)}
 .startbox h1 span{display:block;color:var(--text);font-size:.42em;letter-spacing:.3em;margin-top:8px;text-shadow:none}
 .startbox p{margin:0;line-height:1.55;max-width:60ch;color:#d9d1c1}
 .keys{display:grid;grid-template-columns:auto 1fr;gap:5px 14px;font-size:14px}
+.bseats{display:flex;gap:5px;flex-wrap:wrap;margin:6px 0 2px}.bseats i,.bkey i{display:inline-block;width:16px;height:16px;border-radius:50%;border:2px solid var(--line)}
+.bkey{display:flex;flex-wrap:wrap;gap:4px 10px;align-items:center;margin:4px 0 8px}.bkey i{width:10px;height:10px;margin-right:3px;vertical-align:-1px}
+.bs-ally{background:var(--good);border-color:var(--good)!important}.bs-mid{background:linear-gradient(90deg,var(--good) 50%,transparent 50%);border-color:var(--good)!important}
+.bs-pro{background:#5aa7d8;border-color:#5aa7d8!important}.bs-inh{background:var(--muted);opacity:.6}.bs-open{border-style:dashed!important;border-color:var(--amber)!important}.bs-state{background:var(--bad);border-color:var(--bad)!important;opacity:.75}
+.crrow{border:1px solid var(--line);border-radius:6px;padding:8px 10px;margin-bottom:6px}.crh{display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;align-items:baseline}
+.crc{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:6px}.crc .btn{display:flex;align-items:center;gap:8px;text-align:left;padding:6px 8px;min-height:44px}.crc .btn span{display:flex;flex-direction:column}.crc .btn small{opacity:.8;font-size:12px}
+.crc .btn svg{flex:none}@media (max-width:560px){.crc{grid-template-columns:1fr}}
 #intro .lede{font-size:16px;margin:4px 0 14px}
 .paths{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px}
 .path{text-align:left;display:flex;flex-direction:column;gap:4px;padding:14px;border:1px solid var(--line);border-radius:6px;background:var(--panel2,rgba(255,255,255,.04));color:inherit;font:inherit;cursor:pointer}
@@ -590,7 +597,7 @@ details.analysis{margin-top:6px}details.analysis summary{cursor:pointer;color:va
     <button class="btn primary" data-act="pause" id="bPlay"><svg class="ico" viewBox="0 0 12 12" aria-hidden="true"><path d="M3.2 1.6v8.8l7.2-4.4z" fill="currentColor"/></svg> Resume <kbd>Space</kbd></button>
   </nav>
   <div class="status" id="status">Loading map…</div>
-  <div class="credit"><span class="ver" id="verTag">v26.6</span></div>
+  <div class="credit"><span class="ver" id="verTag">v26.7</span></div>
   <div class="tip" id="tip" hidden></div>
   <div class="toast" id="toast" role="status"></div>
   <section class="panel" id="panel" hidden aria-live="polite">
@@ -618,7 +625,7 @@ details.analysis{margin-top:6px}details.analysis summary{cursor:pointer;color:va
         <button class="btn" data-music-open>Music &amp; volume</button>
       </div>
       <div id="slotList" hidden></div>
-      <p class="note startv">Version <b class="ver" id="verStart">v26.6</b></p>
+      <p class="note startv">Version <b class="ver" id="verStart">v26.7</b></p>
     </div>
     <div class="startbox create" id="create" hidden>
       <h2>Create your mayor</h2>
@@ -1408,7 +1415,7 @@ function enact(s,p){DIVS.forEach(d=>{s.enacted[d.id]=p.divs[d.id];s.ratio[d.id]=
 // Voter groups. Each has a share of residents, turnout, home districts, concerns and an approval of you.
 // Citywide approval is the turnout-weighted average of the groups; each council district's approval comes from the groups that live there.
 // Shares, district mix and turnout are modeled, loosely grounded in Memphis demographics; they are not survey data.
-const VERSION='v26.6';
+const VERSION='v26.7';
 const GROUPS=[
  {id:'working',sh:'Working families',n:'Working families',ic:'⚒︎',c:'#f2a93b',share:24,turn:.5,start:56,w:{jobs:1,safety:.8,transit:.5},
   d:'Hourly workers in logistics, warehouses, health care and service jobs. The biggest bloc in the city.',dm:{1:1.1,2:.8,3:1.3,4:1.2,5:.6,6:1.2,7:1.1}},
@@ -4228,7 +4235,7 @@ function openPlatform(){closePanel();const c=clout(),parts=cloutParts();
    <div class="facts"><h4>Clout: <span style="color:${cloutColor(c)}">${Math.round(c)} · ${cloutTier(c)}</span></h4><div class="meter" style="height:8px"><i style="width:${c}%;background:${cloutColor(c)}"></i></div>
     <div class="opl" style="margin-top:8px">${parts.map(x=>`<div><span>${x.t}</span><b style="color:${x.v>=0?'var(--good)':'var(--bad)'}">${x.v>=0?'+':'−'}${Math.abs(x.v)}</b></div>`).join('')||'<div><span>No clout as a candidate</span><b>0</b></div>'}</div>
     <p class="note">You don't control the school district, the county, the legislature, MLGW's rates or private companies. You can still move them by using the mayor's platform. The more popular you are, the more likely it works. Each push uses a meeting and some clout, which comes back over a few months. Clout also helps when you offer the school district money or press it on a broken building.</p></div>
-   <div class="facts"><h4>Push for change</h4><div class="choices">${PUSHES.map(p=>{const why=pushWhy(p),o=Math.round(pushOdds(p)*100);return`<button class="choice" data-push="${p.id}" ${why?'disabled':''}><b>${p.n} · <span style="color:${o>=60?'var(--good)':o>=35?'var(--warn)':'var(--bad)'}">${o}% chance</span></b><small>${p.who} · costs ${p.cost} clout${why?` · ${why}`:''}<br>${p.d}</small></button>`}).join('')}</div></div>`,true)}
+   <div class="facts"><button class="choice" data-act="power"><b>Power &amp; influence</b><small>Appoint board members, endorse council candidates and manage relations with Nashville.</small></button></div><div class="facts"><h4>Push for change</h4><div class="choices">${PUSHES.map(p=>{const why=pushWhy(p),o=Math.round(pushOdds(p)*100);return`<button class="choice" data-push="${p.id}" ${why?'disabled':''}><b>${p.n} · <span style="color:${o>=60?'var(--good)':o>=35?'var(--warn)':'var(--bad)'}">${o}% chance</span></b><small>${p.who} · costs ${p.cost} clout${why?` · ${why}`:''}<br>${p.d}</small></button>`}).join('')}</div></div>`,true)}
 openPlatform=navWrap('openPlatform',openPlatform);
 document.addEventListener('click',e=>{const b=e.target.closest('[data-push],[data-act="platform"]');if(!b||!S)return;e.preventDefault();e.stopImmediatePropagation();if(b.dataset.push){doPush(b.dataset.push);return}if(modalOpen){onClose=null;closeModal()}openPlatform()},true);
 window.addEventListener('keydown',e=>{if(!S||!S.started||!$('start').hidden||modalOpen||(e.target&&e.target.tagName==='INPUT'))return;if(e.key.toLowerCase()==='p'){e.preventDefault();closePanel();openPlatform()}});
@@ -4757,6 +4764,160 @@ function renderMgrFace(){let f=$('mgrface');const m=curMgr();const show=!!(m&&S&
 {const _rm=rivalMonth;rivalMonth=function(report){const a0=S.rival&&S.rival.camp?S.rival.camp.ads||0:0;_rm(report);const a1=S.rival&&S.rival.camp?S.rival.camp.ads||0:0;if(curMgr()&&a1>a0&&S.mgrAtk!==nowM()){S.mgrAtk=nowM();setTimeout(()=>mgrPop(`${S.rival.name.split(' ').pop()} is on the air. Here's our answer`,{pause:true}),600)}}}
 
 {const _cp2=choosePromises;choosePromises=function(ids){_cp2(ids);try{setTimeout(()=>{try{renderDesk();renderNextChip()}catch(e){}},0)}catch(e){}if(curMgr()&&!S.mgrIntro){S.mgrIntro=1;setTimeout(()=>{if(S&&S.started)mgrPop('Here\'s how we win')},1200)}}}
+// ======================= POWER & INFLUENCE =======================
+// Three ways a Memphis mayor extends power beyond the charter:
+//  1. Boards: the mayor appoints MLGW, MATA and Airport Authority commissioners; the council confirms. A board majority
+//     lets you direct the agency.
+//  2. Council races: council seats are on the same October ballot. Endorse allies (or their challengers) to build a majority.
+//  3. Nashville: the legislature can override the city. Keep relations up or it files bills that take powers away.
+const BOARDS={
+ mlgw:{n:'MLGW board',full:'Memphis Light, Gas and Water',seats:5,city:5,at:'mlgw',
+  d:'Five commissioners on three-year terms run the city-owned utility. The council still sets rates and approves big contracts.',
+  dir:{n:'Have the board pass a bill-relief plan',d:'Lower bills for low-income customers and faster shutoff protection.',do(){S.mlgwAdj=(S.mlgwAdj||1)*0.98;addGroupMod(S.groups.renters,'Utility bill relief',2);addGroupMod(S.groups.working,'Utility bill relief',1);addGroupMod(S.groups.business,'Utility costs shifted to business',-0.5);return'MLGW\'s board adopted a bill-relief plan for low-income customers. Gas and water bills dip about 2%.'}},
+  pro:'Independent experts make the utility run better: bills creep down a little each month.'},
+ mata:{n:'MATA board',full:'Memphis Area Transit Authority',seats:9,city:9,at:'mata',
+  d:'Nine commissioners oversee the bus system. In September 2026 the council approved eight new members after the board went a year without a quorum.',
+  dir:{n:'Have the board restore cut routes',d:'Bring back frequency on the busiest routes.',do(){S.met.transit=clamp(S.met.transit+4,0,100);addGroupMod(S.groups.renters,'Buses come more often',2);addGroupMod(S.groups.young,'Better bus service',1);return'MATA\'s board voted to restore service on its busiest routes. Transit index +4.'}},
+  pro:'Transit experts slowly improve service: the transit index rises a little each month.'},
+ airport:{n:'Airport Authority',full:'Memphis-Shelby County Airport Authority',seats:9,city:3,at:'airport',
+  d:'Since July 1, 2026, a state law gives the governor, lieutenant governor and House speaker six of the nine seats. The mayor appoints three.',
+  dir:{n:'Have the board steer contracts to local firms',d:'More airport concessions and construction for Memphis businesses.',do(){S.met.jobs=clamp(S.met.jobs+2,0,100);S.jobsBoost=(S.jobsBoost||0)+0.3;addGroupMod(S.groups.business,'Airport contracts for local firms',1.5);addGroupMod(S.groups.working,'Airport jobs',1);return'The Airport Authority set a local-business goal for new contracts. Jobs +2.'}},
+  pro:'Aviation experts help the airport compete for routes: a small lift to jobs over time.'}};
+const NOMINEES={
+ ally:{n:'A loyal ally',d:'Votes your way on the board. Council members who don\'t trust you will resist.',conf:2,ctl:1},
+ mid:{n:'A consensus pick',d:'Respected across the council and usually with you.',conf:8,ctl:0.5},
+ pro:{n:'An independent expert',d:'Not your vote, but makes the agency run better.',conf:6,ctl:0}};
+function pwInit(){if(!S)return null;if(!S.pw){S.pw={tn:40,b:{},cr:null,bill:null,lost:[],tnLog:[]};
+  for(const id in BOARDS)S.pw.b[id]={city:BOARDS[id].city,seats:BOARDS[id].seats,ally:0,mid:0,pro:0,open:id==='mlgw'?1:0,fail:-9}}
+  return S.pw}
+function bInh(B){return Math.max(0,B.city-B.ally-B.mid-B.pro-B.open)}
+function bCtl(B){return B.ally+B.mid*0.5}
+function bMajority(id){const P=pwInit();const B=P&&P.b[id];return!!B&&bCtl(B)>B.seats/2}
+function confScore(m,type){return m.op+NOMINEES[type].conf+(typeof clout==='function'?(clout()-30)*0.1:0)}
+function confCount(type,exact){recomputeAll(S);return S.council.filter(m=>(exact?confScore(m,type):confScore(m,type)+rnd(-8,8))>=50).length}
+function nominate(id,type){const P=pwInit(),B=P.b[id],D=BOARDS[id];if(!inOffice()||!B||B.open<=0||P.b[id].fail===nowM())return;
+  const yes=confCount(type);const ok=yes>=7;const N=NOMINEES[type];
+  if(ok){B.open--;B[type]++;if(type==='ally')S.council.filter(m=>m.op<45).forEach(m=>addMod(m,'Packed a board with loyalists',-2))}else{B.fail=nowM();}
+  const msg=ok?`The council confirmed your nominee to the ${D.n}, ${yes}–${13-yes}. ${type==='ally'?'One more vote for you on the board.':type==='mid'?'A respected pick who usually sides with you.':'An expert who will make the agency run better.'}`:`The council rejected your nominee to the ${D.n}, ${yes}–${13-yes}. You can send another name next month.`;
+  logIt(msg);try{sfx(ok?'good':'bad')}catch(e){}save();refreshHUD();notify(ok?'vote':'bad',ok?`Confirmed: ${N.n.replace(/^An? /,'')} for ${D.n}`:`Rejected: your ${D.n} nominee`,msg,()=>openPower('boards'),{silent:true});openPower('boards')}
+function directBoard(id){const P=pwInit(),D=BOARDS[id];if(!inOffice()||!bMajority(id)||cdLeft('bd_'+id,12)||S.slots<=0)return;S.slots--;markAct('bd_'+id);gainXP('stew',5);
+  const msg=D.dir.do();S.approval=cityApproval(S);recomputeAll(S);logIt(msg);try{sfx('good')}catch(e){}save();refreshHUD();notify('good',D.dir.n,msg,()=>openPower('boards'),{silent:true});openPower('boards')}
+function boardMonth(){const P=pwInit();if(!P||!inOffice())return;for(const id in BOARDS){const B=P.b[id];
+  // terms end: inherited seats open first, then your own appointees come up for reappointment
+  const pr=id==='mlgw'?0.12:id==='mata'?0.1:0.06;if(B.open<2&&Math.random()<pr){if(bInh(B)>0){B.open++}else{const t=['ally','mid','pro'].filter(t=>B[t]>0);if(t.length){const k=t[Math.floor(Math.random()*t.length)];B[k]--;B.open++}}
+    if(B.open>0)notify('people',`Open seat on the ${BOARDS[id].n}`,'A term ended. Send the council a nominee.',()=>openPower('boards'),{silent:true})}
+  if(B.pro){if(id==='mlgw')S.mlgwAdj=(S.mlgwAdj||1)*(1-0.0008*B.pro);if(id==='mata')S.met.transit=clamp(S.met.transit+0.12*B.pro,0,100);if(id==='airport')S.met.jobs=clamp(S.met.jobs+0.05*B.pro,0,100)}}}
+// ---------- council races ----------
+function crYear(){const y=COUNCIL_ELECT.find(y=>y===S.y);return y&&S.m<=10?y:null}
+function crOpen(){const y=crYear();if(!y)return false;const e=electionDate();return!(S.m===10&&S.day>=e.day)&&!(S.pw&&S.pw.cr&&S.pw.cr.y===y&&S.pw.cr.done)}
+function crInit(){const P=pwInit();const y=crYear();if(!y)return null;if(P.cr&&P.cr.y===y)return P.cr;const pk=a=>a[Math.floor(Math.random()*a.length)];
+  const rk=S.rival&&S.rival.k!=null&&S.rival.k>=0?S.rival.k:-1;
+  P.cr={y,done:false,seats:S.council.map((m,k)=>{const g=Math.random()<.5?'f':'m';const open=!!m.limited||k===rk;
+    return{k,open,why:k===rk?'running for mayor':m.limited?'term-limited':'',ch:{name:`${pk(NEWNAMES[g])} ${pk(NEWNAMES.l)}`,g,age:30+Math.floor(Math.random()*26),bg:pk(['a pastor','a small-business owner','a nurse','a teacher','a neighborhood association president','a former city planner','a union organizer','a nonprofit director'])},pick:null}})};
+  return P.cr}
+function endorseFx(sea){const m=S.council[sea.k],v=votersOf(m).v;return clamp(0.06+(v-(isCand()?35:50))/100*0.9,-0.2,0.3)}
+function incOdds(sea){const e=sea.pick?endorseFx(sea):0;if(sea.open)return null;return clamp(0.78+(sea.pick==='inc'?e:sea.pick==='ch'?-e:0),0.1,0.95)}
+function chOdds(sea){const e=sea.pick?endorseFx(sea):0;if(sea.open)return clamp(0.45+(sea.pick==='ch'?e:0),0.1,0.9);return 1-incOdds(sea)}
+function crSync(C){C.seats.forEach(s=>{if(!s.pick&&!s.open&&S.endorsed&&S.endorsed[s.k]===true)s.pick='inc'})}
+function endorseSeat(k,who){const C=crInit();if(!C||!crOpen()||S.slots<=0)return;const s=C.seats[k];if(!s||s.pick)return;const m=S.council[k];s.pick=who;S.slots--;gainXP('cha',4);
+  const cand=isCand();if(who==='inc'){S.endorsed=S.endorsed||{};S.endorsed[k]=true;addMod(m,cand?'Endorsed me for re-election':'Mayor endorsed me',cand?8:12);m.favors=(m.favors||0)+(cand?0:1)}
+  else{S.endorsed=S.endorsed||{};S.endorsed[k]='no'}if(who==='ch'&&!s.open){addMod(m,cand?'Endorsed my opponent':'Mayor backed my opponent',-15,true)}
+  const nm=who==='inc'?m.name:s.ch.name;const msg=`You endorsed ${nm} for ${m.seat}. ${endorseFx(s)>=0.1?'You\'re popular there, so it should help.':endorseFx(s)>=0?'It helps a little.':'You\'re unpopular there. It may hurt them.'}`;
+  logIt(msg);save();refreshHUD();try{toast(msg)}catch(e){}openPower('council')}
+function crResolve(){const C=S.pw&&S.pw.cr;if(!C||C.done)return;C.done=true;crSync(C);const res=[];let mine=0,backed=0;
+  C.seats.forEach(s=>{const m=S.council[s.k];if(!m)return;const seat=m.seat,old=m.name;let winner,whoWon;
+    if(s.open){const chWin=Math.random()<chOdds(s);newCouncilFace(s.k);const n=S.council[s.k];
+      if(chWin){n.name=s.ch.name;n.g=s.ch.g;n.age=s.ch.age}whoWon=chWin?'ch':'other';winner=n.name;
+      if(s.pick==='ch'){backed++;if(chWin){mine++;n.mods=[{t:'Mayor helped elect me',v:22,perm:true}]}else n.mods=[{t:'Won without the mayor',v:-4,perm:true}]}}
+    else{const incWin=Math.random()<incOdds(s);whoWon=incWin?'inc':'ch';
+      if(incWin){winner=m.name;m.limited=false;m.mods=m.mods.filter(x=>x.t!=='Mayor backed my opponent'&&x.t!=='Endorsed my opponent');
+        if(s.pick==='inc'){backed++;mine++;addMod(m,'Mayor helped me win',16,true)}else if(s.pick==='ch'){backed++;addMod(m,'Beat the mayor\'s candidate',-25)}}
+      else{newCouncilFace(s.k);const n=S.council[s.k];n.name=s.ch.name;n.g=s.ch.g;n.age=s.ch.age;winner=n.name;
+        if(s.pick==='ch'){backed++;mine++;n.mods=[{t:'Mayor helped elect me',v:22,perm:true}]}else if(s.pick==='inc'){backed++;n.mods=[{t:'Beat the mayor\'s candidate',v:-12,perm:true}]}}}
+    res.push({seat,old,winner,flip:winner!==old,pick:s.pick,won:s.pick&&((s.pick==='inc'&&whoWon==='inc')||(s.pick==='ch'&&whoWon==='ch'))})});
+  C.res=res;C.mine=mine;C.backed=backed;recomputeAll(S);const flips=res.filter(r=>r.flip).length;
+  const msg=`Council races: ${flips} of 13 seats changed hands.${backed?` Your candidates won ${mine} of ${backed}.`:' You stayed out of the council races.'}`;logIt(msg);
+  setTimeout(()=>{try{notify('vote','Council election results',msg,()=>openPower('council'),{ttl:20})}catch(e){}},1500);save()}
+// ---------- Nashville ----------
+const TN_ACTS=[
+ {id:'deleg',n:'Meet the Shelby County delegation',d:'Work with Memphis-area legislators on what the city needs from Nashville.',gain:6,cd:2},
+ {id:'capitol',n:'Spend a day at the Capitol',d:'Meet the governor\'s staff and committee chairs while the legislature is in session (January to April).',gain:10,cd:12,when:()=>S.m>=1&&S.m<=4,whenTxt:'Only January to April'},
+ {id:'back',n:'Back a bill the governor wants',d:'Stand with the state on one of its priorities. Some of your base won\'t like it.',gain:12,cd:12,fx(){addGroupMod(S.groups.renters,'Mayor sided with Nashville',-1);addGroupMod(S.groups.young,'Mayor sided with Nashville',-0.5);addGroupMod(S.groups.business,'Mayor works with the state',1)}},
+ {id:'fight',n:'Call out the legislature in public',d:'Rally Memphis against state interference. Popular at home, costly in Nashville.',gain:-15,cd:6,fx(){['working','renters','young','faith'].forEach(g=>addGroupMod(S.groups[g],'Mayor stood up to Nashville',1.2))}},
+ {id:'return',n:'Ask Nashville to hand back board seats',d:'With strong relations, the legislature may return seats it took from the city.',gain:0,cd:6,when:()=>(S.pw.tn>=70)&&(S.pw.lost.length||S.pw.b.airport.city<5),whenTxt:'Needs relations of 70+'}];
+const TAKEOVERS={
+ mlgw_seats:{n:'A bill to add state appointees to the MLGW board',pass:'The legislature passed it. The board grows to 7 seats, and the state now appoints 4. You keep 3.',do(){shrinkBoard('mlgw',3,7)},undo(){growBoard('mlgw',5,5)}},
+ fees:{n:'A bill to cap Memphis taxes and fees',pass:'The legislature passed it. The city loses about $4 million a year in revenue.',do(){S.revBoost=(S.revBoost||0)-4},undo(){S.revBoost=(S.revBoost||0)+4}},
+ mata_seats:{n:'A bill to give the state seats on the MATA board',pass:'The legislature passed it. The state now appoints 4 of 9 MATA commissioners. You keep 5.',do(){shrinkBoard('mata',5,9)},undo(){growBoard('mata',9,9)}}};
+function shrinkBoard(id,city,seats){const B=S.pw.b[id];B.seats=seats;B.city=city;
+  while(B.ally+B.mid+B.pro+B.open>B.city){if(B.open)B.open--;else if(B.pro)B.pro--;else if(B.mid)B.mid--;else B.ally--}}
+function growBoard(id,city,seats){const B=S.pw.b[id];const add=city-B.city;B.city=city;B.seats=seats;B.open=Math.min(2,B.open+Math.max(0,add))}
+function tnWord(t){return t<20?'Hostile':t<35?'Cold':t<55?'Working':t<70?'Warm':'Strong'}
+function tnColor(t){return t<20?'var(--bad)':t<35?'#e8944f':t<55?'var(--warn)':'var(--good)'}
+function tnAdd(v,why){const P=pwInit();if(!P)return;P.tn=clamp(P.tn+v,0,100);if(why){P.tnLog.unshift({t:why,v,d:dateStr()});P.tnLog.length=Math.min(P.tnLog.length,8)}}
+function tnWhy(a){if(!inOffice())return'Only the mayor can do this';const cd=cdLeft('tn_'+a.id,a.cd);if(cd)return`Again in ${cd} mo`;if(a.when&&!a.when())return a.whenTxt;if(S.slots<=0)return'No meetings left this month';return''}
+function tnAct(id){const a=TN_ACTS.find(x=>x.id===id);if(!a||tnWhy(a))return;S.slots--;markAct('tn_'+id);gainXP('dip',6);let msg;
+  if(id==='return'){const P=S.pw;const ok=Math.random()<0.35+(P.tn-70)/100;if(ok){const t=P.lost.pop();if(t){TAKEOVERS[t].undo();msg=`The legislature reversed its takeover: ${TAKEOVERS[t].n.replace(/^A bill to /,'')}. The seats are yours again.`}else{growBoard('airport',5,9);msg='The legislature gave Memphis back two Airport Authority seats. You now appoint 5 of 9.'}tnAdd(-4,'Asked for seats back')}else{msg='Leaders said they\'d consider it next session. Nothing changed.';tnAdd(-2,'Asked for seats back')}}
+  else{tnAdd(a.gain,a.n);if(a.fx)a.fx();msg=a.gain>=0?`Relations with Nashville improved (+${a.gain}).`:`Memphis cheered. Nashville noticed (${a.gain}).`}
+  S.approval=cityApproval(S);recomputeAll(S);logIt(`${a.n}: ${msg}`);save();refreshHUD();notify(a.gain<0?'alert':'good',a.n,msg,()=>openPower('state'),{silent:true});openPower('state')}
+function tnMonth(){const P=pwInit();if(!P||!inOffice())return;P.tn+=(40-P.tn)*0.04;
+  if(P.bill&&nowM()>=P.bill.due){const T=TAKEOVERS[P.bill.id];if(P.tn>=35){logIt(`${T.n} died in committee.`);notify('good','The bill against Memphis died',`${T.n} never got a vote. Your work in Nashville paid off.`,()=>openPower('state'),{ttl:14})}
+    else{T.do();P.lost.push(P.bill.id);addRecord&&addRecord({t:`Nashville passed ${T.n.replace(/^A bill/,'a bill')}`,kind:'state',good:[],bad:[]});logIt(T.pass);notify('alert','Nashville overruled the city',T.pass,()=>openPower('state'),{ttl:20});tnAdd(5,'The legislature got its way')}P.bill=null;return}
+  if(!P.bill&&P.tn<30&&S.m>=1&&S.m<=3){const left=Object.keys(TAKEOVERS).filter(t=>!P.lost.includes(t));if(left.length&&Math.random()<0.4){P.bill={id:left[0],filed:nowM(),due:nowM()+2};
+    notify('alert','A bill in Nashville targets Memphis',`${TAKEOVERS[left[0]].n} was filed. It comes up in two months. Get relations with Nashville to 35 or higher to stop it.`,()=>openPower('state'),{ttl:20});logIt(`${TAKEOVERS[left[0]].n} was filed in the legislature.`)}}}
+// ---------- the screen ----------
+let PW_TAB='boards';
+function openPower(tab){if(!S)return;pwInit();closePanel();const cand=!inOffice();PW_TAB=cand?'council':(tab||PW_TAB||'boards');const P=S.pw;
+  const tabs=cand?'':`<div class="lsel" style="margin-bottom:8px">${[['boards','Boards'],['council','Council races'],['state','Nashville']].map(([k,n])=>`<button data-pwtab="${k}" class="${PW_TAB===k?'on':''}">${n}</button>`).join('')}</div>`;
+  let body='';
+  if(PW_TAB==='boards'){body=Object.keys(BOARDS).map(id=>{const D=BOARDS[id],B=P.b[id],inh=bInh(B),maj=bMajority(id),cd=cdLeft('bd_'+id,12),state=B.seats-B.city;
+    const pips=[...Array(B.ally).fill('ally'),...Array(B.mid).fill('mid'),...Array(B.pro).fill('pro'),...Array(inh).fill('inh'),...Array(B.open).fill('open'),...Array(state).fill('state')];
+    const why=!maj?(B.city<=B.seats/2?'The state controls the majority':`You need ${Math.floor(B.seats/2)+1} of ${B.seats} votes (an ally counts as 1, a consensus pick as ½)`):cd?`Again in ${cd} mo`:S.slots<=0?'No meetings left this month':'';
+    return`<div class="facts"><h4>${D.n} · ${maj?'<span style="color:var(--good)">You have a majority</span>':`${String(bCtl(B)).replace('.5','½').replace(/^0½/,'½')} of ${B.seats} votes are yours`}</h4><p class="note" style="margin-top:0">${D.d}</p>
+     <div class="bseats">${pips.map(t=>`<i class="bs-${t}" title="${{ally:'Your ally',mid:'Consensus pick',pro:'Independent expert',inh:'Appointed by the last mayor',open:'Open seat',state:'State appointee'}[t]}"></i>`).join('')}</div>
+     <p class="note bkey"><i class="bs-ally"></i>Ally <i class="bs-mid"></i>Consensus <i class="bs-pro"></i>Expert <i class="bs-inh"></i>Last mayor's ${state?'<i class="bs-state"></i>State ':''}${B.open?'<i class="bs-open"></i>Open':''}</p>
+     ${B.open?(B.fail===nowM()?`<p class="note" style="color:var(--bad)">The council rejected your last nominee. Try again next month.</p>`:`<div class="choices">${Object.keys(NOMINEES).map(t=>{const N=NOMINEES[t],n=confCount(t,true);return`<button class="choice" data-nominate="${id}:${t}"><b>Nominate ${N.n.toLowerCase()} · <span style="color:${n>=8?'var(--good)':n>=7?'var(--warn)':'var(--bad)'}">about ${n} of 13 would confirm</span></b><small>${N.d}${t==='pro'?' '+D.pro:''}</small></button>`}).join('')}</div>`):''}
+     <div class="choices"><button class="choice" data-direct="${id}" ${why?'disabled':''}><b>${D.dir.n}</b><small>${D.dir.d} Uses a meeting · once a year${why?` · ${why}`:''}</small></button></div></div>`}).join('')}
+  else if(PW_TAB==='council'){const C=crInit();
+    if(!C){const nx=COUNCIL_ELECT.find(y=>y>S.y);body=`<div class="facts"><p>All 13 council seats are on the ballot in October ${nx||''}, the same day as the mayor's race. Endorsements open that January.</p>${P.cr&&P.cr.res?crResHTML(P.cr):''}</div>`}
+    else if(C.done)body=`<div class="facts"><h4>Results · October ${C.y}</h4>${crResHTML(C)}</div>`;
+    else{crSync(C);const open=crOpen();body=`<div class="facts"><p style="margin-top:0">All 13 council seats are on the ballot on Election Day. Your endorsement helps where voters like you and hurts where they don't. Each endorsement uses a ${slotWord(1)}. ${cand?'A council that owes you its seat makes your first months in office easier.':'Back a challenger and the incumbent won\'t forget it.'}</p></div>
+      <div class="dlist">${C.seats.map(s=>{const m=S.council[s.k],v=Math.round(votersOf(m).v),e=endorseFx(s),eff=e>=0.1?'helps a lot':e>=0.03?'helps':e>-0.03?'barely matters':'hurts';
+        const io=incOdds(s),co=chOdds(s);const pickTxt=s.pick?`<b style="color:var(--good)">You endorsed ${s.pick==='inc'?m.name.split(' ').pop():s.ch.name.split(' ').pop()}</b>`:'';
+        return`<div class="crrow"><div class="crh"><b>${m.seat}</b><small class="note">Your standing here ${v}% · your endorsement ${eff}</small></div>
+         ${s.open?`<p class="note" style="margin:2px 0">Open seat: ${m.name} is ${s.why}.</p>`:''}
+         <div class="crc">${s.open?'':`<button class="btn" data-endorse="${s.k}:inc" ${s.pick||!open||S.slots<=0?'disabled':''}>${portrait(m,30)}<span><b>${m.name}</b><small>Incumbent · opinion of you ${fmtOp(m.opinion)} · ${Math.round(io*100)}% to win</small></span></button>`}
+          <button class="btn" data-endorse="${s.k}:ch" ${s.pick||!open||S.slots<=0?'disabled':''}><span><b>${s.ch.name}</b><small>${s.open?'Candidate':'Challenger'}, ${s.ch.bg} · ${Math.round(co*100)}% to win</small></span></button></div>${pickTxt}</div>`}).join('')}</div>`}}
+  else{const t=Math.round(P.tn),B=P.bill;
+    body=`<div class="facts"><h4>Relations with Nashville: <span style="color:${tnColor(t)}">${t} · ${tnWord(t)}</span></h4><div class="meter" style="height:8px"><i style="width:${t}%;background:${tnColor(t)}"></i></div>
+     <p class="note">The Tennessee legislature can overrule Memphis, and it has: in 2026 it took six of nine Airport Authority seats from the city. Below 30, legislators file bills against the city each January to March. Above 55, your pushes for state money work more often.</p>
+     ${B?`<p style="color:var(--bad)"><b>${TAKEOVERS[B.id].n}</b> comes up for a vote in ${Math.max(0,B.due-nowM())} month${B.due-nowM()===1?'':'s'}. Get relations to 35 to stop it.</p>`:''}
+     ${P.lost.length?`<p class="note">Powers the state has taken: ${P.lost.map(x=>TAKEOVERS[x].n.replace(/^A bill to /,'')).join('; ')}.</p>`:''}
+     ${P.tnLog.length?`<div class="opl">${P.tnLog.slice(0,4).map(x=>`<div><span>${x.t} · ${x.d}</span><b style="color:${x.v>=0?'var(--good)':'var(--bad)'}">${x.v>=0?'+':'−'}${Math.abs(Math.round(x.v))}</b></div>`).join('')}</div>`:''}</div>
+     <div class="facts"><h4>Work Nashville</h4><div class="choices">${TN_ACTS.map(a=>{const why=tnWhy(a);return`<button class="choice" data-tnact="${a.id}" ${why?'disabled':''}><b>${a.n}${a.gain?` · <span style="color:${a.gain>0?'var(--good)':'var(--bad)'}">${a.gain>0?'+':'−'}${Math.abs(a.gain)}</span>`:''}</b><small>${a.d} Uses a meeting${why?` · ${why}`:''}</small></button>`}).join('')}</div></div>`}
+  openModal(cand?`Council races · ${S.slots} ${slotWord(S.slots)} left`:`${S.slots} ${slotWord(S.slots)} left this month`,'Power & influence',tabs+body,true)}
+function crResHTML(C){return`<p>${C.backed?`Your candidates won <b>${C.mine} of ${C.backed}</b>.`:'You stayed out of the council races.'}</p><div class="opl">${C.res.map(r=>`<div><span>${r.seat}: ${r.winner}${r.flip?` <small class="note">(new, replaced ${r.old})</small>`:''}</span><b style="color:${r.pick?(r.won?'var(--good)':'var(--bad)'):'var(--muted)'}">${r.pick?(r.won?'Your pick won':'Your pick lost'):'—'}</b></div>`).join('')}</div>`}
+openPower=navWrap('openPower',openPower);
+document.addEventListener('click',e=>{const b=e.target.closest('[data-pwtab],[data-nominate],[data-direct],[data-endorse],[data-tnact],[data-act="power"]');if(!b||!S)return;e.preventDefault();e.stopImmediatePropagation();
+  if(b.dataset.pwtab){PW_TAB=b.dataset.pwtab;openPower(PW_TAB);return}
+  if(b.dataset.nominate){const[id,t]=b.dataset.nominate.split(':');nominate(id,t);return}
+  if(b.dataset.direct){directBoard(b.dataset.direct);return}
+  if(b.dataset.endorse){const[k,w]=b.dataset.endorse.split(':');endorseSeat(+k,w);return}
+  if(b.dataset.tnact){tnAct(b.dataset.tnact);return}
+  if(modalOpen){onClose=null;closeModal()}openPower()},true);
+// ---------- hooks ----------
+{const _po=pushOdds;pushOdds=function(p){let o=_po(p);try{const P=pwInit();if(p.who==='Tennessee legislature')o+=(P.tn-40)/100*0.6;if(p.id==='mlgw'&&bMajority('mlgw'))o+=0.2}catch(e){}return clamp(o,0.05,0.95)}}
+{const _dp=doPush;doPush=function(id){const n=(S.stats||{}).push||0,w=(S.stats||{}).pushWin||0;_dp(id);if(((S.stats||{}).push||0)>n){const won=((S.stats||{}).pushWin||0)>w;
+  if(id==='luxtax')tnAdd(-8,'Pushed a luxury tax');else if(PUSHMAP[id]&&PUSHMAP[id].who==='Tennessee legislature')tnAdd(won?4:-1,won?'Won state road money':'Lobbied for road money')}}}
+{const _eom=endOfMonth;endOfMonth=function(...a){const r=_eom.apply(this,a);try{if(S){if(!S.over){boardMonth();tnMonth()}const C=S.pw&&S.pw.cr;if(C&&!C.done&&(S.y>C.y||S.m>=11))crResolve()}}catch(e){console.warn('power',e)}return r}}
+{const _cc=checkCampaignDay;checkCampaignDay=function(){const was=S.camp&&S.camp.voted;const r=_cc();try{if(!was&&S.camp&&S.camp.voted&&S.pw&&S.pw.cr&&!S.pw.cr.done)setTimeout(()=>{try{crResolve()}catch(e){console.warn(e)}},0)}catch(e){}return r}}
+{const def=EVENTS.find(e=>e.id==='mlgw_board');if(def)def.scripted=true}
+{const _ns=nextSteps;nextSteps=function(){const L=_ns();try{if(!S||!S.started||S.over)return L;const P=pwInit();
+  if(inOffice()){if(P.bill)L.push({pri:88,t:'Stop the bill in Nashville',h:`${TAKEOVERS[P.bill.id].n} comes up soon. Get relations with Nashville to 35.`,go:()=>openPower('state')});
+    const ob=Object.keys(BOARDS).find(id=>P.b[id].open>0&&P.b[id].fail!==nowM());if(ob&&S.day>3)L.push({pri:46,t:`Fill a seat on the ${BOARDS[ob].n}`,h:'Send the council a nominee. A board majority lets you direct the agency.',go:()=>openPower('boards')});
+    const db=Object.keys(BOARDS).find(id=>bMajority(id)&&!cdLeft('bd_'+id,12));if(db&&S.slots>0)L.push({pri:50,t:BOARDS[db].dir.n,h:`You have a majority on the ${BOARDS[db].n}.`,go:()=>openPower('boards')})}
+  if(crInit()&&crOpen()&&S.m>=3&&S.slots>0&&!P.cr.seats.some(s=>s.pick))L.push({pri:44,t:'Endorse council candidates',h:'All 13 seats are on the October ballot. Back the people you want to work with.',go:()=>openPower('council')});
+  L.sort((a,b)=>b.pri-a.pri)}catch(e){}return L}}
 function openLedger(){const L=S.log||[];openPanel('Everything that has happened, newest first','Ledger',L.length?`<div class="logl">${L.map(x=>`<div><span>${x.d}</span><p style="margin:0">${x.t}</p></div>`).join('')}</div>`:'<p class="note">Nothing yet. Start the clock with Space or ▶.</p>','ledger')}
 function openPolicies(){const ks=Object.keys(POLICIES);
   openPanel('Ongoing programs you control','Your initiatives',`<p>Mid-year, these are paid from the reserve fund. In April they go into the budget you send the council.</p>
@@ -4777,7 +4938,7 @@ function showEnd(){openModal('Game over','Your time in office is over',`${summar
 function openHelp(){closePanel();openModal('How to play','Guide',`<div class="row" style="margin-bottom:6px"><button class="btn primary" data-tut="replay">Replay the tour</button><button class="btn" data-slotopen="1">Save and load (G)</button><button class="btn" data-act="legacy">Mayors of Memphis (Y)</button><button class="btn" data-act="platform">Your platform and clout (P)</button><button class="btn" data-act="news">The news (R)</button><button class="btn" data-act="sotc">State of the City (T)</button></div>
   <div class="facts"><h4>Controls</h4><ul><li>WASD or the arrow keys pan the map; hold Shift to pan faster. Moving the mouse to the edge of the screen scrolls too (turn it off under Layers). You can also drag.</li><li>Scroll or pinch to zoom toward the cursor; Q and Z (or the + and − buttons on the right) zoom too, and Home shows the whole city. F, or the ◉ button, finds your mayor: the gold marker is at City Hall on weekdays, home on weekends, and wherever you go to act.</li><li>Hover any face or name (on a phone, press and hold) for a quick character card with their opinion of you and why. Click for the full page. News comes to you from a person: your cabinet for their departments, the local council member for neighborhood problems, a suburban mayor for regional ones.</li><li>People act on their own. Council members have allies and rivals (shown on their cards): allies vote together, so locking in one with a favor or a hook pulls their allies your way, and how an ally feels about you rubs off. Feuds, voting pacts, your opponent courting members, endorsement requests, cabinet requests and scandals arrive as ♟︎ People events. Ignoring them costs you, and some end up in your opponent's ads. An ambitious cabinet member may quietly build support for their own run; if you don't catch it, they quit and back your opponent.</li><li>Your cabinet (Cabinet tab) runs the city: chief of staff, police and fire chiefs, finance, public works, housing, economic development, MLGW, MATA and communications. Meet them, praise them or replace them. Unhappy ones leak to reporters; very unhappy ones quit.</li><li>Police stations (★), fire stations (▲) and hospitals (✚) are on the map. Click one to visit, fund equipment or programs, or fix problems there. Turn them off under Layers.</li><li>Scroll or pinch to zoom toward the cursor. Zoomed out you get the political map, with each council district in its own color. Zoom in and the camera tilts down into the 3D city.</li><li>Click a landmark or amber pin to open it. Click a district or precinct when those layers are on.</li><li>Time runs day by day. Space pauses and resumes; + and − (or the pips by the date) set speed 1–5. New business arrives on random days and pauses the game (turn that off under Layers). Each month closes on its last day and goes into the Ledger. N skips to the end of the month. B opens the budget, C the council, O public opinion, L the map layers. Keys 1–7 switch map modes: City, Political, Council opinion, Street condition, MPD precincts, Region, Public opinion.</li><li>Every menu has tabs along the top (Mayor, Opinion, Council, Region, Budget, Programs, Ledger) and a ← Back button that returns to the screen you came from. Backspace also goes back; Esc closes.</li></ul></div>
   <div class="facts"><h4>Two ways to start</h4><ul><li><b>Start as mayor</b>: you take office in October 2026 with a year to go before the election.</li><li><b>Run for mayor</b>: you're a Memphian with a day job (pastor, nurse, teacher, small business owner and more) in March 2027. Pick three platform planks, knock doors, meet community leaders, speak out, raise money, run ads, win forums and debates, and take on the sitting mayor in October. Name recognition starts low; voters who don't know you won't vote for you. If you win, you're sworn in on January 1 and your platform becomes your promise list.</li></ul></div>
-  <div class="facts"><h4>After your term</h4><ul><li>The game goes on. Mayors can serve two terms. In your second term, a few months into the election year, you choose whom to endorse: a council ally, someone from your cabinet, or a newcomer. Your approval and your campaign carry them. If they win, you keep playing as the new mayor.</li><li>If you lose an election, or your successor does, you can keep playing as the winner, skip ahead and run again as a new candidate, or start over. The Mayors of Memphis in your game are listed as you go.</li></ul></div>
+  <div class="facts"><h4>Power beyond City Hall</h4><ul><li>Open People, then Power &amp; influence.</li><li><b>Boards.</b> You appoint the MLGW, MATA and Airport Authority boards, and the council confirms. Loyal allies are harder to confirm. Consensus picks are easy. Experts make the agency run better. With a board majority, you can direct the agency once a year. Since July 2026, the state appoints six of nine airport seats.</li><li><b>Council races.</b> All 13 seats are on the October 2027 ballot. Each endorsement uses a meeting. It helps where you're popular and hurts where you aren't. If you back a challenger, the incumbent won't forget it.</li><li><b>Nashville.</b> The legislature can overrule the city. Below 30, it files bills each January to March that take powers away, and you have two months to get back to 35 to stop them. Above 70, you can ask for seats back.</li></ul></div><div class="facts"><h4>After your term</h4><ul><li>The game goes on. Mayors can serve two terms. In your second term, a few months into the election year, you choose whom to endorse: a council ally, someone from your cabinet, or a newcomer. Your approval and your campaign carry them. If they win, you keep playing as the new mayor.</li><li>If you lose an election, or your successor does, you can keep playing as the winner, skip ahead and run again as a new candidate, or start over. The Mayors of Memphis in your game are listed as you go.</li></ul></div>
   <div class="facts"><h4>Getting started goals</h4><p class="note">The Mayor's Desk shows a short list of goals that teach one thing at a time, with a Show me button. Hide it with ×.</p></div>
   <div class="facts"><h4>The campaign and your money</h4><p class="note"><a href="#" data-act="moneyintro">Show the three-accounts introduction again</a></p><ul><li>You keep three separate accounts: the city treasury (the reserve fund, for services and projects), your campaign fund (for ads, staff, polls and rallies) and your personal money (your salary).</li><li>Campaign HQ (K): raise money from small donors and major donors (who expect things in return), buy ads that promote your record, defend it or attack your opponent, hire organizers, open field offices, poll the race and ask groups for endorsements. Your opponent raises and spends too.</li><li>Endorsements are decided July to September of each election year, debates are September 9 and 23, and Election Day is the first Thursday in October. The vote comes from each population group's support and turnout, so money amplifies your record but can't replace it.</li><li>Your salary ($170,817 a year; $14,234.75 a month before deductions, about $9,600 after deductions) pays into a personal account. Spend it on optional wardrobe items, or put up to $25,000 into your campaign.</li></ul></div>
   <div class="facts"><h4>Projects, stories and your desk</h4><ul><li>Start a capital project from Actions: repave a poorly rated road, rehab vacant homes in a neighborhood, or renovate a park. It goes to the council, out to bid, then takes months to build, with delays you have to handle. Pay from reserves month by month or borrow with bonds. You'll see each project on the map, and finished roads turn green in the street condition map.</li><li>Some decisions start stories that come back months later: backing a data center deal, ordering hot-spot patrols, or deciding who gets rehabbed homes. How they end goes on your public record, and your opponent uses that record in the election.</li><li>The Mayor's Desk (left side, or press I) gathers urgent decisions, council votes, projects and developing stories. Click any item to go there. Choose what pauses the clock from the full desk.</li></ul></div>
@@ -5382,7 +5543,7 @@ window.claude?.hot?.snapshot?.(()=>({S}));
 window.claude?.hot?.ready?window.claude.hot.ready(start):start(window.claude?.hot?.data??{});
 </script>
 <script src="city-life.js?v=26.4"></script>
-<script src="city-flow.js?v=26.4"></script>
+<script src="city-flow.js?v=26.6"></script>
 <script src="music.js?v=25"></script>
 </body>
 </html>
