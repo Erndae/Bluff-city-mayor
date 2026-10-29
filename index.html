@@ -304,6 +304,7 @@ button.seat:hover{border-color:var(--amber)}
 .startbox h1 span{display:block;color:var(--text);font-size:.42em;letter-spacing:.3em;margin-top:8px;text-shadow:none}
 .startbox p{margin:0;line-height:1.55;max-width:60ch;color:#d9d1c1}
 .keys{display:grid;grid-template-columns:auto 1fr;gap:5px 14px;font-size:14px}
+.pcat{margin-bottom:10px}.pcat h4{margin:6px 0 6px;font-family:var(--f-label);font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
 .bseats{display:flex;gap:5px;flex-wrap:wrap;margin:6px 0 2px}.bseats i,.bkey i{display:inline-block;width:16px;height:16px;border-radius:50%;border:2px solid var(--line)}
 .bkey{display:flex;flex-wrap:wrap;gap:4px 10px;align-items:center;margin:4px 0 8px}.bkey i{width:10px;height:10px;margin-right:3px;vertical-align:-1px}
 .bs-ally{background:var(--good);border-color:var(--good)!important}.bs-mid{background:linear-gradient(90deg,var(--good) 50%,transparent 50%);border-color:var(--good)!important}
@@ -598,7 +599,7 @@ details.analysis{margin-top:6px}details.analysis summary{cursor:pointer;color:va
     <button class="btn primary" data-act="pause" id="bPlay"><svg class="ico" viewBox="0 0 12 12" aria-hidden="true"><path d="M3.2 1.6v8.8l7.2-4.4z" fill="currentColor"/></svg> Resume <kbd>Space</kbd></button>
   </nav>
   <div class="status" id="status">Loading map…</div>
-  <div class="credit"><span class="ver" id="verTag">v26.8</span></div>
+  <div class="credit"><span class="ver" id="verTag">v26.9</span></div>
   <div class="tip" id="tip" hidden></div>
   <div class="toast" id="toast" role="status"></div>
   <section class="panel" id="panel" hidden aria-live="polite">
@@ -626,7 +627,7 @@ details.analysis{margin-top:6px}details.analysis summary{cursor:pointer;color:va
         <button class="btn" data-music-open>Music &amp; volume</button>
       </div>
       <div id="slotList" hidden></div>
-      <p class="note startv">Version <b class="ver" id="verStart">v26.8</b></p>
+      <p class="note startv">Version <b class="ver" id="verStart">v26.9</b></p>
     </div>
     <div class="startbox create" id="create" hidden>
       <h2>Create your mayor</h2>
@@ -1416,7 +1417,7 @@ function enact(s,p){DIVS.forEach(d=>{s.enacted[d.id]=p.divs[d.id];s.ratio[d.id]=
 // Voter groups. Each has a share of residents, turnout, home districts, concerns and an approval of you.
 // Citywide approval is the turnout-weighted average of the groups; each council district's approval comes from the groups that live there.
 // Shares, district mix and turnout are modeled, loosely grounded in Memphis demographics; they are not survey data.
-const VERSION='v26.8';
+const VERSION='v26.9';
 const GROUPS=[
  {id:'working',sh:'Working families',n:'Working families',ic:'⚒︎',c:'#f2a93b',share:24,turn:.5,start:56,w:{jobs:1,safety:.8,transit:.5},
   d:'Hourly workers in logistics, warehouses, health care and service jobs. The biggest bloc in the city.',dm:{1:1.1,2:.8,3:1.3,4:1.2,5:.6,6:1.2,7:1.1}},
@@ -2391,6 +2392,12 @@ const PROMISES=[
  {id:'raises',n:'Respect for city workers',d:'Give city workers a raise of 3% or more in your next budget',grp:['labor'],m:s=>({v:(s.pending||{}).raise!=null&&s.stage==='adopted'?s.pending.raise:s.fyIndex>0?s.raise:0,t:3,base:0,u:'%'})},
 ];
 const PMAP={};PROMISES.forEach(p=>PMAP[p.id]=p);
+// Promise categories, so the platform reads like one: pick across them or stack one issue.
+const PCATS=[['health','Health care',['health']],['jobs','Jobs & wages',['jobs','raises']],['taxes','Taxes & budget',['notax','fairshare','books']],['infra','Streets & transit',['roads2','transit']],['hood','Housing & neighborhoods',['homes','blight','parks']],['safety','Public safety',['cops','crime','openpolicing']],['schools','Schools',['reading']]];
+function promChoices(picked){const seen=new Set();const sec=(n,ids)=>{const L=ids.map(id=>PMAP[id]).filter(Boolean);L.forEach(P=>seen.add(P.id));if(!L.length)return'';const k=L.filter(P=>picked.has(P.id)).length;
+  return`<div class="pcat"><h4>${n}${k?` <span style="color:var(--amber)">· ${k} picked</span>`:''}</h4><div class="choices">${L.map(P=>`<button class="choice" data-act="pickpromise" data-id="${P.id}" style="${picked.has(P.id)?'border-color:var(--amber)':''}"><b>${picked.has(P.id)?'✔ ':''}${P.n}</b><small>${P.d} · matters to ${P.grp.map(g=>GMAP[g].sh).join(', ')}</small></button>`).join('')}</div></div>`};
+  const rest=PROMISES.filter(P=>!PCATS.some(c=>c[2].includes(P.id)));
+  return PCATS.map(c=>sec(c[1],c[2])).join('')+(rest.length?sec('Other',rest.map(P=>P.id)):'')}
 function promiseDeadline(){const y=elYear();return y*12+9} // end of September before the October election
 function promiseState(id){const P=PMAP[id],st=(S.promises||[]).find(x=>x.id===id);if(st&&st.status!=='open')return{status:st.status,pct:st.status==='kept'?1:0,label:st.status==='kept'?'Kept':'Broken'};
   if(P.keep){const ok=P.keep(S);return{status:'open',pct:ok?1:0,label:ok?'On track':'Broken now',ok}}
@@ -2410,10 +2417,10 @@ function promisesMonth(report){if(!S.promises)return;const now=nowM(),dl=promise
   if(now>dl){settlePromise(st,!!P.keep);report.push(P.keep?`Promise kept through the deadline: ${P.n}.`:`Deadline passed. Promise broken: ${P.n}.`);return}
   if(dl-now===3)report.push(`Three months left to keep your promise: ${P.n} (${ps.label}).`)})}
 function openPromises(){const picked=new Set((S._pp||[]));const done=!!S.promises;closePanel();
-  if(isCand()&&!done){openModal('Pick 3. If you win, they become your promises as mayor.','Choose your platform',`<p>What will you run on? Each plank wins over the groups who care about it. If you're elected, you'll have until September ${elYear()+4} to deliver.</p><div class="choices">${PROMISES.map(P=>`<button class="choice" data-act="pickpromise" data-id="${P.id}" style="${picked.has(P.id)?'border-color:var(--amber)':''}"><b>${picked.has(P.id)?'✔ ':''}${P.n}</b><small>${P.d} · matters to ${P.grp.map(g=>GMAP[g].sh).join(', ')}</small></button>`).join('')}</div><div class="row"><button class="btn primary" data-act="savepromises" ${picked.size===3?'':'disabled'}>Run on these ${picked.size}/3</button></div>`,true);return}
+  if(isCand()&&!done){openModal('Pick 3. If you win, they become your promises as mayor.','Choose your platform',`<p>What will you run on? Each plank wins over the groups who care about it. If you're elected, you'll have until September ${elYear()+4} to deliver.</p>${promChoices(picked)}<div class="row"><button class="btn primary" data-act="savepromises" ${picked.size===3?'':'disabled'}>Run on these ${picked.size}/3</button></div>`,true);return}
   openModal(done?`Deadline: September ${Math.floor(promiseDeadline()/12)}, before the election`:'Pick 3. They stay on your record.',done?'Your promises':'Make your campaign promises',done?promiseList():`
    <p>Voters remember what you promise. Each one has a measurable target and a deadline of September ${Math.floor(promiseDeadline()/12)}, the month before the election. Kept promises become your best ads; broken ones become your opponent's.</p>
-   <div class="choices">${PROMISES.map(P=>`<button class="choice" data-act="pickpromise" data-id="${P.id}" style="${picked.has(P.id)?'border-color:var(--amber)':''}"><b>${picked.has(P.id)?'✔ ':''}${P.n}</b><small>${P.d} · matters to ${P.grp.map(g=>GMAP[g].sh).join(', ')}</small></button>`).join('')}</div>
+   ${promChoices(picked)}
    <div class="row"><button class="btn primary" data-act="savepromises" ${picked.size===3?'':'disabled'}>${picked.size}/3 chosen · Make these promises</button></div>`,true)}
 openPromises=navWrap('openPromises',openPromises);
 function promiseList(){return`<div class="dlist">${S.promises.map(st=>{const P=PMAP[st.id],ps=promiseState(st.id);const c=st.status==='kept'?'var(--good)':st.status==='broken'?'var(--bad)':ps.pct>=.66?'var(--good)':ps.pct>=.33?'var(--warn)':'var(--bad)';
@@ -4539,7 +4546,8 @@ SOTC_PRI.forEach(p=>{if(p.id==='health'){p.met='health';p.thr=3;p.d='Community h
 // promises and planks
 PROMISES.push({id:'health',n:'Health care close to home',d:'Raise the community health index to 50',grp:['working','faith','renters'],m:s=>({v:s.met.health??42,t:50,base:42,u:''})});
 PROMISES.push({id:'fairshare',n:'Make the wealthy pay their share',d:'Rein in tax breaks for big companies without raising the property tax rate',grp:['working','renters','labor'],neg:['business'],m:s=>({v:(s.policies||{}).pilot||(s.fairWins||0)>0?1:0,t:1,base:0,u:'reform'}),also:s=>s.taxRate<=3.39001});
-PROMISES.slice(-2).forEach(p=>PMAP[p.id]=p);
+PROMISES.push({id:'jobs',n:'Good jobs for Memphians',d:'Raise the jobs climate index to 60',grp:['working','young','business'],m:s=>({v:s.met.jobs,t:60,base:55,u:''})});
+PROMISES.slice(-3).forEach(p=>PMAP[p.id]=p);
 {const _cp=choosePromises;choosePromises=function(ids){_cp(ids);ids.forEach(id=>(PMAP[id].neg||[]).forEach(g=>{if(S.groups[g])addGroupMod(S.groups[g],isCand()?`Your platform: ${PMAP[id].n}`:`Your promise: ${PMAP[id].n}`,-2)}));S.approval=cityApproval(S)}}
 // news and group reactions when the tax-break reform is switched
 function policyNews(k){if(!S||!inOffice())return;{const on=!!S.policies[k];
