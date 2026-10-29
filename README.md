@@ -4,6 +4,16 @@ A city-management game set in Memphis, Tennessee. You play the mayor. You handle
 
 **Play it:** https://erndae.github.io/Bluff-city-mayor/ (once GitHub Pages is turned on, see below)
 
+## v26.3: A clearer next move
+
+The main controls and menu tabs now have four destinations: **City, Budget, People, and Campaign**. City contains the weekly focus, full desk, available actions, decision history, and expandable reports/settings. Budget keeps city and personal finances together; People groups residents, council, cabinet, your character and neighboring mayors. Keyboard shortcuts, campaign-manager strategy and the full Campaign HQ remain available.
+
+Your chief of staff or campaign manager recommends one weekly priority, with two alternatives tucked below. A relevant focus persists through the week and saved-game reloads; an urgent deadline, completed/unavailable task, new week or role change updates it. Taking the next step opens the relevant existing action without spending resources automatically.
+
+Action reports lead with up to three measured changes, a reaction and the next recommended step. All figures and reactions remain expandable. Campaign actions now report campaign cash, name recognition, polls, staffing and recurring payroll separately from city reserves. Existing decisions and saved games remain compatible.
+
+Checks: `node tools/check-flow.cjs` verifies priority persistence and rollover, urgent overrides, role changes and measured city/campaign receipts. Browser checks exercise navigation and action receipts; the preview environment cannot render the WebGL map.
+
 ## v25.6: Houses with roofs and color
 
 Neighborhood homes now have pitched roofs, contrasting roof colors, and ten exterior colors. Closer zoom adds doors, window frames, and one- or two-story facades. This covers both central Memphis and the surrounding residential footprint layer. Named landmarks and civic facilities retain their own designs.

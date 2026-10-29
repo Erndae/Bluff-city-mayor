@@ -523,6 +523,7 @@ details.analysis{margin-top:6px}details.analysis summary{cursor:pointer;color:va
 </style>
 <link rel="stylesheet" href="city-design.css?v=25.5">
 <link rel="stylesheet" href="city-life.css?v=25">
+<link rel="stylesheet" href="city-flow.css?v=26.3">
 
 <div id="splash" role="status" aria-live="polite">
   <div class="sp-in">
@@ -583,7 +584,7 @@ details.analysis{margin-top:6px}details.analysis summary{cursor:pointer;color:va
     <button class="btn primary" data-act="pause" id="bPlay"><svg class="ico" viewBox="0 0 12 12" aria-hidden="true"><path d="M3.2 1.6v8.8l7.2-4.4z" fill="currentColor"/></svg> Resume <kbd>Space</kbd></button>
   </nav>
   <div class="status" id="status">Loading map…</div>
-  <div class="credit"><span class="ver" id="verTag">v25.6</span></div>
+  <div class="credit"><span class="ver" id="verTag">v26.3</span></div>
   <div class="tip" id="tip" hidden></div>
   <div class="toast" id="toast" role="status"></div>
   <section class="panel" id="panel" hidden aria-live="polite">
@@ -618,7 +619,7 @@ details.analysis{margin-top:6px}details.analysis summary{cursor:pointer;color:va
         <button class="btn" id="bLoad" hidden>Continue saved term</button>
       </div>
       <div id="slotList" hidden></div>
-      <p class="note startv">Version <b class="ver" id="verStart">v25.6</b></p>
+      <p class="note startv">Version <b class="ver" id="verStart">v26.3</b></p>
     </div>
     <div class="startbox create" id="create" hidden>
       <h2>Create your mayor</h2>
@@ -1408,7 +1409,7 @@ function enact(s,p){DIVS.forEach(d=>{s.enacted[d.id]=p.divs[d.id];s.ratio[d.id]=
 // Voter groups. Each has a share of residents, turnout, home districts, concerns and an approval of you.
 // Citywide approval is the turnout-weighted average of the groups; each council district's approval comes from the groups that live there.
 // Shares, district mix and turnout are modeled, loosely grounded in Memphis demographics; they are not survey data.
-const VERSION='v25.6';
+const VERSION='v26.3';
 const GROUPS=[
  {id:'working',sh:'Working families',n:'Working families',ic:'⚒︎',c:'#f2a93b',share:24,turn:.5,start:56,w:{jobs:1,safety:.8,transit:.5},
   d:'Hourly workers in logistics, warehouses, health care and service jobs. The biggest bloc in the city.',dm:{1:1.1,2:.8,3:1.3,4:1.2,5:.6,6:1.2,7:1.1}},
@@ -4502,7 +4503,7 @@ document.addEventListener('click',e=>{const b=e.target.closest('[data-mgr],[data
   if(!m&&S.camp&&(isCand()||(inOffice()&&monthsToElection()<=12)))L.push({pri:isCand()?101:74,t:'Hire a campaign manager',h:isCand()?'Your campaign starts with them. Each one is good at something different.':'Election Day is within a year. A manager runs the campaign and points you to your next move.',go:()=>openMgr()});
   if(m)L.forEach(x=>{if(m.focus.test(x.t+' '+x.h))x.pri+=12});
   return L.sort((a,b)=>b.pri-a.pri)}}
-{const _ns2=nextSteps;let memoK='',memoT=0,memoV=null;nextSteps=function(){const k=S?[nowM(),S.day,S.events.length,S.slots,S.camp&&S.camp.mgr,!!S.promises,S.stage,S.phase,Object.keys(S.policies||{}).length,S.reserve|0].join(':'):'';const t=performance.now();if(k===memoK&&memoV&&t-memoT<2000)return memoV.slice();memoK=k;memoT=t;memoV=_ns2();return memoV.slice()}}
+{const _ns2=nextSteps;let memoK='',memoT=0,memoV=null;nextSteps=function(){const k=S?[nowM(),S.day,S.events.length,S.slots,S.camp&&S.camp.mgr,!!S.promises,S.stage,S.phase,Object.keys(S.policies||{}).length,S.reserve|0,JSON.stringify(S.acts||{}),S.camp?.polls?.length,S.projects?.length,S.approval?.toFixed(2)].join(':'):'';const t=performance.now();if(k===memoK&&memoV&&t-memoT<2000)return memoV.slice();memoK=k;memoT=t;memoV=_ns2();return memoV.slice()}}
 {const _nb=nextBox;nextBox=function(){const h=_nb();const m=curMgr();if(!h||!m)return h;return h.replace('<div class="nb-h">What to do next</div>',`<div class="nb-h">${m.name} suggests</div>`)}}
 // HQ: show the manager at the top
 {const _hq=openHQ;openHQ=function(...a){const r=_hq.apply(this,a);try{const m=curMgr();const body=$('mBody');if(body&&modalOpen&&!body.querySelector('.mgrline')){body.insertAdjacentHTML('afterbegin',m?`<div class="facts mgrline"><div class="row" style="align-items:center;gap:10px">${mgrFace(m,44)}<div style="flex:1"><b>${m.name}</b> · campaign manager<br><small class="note">${m.title}: ${m.bonus} <span style="color:var(--bad)">−$${m.sal}K</span> a month.</small></div><button class="btn" data-act="mgr">Change</button></div></div>`:`<div class="facts mgrline" style="border-color:var(--amber)"><b>No campaign manager yet.</b> <span class="note">${isCand()?'Your campaign can\'t start without one.':'A manager makes your campaign stronger and suggests what to do next.'}</span><div class="row"><button class="btn primary" data-act="mgr">Hire a campaign manager</button></div></div>`)}}catch(e){}return r}}
@@ -5122,7 +5123,7 @@ window.addEventListener('keydown',e=>{
   if(k==='f'){findMayor();return}if(k==='g'){openSlots();return}if(k==='y'){openLegacy();return}if(k==='home'){e.preventDefault();camFly({...HOME_VIEW,speed:1.6});return}
   if(k==='n')advance();else if(k==='b')openBudget();else if(k==='c')openCouncil();else if(k==='h')openHelp();else if(k==='o')openOpinion();else if(k==='e')openActions();else if(k==='i')openDesk();else if(k==='k')openHQ();else if(k==='m')openFinances();else if(k==='l')toggleLayersBox();
 });
-function toggleLayersBox(){$('layers').hidden=!$('layers').hidden;$('bLayers').classList.toggle('on',!$('layers').hidden)}
+function toggleLayersBox(){$('layers').hidden=!$('layers').hidden;$('bLayers')?.classList.toggle('on',!$('layers').hidden)}
 document.addEventListener('change',e=>{const t=e.target;if(!S)return;if(t.dataset&&t.dataset.hh){S.home[t.dataset.hh]=t.value;save();openHousehold();return}if(t.dataset&&t.dataset.notify){S.notify=S.notify||{...NOTIFY_DEF};S.notify[t.dataset.notify]=t.checked;save();return}if(t.id==='lyPause'){S.autoPause=t.checked;save();return}const map_={lySuper:'superd',lyBld:'bld',lyLabels:'labels',lyEdge:'edge',lyCivic:'civic',lySchools:'schools'};
   if(map_[t.id]){S.layers[map_[t.id]]=t.checked;applyLayers();try{renderCivic()}catch(e){}save()}});
 document.addEventListener('click',e=>{
@@ -5380,7 +5381,8 @@ window.bluffMusicContext = () => {
 window.claude?.hot?.snapshot?.(()=>({S}));
 window.claude?.hot?.ready?window.claude.hot.ready(start):start(window.claude?.hot?.data??{});
 </script>
-<script src="city-life.js?v=26"></script>
+<script src="city-life.js?v=26.3"></script>
+<script src="city-flow.js?v=26.3"></script>
 <script src="music.js?v=25"></script>
 </body>
 </html>
