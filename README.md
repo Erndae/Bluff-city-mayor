@@ -4,6 +4,16 @@ A city-management game set in Memphis, Tennessee. You play the mayor. You handle
 
 **Play it:** https://erndae.github.io/Bluff-city-mayor/ (once GitHub Pages is turned on, see below)
 
+## v26.10: A first-person home
+
+Tap your house marker, choose **People → Your home**, or use **Go inside your home** in Household. Walk through a furnished living room, kitchen and bedroom at eye level. Drag to look, use the touch stick or step buttons to walk; on a keyboard use WASD and the arrow keys. City time pauses indoors and returns to its previous pause state on exit.
+
+Furnish & decorate offers 12 furniture types with a preview, quarter-turn rotation and an explicit Buy & place price. Purchases debit only personal cash and appear in personal purchases; moving and storing owned items is free. Walls, fixtures, other solid furniture and doorways constrain placement. Choose wall colors and floor finishes for free. Layouts and stored furniture save with the current game slot and stay with you when you move homes. Existing games receive a starter layout on first entry, without a charge. The older household furniture upgrade retains its existing donor-dinner effect; decorative purchases do not alter campaign balance.
+
+The TV opens News and the desk opens Campaign HQ when nearby. Resting is a quiet moment with city time paused, without a new resource or stat system. This is a stylized shared floor plan rather than a measured recreation of an individual property. The home uses a self-contained Canvas renderer, so it works without WebGL or additional network assets.
+
+Validation: `node tools/check-home.cjs`, `node tools/check-flow.cjs`, and `node tools/check-building-links.cjs`. Browser review covers the first-person view, desktop and 390×844 phone controls, a purchase and a saved layout; the city map's WebGL rendering remains unavailable in the review browser.
+
 ## v26.6: Living houses and buildings
 
 Homes keep their pitched roofs and varied exterior colors. Larger unnamed buildings now have eight exterior color choices, flat roof surfaces with raised edges, window rows and glazed entrances. Real footprint boundaries and measured building heights are retained; named landmarks retain their existing designs and visit links. Decorative architecture remains stylized.

@@ -1,6 +1,7 @@
 <!doctype html>
 <html lang="en">
 <head>
+<link rel="stylesheet" href="home-interior.css?v=26.10">
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="description" content="Create your mayor and govern Memphis in real time on a real map of the city.">
@@ -599,7 +600,7 @@ details.analysis{margin-top:6px}details.analysis summary{cursor:pointer;color:va
     <button class="btn primary" data-act="pause" id="bPlay"><svg class="ico" viewBox="0 0 12 12" aria-hidden="true"><path d="M3.2 1.6v8.8l7.2-4.4z" fill="currentColor"/></svg> Resume <kbd>Space</kbd></button>
   </nav>
   <div class="status" id="status">Loading map…</div>
-  <div class="credit"><span class="ver" id="verTag">v26.9</span></div>
+  <div class="credit"><span class="ver" id="verTag">v26.10</span></div>
   <div class="tip" id="tip" hidden></div>
   <div class="toast" id="toast" role="status"></div>
   <section class="panel" id="panel" hidden aria-live="polite">
@@ -627,7 +628,7 @@ details.analysis{margin-top:6px}details.analysis summary{cursor:pointer;color:va
         <button class="btn" data-music-open>Music &amp; volume</button>
       </div>
       <div id="slotList" hidden></div>
-      <p class="note startv">Version <b class="ver" id="verStart">v26.9</b></p>
+      <p class="note startv">Version <b class="ver" id="verStart">v26.10</b></p>
     </div>
     <div class="startbox create" id="create" hidden>
       <h2>Create your mayor</h2>
@@ -1417,7 +1418,7 @@ function enact(s,p){DIVS.forEach(d=>{s.enacted[d.id]=p.divs[d.id];s.ratio[d.id]=
 // Voter groups. Each has a share of residents, turnout, home districts, concerns and an approval of you.
 // Citywide approval is the turnout-weighted average of the groups; each council district's approval comes from the groups that live there.
 // Shares, district mix and turnout are modeled, loosely grounded in Memphis demographics; they are not survey data.
-const VERSION='v26.9';
+const VERSION='v26.10';
 const GROUPS=[
  {id:'working',sh:'Working families',n:'Working families',ic:'⚒︎',c:'#f2a93b',share:24,turn:.5,start:56,w:{jobs:1,safety:.8,transit:.5},
   d:'Hourly workers in logistics, warehouses, health care and service jobs. The biggest bloc in the city.',dm:{1:1.1,2:.8,3:1.3,4:1.2,5:.6,6:1.2,7:1.1}},
@@ -2863,6 +2864,16 @@ function homeInit(s){s.home=s.home||{mode:'rent',id:'midtown',unit:'2br',since:s
   if(s.purse&&s.purse.savingsSet==null){const bg=((s.mayor&&s.mayor.traits)||[]).find(t=>SAVINGS_BY_BG[t]!=null);s.purse.cash=(s.purse.cash||0)+(bg?SAVINGS_BY_BG[bg]:35000);s.purse.savingsSet=true}
   if(s.mlgwAdj==null)s.mlgwAdj=1}
 function homeValue(H){return H.value||H.price}
+function enterHome(){
+  if(!S?.started||!window.BCInterior||BCInterior.isOpen)return;
+  homeInit(S);const wasPaused=S.paused;
+  if(typeof TUT!=='undefined'&&TUT)tutEnd(false);
+  onClose=null;closeModal();closePanel();navReset();keysDown.clear();S.paused=true;refreshHUD();
+  BCInterior.open({state:()=>S,save,close:next=>{
+    keysDown.clear();S.paused=wasPaused;save();refreshHUD();
+    if(next==='news')openNews();else if(next==='campaign')openHQ();
+  }});
+}
 function hoodDistrict(id){const h=LMAP[id];return h?districtAt(h.lon,h.lat):null}
 function rentPassThrough(){return 1+(S.taxRate-3.39)/3.39*0.08+((S.laws||{}).landlord?0.005:0)} // assumption: property tax is ~8% of rent; fines on landlords get partly passed on
 function seasonal(m){return{elec:[6,7,8,9].includes(m)?1.35:[12,1,2].includes(m)?1.05:0.8,gas:[12,1,2].includes(m)?0.075:[11,3].includes(m)?0.035:[4,10].includes(m)?0.015:0.006}}
@@ -2906,6 +2917,7 @@ function openHousehold(){homeInit(S);closePanel();const H=S.home,h=LMAP[H.id],L=
   const sum=k=>L.filter(x=>x.k===k).reduce((a,x)=>a+x.v,0);
   openModal(`Personal account ${$0(S.purse.cash)} · take-home ${$$(net)} a month`,'Your household',`
    <div class="facts"><h4>Where you live</h4><p style="margin:0"><b>${H.mode==='own'?'You own a home':'You rent a '+UNITS[H.unit].n}</b> in <b>${h.n}</b> (Council District ${hoodDistrict(H.id)||'?'}).${H.mode==='own'?` Bought for ${fmt$(H.price)}; worth about ${fmt$(homeValue(H))}; you owe ${fmt$(H.bal)}. If you sold today you'd clear about ${fmt$(sellProceeds())} after selling costs.`:''}</p>
+    <div class="row" style="margin-top:12px"><button class="btn primary" data-act="enterhome">Go inside your home</button></div><p class="note">Walk around in first person, arrange furniture and decorate. City time pauses while you're inside.</p>
     <p class="note">The city charter requires the mayor to live inside Memphis, so the suburbs aren't an option.</p></div>
    <div class="facts"><h4>This month's bills · ${$0(tot)}</h4><div class="opl">${Object.keys(grp).map(k=>`<div><span><b>${grp[k]}</b></span><b>${$0(sum(k))}</b></div>${L.filter(x=>x.k===k).map(x=>`<div><span style="padding-left:10px">${x.n}${x.policy?' <span class="pill" title="City policy can move this">policy</span>':''}</span><b>−${$$(x.v)}</b></div>`).join('')}`).join('')}
     <div><span><b>Left over from take-home pay</b></span><b style="color:${net-tot>=0?'var(--good)':'var(--bad)'}">${net-tot>=0?'+':'−'}${$0(Math.abs(net-tot))}</b></div></div>
@@ -2943,7 +2955,7 @@ function doMove(id,mode,opt){const h=LMAP[id];const old=S.home;let cash=S.purse.
   if(pricey)applyGroupReact({business:1,owners:0.5,renters:-1,working:-0.5},`The mayor moved to ${h.n}`);if(modest)applyGroupReact({working:1,renters:1,faith:0.5},`The mayor moved to ${h.n}`);
   logIt(`You ${mode==='own'?`bought a home in ${h.n} for ${fmt$(q.H.price)} (${opt}% down)`:`rented a ${UNITS[opt].n} in ${h.n}`}. It's public record where the mayor lives.`);save();refreshHUD();navReset();closeModal();openHousehold();toast(`Welcome to ${h.n}.`)}
 let homeMarker=null;
-function renderHomeMarker(){if(!mapReady||!S||!S.home)return;const h=LMAP[S.home.id];if(!h)return;if(!homeMarker){const el=document.createElement('button');el.className='homepin';el.title='Your home';el.innerHTML='<span>🏠</span>';el.addEventListener('click',e=>{e.stopPropagation();openHousehold()});homeMarker=new maplibregl.Marker({element:el,anchor:'center'}).setLngLat([h.lon,h.lat]).addTo(map)}else homeMarker.setLngLat([h.lon,h.lat])}
+function renderHomeMarker(){if(!mapReady||!S||!S.home)return;const h=LMAP[S.home.id];if(!h)return;if(!homeMarker){const el=document.createElement('button');el.className='homepin';el.title='Go inside your home';el.setAttribute('aria-label','Go inside your home');el.innerHTML='<span>🏠</span>';el.addEventListener('click',e=>{e.stopPropagation();enterHome()});homeMarker=new maplibregl.Marker({element:el,anchor:'center'}).setLngLat([h.lon,h.lat]).addTo(map)}else homeMarker.setLngLat([h.lon,h.lat])}
 
 // ======================= POLICE, FIRE AND HOSPITALS =======================
 // Station and hospital positions: MPD's nine stations, all 56 Memphis Fire stations, and the city's major hospitals.
@@ -5200,7 +5212,7 @@ const keysDown=new Set();const mouse={x:0,y:0,in:false,btn:false};let flying=fal
 const pitchFor=z=>z<=11.2?0:z>=16.2?56:(z-11.2)/5*56;
 function camFly(o){if(!map)return;flying=true;map.flyTo({center:o.center,zoom:o.zoom,pitch:pitchFor(o.zoom),bearing:0,speed:o.speed||1.3,curve:1.42,essential:true});map.once('moveend',()=>{flying=false})}
 function camLoop(t){const dt=Math.min(.05,lastT?(t-lastT)/1000:0);lastT=t;timeStep(dt);
-  if(map&&mapReady&&S&&S.started&&!modalOpen&&!window.BCLife?.isOpen&&$('start').hidden){
+  if(map&&mapReady&&S&&S.started&&!modalOpen&&!window.BCLife?.isOpen&&!window.BCInterior?.isOpen&&$('start').hidden){
     let dx=0,dy=0;
     if(keysDown.has('w')||keysDown.has('arrowup'))dy-=1;if(keysDown.has('s')||keysDown.has('arrowdown'))dy+=1;
     if(keysDown.has('a')||keysDown.has('arrowleft'))dx-=1;if(keysDown.has('d')||keysDown.has('arrowright'))dx+=1;
@@ -5314,7 +5326,8 @@ document.addEventListener('click',e=>{
   const ch=e.target.closest('[data-ev]');if(ch){const ev=S.events[+ch.dataset.ev];if(!ev)return;const at=evAt(ev);resolve(ev,+ch.dataset.ci);
     if(panelFor===at&&!$('panel').hidden)openPlace(at);return}
   const b=e.target.closest('[data-act]');if(!b)return;const a=b.dataset.act;
-  if(a==='close'){navReset();closeModal()}
+  if(a==='enterhome'){enterHome()}
+  else if(a==='close'){navReset();closeModal()}
   else if(a==='pclose'){navReset();closePanel()}
   else if(a==='navback')navBack();
   else if(a==='desk'){openDesk()}
@@ -5551,8 +5564,9 @@ window.bluffMusicContext = () => {
 window.claude?.hot?.snapshot?.(()=>({S}));
 window.claude?.hot?.ready?window.claude.hot.ready(start):start(window.claude?.hot?.data??{});
 </script>
+<script src="home-interior.js?v=26.10"></script>
 <script src="city-life.js?v=26.4"></script>
-<script src="city-flow.js?v=26.6"></script>
+<script src="city-flow.js?v=26.10"></script>
 <script src="music.js?v=25"></script>
 </body>
 </html>

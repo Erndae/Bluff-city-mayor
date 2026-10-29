@@ -1,0 +1,35 @@
+const assert=require('node:assert/strict');
+const fs=require('node:fs');
+const vm=require('node:vm');
+const H=require('../home-interior.js');
+const state={started:true,home:{id:'midtown'},purse:{cash:5000,mf:{buy:20}},reserve:120,camp:{cash:45}};
+const h=H.ensure(state);assert.equal(h.items.length,11);
+assert(H.walkable(h,3.5,1.05));
+// Real door openings connect all three rooms; wall segments remain solid.
+assert(H.walkable(h,7,4.7));assert(!H.walkable(h,7,2));assert(H.walkable(h,3.4,6));assert(!H.walkable(h,1,6));
+const p={x:6.5,z:2};H.move(h,p,2,0);assert(p.x<6.7,'cannot tunnel through bedroom wall');
+const door={x:6.4,z:4.7};H.move(h,door,1.4,0);assert(door.x>7.5);
+const collision={x:3.4,z:1};H.move(h,collision,0,4);assert(collision.z<2.5,'furniture blocks movement');
+const trial={type:'plant',x:5.5,z:5,r:0};assert(H.canPlace(h,trial));
+assert(!H.canPlace(h,{type:'sofa',x:7,z:4.7,r:0}),'doorway must stay clear');
+assert(!H.canPlace(h,{type:'bed',x:11.5,z:7,r:0}),'walls bound placement');
+assert(!H.canPlace(h,{type:'plant',x:3.5,z:1,r:0},{x:3.5,z:1}),'cannot place on player');
+let before=state.purse.cash;
+assert.equal(H.transact(state,{type:'sofa',x:7,z:4.7,r:0}).ok,false);assert.equal(state.purse.cash,before);
+const bought=H.transact(state,trial);assert(bought.ok);assert.equal(state.purse.cash,before-65);assert.equal(state.purse.mf.buy,85);assert.equal(state.reserve,120);assert.equal(state.camp.cash,45);
+const moved=H.transact(state,{...bought.item,x:5.5,z:4.7,r:1});assert(moved.ok);assert.equal(moved.cost,0);assert.equal(state.purse.cash,before-65);
+bought.item.stored=true;assert(H.transact(state,{...bought.item,x:5.5,z:5}).ok);assert.equal(state.purse.cash,before-65);
+const poor={started:true,purse:{cash:0},home:{}};H.ensure(poor);assert(!H.transact(poor,trial).ok);assert.equal(poor.interior.items.length,11);
+assert(H.canPlace(h,{type:'rug',x:3.4,z:3,r:0}),'rugs may sit under solid furniture');
+const saved=JSON.parse(JSON.stringify(state));saved.home={id:'downtown'};H.ensure(saved);assert.deepEqual(saved.interior,state.interior,'layout persists after reload and a house move');
+const faces=H.geometry(h);assert(faces.length>500);assert(faces.every(f=>f.points.every(p=>p.every(Number.isFinite))));
+const clipped=H.clipNear([[-1,0,-1],[1,0,1],[0,1,1]]);assert(clipped.length>=3);assert(clipped.every(v=>v[2]>=.08-1e-9));
+// Exercise the actual entry adapter against a game-state stub.
+const html=fs.readFileSync('index.html','utf8');
+for(const match of html.matchAll(/<script(?:\s[^>]*)?>([\s\S]*?)<\/script>/g))new vm.Script(match[1]);
+const code=html.slice(html.indexOf('function enterHome(){'),html.indexOf('function hoodDistrict('));
+let options,events=[];const ctx={S:{started:true,paused:false,home:{},purse:{cash:5000}},window:{BCInterior:true},BCInterior:{isOpen:false,open:o=>{options=o;events.push('open')}},homeInit:()=>{},TUT:null,onClose:null,closeModal:()=>{},closePanel:()=>{},navReset:()=>{},keysDown:new Set(['w']),refreshHUD:()=>{},save:()=>events.push('save'),openNews:()=>events.push('news'),openHQ:()=>events.push('hq')};
+vm.createContext(ctx);vm.runInContext(code,ctx);ctx.enterHome();assert(ctx.S.paused);assert.equal(ctx.keysDown.size,0);options.close('news');assert.equal(ctx.S.paused,false);assert(events.includes('news'));
+ctx.S.paused=true;ctx.enterHome();options.close();assert.equal(ctx.S.paused,true);
+assert(html.includes('data-act="enterhome"'));assert(html.includes('e.stopPropagation();enterHome()'));assert(html.includes('!window.BCInterior?.isOpen'));
+console.log('PASS: first-person rooms, doorway/collision rules, placement, personal-only purchases, free rearranging/storage, saved layout, moving homes, geometry, pause restoration and entry wiring.');
