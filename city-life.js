@@ -7,7 +7,7 @@ window.BCLife = (() => {
   const dialog=document.createElement('dialog');dialog.id='lifeReport';dialog.setAttribute('aria-labelledby','lifeTitle');document.body.append(dialog);
   dialog.addEventListener('close',()=>returnFocus?.isConnected&&returnFocus.focus());
   window.addEventListener('keydown',e=>{if(dialog.open)e.stopImmediatePropagation();},true);
-  function show(title,body){returnFocus=document.activeElement;dialog.innerHTML=`<header><div><small>MAYOR'S RECORD</small><h2 id="lifeTitle">${esc(title)}</h2></div><form method="dialog"><button class="btn" aria-label="Close report">Close</button></form></header>${body}`;if(!dialog.open)dialog.showModal();dialog.querySelector('button')?.focus();}
+  function show(title,body){returnFocus=document.activeElement;dialog.innerHTML=`<header><div><small>${(typeof inOffice==='function'&&!inOffice())?'YOUR RECORD':'MAYOR\'S RECORD'}</small><h2 id="lifeTitle">${esc(title)}</h2></div><form method="dialog"><button class="btn" aria-label="Close report">Close</button></form></header>${body}`;if(!dialog.open)dialog.showModal();dialog.querySelector('button')?.focus();}
   function facility(p){
     if(p.type==='hospital')return null;
     const all=state().facilities,now=nowM();const f=all[p.id]||(all[p.id]={condition:72,month:now,actions:[]});

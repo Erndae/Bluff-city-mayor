@@ -389,6 +389,9 @@ button.seat:hover{border-color:var(--amber)}
 .droom{text-align:center}.droom small{display:block;color:var(--muted);font-size:11.5px}.dbar{position:relative;height:10px;border-radius:5px;margin:4px 0;background:linear-gradient(90deg,var(--bad),#3a4652 45%,#3a4652 55%,var(--good))}.dbar i{position:absolute;top:-3px;width:4px;height:16px;background:#fff;border-radius:2px;transform:translateX(-50%);transition:left .4s}
 .dq{border-left:3px solid var(--amber);padding:4px 0 4px 10px;margin:6px 0 10px}.dq small{color:var(--amber);font-family:var(--f-label);letter-spacing:.12em;text-transform:uppercase;font-size:11px}.dq p{margin:2px 0 0;font-size:16px}
 .dmeter{position:relative;height:30px;border-radius:15px;background:#22303d;border:1px solid var(--line);margin:14px 0}.dmeter .zone{position:absolute;top:0;bottom:0;background:rgba(46,158,91,.55);border-radius:4px}.dmeter .mark{position:absolute;top:-4px;width:6px;height:38px;background:#fff;border-radius:3px;transform:translateX(-50%);box-shadow:0 0 6px rgba(255,255,255,.6)}
+#hSlots{display:flex!important;align-items:center;gap:5px;pointer-events:auto;cursor:pointer;font-size:11.5px;color:var(--text);margin-top:2px;white-space:nowrap}#hSlots.empty{color:var(--muted)}
+.pips{display:inline-flex;gap:3px}.pips i{width:8px;height:8px;border-radius:50%;border:1.5px solid var(--amber);display:inline-block}.pips i.on{background:var(--amber)}.pips.big i{width:16px;height:16px}
+.bankbig{display:flex;align-items:center;gap:12px}.bankbig small{display:block;color:var(--muted)}.bankrow{grid-template-columns:minmax(0,1fr) auto!important;padding:7px 0!important;border-bottom:1px solid var(--line)!important}.bankrow small{display:block}
 #hovercard.touch{left:12px!important;right:12px!important;top:auto!important;bottom:calc(84px + env(safe-area-inset-bottom,0px))!important;width:auto!important;pointer-events:auto}
 .navrow.more-r{-webkit-mask-image:linear-gradient(90deg,#000 85%,transparent);mask-image:linear-gradient(90deg,#000 85%,transparent)}
 .navrow.more-l.more-r{-webkit-mask-image:linear-gradient(90deg,transparent,#000 10%,#000 85%,transparent);mask-image:linear-gradient(90deg,transparent,#000 10%,#000 85%,transparent)}
@@ -530,7 +533,7 @@ details.analysis{margin-top:6px}details.analysis summary{cursor:pointer;color:va
   <div class="hud-top">
     <div class="brand">BLUFF CITY<span>MAYOR</span></div>
     <button class="mchip" id="mchip" data-act="mayor" aria-label="Your character"><span id="mchipPt"></span><span class="mname"><b id="mchipName">Mayor</b><small id="mchipSk"></small></span></button>
-    <div class="clock paused" id="clock"><button id="cPause" data-act="pause" aria-label="Resume time"><svg class="ico" viewBox="0 0 12 12" aria-hidden="true"><path d="M3.2 1.6v8.8l7.2-4.4z" fill="currentColor"/></svg></button><div class="cdate"><b id="hDate">1 Oct 2026</b><small id="hFY">FY2027</small></div>
+    <div class="clock paused" id="clock"><button id="cPause" data-act="pause" aria-label="Resume time"><svg class="ico" viewBox="0 0 12 12" aria-hidden="true"><path d="M3.2 1.6v8.8l7.2-4.4z" fill="currentColor"/></svg></button><div class="cdate"><b id="hDate">1 Oct 2026</b><small id="hFY">FY2027</small><small id="hSlots" role="button" title="What you can do now"></small></div>
       <div class="cspeed"><button data-act="slower" aria-label="Slower" title="Slower (−)">−</button><div class="speeds" id="speeds"></div><button data-act="faster" aria-label="Faster" title="Faster (+)">+</button></div><span class="ptag">PAUSED</span></div>
     <div class="stat"><label>Reserve fund</label><b id="hRes">$96.0M</b><small id="hResPct"></small></div>
     <div class="stat click" data-act="opinion" title="Public opinion (O)"><label>Approval</label><span style="display:flex;align-items:center;white-space:nowrap"><b id="hApp">52%</b><small id="hClout" data-act="platform" title="Clout: your influence beyond City Hall (P)"></small></span><div class="meter"><i id="hAppBar"></i></div></div>
@@ -539,7 +542,7 @@ details.analysis{margin-top:6px}details.analysis summary{cursor:pointer;color:va
   </div>
   <aside class="side">
     <div class="box" id="metrics" aria-label="City indicators"></div>
-    <div class="box" style="min-height:0;flex:1 1 auto"><h3>Mayor's Desk <span id="deskN" class="pill"></span></h3><div class="desk" id="desk"></div></div>
+    <div class="box" style="min-height:0;flex:1 1 auto"><h3 id="deskTitle">Mayor's Desk <span id="deskN" class="pill"></span></h3><div class="desk" id="desk"></div></div>
     <div class="box legend" id="legend" hidden></div>
   </aside>
   <div class="modes" id="modes" role="toolbar" aria-label="Map modes"></div>
@@ -1612,7 +1615,7 @@ function openPlace(at){
   const pl=placeOf(at);
   const evs=S.events.map((e,i)=>[e,i]).filter(([e])=>evAt(e)===at);
   if(pl.lmk){const L=LM[at];const{f,acts}=lmkInfo(L);
-    openPanel(L.addr,L.name,`${window.BCLife?.landmark(L)||''}${evs.map(([e,i])=>eventCard(e,i)).join('')}<div class="note">${whereLine(L.lon,L.lat)}</div>${f.length?`<div class="facts"><h4>About this place</h4><ul>${f.map(x=>`<li>${x}</li>`).join('')}</ul></div>`:''}${acts}${!evs.length&&!acts?'<p class="note">Nothing needs you here right now.</p>':''}`,at)}
+    openPanel(L.addr,L.name,`${evs.map(([e,i])=>eventCard(e,i)).join('')}${window.BCLife?.landmark(L)||''}<div class="note">${whereLine(L.lon,L.lat)}</div>${f.length?`<div class="facts"><h4>About this place</h4><ul>${f.map(x=>`<li>${x}</li>`).join('')}</ul></div>`:''}${acts}${!evs.length&&!acts?'<p class="note">Nothing needs you here right now.</p>':''}`,at)}
   else openPanel('Neighborhood',pl.name,evs.length?evs.map(([e,i])=>eventCard(e,i)).join(''):'<p class="note">Nothing needs you here right now.</p>',at);
 }
 function flyTo(at,open){const pl=placeOf(at);camFly({center:[pl.lon,pl.lat],zoom:Math.max(map?map.getZoom():15,15.2),speed:1.4});if(open)openPlace(at)}
@@ -2251,7 +2254,7 @@ function renderDesk(){const items=deskItems();$('deskN').textContent=items.filte
   const groups=DESK_CATS.map(([k,n])=>[k,n,items.filter(i=>i.cat===k)]).filter(g=>g[2].length);let shown=0;
   $('desk').innerHTML=(groups.length?groups.map(([k,n,arr])=>{const take=arr.slice(0,k==='urgent'?4:2);shown+=take.length;return`<div class="dkh dk-${k}">${n}${arr.length>take.length?` <span class="note">+${arr.length-take.length}</span>`:''}</div>${take.map(deskRow).join('')}`}).join(''):'<div class="empty">Nothing waiting. Press E to take action, or let time run.</div>')+`<button class="dkall" data-act="desk">Open the full desk</button>`}
 function openDesk(){const items=deskItems();const N=S.notify||NOTIFY_DEF;
-  openPanel(`${items.length} item${items.length===1?'':'s'} · ${dateStr()}`,'Mayor\'s Desk',`
+  openPanel(`${items.length} item${items.length===1?'':'s'} · ${dateStr()}`,deskName(),`
    ${DESK_CATS.filter(([k])=>k!=='promises'||!S.promises).map(([k,n])=>{const arr=items.filter(i=>i.cat===k);return arr.length?`<div class="facts"><h4>${n}</h4><div class="desk">${arr.map(deskRow).join('')}</div></div>`:''}).join('')||'<p class="note">Nothing waiting.</p>'}
    ${S.promises?`<div class="facts"><h4>Your promises · deadline September ${Math.floor(promiseDeadline()/12)}</h4>${promiseList()}</div>`:''}
    ${rivalCard()}
@@ -4645,6 +4648,41 @@ document.addEventListener('click',e=>{const b=e.target.closest('[data-dbt]');if(
   if(k==='resume'){openDebate(+b.dataset.n);return}if(k==='pick'){dbtPick(b.dataset.c);return}if(k==='deliver'){dbtDeliver();return}
   if(k==='practice'){if(S.slots<=0){toast('No meetings left this month.');return}if(isCand()&&!curMgr()){toast('Hire a campaign manager first.');openMgr();return}S.slots--;DBT=null;openDebate(0,true)}},true);
 window.addEventListener('keydown',e=>{if(DBT&&DBT.step==='deliver'&&(e.key===' '||e.key==='Enter')){e.preventDefault();e.stopImmediatePropagation();dbtDeliver()}},true);
+// ======================= ACTION BANK =======================
+// Always visible: how many meetings (campaign stops, as a candidate) are left this month and when they refill.
+// Tap it for everything that recharges: what's ready now and when the rest comes back.
+function deskName(){return inOffice()?'Mayor\'s Desk':'Your desk'}
+function slotWord(n){return isCand()?`campaign stop${n===1?'':'s'}`:`meeting${n===1?'':'s'}`}
+function refillDays(){return daysIn(S.y,S.m)-S.day+1}
+function renderBank(){const el=$('hSlots');if(!el||!S||!S.started)return;const n=Math.max(0,S.slots),max=Math.max(3,n);
+  el.innerHTML=`<span class="pips">${Array.from({length:max},(_,i)=>`<i class="${i<n?'on':''}"></i>`).join('')}</span>${n} ${slotWord(n)} · refill in ${refillDays()}d`;el.classList.toggle('empty',n<=0)}
+function bankRows(){const R=[];const add=(name,ready,when,go,note)=>R.push({name,ready,when,go,note});const cd=(k,m)=>cdLeft(k,m);const sl=S.slots>0;
+  if(isCand()){const doors=[1,2,3,4,5,6,7].filter(d=>!cd('kd'+d,2)).length;add('Knock doors',doors>0&&sl,doors?`${doors} of 7 districts ready`:'All districts knocked recently',()=>openHQ(),'Uses a stop · each district every 2 months');
+    const gs=GROUPS.filter(g=>!cd('cg'+g.id,3)).length;add('Meet community leaders',gs>0&&sl,gs?`${gs} of 8 groups ready`:'Every group met recently',()=>openActions(),'Uses a stop · each group every 3 months');
+    const sp=cd('cspeak',1);add('Speak out on an issue',!sp,sp?`Again in ${sp} mo`:'Ready',()=>openActions(),'Once a month');
+    const fr=cd('fr_small',1);add('Grassroots fundraiser',!fr&&sl,fr?`Again in ${fr} mo`:'Ready',()=>openHQ(),'Uses a stop · once a month');
+    const dd=cd('fr_big',2);add('Major-donor dinner',!dd&&sl,dd?`Again in ${dd} mo`:'Ready',()=>openHQ(),'Uses a stop · every 2 months');
+    add('Ask for an endorsement',sl&&S.m<7,S.m<7?'Ready':'Closed after June',()=>openHQ(),'Uses a stop · before July');
+    add('Practice for the debates',sl,(S.camp.prep||0)>=3?'Fully prepared':'Ready',()=>openHQ(),'Uses a stop');
+    add('Polls and ads',true,`$${Math.round(S.camp.cash)}K in campaign cash`,()=>openHQ(),'Cost money, not stops')}
+  else if(inOffice()){const th=[1,2,3,4,5,6,7].filter(d=>!cd('th'+d,ACT_CD.townhall)).length;add('Town halls',th>0&&sl,th?`${th} of 7 districts ready`:'All held recently',()=>openActions(),'Uses a meeting · each district every 3 months');
+    const cm=S.council.filter(m=>m.met!==nowM()).length;add('Meet council members',cm>0&&sl,`${cm} of 13 not met this month`,()=>openCouncil(),'Uses a meeting');
+    add('Visit a station, hospital or school',sl,'Ready',()=>openCivicList('fire'),'Uses a meeting · each place has its own wait');
+    const ex=EXEC_ORDERS.filter(x=>!cd('ex_'+x.id,ACT_CD.exec)).length;add('Executive orders',ex>0,`${ex} of ${EXEC_ORDERS.length} ready`,()=>openActions(),'No meeting needed · each every 6 months');
+    try{const pu=PUSHES.filter(p=>!pushWhy(p)).length;add('Push for change (clout)',pu>0,`${pu} ready · clout ${Math.round(clout())}`,()=>openPlatform(),'Uses a meeting and clout')}catch(e){}
+    try{const pc=canPress();add('Press conference',!pc,pc||'Ready',()=>openNews(),'Uses a meeting · every 2 months')}catch(e){}
+    try{if(sotcDue())add('State of the City',true,'Due by the end of February',()=>openSotc(),'Once a year')}catch(e){}
+    if(S.camp&&monthsToElection()<=12){const doors=[1,2,3,4,5,6,7].filter(d=>!cd('kd'+d,2)).length;add('Campaign door to door',doors>0&&sl,`${doors} of 7 districts ready`,()=>openHQ(),'Uses a meeting')}}
+  return R}
+let BANK_GO=[];
+function openBank(){closePanel();const n=S.slots,rows=bankRows();BANK_GO=rows.map(r=>r.go);
+  openModal(`${n} ${slotWord(n)} left · refills on ${MONTHS_L[S.m%12]} 1 (in ${refillDays()} days)`,'What you can do now',`
+   <div class="facts"><div class="bankbig"><span class="pips big">${Array.from({length:Math.max(3,n)},(_,i)=>`<i class="${i<n?'on':''}"></i>`).join('')}</span><div><b>${n} ${slotWord(n)} left this month</b><small>You get 3 every month. One unused carries over to the next month.</small></div></div></div>
+   <div class="dlist">${rows.map((r,i)=>`<button class="drow bankrow" data-bank="${i}"><span><b>${r.name}</b><small class="note">${r.note}</small></span><b style="color:${r.ready?'var(--good)':'var(--muted)'}">${r.when}</b></button>`).join('')}</div>`,true)}
+openBank=navWrap('openBank',openBank);
+document.addEventListener('click',e=>{const b=e.target.closest('[data-bank],#hSlots');if(!b||!S)return;e.preventDefault();e.stopImmediatePropagation();if(b.id==='hSlots'){openBank();return}const f=BANK_GO[+b.dataset.bank];if(modalOpen){onClose=null;closeModal()}try{f&&f()}catch(err){}},true);
+{const _uc=updateClock;updateClock=function(){_uc();try{renderBank()}catch(e){}}}
+{const _rh=refreshHUD;refreshHUD=function(...a){const r=_rh.apply(this,a);try{const h=document.querySelector('#deskTitle');if(h&&S)h.firstChild.textContent=deskName()+' '}catch(e){}return r}}
 function openLedger(){const L=S.log||[];openPanel('Everything that has happened, newest first','Ledger',L.length?`<div class="logl">${L.map(x=>`<div><span>${x.d}</span><p style="margin:0">${x.t}</p></div>`).join('')}</div>`:'<p class="note">Nothing yet. Start the clock with Space or ▶.</p>','ledger')}
 function openPolicies(){const ks=Object.keys(POLICIES);
   openPanel('Ongoing programs you control','Your initiatives',`<p>Mid-year, these are paid from the reserve fund. In April they go into the budget you send the council.</p>
@@ -5058,7 +5096,7 @@ document.addEventListener('click',e=>{
   else if(a==='buy'){const it=SHOP.find(x=>x.id===b.dataset.id);if(it&&!S.purse.owned[it.id]&&S.purse.cash>=it.p){S.purse.cash-=it.p;flowP('buy',it.p);S.purse.owned[it.id]=true;logIt(`You bought a ${it.n.toLowerCase()} with your own money ($${it.p.toLocaleString()}).`);save();toast(`Bought: ${it.n}. Wear it under Change your look.`)}openShop()}
   else if(a==='promises')openPromises();
   else if(a==='pickpromise'){S._pp=S._pp||[];const id=b.dataset.id;if(S._pp.includes(id))S._pp=S._pp.filter(x=>x!==id);else if(S._pp.length<3)S._pp.push(id);openPromises()}
-  else if(a==='savepromises'){if((S._pp||[]).length===3){choosePromises(S._pp);delete S._pp;save();refreshHUD();navReset();closeModal();toast('Your promises are public. Track them on the Mayor\'s Desk.');let skip=false;try{skip=localStorage.getItem('bcm-nomoneyintro')==='1'}catch(e){}if(!skip&&!S.seenMoneyIntro)openMoneyIntro()}}
+  else if(a==='savepromises'){if((S._pp||[]).length===3){choosePromises(S._pp);delete S._pp;save();refreshHUD();navReset();closeModal();toast(isCand()?'Your platform is public. Track it on your desk.':'Your promises are public. Track them on the Mayor\'s Desk.');let skip=false;try{skip=localStorage.getItem('bcm-nomoneyintro')==='1'}catch(e){}if(!skip&&!S.seenMoneyIntro)openMoneyIntro()}}
   else if(a==='negotiate')openDeal(b.dataset.key,+b.dataset.k);
   else if(a==='dealaccept'||a==='dealcounter'||a==='dealrefuse')dealAction(a,b.dataset.key,+b.dataset.k);
   else if(a==='maintcut'||a==='maintrestore'){const P=projById(b.dataset.id);if(P){const receipt=window.BCLife?.snapshot();P.maintCut=a==='maintcut';plog(P,P.maintCut?'You cut its upkeep budget.':'You restored its upkeep budget.');logIt(`${P.maintCut?'Cut':'Restored'} upkeep on ${P.name}.`);save();refreshHUD();openProject(P.id);if(receipt)BCLife.record(receipt,(P.maintCut?'Cut':'Restored')+' upkeep · '+P.name,'The annual upkeep budget has changed.','project:'+P.id,[fmtM(PMAINT[P.type]*(P.scope||1))+' per year '+(P.maintCut?'saved; satisfaction and benefits will decline.':'restored; satisfaction will recover over time.')])}}
@@ -5268,7 +5306,7 @@ window.bluffMusicContext = () => {
 window.claude?.hot?.snapshot?.(()=>({S}));
 window.claude?.hot?.ready?window.claude.hot.ready(start):start(window.claude?.hot?.data??{});
 </script>
-<script src="city-life.js?v=25.6"></script>
+<script src="city-life.js?v=26"></script>
 <script src="music.js?v=25"></script>
 </body>
 </html>
