@@ -1166,7 +1166,7 @@ function monthlySim(s){
   if(s.groups)groupsMonth(s);else s.approval=clamp(s.approval+(target-s.approval)*0.22+rnd(-.5,.5),5,95);
   s.mood*=0.85;
   if(s.reserve<0){s.reserve-=Math.abs(s.reserve)*0.065/12;s.mood-=0.4}
-  s.council.forEach(decayMods);if(s.nb)for(const id in s.nb)decayMods(s.nb[id]);s.slots=3;recomputeAll(s);
+  s.council.forEach(decayMods);if(s.nb)for(const id in s.nb)decayMods(s.nb[id]);s.slots=3+Math.min(1,Math.max(0,s.slots||0));recomputeAll(s);
   if(s.nb)for(const id in s.nb){const n=s.nb[id];if(n.opinion>=40)s.met.jobs+=0.08}
 }
 function readingUpdate(s){const r=id=>s.ratio[id]||1,P=s.policies;
@@ -4361,7 +4361,7 @@ function citizenMark(root){if(!S||!S.started||inOffice()||!root)return;root.quer
 // off to the first decision (promises or platform). It can be replayed from the Guide.
 const TUT_MAYOR=[
  {t:()=>`Welcome, Mayor ${S.mayor.name.split(' ').pop()}`,b:()=>`You run Memphis: a $906 million budget, 13 council members, about 620,000 people. Your term ends on <b>Election Day, Thursday, October 7, 2027</b>. Keep the city working and voters on your side, and you win a second term.`},
- {sel:'#clock',t:()=>'Time',b:()=>'The game is paused. Press ▶ (or Space) and days start to pass. New problems pause the clock for you. + and − change the speed.'},
+ {sel:'#clock',t:()=>'Time',b:()=>'The game is paused. Press ▶ (or Space) and days start to pass. New problems pause the clock for you. + and − change the speed. You get 3 meetings a month; your chief of staff checks in every Monday, and four days before the month ends pauses the clock if you still have meetings or decisions left. One unused meeting carries over.'},
  {sel:'.hud-top .stat.click',t:()=>'Approval and clout',b:()=>'Approval is what wins elections. Clout, next to it, is your pull beyond City Hall: the more popular you are, the more you can move the school district, the county or the state.'},
  {sel:'#hRes',up:1,t:()=>'The reserve',b:()=>'The city\'s savings. Projects and programs draw on it. Spending $1M or more from it outside the budget takes 7 council votes.'},
  {sel:'#hCouncil',up:1,t:()=>'The council',b:()=>'Thirteen members; 7 votes pass anything, including your budget in June. Meet them privately, deliver for their districts, and keep their favor.'},
@@ -4376,7 +4376,7 @@ const TUT_CAND=[
  {sel:'.actions [data-act="actions"]',t:()=>'Meet voters',b:()=>'Actions (E): knock doors in a district, meet community groups and give speeches on the issues. Each uses one of your 3 meetings a month.'},
  {sel:'.actions [data-act="hq"]',t:()=>'Campaign HQ',b:()=>'Campaign HQ (K): raise money, run polls and ads, hire organizers, open offices and ask groups for endorsements. Ads work best in the last three months.'},
  {sel:'#desk',mob:'.actions [data-act="desk"]',t:()=>'Your desk',b:()=>'Candidate forums and debates show up here, along with <b>What to do next</b>.'},
- {sel:'#clock',t:()=>'Time',b:()=>'Press ▶ (or Space) to let days pass. Forums and debates pause the clock for you.'},
+ {sel:'#clock',t:()=>'Time',b:()=>'Press ▶ (or Space) to let days pass. Forums and debates pause the clock for you. Your campaign manager checks in every Monday, and four days before the month ends pauses the clock if you still have meetings left. One unused meeting carries over.'},
  {t:()=>'Your first steps',b:()=>'1. Hire a campaign manager. Each one is strong at something different, and they\'ll suggest your next moves.<br>2. Pick your three-plank platform.<br>3. Raise money, knock doors where you\'re weakest, then put ads on the air as Election Day nears.'}];
 let TUT=null;
 function tutTarget(st){if(!st.sel)return null;const mob=window.innerWidth<=860;let el=mob&&st.mob?document.querySelector(st.mob):document.querySelector(st.sel);
@@ -4524,6 +4524,32 @@ function policyNews(k){if(!S||!inOffice())return;{const on=!!S.policies[k];
   if((k==='chw'||k==='rides')&&on)newsAdd(0.8,k==='chw'?'City hires community health workers for every district':'Free bus rides to the doctor start this month',{tag:'neighborhoods',w:1.1})}}
 // speeches on the new issues
 {const _cs=candSpeak;candSpeak=function(p){const had=cdLeft('cspeak',1);_cs(p);if(!had&&p==='fairtax'&&S.groups.business)candBump('business',-1.5,'Spoke out on taxing the wealthy')}}
+// ======================= ADVISORS KEEP YOU ON TOP OF THINGS =======================
+// The clock keeps running, but your chief of staff (as mayor) or campaign manager (as a candidate) checks in: a short
+// note every Monday, and near the end of the month, if you still have meetings or decisions left, they pause the clock and
+// brief you with the best ways to use them. One unused meeting carries over into the next month.
+function advisor(){if(!S)return null;if(isCand()){const m=curMgr();return m?{name:m.name,role:'campaign manager',face:mgrFace(m,56)}:null}
+  if(!inOffice())return null;try{const s=staffOf('cos');return{name:s.name,role:'chief of staff',face:portrait({...s,frame:'#8a96a3'},56)}}catch(e){return{name:'Your chief of staff',role:'chief of staff',face:''}}}
+function dueThisMonth(){return S.events.filter(e=>e.kind!=='budget'&&e.id!=='briefing'&&evLeftM(e)<=0)}
+function openBriefing(kind){const A=advisor();if(!A)return;const left=daysIn(S.y,S.m)-S.day;const due=dueThisMonth();const L=nextSteps().slice(0,4);NEXT_GO=L.map(x=>x.go);
+  const lines=[];if(S.slots>0)lines.push(`You still have <b>${S.slots} meeting${S.slots===1?'':'s'}</b> this month${left>0?` and ${left} day${left===1?'':'s'} to use ${S.slots===1?'it':'them'}`:''}. ${S.slots>1?'One unused meeting carries over to next month; the rest are gone.':'If you don\'t use it, it carries over to next month.'}`);
+  if(due.length)lines.push(`<b>${due.length} decision${due.length===1?'':'s'}</b> expire${due.length===1?'s':''} at the end of the month. Ignoring them costs you.`);
+  if(inOffice()&&S.stage==='draft')lines.push('Your budget is due to the council. It has to go in this month.');
+  openModal(`${MONTHS_L[S.m-1]} ${S.day} · ${left} day${left===1?'':'s'} left in the month`,`Briefing from ${A.name}`,`
+   <div class="row" style="align-items:flex-start;gap:12px">${A.face}<div style="flex:1">${lines.map(l=>`<p style="margin:0 0 6px">${l}</p>`).join('')}</div></div>
+   <div class="facts"><h4>My suggestions</h4><div class="choices">${L.map((x,i)=>`<button class="choice" data-next="${i}"><b>${x.t}</b><small>${x.h}</small></button>`).join('')}</div></div>
+   <div class="row"><button class="btn primary" data-act="close">Keep going</button><label class="note" style="display:flex;align-items:center;gap:6px"><input type="checkbox" data-brief-off ${S.briefOff?'checked':''}> Don't pause the clock for these reminders</label></div>`,true)}
+function advisorDaily(){if(!S||!S.started||S.over)return;const A=advisor();if(!A)return;S.brief=S.brief||{};const k=nowM(),dim=daysIn(S.y,S.m),left=dim-S.day;
+  // end-of-month check: meetings left, decisions expiring, budget due
+  if(left===4&&!S.brief['eom'+k]&&(S.slots>0||dueThisMonth().length||(inOffice()&&S.stage==='draft'))){S.brief['eom'+k]=1;
+    if(S.briefOff){const n=S.slots;try{notify('people',`${A.name}: ${n?`${n} meeting${n===1?'':'s'} left this month`:'decisions are due'}`,'Four days left in the month.',()=>openBriefing('eom'))}catch(e){}}
+    else{setPaused(true);openBriefing('eom')}return}
+  // Monday note
+  const dow=new Date(S.y,S.m-1,S.day).getDay();if(dow===1&&!S.brief['wk'+k+'_'+S.day]){S.brief['wk'+k+'_'+S.day]=1;const L=nextSteps();const top=L[0];if(top&&top.pri>=40)try{notify('people',`${A.name}: this week`,`${top.t}${S.slots>0?` · ${S.slots} meeting${S.slots===1?'':'s'} left this month`:''}`,()=>{try{top.go()}catch(e){}},{silent:true})}catch(e){}}
+  // clean old keys
+  if(S.day===1)for(const key in S.brief)if(!key.includes(String(k)))delete S.brief[key]}
+{const _dt=dayTick;dayTick=function(){_dt();try{advisorDaily()}catch(e){console.warn('advisor',e)}}}
+document.addEventListener('change',e=>{if(e.target&&e.target.hasAttribute&&e.target.hasAttribute('data-brief-off')&&S){S.briefOff=e.target.checked;save()}});
 function openLedger(){const L=S.log||[];openPanel('Everything that has happened, newest first','Ledger',L.length?`<div class="logl">${L.map(x=>`<div><span>${x.d}</span><p style="margin:0">${x.t}</p></div>`).join('')}</div>`:'<p class="note">Nothing yet. Start the clock with Space or ▶.</p>','ledger')}
 function openPolicies(){const ks=Object.keys(POLICIES);
   openPanel('Ongoing programs you control','Your initiatives',`<p>Mid-year, these are paid from the reserve fund. In April they go into the budget you send the council.</p>
