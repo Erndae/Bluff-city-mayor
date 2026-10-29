@@ -399,7 +399,7 @@ button.seat:hover{border-color:var(--amber)}
 .mp-moves{display:grid;gap:6px}.mp-move{text-align:left;background:rgba(90,167,216,.08);border:1px solid rgba(90,167,216,.35);border-radius:8px;padding:8px 10px;color:var(--text);cursor:pointer;font:inherit}.mp-move b{display:block;font-size:14.5px}.mp-move small{display:block;color:var(--muted);font-size:12.5px;margin-top:2px}.mp-move:hover{border-color:#8cc8ef}
 .mp-foot{display:flex;gap:8px;justify-content:flex-end;margin-top:10px}
 #mgrface{position:absolute;right:16px;top:300px;z-index:4;display:flex;align-items:center;gap:8px;background:rgba(13,24,34,.94);border:1px solid #5aa7d8;border-radius:30px;padding:3px 12px 3px 3px;color:var(--text);cursor:pointer;font:600 13px var(--f-body);box-shadow:0 2px 8px rgba(0,0,0,.4)}#mgrface[hidden]{display:none}#mgrface .pt{border-radius:50%;width:40px;height:40px;object-fit:cover}
-@media (max-width:860px){#mgrpop{left:10px;right:10px;width:auto;bottom:calc(140px + env(safe-area-inset-bottom,0px));max-height:62vh}#mgrface{top:auto;bottom:calc(150px + env(safe-area-inset-bottom,0px));right:10px;padding:3px}#mgrface span{display:none}}
+@media (max-width:860px){#mgrpop{left:10px;right:10px;width:auto;bottom:calc(196px + env(safe-area-inset-bottom,0px));max-height:58vh}#mgrface{top:auto;bottom:calc(206px + env(safe-area-inset-bottom,0px));right:10px;padding:3px}#mgrface span{display:none}}
 #hovercard.touch{left:12px!important;right:12px!important;top:auto!important;bottom:calc(84px + env(safe-area-inset-bottom,0px))!important;width:auto!important;pointer-events:auto}
 .navrow.more-r{-webkit-mask-image:linear-gradient(90deg,#000 85%,transparent);mask-image:linear-gradient(90deg,#000 85%,transparent)}
 .navrow.more-l.more-r{-webkit-mask-image:linear-gradient(90deg,transparent,#000 10%,#000 85%,transparent);mask-image:linear-gradient(90deg,transparent,#000 10%,#000 85%,transparent)}
@@ -523,7 +523,7 @@ details.analysis{margin-top:6px}details.analysis summary{cursor:pointer;color:va
 </style>
 <link rel="stylesheet" href="city-design.css?v=25.5">
 <link rel="stylesheet" href="city-life.css?v=25">
-<link rel="stylesheet" href="city-flow.css?v=26.3">
+<link rel="stylesheet" href="city-flow.css?v=26.4">
 
 <div id="splash" role="status" aria-live="polite">
   <div class="sp-in">
@@ -4757,7 +4757,7 @@ function renderMgrFace(){let f=$('mgrface');const m=curMgr();const show=!!(m&&S&
 // the opponent's attack ads
 {const _rm=rivalMonth;rivalMonth=function(report){const a0=S.rival&&S.rival.camp?S.rival.camp.ads||0:0;_rm(report);const a1=S.rival&&S.rival.camp?S.rival.camp.ads||0:0;if(curMgr()&&a1>a0&&S.mgrAtk!==nowM()){S.mgrAtk=nowM();setTimeout(()=>mgrPop(`${S.rival.name.split(' ').pop()} is on the air. Here's our answer`,{pause:true}),600)}}}
 
-{const _cp2=choosePromises;choosePromises=function(ids){_cp2(ids);if(curMgr()&&!S.mgrIntro){S.mgrIntro=1;setTimeout(()=>{if(S&&S.started)mgrPop('Here\'s how we win')},1200)}}}
+{const _cp2=choosePromises;choosePromises=function(ids){_cp2(ids);try{setTimeout(()=>{try{renderDesk();renderNextChip()}catch(e){}},0)}catch(e){}if(curMgr()&&!S.mgrIntro){S.mgrIntro=1;setTimeout(()=>{if(S&&S.started)mgrPop('Here\'s how we win')},1200)}}}
 function openLedger(){const L=S.log||[];openPanel('Everything that has happened, newest first','Ledger',L.length?`<div class="logl">${L.map(x=>`<div><span>${x.d}</span><p style="margin:0">${x.t}</p></div>`).join('')}</div>`:'<p class="note">Nothing yet. Start the clock with Space or ▶.</p>','ledger')}
 function openPolicies(){const ks=Object.keys(POLICIES);
   openPanel('Ongoing programs you control','Your initiatives',`<p>Mid-year, these are paid from the reserve fund. In April they go into the budget you send the council.</p>
