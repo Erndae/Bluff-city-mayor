@@ -4,6 +4,12 @@ A city-management game set in Memphis, Tennessee. You play the mayor. You handle
 
 **Play it:** https://erndae.github.io/Bluff-city-mayor/ (once GitHub Pages is turned on, see below)
 
+## v26.11: Stable home rendering
+
+Home surfaces now use a depth buffer rather than sorting entire faces by average distance. Walls and furniture stay correctly in front of or behind each other as the camera turns, including close to doorways and overlapping surfaces. A continuous ceiling and floor base close the room. The room geometry stays fixed; looking around changes only the camera. Furniture previews are solid and depth-tested, so they do not show through walls.
+
+WebGL provides hardware rendering with antialiasing on supported devices; a per-pixel software depth renderer handles browsers without it. Both use the same geometry and camera projection. Existing layouts, furniture purchases and controls are retained. `node tools/check-home-renderer.cjs` checks crossing surfaces, 600 independent ray/triangle visibility samples over six camera views, repeatability, unchanged furniture, GPU depth state, buffer reuse and cleanup. Browser review exercises turning using the software fallback; hardware WebGL is unavailable in that review environment.
+
 ## v26.10: A first-person home
 
 Tap your house marker, choose **People → Your home**, or use **Go inside your home** in Household. Walk through a furnished living room, kitchen and bedroom at eye level. Drag to look, use the touch stick or step buttons to walk; on a keyboard use WASD and the arrow keys. City time pauses indoors and returns to its previous pause state on exit.

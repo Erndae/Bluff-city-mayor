@@ -1,4 +1,4 @@
-/* First-person home. Self-contained software 3D: no GPU or network dependency. */
+/* First-person home. Fixed room geometry with a depth-tested renderer. */
 (function(root){
   'use strict';
   const CATALOG=[
@@ -76,6 +76,9 @@
     }
     if(!itemsOnly){
     const wall=WALLS[h.wall].color,floor=FLOORS[h.floor].color;
+    // Continuous surfaces close the room; decorative boards sit above the base.
+    poly([[0,-.015,0],[12,-.015,0],[12,-.015,10],[0,-.015,10]],'#8e7458');
+    poly([[0,2.8,0],[0,2.8,10],[12,2.8,10],[12,2.8,0]],'#e8e2d4');
     for(let x=0;x<12;x+=.6)for(let z=0;z<10;z+=1){const kitchen=x<7&&z>=6;poly([[x,0,z],[x+.59,0,z],[x+.59,0,z+.99],[x,0,z+.99]],shade(kitchen?'#c1bdac':floor,1+(((Math.round(x*10)+z*3)%7)-3)*.015));}
     for(const b of STRUCTURE){const along=b.w>b.d,length=along?b.w:b.d,n=Math.ceil(length/.7);for(let i=0;i<n;i++){
       const x=along?b.x-b.w/2+(i+.5)*length/n:b.x,z=along?b.z:b.z-b.d/2+(i+.5)*length/n;
@@ -138,30 +141,19 @@
   function clipNear(points){const out=[];for(let i=0;i<points.length;i++){const a=points[i],b=points[(i+1)%points.length],ina=a[2]>=.08,inb=b[2]>=.08;if(ina)out.push(a);if(ina!==inb){const t=(.08-a[2])/(b[2]-a[2]);out.push([a[0]+(b[0]-a[0])*t,a[1]+(b[1]-a[1])*t,.08]);}}return out;}
   const api={CATALOG,WALLS,FLOORS,initial,ensure,canPlace,transact,walkable,move,geometry,clipNear};
   if(typeof module!=='undefined'&&module.exports){module.exports=api;return;}
-  let host,canvas,ctx,adapter,s,h,p,scene=[],active=false,raf,last=0,dirty=true,keys=new Set(),stick={x:0,y:0},look=null,selection=null,tab='shop',noticeTimer,previousFocus;
+  let host,canvas,renderer,adapter,s,h,p,scene=[],active=false,raf,last=0,dirty=true,keys=new Set(),stick={x:0,y:0},look=null,selection=null,tab='shop',noticeTimer,previousFocus;
   const $=id=>host.querySelector('#'+id);
   function say(message){$('hi-status').textContent=message;clearTimeout(noticeTimer);noticeTimer=setTimeout(()=>{$('hi-status').textContent=''},5000);}
-  function persist(){adapter.save();dirty=true;scene=geometry(h);$('hi-cash').textContent=money(s.purse.cash)+' personal';if(s._saveFail)say('Could not save: browser storage is full. Free space before leaving.');}
+  function persist(){adapter.save();dirty=true;scene=geometry(h);renderer.setScene(scene);$('hi-cash').textContent=money(s.purse.cash)+' personal';if(s._saveFail)say('Could not save: browser storage is full. Free space before leaving.');}
   function room(){return p.x>7?'Bedroom':p.z>6?'Kitchen':'Living room';}
-  function resize(){const r=canvas.getBoundingClientRect(),scale=Math.min(root.devicePixelRatio||1,1.3);canvas.width=Math.round(r.width*scale);canvas.height=Math.round(r.height*scale);dirty=true;}
+  function resize(){const r=canvas.getBoundingClientRect(),scale=Math.min(root.devicePixelRatio||1,1.5,Math.sqrt(renderer.maxPixels/Math.max(1,r.width*r.height)));canvas.width=Math.max(1,Math.round(r.width*scale));canvas.height=Math.max(1,Math.round(r.height*scale));dirty=true;}
   function target(){const dist=clamp(1.62/Math.tan(Math.max(.38,p.pitch)),1.25,3.4);return {x:Math.round((p.x+Math.sin(p.yaw)*dist)*4)/4,z:Math.round((p.z+Math.cos(p.yaw)*dist)*4)/4};}
   function draft(){return selection?{...selection,...target()}:null;}
   function draw(){
-    const w=canvas.width,ht=canvas.height,f=Math.min(w,ht)*.88,cy=ht*.48;
-    ctx.fillStyle='#dcd8cc';ctx.fillRect(0,0,w,ht);const gradient=ctx.createLinearGradient(0,ht*.4,0,ht);gradient.addColorStop(0,'#b6a489');gradient.addColorStop(1,'#70553e');ctx.fillStyle=gradient;ctx.fillRect(0,ht*.48,w,ht*.52);
-    let all=scene;const proposed=draft(),valid=proposed&&canPlace(h,proposed,p);
-    if(proposed){const ghost=geometry({...h,items:[{...proposed,uid:-1}]},true);
-      all=scene.concat(ghost.map(face=>({...face,c:valid?'#86bda1':'#cf8274',ghost:true})));
-    }
-    const sy=Math.sin(p.yaw),co=Math.cos(p.yaw),sp=Math.sin(p.pitch),cp=Math.cos(p.pitch),polys=[];
-    for(const face of all){let points=face.points.map(v=>{const dx=v[0]-p.x,dz=v[2]-p.z,y=v[1]-1.62,z=dx*sy+dz*co;return [dx*co-dz*sy,y*cp+z*sp,z*cp-y*sp];});
-      points=clipNear(points);if(points.length<3)continue;
-      const depth=points.reduce((a,v)=>a+v[2],0)/points.length,screen=points.map(v=>[w/2+v[0]*f/v[2],cy-v[1]*f/v[2]]);
-      if(screen.every(v=>v[0]<0)||screen.every(v=>v[0]>w)||screen.every(v=>v[1]<0)||screen.every(v=>v[1]>ht))continue;
-      polys.push({screen,depth,c:face.c,ghost:face.ghost});
-    }
-    polys.sort((a,b)=>b.depth-a.depth);
-    for(const face of polys){ctx.beginPath();face.screen.forEach((v,i)=>i?ctx.lineTo(...v):ctx.moveTo(...v));ctx.closePath();ctx.globalAlpha=face.ghost?.6:1;ctx.fillStyle=face.c;ctx.fill();}ctx.globalAlpha=1;
+    const proposed=draft(),valid=proposed&&canPlace(h,proposed,p);
+    // Preview geometry also tests depth, so it cannot shine through a wall.
+    const ghost=proposed?geometry({...h,items:[{...proposed,uid:-1}]},true).map(face=>({...face,c:valid?'#86bda1':'#cf8274'})):[];
+    renderer.setPreview(ghost);renderer.render(p);
     $('hi-room').textContent=room();
     if(proposed){$('hi-place').disabled=!valid||(!selection.uid&&s.purse.cash<ITEMS[selection.type].price);$('hi-placement-note').textContent=valid?'Clear spot · ready to place':'Blocked · move or turn toward open floor';}
     const near=h.items.filter(i=>!i.stored&&ITEMS[i.type].use&&Math.hypot(i.x-p.x,i.z-p.z)<2.5).sort((a,b)=>Math.hypot(a.x-p.x,a.z-p.z)-Math.hypot(b.x-p.x,b.z-p.z))[0];
@@ -185,7 +177,7 @@
   function select(type,uid){selection={type,uid:uid||null,r:uid?(h.items.find(i=>i.uid===uid)?.r||0):0};$('hi-panel').hidden=true;$('hi-placement').hidden=false;$('hi-place').textContent=uid?'Place item':'Buy & place · '+money(ITEMS[type].price);$('hi-selected').textContent=ITEMS[type].name;$('hi-furnish').hidden=true;dirty=true;say('Face open floor. Move closer or farther, then place.');}
   function cancel(){selection=null;$('hi-placement').hidden=true;$('hi-furnish').hidden=false;dirty=true;}
   function resetControls(){keys.clear();stick={x:0,y:0};look=null;if(host)$('hi-stick-knob').style.transform='translate(0,0)';}
-  function exit(next){if(!active)return;active=false;cancelAnimationFrame(raf);clearTimeout(noticeTimer);resetControls();host.remove();root.removeEventListener('resize',resize);root.removeEventListener('blur',resetControls);document.removeEventListener('visibilitychange',resetControls);document.body.classList.remove('inside-home');adapter.close(next);previousFocus?.focus?.();}
+  function exit(next){if(!active)return;active=false;cancelAnimationFrame(raf);clearTimeout(noticeTimer);resetControls();renderer.destroy();host.remove();root.removeEventListener('resize',resize);root.removeEventListener('blur',resetControls);document.removeEventListener('visibilitychange',resetControls);document.body.classList.remove('inside-home');adapter.close(next);previousFocus?.focus?.();}
   function open(options){
     if(active)return;adapter=options;s=options.state();if(!s?.started||!s.home)return;h=ensure(s);p={x:3.5,z:1.05,yaw:0,pitch:.08};previousFocus=document.activeElement;active=true;
     host=document.createElement('section');host.id='home-interior';host.setAttribute('role','dialog');host.setAttribute('aria-modal','true');host.setAttribute('aria-label','Inside your home');
@@ -196,7 +188,7 @@
       <div id="hi-placement" hidden><strong id="hi-selected"></strong><small id="hi-placement-note"></small><div><button id="hi-rotate">Rotate ↻</button><button id="hi-place">Place</button><button id="hi-cancel">Cancel</button></div></div>
       <div class="hi-controls"><div id="hi-stick" aria-label="Drag to walk"><span id="hi-stick-knob"></span><b>WALK</b></div><div class="hi-step-controls"><button data-hi-step="forward" aria-label="Walk forward">↑</button><button data-hi-step="back" aria-label="Walk backward">↓</button><button data-hi-step="left" aria-label="Turn left">↶</button><button data-hi-step="right" aria-label="Turn right">↷</button></div><span class="hi-look-help">Drag the room to look<br><span>WASD · arrows turn</span></span></div>
       <aside id="hi-panel" hidden aria-label="Furnish your home"><div class="hi-panel-title"><h2>Make yourself at home</h2><button id="hi-panel-close" aria-label="Close furniture shop">×</button></div><nav id="hi-tabs" aria-label="Furniture categories"></nav><div id="hi-panel-body"></div></aside>`;
-    document.body.appendChild(host);document.body.classList.add('inside-home');canvas=$('hi-view');ctx=canvas.getContext('2d',{alpha:false});scene=geometry(h);resize();$('hi-cash').textContent=money(s.purse.cash)+' personal';$('hi-exit').focus();
+    document.body.appendChild(host);document.body.classList.add('inside-home');canvas=$('hi-view');renderer=root.BCHomeRenderer.create(canvas);canvas=renderer.canvas||canvas;scene=geometry(h);renderer.setScene(scene);resize();$('hi-cash').textContent=money(s.purse.cash)+' personal';$('hi-exit').focus();
     host.addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;const d=b.dataset;
       if(b.id==='hi-exit'){exit();return;}if(b.id==='hi-furnish'){panel();return;}if(b.id==='hi-panel-close'){$('hi-panel').hidden=true;$('hi-furnish').focus();return;}
       if(d.hiTab){tab=d.hiTab;panel();return;}if(d.hiBuy){select(d.hiBuy);return;}if(d.hiMove){const i=h.items.find(x=>x.uid===+d.hiMove);if(i)select(i.type,i.uid);return;}
@@ -207,6 +199,7 @@
       if(d.hiStep){if(d.hiStep==='left')p.yaw-=Math.PI/8;else if(d.hiStep==='right')p.yaw+=Math.PI/8;else{const n=d.hiStep==='forward'?.45:-.45;move(h,p,Math.sin(p.yaw)*n,Math.cos(p.yaw)*n);}dirty=true;}
       if(b.id==='hi-use'){const item=h.items.find(i=>i.uid===+b.dataset.uid);if(item){const use=ITEMS[item.type].use;if(use==='rest')say('A quiet moment at home. City time stays paused while you rest.');else exit(use);}}
     });
+    canvas.addEventListener('webglcontextlost',()=>say('Graphics paused. Leave and re-enter your home to restore the view.'));
     canvas.addEventListener('pointerdown',e=>{if(e.button!==0)return;canvas.setPointerCapture(e.pointerId);look={id:e.pointerId,x:e.clientX,y:e.clientY};});
     canvas.addEventListener('pointermove',e=>{if(!look||e.pointerId!==look.id)return;p.yaw+=(e.clientX-look.x)*.005;p.pitch=clamp(p.pitch+(e.clientY-look.y)*.004,-.65,.85);look.x=e.clientX;look.y=e.clientY;dirty=true;});
     for(const event of ['pointerup','pointercancel','lostpointercapture'])canvas.addEventListener(event,()=>{look=null});
