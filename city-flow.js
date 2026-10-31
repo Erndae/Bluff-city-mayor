@@ -59,7 +59,7 @@
   function goPriority(title){const selected=options().find(x=>x.t===title);if(!selected){openHub('city');toast('Your priorities have changed. Here is the current plan.');return;}document.querySelector('dialog[open]')?.close();hideViews();mgrPopClose();selected.go();}
   function amount(c){const n=Math.abs(c.delta),sign=c.delta>0?'+':'−';return c.unit==='M'?sign+fmtM(n):c.unit==='K'?sign+fmtK(n):sign+(Number.isInteger(n)?n:n.toFixed(1))+(c.unit?' '+c.unit:'');}
   function receipt(r){
-    const key=r.changes.filter(c=>!['Meetings remaining','Campaign stops remaining'].includes(c.name)),resource=r.changes.filter(c=>['Meetings remaining','Campaign stops remaining'].includes(c.name));
+    const key=r.changes.filter(c=>!['Actions remaining','Actions remaining'].includes(c.name)),resource=r.changes.filter(c=>['Actions remaining','Actions remaining'].includes(c.name));
     const top=[...key,...resource].slice(0,3),reaction=r.groups.length?r.groups.slice().sort((a,b)=>Math.abs(b.delta)-Math.abs(a.delta))[0]:r.reactions[0];
     const summary=reaction?`${reaction.name}: ${r.groups.includes(reaction)?'support':'opinion'} ${reaction.delta>0?'rose':'fell'} ${Math.abs(reaction.delta).toFixed(1)} points.`:'No immediate change in recorded relationships.';
     const p=current();

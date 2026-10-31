@@ -4,6 +4,10 @@ A city-management game set in Memphis, Tennessee. You play the mayor. You handle
 
 **Play it:** https://erndae.github.io/Bluff-city-mayor/ (once GitHub Pages is turned on, see below)
 
+## v26.15: Actions you can see, and an easier start
+
+Meetings and campaign stops are now just **actions**, everywhere. Under the date, a meter shows **ACTIONS ●●● 3 left · refill Nov 1**. It pulses and shows "−1 action" when you spend one, turns red at zero, and posts one plain note when you run out. Every button that costs an action carries a small amber marker. The tour is shorter (7 steps as mayor, 6 as a candidate) and matches today's screens: actions, time, approval, This week, the map, and the City, Budget, People and Campaign buttons. The Guide now opens with "New here? The game in five steps." On phones, keyboard hints like "(P)" are hidden, at most 2 notes stack at once, and repeat notes replace each other. Your advisor's Monday note now matches the This week card.
+
 ## v26.14: Your lane, more backgrounds, a steadier mayor
 
 "Lifestyle focus" is now **Your lane**, and the skills have new names: Dealmaking, Money Smarts, Inside Game, Safe Streets, Education and Star Power. Character creation now has 16 backgrounds in their own section: the original five plus Nurse, Pastor, Union Electrician, Army Veteran, Firefighter, Tech Founder, Musician, Social Worker, High School Coach, Journalist and Real Estate Agent. Each adds skills, a starting boost with the voter groups who relate to it, and reactions from council members. Candidates also have 19 jobs to choose from (new: firefighter, musician, social worker, coach, journalist, real estate agent, attorney, barbershop owner, FedEx hub worker and Army veteran). The mayor's marker now stays where you last did something. It no longer shuttles between City Hall and home on its own.
