@@ -1,7 +1,6 @@
 <!doctype html>
 <html lang="en">
 <head>
-<link rel="stylesheet" href="home-interior.css?v=26.10">
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="description" content="Create your mayor and govern Memphis in real time on a real map of the city.">
@@ -12,6 +11,7 @@
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#0d1822">
 <link rel="stylesheet" href="music.css?v=25">
+<link rel="stylesheet" href="home-interior.css?v=26.10">
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -305,6 +305,13 @@ button.seat:hover{border-color:var(--amber)}
 .startbox h1 span{display:block;color:var(--text);font-size:.42em;letter-spacing:.3em;margin-top:8px;text-shadow:none}
 .startbox p{margin:0;line-height:1.55;max-width:60ch;color:#d9d1c1}
 .keys{display:grid;grid-template-columns:auto 1fr;gap:5px 14px;font-size:14px}
+button.brand{pointer-events:auto;background:none;border:0;padding:0;cursor:pointer;flex-direction:row;align-items:center;gap:8px;text-align:left}
+button.brand .bm-t{display:flex;flex-direction:column;font-size:inherit;color:inherit;letter-spacing:normal;margin:0}button.brand .bm-t span{font-size:11px;color:var(--text);letter-spacing:.32em;margin-top:3px}
+button.brand .bm-ic{margin:0;letter-spacing:0;display:flex;align-items:center;justify-content:center;width:30px;height:30px;border:1px solid var(--line);border-radius:6px;background:rgba(19,33,45,.93);color:var(--amber)}
+button.brand:hover .bm-ic,button.brand:focus-visible .bm-ic{border-color:var(--amber)}
+.parklbl{font-family:var(--f-label);font-weight:600;font-size:12px;font-style:italic;color:#e7f5dc;text-shadow:0 0 3px #2e5a2c,0 0 3px #2e5a2c,0 1px 2px #000;white-space:nowrap;pointer-events:none;letter-spacing:.02em}
+.poprow{width:100%;background:none;border:0;border-left:3px solid transparent;color:inherit;font:inherit;font-size:13px;text-align:left;cursor:pointer}.poprow:hover{background:rgba(255,255,255,.05)}
+.popbig{display:flex;flex-direction:column;gap:2px}.popbig b{font-family:var(--f-mono);font-size:30px;color:var(--text)}.popbig span{font-size:14px}
 .pcat{margin-bottom:10px}.pcat h4{margin:6px 0 6px;font-family:var(--f-label);font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
 .bseats{display:flex;gap:5px;flex-wrap:wrap;margin:6px 0 2px}.bseats i,.bkey i{display:inline-block;width:16px;height:16px;border-radius:50%;border:2px solid var(--line)}
 .bkey{display:flex;flex-wrap:wrap;gap:4px 10px;align-items:center;margin:4px 0 8px}.bkey i{width:10px;height:10px;margin-right:3px;vertical-align:-1px}
@@ -556,7 +563,7 @@ details.analysis{margin-top:6px}details.analysis summary{cursor:pointer;color:va
 <div id="app">
   <div id="map" aria-label="Map of Memphis"></div>
   <div class="hud-top">
-    <div class="brand">BLUFF CITY<span>MAYOR</span></div>
+    <button class="brand" id="bMenu" aria-label="Menu" title="Menu (Esc)"><span class="bm-ic" aria-hidden="true"><svg viewBox="0 0 16 16" width="16" height="16"><path d="M2 4h12M2 8h12M2 12h12" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></span><span class="bm-t">BLUFF CITY<span>MAYOR</span></span></button>
     <button class="mchip" id="mchip" data-act="mayor" aria-label="Your character"><span id="mchipPt"></span><span class="mname"><b id="mchipName">Mayor</b><small id="mchipSk"></small></span></button>
     <div class="clock paused" id="clock"><button id="cPause" data-act="pause" aria-label="Resume time"><svg class="ico" viewBox="0 0 12 12" aria-hidden="true"><path d="M3.2 1.6v8.8l7.2-4.4z" fill="currentColor"/></svg></button><div class="cdate"><b id="hDate">1 Oct 2026</b><small id="hFY">FY2027</small><small id="hSlots" role="button" title="What you can do now"></small></div>
       <div class="cspeed"><button data-act="slower" aria-label="Slower" title="Slower (−)">−</button><div class="speeds" id="speeds"></div><button data-act="faster" aria-label="Faster" title="Faster (+)">+</button></div><span class="ptag">PAUSED</span></div>
@@ -600,7 +607,7 @@ details.analysis{margin-top:6px}details.analysis summary{cursor:pointer;color:va
     <button class="btn primary" data-act="pause" id="bPlay"><svg class="ico" viewBox="0 0 12 12" aria-hidden="true"><path d="M3.2 1.6v8.8l7.2-4.4z" fill="currentColor"/></svg> Resume <kbd>Space</kbd></button>
   </nav>
   <div class="status" id="status">Loading map…</div>
-  <div class="credit"><span class="ver" id="verTag">v26.11</span></div>
+  <div class="credit"><span class="ver" id="verTag">v26.12</span></div>
   <div class="tip" id="tip" hidden></div>
   <div class="toast" id="toast" role="status"></div>
   <section class="panel" id="panel" hidden aria-live="polite">
@@ -628,7 +635,7 @@ details.analysis{margin-top:6px}details.analysis summary{cursor:pointer;color:va
         <button class="btn" data-music-open>Music &amp; volume</button>
       </div>
       <div id="slotList" hidden></div>
-      <p class="note startv">Version <b class="ver" id="verStart">v26.11</b></p>
+      <p class="note startv">Version <b class="ver" id="verStart">v26.12</b></p>
     </div>
     <div class="startbox create" id="create" hidden>
       <h2>Create your mayor</h2>
@@ -1418,7 +1425,7 @@ function enact(s,p){DIVS.forEach(d=>{s.enacted[d.id]=p.divs[d.id];s.ratio[d.id]=
 // Voter groups. Each has a share of residents, turnout, home districts, concerns and an approval of you.
 // Citywide approval is the turnout-weighted average of the groups; each council district's approval comes from the groups that live there.
 // Shares, district mix and turnout are modeled, loosely grounded in Memphis demographics; they are not survey data.
-const VERSION='v26.11';
+const VERSION='v26.12';
 const GROUPS=[
  {id:'working',sh:'Working families',n:'Working families',ic:'⚒︎',c:'#f2a93b',share:24,turn:.5,start:56,w:{jobs:1,safety:.8,transit:.5},
   d:'Hourly workers in logistics, warehouses, health care and service jobs. The biggest bloc in the city.',dm:{1:1.1,2:.8,3:1.3,4:1.2,5:.6,6:1.2,7:1.1}},
@@ -4404,7 +4411,7 @@ function citizenMark(root){if(!S||!S.started||inOffice()||!root)return;root.quer
 // A short guided tour at the start of every new game. It points at the real controls, says what the goal is, then hands
 // off to the first decision (promises or platform). It can be replayed from the Guide.
 const TUT_MAYOR=[
- {t:()=>`Welcome, Mayor ${S.mayor.name.split(' ').pop()}`,b:()=>`You run Memphis: a $906 million budget, 13 council members, about 620,000 people. Your term ends on <b>Election Day, Thursday, October 7, 2027</b>. Keep the city working and voters on your side, and you win a second term.`},
+ {t:()=>`Welcome, Mayor ${S.mayor.name.split(' ').pop()}`,b:()=>`You run Memphis: a $906 million budget, 13 council members, about 605,000 people. Your term ends on <b>Election Day, Thursday, October 7, 2027</b>. Keep the city working and voters on your side, and you win a second term.`},
  {sel:'#clock',t:()=>'Time',b:()=>'The game is paused. Press ▶ (or Space) and days start to pass. New problems pause the clock for you. + and − change the speed. You get 3 meetings a month; your chief of staff checks in every Monday, and four days before the month ends pauses the clock if you still have meetings or decisions left. One unused meeting carries over.'},
  {sel:'.hud-top .stat.click',t:()=>'Approval and clout',b:()=>'Approval is what wins elections. Clout, next to it, is your pull beyond City Hall: the more popular you are, the more you can move the school district, the county or the state.'},
  {sel:'#hRes',up:1,t:()=>'The reserve',b:()=>'The city\'s savings. Projects and programs draw on it. Spending $1M or more from it outside the budget takes 7 council votes.'},
@@ -4939,6 +4946,145 @@ document.addEventListener('click',e=>{const b=e.target.closest('[data-pwtab],[da
     const db=Object.keys(BOARDS).find(id=>bMajority(id)&&!cdLeft('bd_'+id,12));if(db&&S.slots>0)L.push({pri:50,t:BOARDS[db].dir.n,h:`You have a majority on the ${BOARDS[db].n}.`,go:()=>openPower('boards')})}
   if(crInit()&&crOpen()&&S.m>=3&&S.slots>0&&!P.cr.seats.some(s=>s.pick))L.push({pri:44,t:'Endorse council candidates',h:'All 13 seats are on the October ballot. Back the people you want to work with.',go:()=>openPower('council')});
   L.sort((a,b)=>b.pri-a.pri)}catch(e){}return L}}
+// ======================= A LIVING CITY =======================
+// Menu button, park names, yards around houses, traffic on the streets and a population you can watch grow or shrink.
+const LV_O=[-90.05,35.15],LV_KX=91054,LV_KY=110950;
+const lvXY=(lon,lat)=>[(lon-LV_O[0])*LV_KX,(lat-LV_O[1])*LV_KY],lvLL=(x,y)=>[LV_O[0]+x/LV_KX,LV_O[1]+y/LV_KY];
+const lvReduce=()=>{try{return matchMedia('(prefers-reduced-motion: reduce)').matches}catch(e){return false}};
+const lvLive=()=>!!(map&&mapReady&&S&&S.started&&$('start').hidden&&!window.BCInterior?.isOpen);
+// ---------- menu ----------
+function openGameMenu(){if(!S)return;closePanel();
+  openModal(`Slot ${S.slot||1} · ${dateStr()}`,'Menu',`<div class="choices">
+    <button class="choice" data-act="close"><b>Back to the game</b><small>Close this menu.</small></button>
+    <button class="choice" data-gm="save"><b>Save now</b><small>Saves to slot ${S.slot||1}. The game also saves every month.</small></button>
+    <button class="choice" data-slotopen="1"><b>Save and load</b><small>Keep a copy, or load another game.</small></button>
+    <button class="choice" data-gm="help"><b>Guide</b><small>How the game works, and replay the tour.</small></button>
+    <button class="choice" data-music-open><b>Music &amp; volume</b><small>Soundtrack and sound effects.</small></button>
+    <button class="choice" data-slotmenu="1"><b>Save and quit to the title screen</b><small>Your game is saved. Pick Continue on the title screen to come back.</small></button></div>`,false)}
+document.addEventListener('click',e=>{const b=e.target.closest('#bMenu,[data-gm]');if(!b||!S)return;e.preventDefault();e.stopImmediatePropagation();
+  if(b.id==='bMenu'){if(modalOpen&&$('mTitle').textContent==='Menu'){onClose=null;closeModal();return}if(modalOpen){onClose=null;closeModal()}openGameMenu();return}
+  if(b.dataset.gm==='save'){save();toast(`Saved in slot ${S.slot||1}.`);onClose=null;closeModal();return}
+  if(b.dataset.gm==='help'){onClose=null;closeModal();openHelp();return}},true);
+window.addEventListener('keydown',e=>{if(e.key==='Escape'&&S&&S.started&&$('start').hidden&&!modalOpen&&!window.BCInterior?.isOpen&&!(e.target&&e.target.tagName==='INPUT')){e.preventDefault();openGameMenu()}});
+// ---------- park names ----------
+let PK_LBL=null,pkMarks=[];
+function pkTitle(s){const keep=new Set(['MLK','II','III','YMCA','TO','WC','LLC']);return String(s).trim().split(/\s+/).map((w,i)=>keep.has(w.toUpperCase())&&w.length>1&&w!=='TO'?w.toUpperCase():/^(OF|THE|AND|AT|ON)$/i.test(w)&&i?w.toLowerCase():w.charAt(0).toUpperCase()+w.slice(1).toLowerCase()).join(' ').replace(/\bPk\b/,'Park').replace(/\bT O\b/i,'T.O.')}
+function pkInit(){if(PK_LBL)return PK_LBL;const G=parkGeo();const names=(RAW.parks?RAW.parks.a:[]).concat(RAW.sparks?RAW.sparks.a:[]);
+  PK_LBL=G.map((g,i)=>({n:pkTitle((names[i]||[''])[0]||''),c:g.c,a:g.a})).filter(p=>p.n&&p.n.length>2&&p.c&&isFinite(p.c[0]));
+  // merge pieces of the same park: keep the biggest piece's label
+  const best={};PK_LBL.forEach(p=>{if(!best[p.n]||best[p.n].a<p.a)best[p.n]=p});PK_LBL=Object.values(best).sort((a,b)=>b.a-a.a);return PK_LBL}
+function renderParkLabels(){if(!map||!mapReady||!S)return;const on=S.layers.labels!==false&&S.started&&$('start').hidden;const z=map.getZoom();
+  const want=[];if(on&&z>=12.5&&RAW.parks){const b=map.getBounds();const minA=z>=15?0:z>=14?15000:z>=13.5?60000:200000;
+    for(const p of pkInit()){if(p.a<minA)continue;if(p.c[0]<b.getWest()||p.c[0]>b.getEast()||p.c[1]<b.getSouth()||p.c[1]>b.getNorth())continue;want.push(p);if(want.length>=(innerWidth<700?14:30))break}}
+  const keep=new Set(want.map(p=>p.n));pkMarks=pkMarks.filter(m=>{if(keep.has(m.n))return true;m.m.remove();return false});
+  const have=new Set(pkMarks.map(m=>m.n));want.forEach(p=>{if(have.has(p.n))return;const el=document.createElement('div');el.className='parklbl';el.textContent=p.n;pkMarks.push({n:p.n,m:mk(el,p.c[0],p.c[1])})})}
+// ---------- yards ----------
+// Each house gets a lawn: its footprint's oriented box, grown by a few meters, with a hedge line at the lot edge.
+let YD=null;
+function ydAdd(features){if(!features||!features.length)return;YD=YD||{cx:[],cy:[],hl:[],hw:[],ux:[],uy:[],cells:new Map()};
+  for(const f of features){const r=f.geometry&&f.geometry.coordinates&&f.geometry.coordinates[0];if(!r||r.length<4)continue;const P=r.map(c=>lvXY(c[0],c[1]));
+    let L=0,ux=1,uy=0;for(let i=0;i<P.length-1;i++){const dx=P[i+1][0]-P[i][0],dy=P[i+1][1]-P[i][1],d=Math.hypot(dx,dy);if(d>L){L=d;ux=dx/d;uy=dy/d}}
+    let a0=1e9,a1=-1e9,b0=1e9,b1=-1e9;for(const p of P){const a=p[0]*ux+p[1]*uy,b=-p[0]*uy+p[1]*ux;a0=Math.min(a0,a);a1=Math.max(a1,a);b0=Math.min(b0,b);b1=Math.max(b1,b)}
+    const hl=(a1-a0)/2,hw=(b1-b0)/2;if(hl>30||hw>30||hl<2)continue;const am=(a0+a1)/2,bm=(b0+b1)/2;const cx=am*ux-bm*uy,cy=am*uy+bm*ux;
+    const i=YD.cx.length;YD.cx.push(cx);YD.cy.push(cy);YD.hl.push(hl);YD.hw.push(hw);YD.ux.push(ux);YD.uy.push(uy);const k=Math.floor(cx/300)+','+Math.floor(cy/300);if(!YD.cells.has(k))YD.cells.set(k,[]);YD.cells.get(k).push(i)}
+  ydSoon()}
+if(window.BCHouses&&BCHouses.ingest){const _ing=BCHouses.ingest;BCHouses.ingest=function(features,kind){const r=_ing.apply(this,arguments);try{if(kind!=='building')ydAdd(features)}catch(e){console.warn('yards',e)}return r}}
+let ydT=null,ydSig='';function ydSoon(){clearTimeout(ydT);ydT=setTimeout(renderYards,120)}
+function ydLayer(){if(!map||map.getSource('yards'))return;map.addSource('yards',{type:'geojson',data:{type:'FeatureCollection',features:[]},tolerance:0});
+  const before=map.getLayer('streets')?'streets':undefined;
+  map.addLayer({id:'yards-fill',type:'fill',source:'yards',minzoom:15,paint:{'fill-color':['get','c'],'fill-opacity':['interpolate',['linear'],['zoom'],15,0,15.6,1]}},before);
+  map.addLayer({id:'yards-drive',type:'fill',source:'yards',minzoom:15,filter:['==',['get','k'],'d'],paint:{'fill-color':'#b9b4a8','fill-opacity':['interpolate',['linear'],['zoom'],15,0,15.6,1]}},before);
+  map.addLayer({id:'yards-hedge',type:'line',source:'yards',minzoom:16,filter:['==',['get','k'],'y'],paint:{'line-color':'#4f7f45','line-width':['interpolate',['linear'],['zoom'],16,0.8,18,2.6],'line-opacity':.9}},before)}
+function renderYards(){if(!map||!mapReady)return;ydLayer();const src=map.getSource('yards');if(!src)return;const on=YD&&S&&S.layers.bld!==false&&map.getZoom()>=15&&!(S.mode&&!['real','streets'].includes(S.mode));
+  if(!on){if(ydSig){ydSig='';src.setData({type:'FeatureCollection',features:[]})}return}
+  const b=map.getBounds(),lo=lvXY(b.getWest(),b.getSouth()),hi=lvXY(b.getEast(),b.getNorth());const c0=[Math.floor(lo[0]/300)-1,Math.floor(lo[1]/300)-1],c1=[Math.floor(hi[0]/300)+1,Math.floor(hi[1]/300)+1];
+  const sig=c0.concat(c1).join(',')+':'+YD.cx.length;if(sig===ydSig)return;ydSig=sig;const F=[];const greens=['#8fbf6e','#86b867','#97c277','#8cb96c'];
+  for(let x=c0[0];x<=c1[0];x++)for(let y=c0[1];y<=c1[1];y++)for(const i of YD.cells.get(x+','+y)||[]){if(F.length>9000)break;
+    const cx=YD.cx[i],cy=YD.cy[i],ux=YD.ux[i],uy=YD.uy[i],hl=YD.hl[i]+4.5,hw=YD.hw[i]+5.5;
+    const box=(l0,l1,w0,w1)=>[[l0,w0],[l1,w0],[l1,w1],[l0,w1],[l0,w0]].map(([a,b])=>lvLL(cx+a*ux-b*uy,cy+a*uy+b*ux));
+    F.push({type:'Feature',properties:{k:'y',c:greens[i%4]},geometry:{type:'Polygon',coordinates:[box(-hl,hl,-hw,hw)]}});
+    // a driveway beside the house, on one side
+    const side=i%2?1:-1,dl=YD.hl[i]+0.2;F.push({type:'Feature',properties:{k:'d',c:'#b9b4a8'},geometry:{type:'Polygon',coordinates:[box(side>0?dl:-dl-3,side>0?dl+3:-dl,-hw,-YD.hw[i]*0.2)]}})}
+  src.setData({type:'FeatureCollection',features:F})}
+// ---------- traffic ----------
+const TR={net:null,cars:[],last:0,pushed:0,on:false,sig:''};
+const CAR_COLORS=['#b8342a','#2c3e50','#eceff1','#7f8c8d','#2f6fb0','#e3b52b','#1f8a70','#3d4a59','#c45a1c','#c2c7cc','#eceff1','#202428'];
+function trBuild(){if(TR.net||!RAW||!RAW.streets)return TR.net;const lines=[];const add=(parts,major)=>{for(const l of parts){if(!l||l.length<2)continue;const P=new Float32Array(l.length*2);for(let i=0;i<l.length;i++){const q=lvXY(l[i][0],l[i][1]);P[i*2]=q[0];P[i*2+1]=q[1]}lines.push({P,major})}};
+  try{const fc=decodeLayer(RAW.fc.g);fc.forEach((parts,i)=>{const cls=(RAW.fc.a[i]||[])[0]||'';add(parts,/Interstate|Freeway|Expressway/i.test(cls)?3:/Principal/i.test(cls)?2:1)})}catch(e){}
+  decodeLayer(RAW.streets.g).forEach(parts=>add(parts,0));
+  const cells=new Map(),ends=new Map(),ck=(x,y)=>Math.floor(x/400)+','+Math.floor(y/400),ek=(x,y)=>Math.round(x/6)+','+Math.round(y/6);
+  lines.forEach((L,id)=>{const P=L.P,n=P.length/2;let len=0;for(let i=1;i<n;i++)len+=Math.hypot(P[i*2]-P[i*2-2],P[i*2+1]-P[i*2-1]);L.len=len;let last='';
+    for(let i=0;i<n;i++){const k=ck(P[i*2],P[i*2+1]);if(k!==last){last=k;if(!cells.has(k))cells.set(k,{a:[],m:[]});const c=cells.get(k);(L.major?c.m:c.a).push(id)}}
+    for(const e of[0,n-1]){const k=ek(P[e*2],P[e*2+1]);if(!ends.has(k))ends.set(k,[]);ends.get(k).push(id*2+(e?1:0))}});
+  TR.net={lines,cells,ends,ek};return TR.net}
+function trBounds(){const b=map.getBounds(),lo=lvXY(b.getWest(),b.getSouth()),hi=lvXY(b.getEast(),b.getNorth());const px=(hi[0]-lo[0])*0.15,py=(hi[1]-lo[1])*0.15;return[lo[0]-px,lo[1]-py,hi[0]+px,hi[1]+py]}
+function trSpawn(car,B){const N=TR.net;for(let t=0;t<30;t++){const x=B[0]+Math.random()*(B[2]-B[0]),y=B[1]+Math.random()*(B[3]-B[1]);const c=N.cells.get(Math.floor(x/400)+','+Math.floor(y/400));if(!c)continue;
+    const pool=(c.m.length&&Math.random()<0.55)?c.m:c.a.length?c.a:c.m;if(!pool.length)continue;const id=pool[Math.floor(Math.random()*pool.length)],L=N.lines[id];if(L.len<25)continue;
+    const n=L.P.length/2;car.id=id;car.dir=Math.random()<.5?1:-1;car.seg=car.dir>0?Math.floor(Math.random()*(n-1)):1+Math.floor(Math.random()*(n-1));car.t=0;
+    const bus=L.major>=1&&L.major<3&&Math.random()<0.07;car.bus=bus;car.col=bus?'#f3f1e7':CAR_COLORS[Math.floor(Math.random()*CAR_COLORS.length)];car.v=(L.major>=3?27:L.major?15:9)*(0.8+Math.random()*0.4)*(bus?0.7:1);return true}return false}
+function trStep(car,dt,B){const N=TR.net;let L=N.lines[car.id],P=L.P,n=P.length/2;let move=car.v*dt;
+  for(let guard=0;guard<20&&move>0;guard++){const a=car.seg,bI=a+car.dir;if(bI<0||bI>=n){// end of street: carry on to a connected one
+      const k=N.ek(P[a*2],P[a*2+1]),opts=(N.ends.get(k)||[]).filter(v=>(v>>1)!==car.id);if(!opts.length)return false;const v=opts[Math.floor(Math.random()*opts.length)];car.id=v>>1;L=N.lines[car.id];P=L.P;n=P.length/2;
+      car.dir=(v&1)?-1:1;car.seg=(v&1)?n-1:0;car.t=0;continue}
+    const sl=Math.hypot(P[bI*2]-P[a*2],P[bI*2+1]-P[a*2+1]);if(car.t+move<sl){car.t+=move;move=0}else{move-=sl-car.t;car.t=0;car.seg=bI}}
+  const a=car.seg,bI=Math.min(n-1,Math.max(0,a+car.dir));const ax=P[a*2],ay=P[a*2+1],bx=P[bI*2],by=P[bI*2+1],sl=Math.hypot(bx-ax,by-ay)||1;const ux=(bx-ax)/sl,uy=(by-ay)/sl;
+  const lane=L.major>=2?4.5:L.major?3.2:2.2;car.x=ax+ux*car.t+uy*lane;car.y=ay+uy*car.t-ux*lane;car.ux=ux;car.uy=uy;
+  return car.x>B[0]&&car.x<B[2]&&car.y>B[1]&&car.y<B[3]}
+function trLayer(){if(!map||map.getSource('traffic'))return;map.addSource('traffic',{type:'geojson',data:{type:'FeatureCollection',features:[]},tolerance:0,buffer:0});
+  map.addLayer({id:'traffic-3d',type:'fill-extrusion',source:'traffic',minzoom:14.5,paint:{'fill-extrusion-color':['get','c'],'fill-extrusion-height':['get','h'],'fill-extrusion-base':['get','b'],'fill-extrusion-opacity':1}})}
+function trActive(){return lvLive()&&!lvReduce()&&!document.hidden&&map.getZoom()>=14.5&&S.layers.bld!==false&&(S.mode||'real')==='real'&&RAW&&RAW.streets}
+function trFrame(ts){requestAnimationFrame(trFrame);if(!map||!mapReady)return;const act=trActive();if(!act){if(TR.on){TR.on=false;TR.cars=[];const s=map.getSource('traffic');if(s)s.setData({type:'FeatureCollection',features:[]})}TR.last=ts;return}
+  if(!TR.net){if(!TR.building){TR.building=true;setTimeout(()=>{try{trBuild()}catch(e){console.warn('traffic',e)}},50)}return}trLayer();TR.on=true;
+  const dt=Math.min(0.25,(ts-(TR.last||ts))/1000);TR.last=ts;const B=trBounds();const want=innerWidth<700?45:100;
+  while(TR.cars.length<want){const c={};if(!trSpawn(c,B))break;TR.cars.push(c)}
+  for(const c of TR.cars){if(!trStep(c,dt*1.6,B))trSpawn(c,B)}
+  if(ts-TR.pushed<70)return;TR.pushed=ts;const z=map.getZoom(),s=Math.min(3.5,Math.max(1.6,Math.pow(2,(17.5-z)*0.8)));
+  const F=TR.cars.filter(c=>c.x!=null).map(c=>{const L=(c.bus?12:4.6)*s/2,W=(c.bus?2.6:1.9)*s/2;const pts=[[L,W],[-L,W],[-L,-W],[L,-W],[L,W]].map(([a,b])=>lvLL(c.x+a*c.ux-b*c.uy,c.y+a*c.uy+b*c.ux));
+    return{type:'Feature',properties:{c:c.col,h:(c.bus?3.2:1.5)*Math.sqrt(s),b:0.15},geometry:{type:'Polygon',coordinates:[pts]}}});
+  map.getSource('traffic').setData({type:'FeatureCollection',features:F})}
+requestAnimationFrame(trFrame);
+// ---------- population ----------
+const POP0=605200; // July 2025 Census estimate 609,647, carried forward at the recent rate of decline (about -0.6% a year)
+function popParts(s){s=s||S;const M=s.met;const P=[];const add=(t,v)=>{if(Math.abs(v)>=0.005)P.push({t,v})};
+  add('Long-run trend: people leaving for the suburbs and the Sun Belt',-0.58);
+  add(`Jobs climate (${M.jobs.toFixed(0)})`,(M.jobs-55)*0.08);
+  add(`Violent crime (index ${M.crime.toFixed(0)})`,-(M.crime-88)*0.04);
+  add(`Blight (${M.blight.toFixed(0)})`,-(M.blight-60)*0.03);
+  add(`Schools: MSCS reading ${M.reading.toFixed(1)}%`,(M.reading-25.7)*0.1);
+  add(`Streets (${M.streets.toFixed(0)})`,(M.streets-46)*0.02);
+  add(`Transit (${M.transit.toFixed(0)})`,(M.transit-40)*0.015);
+  add(`Community health (${(M.health??42).toFixed(0)})`,((M.health??42)-42)*0.02);
+  add(`Property tax ($${s.taxRate.toFixed(2)})`,-(s.taxRate-3.39)*1.2);
+  return P}
+function popRate(s){return clamp(popParts(s).reduce((a,x)=>a+x.v,0),-3,2)} // percent a year
+function popInit(s){s=s||S;if(s&&s.popn==null){s.popn=POP0;s.popH=[{m:s.y*12+s.m,v:POP0}]}}
+function popMonth(s){popInit(s);const r=popRate(s)/100/12;const before=s.popn;s.popn=Math.round(s.popn*(1+r+(Math.random()-.5)*0.0003));s.popH.push({m:s.y*12+s.m,v:s.popn});if(s.popH.length>300)s.popH.splice(0,s.popH.length-300);
+  if(s===S&&Math.floor(before/5000)!==Math.floor(s.popn/5000)){const up=s.popn>before,mark=Math.floor((up?s.popn:before)/5000)*5000;
+    try{notify(up?'good':'bad',up?`Memphis tops ${mark.toLocaleString()} people`:`Memphis falls below ${mark.toLocaleString()} people`,up?'More people are moving in than leaving.':'More people are leaving than moving in.',()=>openPop(),{silent:true})}catch(e){}}}
+{const _ms=monthlySim;monthlySim=function(s){const r=_ms.apply(this,arguments);try{popMonth(s)}catch(e){console.warn('pop',e)}return r}}
+{const _rf=revenueFor;revenueFor=function(s,...a){const v=_rf.call(this,s,...a);return v+(s&&s.popn?(s.popn/POP0-1)*600:0)}}
+function popChart(H){if(!H||H.length<2)return'<p class="note">The chart fills in month by month.</p>';const W=320,Hh=110,vs=H.map(h=>h.v),lo=Math.min(...vs),hi=Math.max(...vs),pad=Math.max(500,(hi-lo)*0.15);const y0=lo-pad,y1=hi+pad;
+  const pts=H.map((h,i)=>`${(i/(H.length-1)*W).toFixed(1)},${(Hh-(h.v-y0)/(y1-y0)*Hh).toFixed(1)}`).join(' ');const up=vs[vs.length-1]>=vs[0];const col=up?'var(--good)':'var(--bad)';
+  const lab=m=>`${MONTHS_L[(m-1)%12].slice(0,3)} ${Math.floor((m-1)/12)}`;
+  return`<svg viewBox="0 0 ${W} ${Hh+18}" style="width:100%;max-width:520px;height:auto;display:block" role="img" aria-label="Population over time"><polyline points="${pts}" fill="none" stroke="${col}" stroke-width="2.5" stroke-linejoin="round"/><text x="0" y="${Hh+15}" fill="var(--muted)" font-size="11">${lab(H[0].m)}</text><text x="${W}" y="${Hh+15}" fill="var(--muted)" font-size="11" text-anchor="end">${lab(H[H.length-1].m)}</text><text x="${W}" y="12" fill="var(--muted)" font-size="11" text-anchor="end">${Math.round(hi).toLocaleString()}</text><text x="${W}" y="${Hh-2}" fill="var(--muted)" font-size="11" text-anchor="end">${Math.round(lo).toLocaleString()}</text></svg>`}
+function openPop(){if(!S)return;popInit();closePanel();const r=popRate(S),H=S.popH,yr=H.length>12?S.popn-H[H.length-13].v:S.popn-H[0].v,since=S.popn-H[0].v,perMo=Math.round(S.popn*r/100/12);
+  const parts=popParts(S).sort((a,b)=>Math.abs(b.v)-Math.abs(a.v));
+  openModal(`${r>=0?'Growing':'Shrinking'} about ${Math.abs(r).toFixed(2)}% a year`,'Population',`
+   <div class="facts"><div class="popbig"><b>${S.popn.toLocaleString()}</b><span style="color:${r>=0?'var(--good)':'var(--bad)'}">${r>=0?'▲':'▼'} about ${Math.abs(perMo).toLocaleString()} people a month</span></div>
+    <p class="note" style="margin-top:4px">${since>=0?'+':'−'}${Math.abs(since).toLocaleString()} since you started${H.length>12?` · ${yr>=0?'+':'−'}${Math.abs(yr).toLocaleString()} in the last 12 months`:''}</p>${popChart(H)}</div>
+   <div class="facts"><h4>Why people are coming or going</h4><div class="opl">${parts.map(x=>`<div><span>${x.t}</span><b style="color:${x.v>=0?'var(--good)':'var(--bad)'}">${x.v>=0?'+':'−'}${Math.abs(x.v).toFixed(2)}%/yr</b></div>`).join('')}</div>
+    <p class="note">Fewer residents means less tax money: every 1% the city shrinks costs about $6 million a year in revenue. Better jobs, safer streets, less blight and better schools bring people back.</p></div>
+   <p class="note">Real numbers: 633,104 in the 2020 Census and an estimated 609,647 in July 2025 (U.S. Census Bureau). The game carries that trend forward and lets your decisions change it.</p>`,true)}
+openPop=navWrap('openPop',openPop);
+document.addEventListener('click',e=>{const b=e.target.closest('[data-act="pop"]');if(!b||!S)return;e.preventDefault();e.stopImmediatePropagation();if(modalOpen){onClose=null;closeModal()}openPop()},true);
+function popRow(){const el=$('metrics');if(!el||!S||el.querySelector('.poprow'))return;popInit();const r=popRate(S);const h=el.querySelector('h3');if(!h)return;
+  h.insertAdjacentHTML('afterend',`<button class="mrow poprow g-${r>=0.1?'good':r>-0.3?'warn':'bad'}" data-act="pop" title="Click for details"><span><i class="dot"></i>Population</span><b>${S.popn.toLocaleString()}</b><span class="tr ${r>=0?'up':'down'}">${r>=0?'+':'−'}${Math.abs(r).toFixed(1)}%/yr</span></button>`)}
+// ---------- hooks ----------
+{const _rh=refreshHUD;refreshHUD=function(...a){const r=_rh.apply(this,a);try{popRow()}catch(e){}return r}}
+{const _al=applyLayers;applyLayers=function(...a){const r=_al.apply(this,a);try{renderParkLabels();ydSig='';ydSoon()}catch(e){}return r}}
+{const _zc=zoomClasses;zoomClasses=function(...a){const r=_zc.apply(this,a);try{pkSoon()}catch(e){}return r}}
+let pkT=null;function pkSoon(){clearTimeout(pkT);pkT=setTimeout(()=>{try{renderParkLabels();renderYards()}catch(e){}},150)}
+function lvWait(){if(map&&mapReady){map.on('moveend',pkSoon);pkSoon();return}setTimeout(lvWait,500)}setTimeout(lvWait,0);
 function openLedger(){const L=S.log||[];openPanel('Everything that has happened, newest first','Ledger',L.length?`<div class="logl">${L.map(x=>`<div><span>${x.d}</span><p style="margin:0">${x.t}</p></div>`).join('')}</div>`:'<p class="note">Nothing yet. Start the clock with Space or ▶.</p>','ledger')}
 function openPolicies(){const ks=Object.keys(POLICIES);
   openPanel('Ongoing programs you control','Your initiatives',`<p>Mid-year, these are paid from the reserve fund. In April they go into the budget you send the council.</p>
@@ -5567,7 +5713,7 @@ window.claude?.hot?.ready?window.claude.hot.ready(start):start(window.claude?.ho
 <script src="home-renderer.js?v=26.11"></script>
 <script src="home-interior.js?v=26.11"></script>
 <script src="city-life.js?v=26.4"></script>
-<script src="city-flow.js?v=26.10"></script>
+<script src="city-flow.js?v=26.12"></script>
 <script src="music.js?v=25"></script>
 </body>
 </html>

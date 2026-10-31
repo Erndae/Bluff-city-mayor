@@ -4,6 +4,18 @@ A city-management game set in Memphis, Tennessee. You play the mayor. You handle
 
 **Play it:** https://erndae.github.io/Bluff-city-mayor/ (once GitHub Pages is turned on, see below)
 
+## v26.12: A living city and its population
+
+**Menu.** The ☰ button beside the Bluff City Mayor logo (or Esc) opens a menu: back to the game, save, save and load, guide, music, and save and quit to the title screen.
+
+**Park names.** The 234 city parks and two state parks are labeled with their names from the City of Memphis GIS layer. Big parks show from further out, small ones as you zoom in.
+
+**Yards.** Every house gets a lawn around its footprint, a driveway on one side and a hedge line at the lot edge from street level. Lot shapes are stylized, not property lines.
+
+**Traffic.** Cars move along the real street network at street level (zoom 14.5+), more of them on major roads, faster on interstates, with occasional MATA buses. They follow connected streets and drive on the right. Traffic stops when the Buildings layer is off, in other map modes, indoors, in a hidden tab or with reduced motion.
+
+**Population.** Memphis starts at about 605,200 (the Census Bureau's July 2025 estimate of 609,647, carried forward at the recent rate of about −0.6% a year). Each month it changes with jobs, crime, blight, schools, streets, transit, health and the tax rate. See it under City indicators or People → Population, with a monthly chart and the reasons people are coming or going. Every 1% change moves city revenue by about $6 million a year, and crossing a 5,000 mark makes news.
+
 ## v26.11: Stable home rendering
 
 Home surfaces now use a depth buffer rather than sorting entire faces by average distance. Walls and furniture stay correctly in front of or behind each other as the camera turns, including close to doorways and overlapping surfaces. A continuous ceiling and floor base close the room. The room geometry stays fixed; looking around changes only the camera. Furniture previews are solid and depth-tested, so they do not show through walls.
