@@ -617,7 +617,7 @@ details.analysis{margin-top:6px}details.analysis summary{cursor:pointer;color:va
     <button class="btn primary" data-act="pause" id="bPlay"><svg class="ico" viewBox="0 0 12 12" aria-hidden="true"><path d="M3.2 1.6v8.8l7.2-4.4z" fill="currentColor"/></svg> Resume <kbd>Space</kbd></button>
   </nav>
   <div class="status" id="status">Loading map…</div>
-  <div class="credit"><span class="ver" id="verTag">v26.15</span></div>
+  <div class="credit"><span class="ver" id="verTag">v26.16</span></div>
   <div class="tip" id="tip" hidden></div>
   <div class="toast" id="toast" role="status"></div>
   <section class="panel" id="panel" hidden aria-live="polite">
@@ -637,7 +637,7 @@ details.analysis{margin-top:6px}details.analysis summary{cursor:pointer;color:va
       <h1>Bluff City<span>MAYOR</span></h1>
       <p class="lede">Run Memphis, or run for it. The map is the real city: every street, district and station.</p>
       <div class="paths">
-        <button class="path primary" id="bRun"><b>Run for mayor</b><small>Start as a candidate. Hire a campaign manager, win voters and beat the incumbent in October 2027.</small></button>
+        <button class="path primary" id="bRun"><b>Run for mayor</b><small>Start in March 2027 as a candidate, seven months before Election Day. Hire a campaign manager, win voters and beat the incumbent.</small></button>
         <button class="path" id="bNew"><b>Start as mayor</b><small>You were just sworn in. Pass a budget, work the council and win re-election.</small></button>
       </div>
       <div class="row">
@@ -645,7 +645,7 @@ details.analysis{margin-top:6px}details.analysis summary{cursor:pointer;color:va
         <button class="btn" data-music-open>Music &amp; volume</button>
       </div>
       <div id="slotList" hidden></div>
-      <p class="note startv">Version <b class="ver" id="verStart">v26.15</b></p>
+      <p class="note startv">Version <b class="ver" id="verStart">v26.16</b></p>
     </div>
     <div class="startbox create" id="create" hidden>
       <h2>Create your mayor</h2>
@@ -1453,7 +1453,7 @@ function enact(s,p){DIVS.forEach(d=>{s.enacted[d.id]=p.divs[d.id];s.ratio[d.id]=
 // Voter groups. Each has a share of residents, turnout, home districts, concerns and an approval of you.
 // Citywide approval is the turnout-weighted average of the groups; each council district's approval comes from the groups that live there.
 // Shares, district mix and turnout are modeled, loosely grounded in Memphis demographics; they are not survey data.
-const VERSION='v26.15';
+const VERSION='v26.16';
 const GROUPS=[
  {id:'working',sh:'Working families',n:'Working families',ic:'⚒︎',c:'#f2a93b',share:24,turn:.5,start:56,w:{jobs:1,safety:.8,transit:.5},
   d:'Hourly workers in logistics, warehouses, health care and service jobs. The biggest bloc in the city.',dm:{1:1.1,2:.8,3:1.3,4:1.2,5:.6,6:1.2,7:1.1}},
@@ -5098,7 +5098,7 @@ function popParts(s){s=s||S;const M=s.met;const P=[];const add=(t,v)=>{if(Math.a
 function popRate(s){return clamp(popParts(s).reduce((a,x)=>a+x.v,0),-3,2)} // percent a year
 function popInit(s){s=s||S;if(s&&s.popn==null){s.popn=POP0;s.popH=[{m:s.y*12+s.m,v:POP0}]}}
 function popMonth(s){popInit(s);const r=popRate(s)/100/12;const before=s.popn;s.popn=Math.round(s.popn*(1+r+(Math.random()-.5)*0.0003));s.popH.push({m:s.y*12+s.m,v:s.popn});if(s.popH.length>300)s.popH.splice(0,s.popH.length-300);
-  if(s===S&&Math.floor(before/5000)!==Math.floor(s.popn/5000)){const up=s.popn>before,mark=Math.floor((up?s.popn:before)/5000)*5000;
+  if(s===S&&s.started&&s.phase!=='ai'&&!window.__bcBoot&&Math.floor(before/5000)!==Math.floor(s.popn/5000)){const up=s.popn>before,mark=Math.floor((up?s.popn:before)/5000)*5000;
     try{notify(up?'good':'bad',up?`Memphis tops ${mark.toLocaleString()} people`:`Memphis falls below ${mark.toLocaleString()} people`,up?'More people are moving in than leaving.':'More people are leaving than moving in.',()=>openPop(),{silent:true})}catch(e){}}}
 {const _ms=monthlySim;monthlySim=function(s){const r=_ms.apply(this,arguments);try{popMonth(s)}catch(e){console.warn('pop',e)}return r}}
 {const _rf=revenueFor;revenueFor=function(s,...a){const v=_rf.call(this,s,...a);return v+(s&&s.popn?(s.popn/POP0-1)*600:0)}}
@@ -5126,7 +5126,7 @@ let pkT=null;function pkSoon(){clearTimeout(pkT);pkT=setTimeout(()=>{try{renderP
 document.addEventListener('change',e=>{const t=e.target;if(!S||!t||(t.id!=='lyYards'&&t.id!=='lyTraffic'))return;S.layers[t.id==='lyYards'?'yards':'traffic']=t.checked;save();applyLayers()});
 function applyBgGroups(){if(!S||!S.mayor||!S.groups)return;(S.mayor.traits||[]).forEach(t=>{const T=MTRAITS[t];if(T&&T.grp)for(const g in T.grp)if(S.groups[g])addGroupMod(S.groups[g],`Your background: ${T.n}`,T.grp[g])});try{S.approval=cityApproval(S)}catch(e){}}
 {const _bt=beginTerm;beginTerm=function(cr,quiet){const r=_bt.apply(this,arguments);if(!quiet){applyBgGroups();try{refreshHUD();save()}catch(e){}}return r}}
-{const _bc=beginCampaign;beginCampaign=function(){const r=_bc.apply(this,arguments);applyBgGroups();try{refreshHUD();save()}catch(e){}return r}}
+{const _bc=beginCampaign;beginCampaign=function(){window.__bcBoot=true;let r;try{r=_bc.apply(this,arguments)}finally{window.__bcBoot=false}applyBgGroups();try{refreshHUD();save()}catch(e){}return r}}
 function lvWait(){if(map&&mapReady){map.on('moveend',pkSoon);pkSoon();return}setTimeout(lvWait,500)}setTimeout(lvWait,0);
 // ======================= ACTIONS YOU CAN SEE, AND A FRIENDLIER START =======================
 // One word for the monthly budget of moves: actions. A big meter shows what's left and when it refills; spending one
@@ -5167,7 +5167,8 @@ TUT_MAYOR.length=0;TUT_MAYOR.push(
  {t:()=>'The map',b:()=>'Amber pins are problems waiting for your decision. Tap one. Police, fire, hospitals and schools are places you can visit. Drag to move, pinch to zoom.'},
  {sel:'[data-flow-hub="city"]',t:()=>'Everything else',b:()=>'<b>City</b>: your desk and actions. <b>Budget</b>: money and taxes. <b>People</b>: residents, the council and population. <b>Campaign</b>: your re-election. The ☰ button at the top left opens the menu.'});
 TUT_CAND.length=0;TUT_CAND.push(
- {t:()=>`Welcome, ${S.mayor.name}`,b:()=>`You're running for mayor against <b>Mayor ${S.rival?S.rival.name:'the incumbent'}</b>. Election Day is <b>Thursday, October 7, 2027</b>. Win more votes and the job is yours. You're not in office yet, so city powers stay grayed out until you win.`},
+ {t:()=>`Welcome, ${S.mayor.name}`,b:()=>`You're running for mayor against <b>Mayor ${S.rival?S.rival.name:'the incumbent'}</b>. Your campaign starts now, in <b>${MONTHS_L[S.m-1]} ${S.y}</b>, ${Math.round(monthsToElection())} months before Election Day on <b>Thursday, October 7, 2027</b>. That's when races heat up and challengers launch. Win more votes and the job is yours.`},
+ {t:()=>'You\'re not in office yet',b:()=>'As a candidate you\'re a private citizen. City powers like the budget, the council and executive orders stay grayed out until you win. Your tools are the campaign.'},
  {sel:'#hSlots',t:()=>'Your actions',b:()=>'These dots are your <b>actions</b>. You get 3 a month. Knocking doors, meeting groups, fundraisers and speeches each use one. They refill on the 1st. Tap the dots to see what you can do.'},
  {sel:'.hud-top .stat.click',t:()=>'Your support',b:()=>'The share of voters backing you. Polls in Campaign HQ show how you stack up against the mayor.'},
  {sel:'#desk .weekly-card',mob:'#nextchip',t:()=>'Not sure what to do?',b:()=>'<b>This week</b> shows the most important next step. Once you hire a campaign manager, they pick it for you.'},
@@ -5802,7 +5803,7 @@ window.claude?.hot?.ready?window.claude.hot.ready(start):start(window.claude?.ho
 <script src="home-renderer.js?v=26.11"></script>
 <script src="home-interior.js?v=26.11"></script>
 <script src="city-life.js?v=26.4"></script>
-<script src="city-flow.js?v=26.12"></script>
+<script src="city-flow.js?v=26.16"></script>
 <script src="music.js?v=25"></script>
 </body>
 </html>

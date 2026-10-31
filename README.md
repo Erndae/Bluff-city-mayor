@@ -4,6 +4,10 @@ A city-management game set in Memphis, Tennessee. You play the mayor. You handle
 
 **Play it:** https://erndae.github.io/Bluff-city-mayor/ (once GitHub Pages is turned on, see below)
 
+## v26.16: Cleaner pop-ups and a clearer candidate start
+
+The City, Budget, People and Campaign tabs now appear only on those hub screens (and Campaign HQ and your desk), not inside every pop-up. A screen opened from a hub still shows its back button. The candidate path explains its start: the title-screen card says you begin in March 2027, seven months before Election Day, and the tour's first step says the same. City powers stay grayed out until you win. Population news no longer fires while the game fast-forwards to the start of a campaign.
+
 ## v26.15: Actions you can see, and an easier start
 
 Meetings and campaign stops are now just **actions**, everywhere. Under the date, a meter shows **ACTIONS ●●● 3 left · refill Nov 1**. It pulses and shows "−1 action" when you spend one, turns red at zero, and posts one plain note when you run out. Every button that costs an action carries a small amber marker. The tour is shorter (7 steps as mayor, 6 as a candidate) and matches today's screens: actions, time, approval, This week, the map, and the City, Budget, People and Campaign buttons. The Guide now opens with "New here? The game in five steps." On phones, keyboard hints like "(P)" are hidden, at most 2 notes stack at once, and repeat notes replace each other. Your advisor's Monday note now matches the This week card.
