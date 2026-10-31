@@ -11,7 +11,7 @@
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#0d1822">
 <link rel="stylesheet" href="music.css?v=25">
-<link rel="stylesheet" href="home-interior.css?v=26.18">
+<link rel="stylesheet" href="home-interior.css?v=26.19">
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -622,7 +622,7 @@ details.analysis{margin-top:6px}details.analysis summary{cursor:pointer;color:va
     <button class="btn primary" data-act="pause" id="bPlay"><svg class="ico" viewBox="0 0 12 12" aria-hidden="true"><path d="M3.2 1.6v8.8l7.2-4.4z" fill="currentColor"/></svg> Resume <kbd>Space</kbd></button>
   </nav>
   <div class="status" id="status">Loading map…</div>
-  <div class="credit"><span class="ver" id="verTag">v26.18</span></div>
+  <div class="credit"><span class="ver" id="verTag">v26.19</span></div>
   <div class="tip" id="tip" hidden></div>
   <div class="toast" id="toast" role="status"></div>
   <section class="panel" id="panel" hidden aria-live="polite">
@@ -650,7 +650,7 @@ details.analysis{margin-top:6px}details.analysis summary{cursor:pointer;color:va
         <button class="btn" data-music-open>Music &amp; volume</button>
       </div>
       <div id="slotList" hidden></div>
-      <p class="note startv">Version <b class="ver" id="verStart">v26.18</b></p>
+      <p class="note startv">Version <b class="ver" id="verStart">v26.19</b></p>
     </div>
     <div class="startbox create" id="create" hidden>
       <h2>Create your mayor</h2>
@@ -1458,7 +1458,7 @@ function enact(s,p){DIVS.forEach(d=>{s.enacted[d.id]=p.divs[d.id];s.ratio[d.id]=
 // Voter groups. Each has a share of residents, turnout, home districts, concerns and an approval of you.
 // Citywide approval is the turnout-weighted average of the groups; each council district's approval comes from the groups that live there.
 // Shares, district mix and turnout are modeled, loosely grounded in Memphis demographics; they are not survey data.
-const VERSION='v26.18';
+const VERSION='v26.19';
 const GROUPS=[
  {id:'working',sh:'Working families',n:'Working families',ic:'⚒︎',c:'#f2a93b',share:24,turn:.5,start:56,w:{jobs:1,safety:.8,transit:.5},
   d:'Hourly workers in logistics, warehouses, health care and service jobs. The biggest bloc in the city.',dm:{1:1.1,2:.8,3:1.3,4:1.2,5:.6,6:1.2,7:1.1}},
@@ -2909,7 +2909,7 @@ function enterHome(){
   homeInit(S);const wasPaused=S.paused;
   if(typeof TUT!=='undefined'&&TUT)tutEnd(false);
   onClose=null;closeModal();closePanel();navReset();keysDown.clear();S.paused=true;refreshHUD();
-  BCInterior.open({state:()=>S,save,menu:()=>typeof laptopItems==='function'?laptopItems():[],close:next=>{
+  BCInterior.open({state:()=>S,save,menu:()=>typeof laptopItems==='function'?laptopItems():[],tv:typeof homeTV==='function'?()=>homeTV():null,books:typeof homeBooks==='function'?()=>homeBooks():null,read:typeof homeRead==='function'?id=>homeRead(id):null,close:next=>{
     keysDown.clear();S.paused=wasPaused;save();refreshHUD();
     if(next==='news')openNews();else if(next==='campaign')openHQ();else if(next&&typeof homeRoute==='function')homeRoute(next);
   }});
@@ -5264,6 +5264,23 @@ function laptopItems(){const L=[];const n=(S.events||[]).length;
   if(inOffice()){L.push({go:'budget',t:'City budget',d:'Spending, taxes and the reserve'});L.push({go:'power',t:'Power & influence',d:'Boards, council races and Nashville'})}
   L.push({go:'pop',t:'City numbers',d:`Population ${(S.popn||605200).toLocaleString()} and how it's changing`});
   L.push({go:'phone',t:'Schedule a meeting',d:'Open your phone contacts'});return L}
+// ---------- the TV and the bookcase at home ----------
+const BOOKS=[
+ {id:'budget',t:'The City Budget, Line by Line',k:'stew',d:'How cities balance the books'},
+ {id:'deals',t:'Getting to Seven Votes',k:'dip',d:'Coalitions and how deals get done'},
+ {id:'policing',t:'Safer Streets: What Works',k:'safe',d:'Research on cutting violent crime'},
+ {id:'reading',t:'Reading by Third Grade',k:'learn',d:'What helps kids learn to read'},
+ {id:'speech',t:'Speak So People Listen',k:'cha',d:'Speeches, interviews and town halls'},
+ {id:'cityhall',t:'Inside City Hall',k:'intr',d:'Who really decides, and how'},
+ {id:'memphis',t:'River City: A Memphis Story',k:'cha',d:'The city\'s music, struggles and comebacks'}];
+function homeBooks(){const cd=cdLeft('book',1);return BOOKS.map(b=>({id:b.id,t:b.t,d:`${b.d} · +25 ${skillName(b.k)}`,why:cd?`Next book in ${cd} mo`:''}))}
+function homeRead(id){const b=BOOKS.find(x=>x.id===id);if(!b||cdLeft('book',1))return'';markAct('book');gainXP(b.k,25);save();try{refreshHUD()}catch(e){}return`You read "${b.t}". +25 ${skillName(b.k)} experience.`}
+function homeTV(){const ch=OUTMAP.ch6,st=[];const recent=(S.news||[]).filter(x=>nowM()-(x.y*12+x.m)<=3).slice(0,3);
+  recent.forEach(x=>st.push({h:x.head,d:x.dek,tone:x.tone}));
+  if(isCand()){const C=S.camp||{},lp=(C.polls||[]).slice(-1)[0];st.push({h:`${Math.round(daysToElection())} days until Memphis picks its mayor`,d:lp?`The latest poll has you at ${lp.you}% and Mayor ${S.rival?S.rival.name.split(' ').pop():''} at ${Math.round(100-lp.you-lp.und)}%.`:`Challenger ${S.mayor.name} is still introducing themselves to voters. About ${Math.round((S.cand?S.cand.rec:0.2)*100)}% know the name.`,tone:0})}
+  else{st.push({h:`Mayor's approval: ${Math.round(S.approval)}%`,d:S.approval>=55?'Most Memphians like the direction of the city.':S.approval>=45?'The city is split on the mayor.':'Voters are frustrated with City Hall.',tone:(S.approval-50)/10})}
+  const M=S.met;if(st.length<4)st.push({h:M.crime<=85?'Violent crime keeps falling':M.crime>=95?'Violent crime is up across the city':'Crime numbers hold steady',d:`The violent crime index is ${Math.round(M.crime)}. Population: ${(S.popn||605200).toLocaleString()}.`,tone:M.crime<=85?0.5:M.crime>=95?-0.6:0});
+  return{channel:ch?ch.n:'Channel 6 Eyewitness News',anchor:`Evening news · ${dateStr()} · with anchor Dana Reeves`,stories:st.slice(0,4),signoff:'That\'s the news for tonight. Good night, Memphis.'}}
 function homeRoute(next){const R={desk:()=>openDesk(),budget:()=>openBudget(),pop:()=>openPop(),power:()=>openPower(),phone:()=>openPhone()};try{R[next]&&R[next]()}catch(e){console.warn(e)}}
 function openLedger(){const L=S.log||[];openPanel('Everything that has happened, newest first','Ledger',L.length?`<div class="logl">${L.map(x=>`<div><span>${x.d}</span><p style="margin:0">${x.t}</p></div>`).join('')}</div>`:'<p class="note">Nothing yet. Start the clock with Space or ▶.</p>','ledger')}
 function openPolicies(){const ks=Object.keys(POLICIES);
@@ -5892,7 +5909,7 @@ window.claude?.hot?.snapshot?.(()=>({S}));
 window.claude?.hot?.ready?window.claude.hot.ready(start):start(window.claude?.hot?.data??{});
 </script>
 <script src="home-renderer.js?v=26.11"></script>
-<script src="home-interior.js?v=26.18"></script>
+<script src="home-interior.js?v=26.19"></script>
 <script src="city-life.js?v=26.4"></script>
 <script src="city-flow.js?v=26.16"></script>
 <script src="music.js?v=25"></script>

@@ -4,6 +4,12 @@ A city-management game set in Memphis, Tennessee. You play the mayor. You handle
 
 **Play it:** https://erndae.github.io/Bluff-city-mayor/ (once GitHub Pages is turned on, see below)
 
+## v26.19: The evening news and a bookcase
+
+**TV.** "Watch the news" now plays a short Channel 6 evening broadcast right in your living room. The top story is your latest real coverage (green for good, red for bad), followed by your approval (or, as a candidate, the days left and your last poll) and the crime and population numbers. "Read all the coverage" opens the full News screen.
+
+**Bookcase.** "Pick a book" offers seven books, each building a skill by 25 experience: budgets (Money Smarts), coalitions (Dealmaking), safer streets (Safe Streets), early reading (Education), public speaking (Star Power), City Hall (Inside Game) and Memphis history (Star Power). One book a month, and reading doesn't use an action.
+
 ## v26.18: Your phone, your laptop and meetings around town
 
 **Phone.** A phone button sits beside the menu, and inside your home there's one in the header. Its contacts: power players (the Shelby County mayor, the MSCS superintendent, the Greater Memphis Chamber president, a FedEx executive, the pastors' coalition chair and the AFSCME Local 1733 president; all fictional people in real roles), the 13 council members, your cabinet, community leaders and the suburban mayors. **Meet** uses 1 action and takes you to them: a coffee shop in their district, their department, their city hall or their office. Your marker moves there. **Call** is free once a month per person and gives a small boost. Candidates see their campaign manager, donors and community leaders.
