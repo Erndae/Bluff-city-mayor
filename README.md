@@ -4,6 +4,14 @@ A city-management game set in Memphis, Tennessee. You play the mayor. You handle
 
 **Play it:** https://erndae.github.io/Bluff-city-mayor/ (once GitHub Pages is turned on, see below)
 
+## v26.21: Everyday news, a real bookcase and Campaign HQ in tabs
+
+**News.** The evening broadcast mixes stories that matter (your coverage, your approval or race, crime and population) with everyday Memphis news: the Grizzlies and Tigers, Memphis in May, Elvis Week, the St. Jude Marathon, the zoo, new restaurants, I-240 lane closures, a weather report and more, chosen by season. The News screen also has an "Around town" section, which doesn't move your numbers.
+
+**Bookcase.** The starting bookcase faced the wall, so you saw its plain back. It now faces the room (existing saves are fixed once), and its shelves hold rows of books in varied colors and heights, with a few stacked flat.
+
+**Campaign HQ.** It's split into tabs: Overview (manager, money totals, your opponent), Voters (doors, polls, groups and speeches), Money, Ads, Field (organizers and offices), Endorsements, Debates and Log. Your campaign manager's suggestions open the right tab.
+
 ## v26.20: Phone and laptop screens
 
 Your phone and laptop have their own look. The phone opens in a phone frame (rounded body, a status bar with the game date, a home bar), both on the map and at home. At home, the laptop opens a laptop frame (screen bezel, camera dot, keyboard base) with a desktop of apps: inbox, news, Campaign HQ, budget, Power & influence, city numbers and your phone. Each app opens inside the laptop. Closing an app returns to the desktop, and closing the laptop or phone puts you back exactly where you were standing in the house. Meeting someone from your phone at home walks you out the door to the meeting. When you're out of actions, the phone says so at the top, and Meet buttons read "No actions" instead of looking clickable. Switching phone tabs no longer piles up back buttons.

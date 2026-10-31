@@ -11,7 +11,7 @@
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#0d1822">
 <link rel="stylesheet" href="music.css?v=25">
-<link rel="stylesheet" href="home-interior.css?v=26.20">
+<link rel="stylesheet" href="home-interior.css?v=26.21">
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -325,6 +325,7 @@ button.brand:hover .bm-ic,button.brand:focus-visible .bm-ic{border-color:var(--a
 .phwho{display:flex;flex-direction:column;min-width:0}.phwho small{color:var(--muted);font-size:12px;line-height:1.3}.phbtns{display:flex;gap:6px}.phbtns .btn{padding:6px 12px}.phwhere{grid-column:2/-1;color:var(--muted);font-size:11.5px}
 @media (max-width:560px){.phrow{grid-template-columns:auto 1fr}.phbtns{grid-column:1/-1}.phbtns .btn{flex:1}.phwhere{grid-column:1/-1}}
 .phbtns .btn[disabled]{opacity:1;background:transparent;color:var(--muted);border:1px dashed var(--line);cursor:not-allowed}.phout{border:1px solid var(--bad);background:rgba(232,100,79,.12);border-radius:8px;padding:10px 12px;margin-bottom:10px;font-size:13.5px}
+.hqtabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px}.hqtabs button{flex:none}
 .phic{width:40px;height:40px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:18px;color:#13212d}
 
 /* phone and laptop frames */
@@ -646,7 +647,7 @@ details.analysis{margin-top:6px}details.analysis summary{cursor:pointer;color:va
     <button class="btn primary" data-act="pause" id="bPlay"><svg class="ico" viewBox="0 0 12 12" aria-hidden="true"><path d="M3.2 1.6v8.8l7.2-4.4z" fill="currentColor"/></svg> Resume <kbd>Space</kbd></button>
   </nav>
   <div class="status" id="status">Loading map…</div>
-  <div class="credit"><span class="ver" id="verTag">v26.20</span></div>
+  <div class="credit"><span class="ver" id="verTag">v26.21</span></div>
   <div class="tip" id="tip" hidden></div>
   <div class="toast" id="toast" role="status"></div>
   <section class="panel" id="panel" hidden aria-live="polite">
@@ -674,7 +675,7 @@ details.analysis{margin-top:6px}details.analysis summary{cursor:pointer;color:va
         <button class="btn" data-music-open>Music &amp; volume</button>
       </div>
       <div id="slotList" hidden></div>
-      <p class="note startv">Version <b class="ver" id="verStart">v26.20</b></p>
+      <p class="note startv">Version <b class="ver" id="verStart">v26.21</b></p>
     </div>
     <div class="startbox create" id="create" hidden>
       <h2>Create your mayor</h2>
@@ -1482,7 +1483,7 @@ function enact(s,p){DIVS.forEach(d=>{s.enacted[d.id]=p.divs[d.id];s.ratio[d.id]=
 // Voter groups. Each has a share of residents, turnout, home districts, concerns and an approval of you.
 // Citywide approval is the turnout-weighted average of the groups; each council district's approval comes from the groups that live there.
 // Shares, district mix and turnout are modeled, loosely grounded in Memphis demographics; they are not survey data.
-const VERSION='v26.20';
+const VERSION='v26.21';
 const GROUPS=[
  {id:'working',sh:'Working families',n:'Working families',ic:'⚒︎',c:'#f2a93b',share:24,turn:.5,start:56,w:{jobs:1,safety:.8,transit:.5},
   d:'Hourly workers in logistics, warehouses, health care and service jobs. The biggest bloc in the city.',dm:{1:1.1,2:.8,3:1.3,4:1.2,5:.6,6:1.2,7:1.1}},
@@ -4396,6 +4397,7 @@ function openNews(){closePanel();S.seen=S.seen||{};S.seen.news=1;const N=S.news|
     <p class="note">Five local outlets cover City Hall. Each month the biggest stories run: what you decide, council votes, pushes that work or fail, problems left broken, crime and the polls. Good coverage lifts the people who read that outlet and adds to your clout (now ${pressPart()>=0?'+':''}${pressPart()}); bad coverage does the opposite.</p>
     <div class="row"><button class="btn primary" data-news="press" ${why?'disabled':''} title="${why||'Uses 1 action'}">Hold a press conference${why?` · ${why}`:''}</button>${typeof openSotc==='function'?`<button class="btn" data-act="sotc">State of the City</button>`:''}</div>
     <div class="row" style="margin-top:6px;flex-wrap:wrap">${OUTLETS.map(o=>`<button class="btn" data-news="int" data-o="${o.id}" ${wi?'disabled':''} title="${wi||'Uses 1 action. Star Power and approval help.'}">Interview: ${o.n}</button>`).join('')}</div></div>
+   <div class="facts"><h4>Around town</h4><div class="newslist">${[...localStories(3),weatherLine()].map(x=>`<div class="newsit"><div class="nh" style="border-left-color:var(--line)"><b>${x.h}</b></div><p class="note" style="margin:2px 0 0">${x.d}</p></div>`).join('')}</div><p class="note">Everyday news. It doesn't move your numbers.</p></div>
    <div class="facts"><h4>Recent coverage</h4>${N.length?`<div class="newslist">${N.slice(0,18).map(n=>{const o=OUTMAP[n.o];return`<div class="newsit${n.front?' front':''}"><small><b>${o.n}</b> · ${o.k} · ${MONTHS[n.m-1]} ${n.y}${n.front?' · top story':''}</small><div class="nh" style="border-left-color:${toneCol(n.tone)}">${n.head}</div>${n.dek?`<small>${n.dek}</small>`:''}</div>`}).join('')}</div>`:'<p class="note">No stories yet. Coverage runs at the end of each month.</p>'}</div>`,true)}
 openNews=navWrap('openNews',openNews);
 document.addEventListener('click',e=>{const b=e.target.closest('[data-news],[data-act="news"]');if(!b||!S)return;e.preventDefault();e.stopImmediatePropagation();const k=b.dataset.news;if(k==='press'){doPressConf();return}if(k==='int'){doInterview(b.dataset.o);return}if(modalOpen){onClose=null;closeModal()}openNews()},true);
@@ -5300,12 +5302,37 @@ const BOOKS=[
  {id:'memphis',t:'River City: A Memphis Story',k:'cha',d:'The city\'s music, struggles and comebacks'}];
 function homeBooks(){const cd=cdLeft('book',1);return BOOKS.map(b=>({id:b.id,t:b.t,d:`${b.d} · +25 ${skillName(b.k)}`,why:cd?`Next book in ${cd} mo`:''}))}
 function homeRead(id){const b=BOOKS.find(x=>x.id===id);if(!b||cdLeft('book',1))return'';markAct('book');gainXP(b.k,25);save();try{refreshHUD()}catch(e){}return`You read "${b.t}". +25 ${skillName(b.k)} experience.`}
+// ---------- everyday Memphis news: some of it matters, some of it just happens ----------
+const LOCAL_NEWS=[
+ {h:'Grizzlies win at FedExForum',d:'A late run sealed it in front of a loud home crowd.',m:[10,11,12,1,2,3,4]},
+ {h:'Tigers win at Simmons Bank Liberty Stadium',d:'Fans tailgated all afternoon in the Midtown sun.',m:[9,10,11]},
+ {h:'Southern Heritage Classic draws a packed weekend',d:'Hotels Downtown report a strong weekend.',m:[9]},
+ {h:'Beale Street Music Festival lineup announced',d:'Tickets go on sale Friday for the Memphis in May weekend.',m:[2,3]},
+ {h:'Barbecue teams fill Tom Lee Park',d:'Smoke hangs over the riverfront for the world championship contest.',m:[5]},
+ {h:'Elvis Week brings fans from around the world',d:'Graceland expects one of its busiest weeks of the year.',m:[8]},
+ {h:'St. Jude Memphis Marathon closes Downtown streets Saturday',d:'Plan for detours from early morning until early afternoon.',m:[12]},
+ {h:'Big River Crossing lights up for the holidays',d:'The bridge lights run nightly through New Year\'s.',m:[11,12]},
+ {h:'Memphis Zoo welcomes a baby giraffe',d:'The calf will be on view next month.'},
+ {h:'Shelby Farms Park opens new bike trails',d:'Six more miles of trail for riders and runners.'},
+ {h:'New restaurant opens in Cooper-Young',d:'Lines down the block on opening night.'},
+ {h:'Lane closures on I-240 this weekend',d:'TDOT crews will repave the eastbound lanes overnight.'},
+ {h:'Whitehaven band heads to a national competition',d:'Students are raising money for the trip.'},
+ {h:'Overton Square hosts a free movie night',d:'Bring a chair; the show starts at sundown.',m:[4,5,6,7,8,9,10]},
+ {h:'Local barber gives free back-to-school haircuts',d:'More than 200 kids got cuts in one Saturday.',m:[7,8]},
+ {h:'Library card sign-up drive this month',d:'Benjamin L. Hooks Central Library is open late on Thursdays.'},
+ {h:'Pets of the week at Memphis Animal Services',d:'Adoption fees are waived through Sunday.'},
+ {h:'Farmers market moves to winter hours',d:'Fewer vendors, same tomatoes from Mississippi.',m:[11,12,1,2]}];
+const WEATHER={1:['Cold and clear',38],2:['Gray and damp',44],3:['Spring storms possible',58],4:['Warm and breezy',67],5:['Humid, storms late',76],6:['Hot and sticky',85],7:['Heat advisory',92],8:['Muggy, pop-up storms',91],9:['Still summer-hot',84],10:['Cool mornings, warm afternoons',72],11:['Crisp and dry',58],12:['Chilly rain',47]};
+function seeded(n){let x=(n*9301+49297)%233280;return()=>{x=(x*9301+49297)%233280;return x/233280}}
+function localStories(k){const r=seeded(S.y*400+S.m*31+S.day);const pool=LOCAL_NEWS.filter(x=>!x.m||x.m.includes(S.m));const out=[];while(out.length<k&&pool.length){out.push(pool.splice(Math.floor(r()*pool.length),1)[0])}return out}
+function weatherLine(){const w=WEATHER[S.m]||['Fair',70];const r=seeded(S.y*400+S.m*31+S.day+7)();return{h:`Weather: ${w[0]}`,d:`High near ${Math.round(w[1]+(r-.5)*8)}°.`,tone:0,light:true}}
 function homeTV(){const ch=OUTMAP.ch6,st=[];const recent=(S.news||[]).filter(x=>nowM()-(x.y*12+x.m)<=3).slice(0,3);
   recent.forEach(x=>st.push({h:x.head,d:x.dek,tone:x.tone}));
   if(isCand()){const C=S.camp||{},lp=(C.polls||[]).slice(-1)[0];st.push({h:`${Math.round(daysToElection())} days until Memphis picks its mayor`,d:lp?`The latest poll has you at ${lp.you}% and Mayor ${S.rival?S.rival.name.split(' ').pop():''} at ${Math.round(100-lp.you-lp.und)}%.`:`Challenger ${S.mayor.name} is still introducing themselves to voters. About ${Math.round((S.cand?S.cand.rec:0.2)*100)}% know the name.`,tone:0})}
   else{st.push({h:`Mayor's approval: ${Math.round(S.approval)}%`,d:S.approval>=55?'Most Memphians like the direction of the city.':S.approval>=45?'The city is split on the mayor.':'Voters are frustrated with City Hall.',tone:(S.approval-50)/10})}
   const M=S.met;if(st.length<4)st.push({h:M.crime<=85?'Violent crime keeps falling':M.crime>=95?'Violent crime is up across the city':'Crime numbers hold steady',d:`The violent crime index is ${Math.round(M.crime)}. Population: ${(S.popn||605200).toLocaleString()}.`,tone:M.crime<=85?0.5:M.crime>=95?-0.6:0});
-  return{channel:ch?ch.n:'Channel 6 Eyewitness News',anchor:`Evening news · ${dateStr()} · with anchor Dana Reeves`,stories:st.slice(0,4),signoff:'That\'s the news for tonight. Good night, Memphis.'}}
+  const main=st.slice(0,3);const light=localStories(2).map(x=>({h:x.h,d:x.d,tone:0,light:true}));const mix=[main[0],light[0],...main.slice(1),light[1],weatherLine()].filter(Boolean);
+  return{channel:ch?ch.n:'Channel 6 Eyewitness News',anchor:`Evening news · ${dateStr()} · with anchor Dana Reeves`,stories:mix,signoff:'That\'s the news for tonight. Good night, Memphis.'}}
 function homeRoute(next){const R={desk:()=>openDesk(),budget:()=>openBudget(),pop:()=>openPop(),power:()=>openPower(),phone:()=>openPhone()};try{R[next]&&R[next]()}catch(e){console.warn(e)}}
 // ======================= PHONE AND LAPTOP SCREENS =======================
 // When you use your phone or laptop, game screens appear inside that device's frame. Close an app and you're back on
@@ -5332,6 +5359,26 @@ function devAfterClose(){setTimeout(()=>{if(!DEV.kind)return;if(modalOpen||!$('p
 {const _om=openModal;openModal=function(...a){const r=_om.apply(this,a);if(DEV.kind)devFrame(true);return r}}
 // a meeting means leaving the house
 {const _pm=phMeet;phMeet=function(kind,id){if(phMeetWhy(kind,id))return;if(window.BCInterior&&BCInterior.isOpen){endDevice();onClose=null;try{closeModal()}catch(e){}BCInterior.close();setTimeout(()=>{_pm(kind,id);try{onClose=null;closeModal()}catch(e){}},50);return}return _pm(kind,id)}}
+// ---------- Campaign HQ in tabs ----------
+let HQ_TAB='overview';
+const HQ_TABS=[['overview','Overview'],['voters','Voters'],['money','Money'],['ads','Ads'],['field','Field'],['endorse','Endorsements'],['debates','Debates'],['log','Log']];
+function hqTabOf(el){const id=el.id||'',h=(el.querySelector('h4')||{}).textContent||'';
+  if(/^hq-(doors|poll)$/.test(id))return'voters';if(id==='hq-money')return'money';if(id==='hq-ads')return'ads';if(/^hq-(staff|offices)$/.test(id))return'field';if(id==='hq-endorse')return'endorse';
+  if(id==='hq-debates'||/^Debates/.test(h))return'debates';if(/Campaign log/.test(h))return'log';return'overview'}
+function hqApplyTabs(){const body=$('mBody');if(!body||$('mTitle').textContent.indexOf('Campaign HQ')<0&&!body.querySelector('#hq-money'))return;
+  const kids=[...body.children].filter(c=>!c.classList.contains('hqjump')&&!c.classList.contains('hqtabs'));const used=new Set(kids.map(hqTabOf));
+  if(!used.has(HQ_TAB))HQ_TAB='overview';
+  kids.forEach(c=>{c.hidden=hqTabOf(c)!==HQ_TAB});
+  const old=body.querySelector('.hqjump');const extra=isCand()?'<button class="btn" data-act="actions">Groups and speeches</button>':'';
+  let bar=body.querySelector('.hqtabs');if(!bar){bar=document.createElement('div');bar.className='hqtabs lsel';body.prepend(bar)}else body.prepend(bar);
+  bar.innerHTML=HQ_TABS.filter(([k])=>used.has(k)).map(([k,n])=>`<button data-hqtab="${k}" class="${HQ_TAB===k?'on':''}">${n}</button>`).join('');
+  if(old){old.remove()}
+  if(HQ_TAB==='voters'&&extra&&!body.querySelector('.hqextra')){const d=document.createElement('div');d.className='row hqextra';d.innerHTML=extra;bar.after(d)}}
+{const _hq=openHQ;openHQ=function(...a){const r=_hq.apply(this,a);try{hqApplyTabs()}catch(e){console.warn('hqtabs',e)}return r}}
+document.addEventListener('click',e=>{const b=e.target.closest('[data-hqtab]');if(!b)return;e.preventDefault();e.stopImmediatePropagation();HQ_TAB=b.dataset.hqtab;const ex=$('mBody').querySelector('.hqextra');if(ex)ex.remove();hqApplyTabs();$('mBody').scrollTop=0},true);
+// the manager's suggestions open the right tab
+function hqTabFor(t){return/door/i.test(t)?'voters':/poll/i.test(t)?'voters':/money|donor|fundrais/i.test(t)?'money':/\bads?\b|attack|air/i.test(t)?'ads':/office|organizer/i.test(t)?'field':/endorse/i.test(t)?'endorse':/debate/i.test(t)?'debates':null}
+{const _cs=campStrategy;campStrategy=function(...a){const P=_cs.apply(this,a);if(P&&P.moves)P.moves.forEach(m=>{const g=m.go,tab=hqTabFor(m.t);if(tab)m.go=()=>{HQ_TAB=tab;g&&g()}});return P}}
 function openLedger(){const L=S.log||[];openPanel('Everything that has happened, newest first','Ledger',L.length?`<div class="logl">${L.map(x=>`<div><span>${x.d}</span><p style="margin:0">${x.t}</p></div>`).join('')}</div>`:'<p class="note">Nothing yet. Start the clock with Space or ▶.</p>','ledger')}
 function openPolicies(){const ks=Object.keys(POLICIES);
   openPanel('Ongoing programs you control','Your initiatives',`<p>Mid-year, these are paid from the reserve fund. In April they go into the budget you send the council.</p>
@@ -5959,7 +6006,7 @@ window.claude?.hot?.snapshot?.(()=>({S}));
 window.claude?.hot?.ready?window.claude.hot.ready(start):start(window.claude?.hot?.data??{});
 </script>
 <script src="home-renderer.js?v=26.11"></script>
-<script src="home-interior.js?v=26.20"></script>
+<script src="home-interior.js?v=26.21"></script>
 <script src="city-life.js?v=26.4"></script>
 <script src="city-flow.js?v=26.16"></script>
 <script src="music.js?v=25"></script>

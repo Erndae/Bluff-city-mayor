@@ -28,7 +28,7 @@
   function initial(){return {version:1,wall:0,floor:0,next:12,items:[
     {uid:1,type:'sofa',x:1.15,z:3,r:1},{uid:2,type:'tv',x:5.95,z:3,r:3},{uid:3,type:'coffee',x:3.4,z:3,r:0},
     {uid:4,type:'rug',x:3.4,z:3,r:0},{uid:5,type:'plant',x:.6,z:5.2,r:0},{uid:6,type:'lamp',x:1.2,z:1.3,r:0},
-    {uid:7,type:'bed',x:10,z:7.8,r:0},{uid:8,type:'desk',x:10,z:1.1,r:2},{uid:9,type:'shelf',x:11.65,z:4,r:3},
+    {uid:7,type:'bed',x:10,z:7.8,r:0},{uid:8,type:'desk',x:10,z:1.1,r:2},{uid:9,type:'shelf',x:11.65,z:4,r:1},
     {uid:10,type:'table',x:3.5,z:7.8,r:0},{uid:11,type:'art',x:8.2,z:8.8,r:0}
   ]};}
   function ensure(s){
@@ -36,6 +36,8 @@
     const h=s.interior;h.wall=clamp(Math.floor(h.wall)||0,0,WALLS.length-1);h.floor=clamp(Math.floor(h.floor)||0,0,FLOORS.length-1);
     h.items=(Array.isArray(h.items)?h.items:[]).filter(i=>ITEMS[i.type]&&Number.isFinite(i.x)&&Number.isFinite(i.z)&&Number.isInteger(i.uid)).slice(0,64);
     h.items.forEach(i=>{i.r=((Math.round(i.r)||0)%4+4)%4;i.x=clamp(i.x,.2,11.8);i.z=clamp(i.z,.2,9.8)});
+    // the original bookcase faced the wall; turn it around once so its books face the room
+    if(!h.shelfFix){h.shelfFix=1;const sh=h.items.find(i=>i.uid===9&&i.type==='shelf'&&i.x===11.65&&i.z===4&&i.r===3);if(sh)sh.r=1;}
     h.next=Math.max(1,...h.items.map(i=>i.uid+1),Number.isInteger(h.next)?h.next:1);return h;
   }
   function canPlace(h,item,player){
@@ -124,7 +126,7 @@
       part(0,.72,.03,1.26,.66,.015,'#73979e');part(0,.75,.015,1.2,.12,.012,'#d6b77e');part(-.26,1,.01,.55,.2,.012,'#b4c6bd');
     }else if(i.type==='shelf'){
       part(-.54,0,0,.07,1.95,.35,c);part(.54,0,0,.07,1.95,.35,c);part(0,0,.15,1.08,1.95,.04,c);
-      for(let k=0;k<5;k++){part(0,k*.47,0,1.15,.06,.35,c);if(k<4)for(let j=0;j<6;j++)part(-.43+j*.15,k*.47+.06,.02,.1,.26+(j%3)*.05,.23,['#728a81','#b77654','#c8b178'][j%3]);}
+      const BK=['#728a81','#b77654','#c8b178','#3f5f8a','#8a3f45','#e3d3a8','#2f4a3e','#d08a3c','#5b4a7a'];for(let k=0;k<5;k++){part(0,k*.47,0,1.15,.06,.35,c);if(k<4){let x=-.5;for(let j=0;j<9&&x<.42;j++){const w=.06+((j*7+k*3)%4)*.015,hh=.24+((j*5+k)%4)*.04;if((j+k)%7===6){part(x+.1,k*.47+.06,-.02,.22,.05,.2,BK[(j+k)%BK.length]);part(x+.1,k*.47+.11,-.02,.2,.05,.19,BK[(j+k+3)%BK.length]);x+=.25;continue;}part(x+w/2,k*.47+.06,-.03,w,hh,.24,BK[(j*2+k)%BK.length]);x+=w+.012;}}}
     }else if(i.type==='plant'){
       part(0,0,0,.37,.4,.37,'#c78f69');part(0,.4,0,.06,.75,.06,'#6c7352');
       for(let k=0;k<5;k++){const a=k*1.25;part(Math.sin(a)*.18,.65+(k%3)*.18,Math.cos(a)*.18,.25,.35,.2,k%2?'#658b61':'#416d50');}
