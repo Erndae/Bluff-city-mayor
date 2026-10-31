@@ -10,9 +10,9 @@ A city-management game set in Memphis, Tennessee. You play the mayor. You handle
 
 **Park names.** The 234 city parks and two state parks are labeled with their names from the City of Memphis GIS layer. Big parks show from further out, small ones as you zoom in.
 
-**Yards.** Every house gets a lawn around its footprint, a driveway on one side and a hedge line at the lot edge from street level. Lot shapes are stylized, not property lines.
+**Yards (off by default; Map layers → Yards around houses).** Every house gets a lawn around its footprint, a driveway on one side and a hedge line at the lot edge from street level. Lot shapes are stylized, not property lines.
 
-**Traffic.** Cars move along the real street network at street level (zoom 14.5+), more of them on major roads, faster on interstates, with occasional MATA buses. They follow connected streets and drive on the right. Traffic stops when the Buildings layer is off, in other map modes, indoors, in a hidden tab or with reduced motion.
+**Traffic (off by default; Map layers → Traffic on the streets).** Cars move along the real street network at street level (zoom 14.5+), more of them on major roads, faster on interstates, with occasional MATA buses. They follow connected streets and drive on the right. Traffic stops when the Buildings layer is off, in other map modes, indoors, in a hidden tab or with reduced motion.
 
 **Population.** Memphis starts at about 605,200 (the Census Bureau's July 2025 estimate of 609,647, carried forward at the recent rate of about −0.6% a year). Each month it changes with jobs, crime, blight, schools, streets, transit, health and the tax rate. See it under City indicators or People → Population, with a monthly chart and the reasons people are coming or going. Every 1% change moves city revenue by about $6 million a year, and crossing a 5,000 mark makes news.
 

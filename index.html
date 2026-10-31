@@ -586,6 +586,8 @@ details.analysis{margin-top:6px}details.analysis summary{cursor:pointer;color:va
     <label><input type="checkbox" id="lyLabels" checked> Landmark labels</label>
     <label><input type="checkbox" id="lyCivic" checked> Police, fire stations and hospitals</label>
     <label><input type="checkbox" id="lySchools" checked> Schools and colleges</label>
+    <label><input type="checkbox" id="lyYards"> Yards around houses</label>
+    <label><input type="checkbox" id="lyTraffic"> Traffic on the streets</label>
     <label><input type="checkbox" id="lyEdge" checked> Scroll at screen edges</label>
     <label><input type="checkbox" id="lyPause" checked> Pause when something new arrives</label>
     <button class="btn" data-slotopen="1" style="margin:4px 0">Save and load <kbd>G</kbd></button>
@@ -607,7 +609,7 @@ details.analysis{margin-top:6px}details.analysis summary{cursor:pointer;color:va
     <button class="btn primary" data-act="pause" id="bPlay"><svg class="ico" viewBox="0 0 12 12" aria-hidden="true"><path d="M3.2 1.6v8.8l7.2-4.4z" fill="currentColor"/></svg> Resume <kbd>Space</kbd></button>
   </nav>
   <div class="status" id="status">Loading map…</div>
-  <div class="credit"><span class="ver" id="verTag">v26.12</span></div>
+  <div class="credit"><span class="ver" id="verTag">v26.13</span></div>
   <div class="tip" id="tip" hidden></div>
   <div class="toast" id="toast" role="status"></div>
   <section class="panel" id="panel" hidden aria-live="polite">
@@ -635,7 +637,7 @@ details.analysis{margin-top:6px}details.analysis summary{cursor:pointer;color:va
         <button class="btn" data-music-open>Music &amp; volume</button>
       </div>
       <div id="slotList" hidden></div>
-      <p class="note startv">Version <b class="ver" id="verStart">v26.12</b></p>
+      <p class="note startv">Version <b class="ver" id="verStart">v26.13</b></p>
     </div>
     <div class="startbox create" id="create" hidden>
       <h2>Create your mayor</h2>
@@ -1425,7 +1427,7 @@ function enact(s,p){DIVS.forEach(d=>{s.enacted[d.id]=p.divs[d.id];s.ratio[d.id]=
 // Voter groups. Each has a share of residents, turnout, home districts, concerns and an approval of you.
 // Citywide approval is the turnout-weighted average of the groups; each council district's approval comes from the groups that live there.
 // Shares, district mix and turnout are modeled, loosely grounded in Memphis demographics; they are not survey data.
-const VERSION='v26.12';
+const VERSION='v26.13';
 const GROUPS=[
  {id:'working',sh:'Working families',n:'Working families',ic:'⚒︎',c:'#f2a93b',share:24,turn:.5,start:56,w:{jobs:1,safety:.8,transit:.5},
   d:'Hourly workers in logistics, warehouses, health care and service jobs. The biggest bloc in the city.',dm:{1:1.1,2:.8,3:1.3,4:1.2,5:.6,6:1.2,7:1.1}},
@@ -4995,7 +4997,7 @@ function ydLayer(){if(!map||map.getSource('yards'))return;map.addSource('yards',
   map.addLayer({id:'yards-fill',type:'fill',source:'yards',minzoom:15,paint:{'fill-color':['get','c'],'fill-opacity':['interpolate',['linear'],['zoom'],15,0,15.6,1]}},before);
   map.addLayer({id:'yards-drive',type:'fill',source:'yards',minzoom:15,filter:['==',['get','k'],'d'],paint:{'fill-color':'#b9b4a8','fill-opacity':['interpolate',['linear'],['zoom'],15,0,15.6,1]}},before);
   map.addLayer({id:'yards-hedge',type:'line',source:'yards',minzoom:16,filter:['==',['get','k'],'y'],paint:{'line-color':'#4f7f45','line-width':['interpolate',['linear'],['zoom'],16,0.8,18,2.6],'line-opacity':.9}},before)}
-function renderYards(){if(!map||!mapReady)return;ydLayer();const src=map.getSource('yards');if(!src)return;const on=YD&&S&&S.layers.bld!==false&&map.getZoom()>=15&&!(S.mode&&!['real','streets'].includes(S.mode));
+function renderYards(){if(!map||!mapReady)return;ydLayer();const src=map.getSource('yards');if(!src)return;const on=YD&&S&&S.layers.yards===true&&S.layers.bld!==false&&map.getZoom()>=15&&!(S.mode&&!['real','streets'].includes(S.mode));
   if(!on){if(ydSig){ydSig='';src.setData({type:'FeatureCollection',features:[]})}return}
   const b=map.getBounds(),lo=lvXY(b.getWest(),b.getSouth()),hi=lvXY(b.getEast(),b.getNorth());const c0=[Math.floor(lo[0]/300)-1,Math.floor(lo[1]/300)-1],c1=[Math.floor(hi[0]/300)+1,Math.floor(hi[1]/300)+1];
   const sig=c0.concat(c1).join(',')+':'+YD.cx.length;if(sig===ydSig)return;ydSig=sig;const F=[];const greens=['#8fbf6e','#86b867','#97c277','#8cb96c'];
@@ -5032,7 +5034,7 @@ function trStep(car,dt,B){const N=TR.net;let L=N.lines[car.id],P=L.P,n=P.length/
   return car.x>B[0]&&car.x<B[2]&&car.y>B[1]&&car.y<B[3]}
 function trLayer(){if(!map||map.getSource('traffic'))return;map.addSource('traffic',{type:'geojson',data:{type:'FeatureCollection',features:[]},tolerance:0,buffer:0});
   map.addLayer({id:'traffic-3d',type:'fill-extrusion',source:'traffic',minzoom:14.5,paint:{'fill-extrusion-color':['get','c'],'fill-extrusion-height':['get','h'],'fill-extrusion-base':['get','b'],'fill-extrusion-opacity':1}})}
-function trActive(){return lvLive()&&!lvReduce()&&!document.hidden&&map.getZoom()>=14.5&&S.layers.bld!==false&&(S.mode||'real')==='real'&&RAW&&RAW.streets}
+function trActive(){return lvLive()&&!lvReduce()&&!document.hidden&&map.getZoom()>=14.5&&S.layers.traffic===true&&S.layers.bld!==false&&(S.mode||'real')==='real'&&RAW&&RAW.streets}
 function trFrame(ts){requestAnimationFrame(trFrame);if(!map||!mapReady)return;const act=trActive();if(!act){if(TR.on){TR.on=false;TR.cars=[];const s=map.getSource('traffic');if(s)s.setData({type:'FeatureCollection',features:[]})}TR.last=ts;return}
   if(!TR.net){if(!TR.building){TR.building=true;setTimeout(()=>{try{trBuild()}catch(e){console.warn('traffic',e)}},50)}return}trLayer();TR.on=true;
   const dt=Math.min(0.25,(ts-(TR.last||ts))/1000);TR.last=ts;const B=trBounds();const want=innerWidth<700?45:100;
@@ -5081,9 +5083,10 @@ function popRow(){const el=$('metrics');if(!el||!S||el.querySelector('.poprow'))
   h.insertAdjacentHTML('afterend',`<button class="mrow poprow g-${r>=0.1?'good':r>-0.3?'warn':'bad'}" data-act="pop" title="Click for details"><span><i class="dot"></i>Population</span><b>${S.popn.toLocaleString()}</b><span class="tr ${r>=0?'up':'down'}">${r>=0?'+':'−'}${Math.abs(r).toFixed(1)}%/yr</span></button>`)}
 // ---------- hooks ----------
 {const _rh=refreshHUD;refreshHUD=function(...a){const r=_rh.apply(this,a);try{popRow()}catch(e){}return r}}
-{const _al=applyLayers;applyLayers=function(...a){const r=_al.apply(this,a);try{renderParkLabels();ydSig='';ydSoon()}catch(e){}return r}}
+{const _al=applyLayers;applyLayers=function(...a){const r=_al.apply(this,a);try{if($('lyYards'))$('lyYards').checked=!!(S&&S.layers.yards);if($('lyTraffic'))$('lyTraffic').checked=!!(S&&S.layers.traffic);renderParkLabels();ydSig='';ydSoon()}catch(e){}return r}}
 {const _zc=zoomClasses;zoomClasses=function(...a){const r=_zc.apply(this,a);try{pkSoon()}catch(e){}return r}}
 let pkT=null;function pkSoon(){clearTimeout(pkT);pkT=setTimeout(()=>{try{renderParkLabels();renderYards()}catch(e){}},150)}
+document.addEventListener('change',e=>{const t=e.target;if(!S||!t||(t.id!=='lyYards'&&t.id!=='lyTraffic'))return;S.layers[t.id==='lyYards'?'yards':'traffic']=t.checked;save();applyLayers()});
 function lvWait(){if(map&&mapReady){map.on('moveend',pkSoon);pkSoon();return}setTimeout(lvWait,500)}setTimeout(lvWait,0);
 function openLedger(){const L=S.log||[];openPanel('Everything that has happened, newest first','Ledger',L.length?`<div class="logl">${L.map(x=>`<div><span>${x.d}</span><p style="margin:0">${x.t}</p></div>`).join('')}</div>`:'<p class="note">Nothing yet. Start the clock with Space or ▶.</p>','ledger')}
 function openPolicies(){const ks=Object.keys(POLICIES);
