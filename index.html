@@ -617,7 +617,7 @@ details.analysis{margin-top:6px}details.analysis summary{cursor:pointer;color:va
     <button class="btn primary" data-act="pause" id="bPlay"><svg class="ico" viewBox="0 0 12 12" aria-hidden="true"><path d="M3.2 1.6v8.8l7.2-4.4z" fill="currentColor"/></svg> Resume <kbd>Space</kbd></button>
   </nav>
   <div class="status" id="status">Loading map…</div>
-  <div class="credit"><span class="ver" id="verTag">v26.16</span></div>
+  <div class="credit"><span class="ver" id="verTag">v26.17</span></div>
   <div class="tip" id="tip" hidden></div>
   <div class="toast" id="toast" role="status"></div>
   <section class="panel" id="panel" hidden aria-live="polite">
@@ -645,7 +645,7 @@ details.analysis{margin-top:6px}details.analysis summary{cursor:pointer;color:va
         <button class="btn" data-music-open>Music &amp; volume</button>
       </div>
       <div id="slotList" hidden></div>
-      <p class="note startv">Version <b class="ver" id="verStart">v26.16</b></p>
+      <p class="note startv">Version <b class="ver" id="verStart">v26.17</b></p>
     </div>
     <div class="startbox create" id="create" hidden>
       <h2>Create your mayor</h2>
@@ -1453,7 +1453,7 @@ function enact(s,p){DIVS.forEach(d=>{s.enacted[d.id]=p.divs[d.id];s.ratio[d.id]=
 // Voter groups. Each has a share of residents, turnout, home districts, concerns and an approval of you.
 // Citywide approval is the turnout-weighted average of the groups; each council district's approval comes from the groups that live there.
 // Shares, district mix and turnout are modeled, loosely grounded in Memphis demographics; they are not survey data.
-const VERSION='v26.16';
+const VERSION='v26.17';
 const GROUPS=[
  {id:'working',sh:'Working families',n:'Working families',ic:'⚒︎',c:'#f2a93b',share:24,turn:.5,start:56,w:{jobs:1,safety:.8,transit:.5},
   d:'Hourly workers in logistics, warehouses, health care and service jobs. The biggest bloc in the city.',dm:{1:1.1,2:.8,3:1.3,4:1.2,5:.6,6:1.2,7:1.1}},
@@ -5127,6 +5127,16 @@ document.addEventListener('change',e=>{const t=e.target;if(!S||!t||(t.id!=='lyYa
 function applyBgGroups(){if(!S||!S.mayor||!S.groups)return;(S.mayor.traits||[]).forEach(t=>{const T=MTRAITS[t];if(T&&T.grp)for(const g in T.grp)if(S.groups[g])addGroupMod(S.groups[g],`Your background: ${T.n}`,T.grp[g])});try{S.approval=cityApproval(S)}catch(e){}}
 {const _bt=beginTerm;beginTerm=function(cr,quiet){const r=_bt.apply(this,arguments);if(!quiet){applyBgGroups();try{refreshHUD();save()}catch(e){}}return r}}
 {const _bc=beginCampaign;beginCampaign=function(){window.__bcBoot=true;let r;try{r=_bc.apply(this,arguments)}finally{window.__bcBoot=false}applyBgGroups();try{refreshHUD();save()}catch(e){}return r}}
+// A candidate's top bar shows what a candidate can act on: campaign cash and the countdown to Election Day.
+function candHUD(){if(!S||!S.started)return;const rs=$('hRes')&&$('hRes').closest('.stat'),cs=$('hCouncil')&&$('hCouncil').closest('.stat');if(!rs||!cs)return;const cand=isCand();
+  const lab=(st,t)=>{const l=st.querySelector('label');if(l)l.textContent=t};
+  if(cand&&S.camp){const C=S.camp,d=Math.max(0,daysToElection()),burn=typeof campBurn==='function'?campBurn():0;
+    lab(rs,'Campaign cash');$('hRes').textContent=fmtK(C.cash);$('hRes').style.color=C.cash<20?'var(--bad)':C.cash<60?'var(--warn)':'var(--good)';$('hResPct').textContent=burn?`spending ${fmtK(burn)} a month`:`raised ${fmtK(C.raised||0)} so far`;$('hResPct').style.color='var(--muted)';
+    lab(cs,'Election Day');$('hCouncil').textContent=`${d} days`;$('hCouncil').style.color=d<=30?'var(--bad)':d<=90?'var(--warn)':'var(--text)';$('hCouncilS').textContent=`Thu, Oct ${electionDate().day}`;
+    [rs,cs].forEach(st=>{st.classList.add('click');st.dataset.act='hq';st.title='Campaign HQ'});rs.dataset.cand='1'}
+  else if(rs.dataset.cand){lab(rs,'Reserve fund');lab(cs,'Council');[rs,cs].forEach(st=>{st.classList.remove('click');delete st.dataset.act;st.title=''});delete rs.dataset.cand;$('hRes').style.color='';}}
+{const _rh=refreshHUD;refreshHUD=function(...a){const r=_rh.apply(this,a);try{candHUD()}catch(e){}return r}}
+{const _uc=updateClock;updateClock=function(...a){const r=_uc.apply(this,a);try{if(isCand())candHUD()}catch(e){}return r}}
 function lvWait(){if(map&&mapReady){map.on('moveend',pkSoon);pkSoon();return}setTimeout(lvWait,500)}setTimeout(lvWait,0);
 // ======================= ACTIONS YOU CAN SEE, AND A FRIENDLIER START =======================
 // One word for the monthly budget of moves: actions. A big meter shows what's left and when it refills; spending one

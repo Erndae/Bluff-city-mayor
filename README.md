@@ -4,6 +4,10 @@ A city-management game set in Memphis, Tennessee. You play the mayor. You handle
 
 **Play it:** https://erndae.github.io/Bluff-city-mayor/ (once GitHub Pages is turned on, see below)
 
+## v26.17: A candidate's top bar
+
+As a candidate, the top bar shows **Campaign cash** (green, yellow or red by how much you have, with monthly spending or total raised underneath) and **Election Day** (days left, turning yellow inside 90 days and red inside 30) instead of the city reserve and council count. Tapping either opens Campaign HQ. Once you win, the bar switches back to Reserve fund and Council.
+
 ## v26.16: Cleaner pop-ups and a clearer candidate start
 
 The City, Budget, People and Campaign tabs now appear only on those hub screens (and Campaign HQ and your desk), not inside every pop-up. A screen opened from a hub still shows its back button. The candidate path explains its start: the title-screen card says you begin in March 2027, seven months before Election Day, and the tour's first step says the same. City powers stay grayed out until you win. Population news no longer fires while the game fast-forwards to the start of a campaign.
