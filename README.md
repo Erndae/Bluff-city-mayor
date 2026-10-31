@@ -4,6 +4,10 @@ A city-management game set in Memphis, Tennessee. You play the mayor. You handle
 
 **Play it:** https://erndae.github.io/Bluff-city-mayor/ (once GitHub Pages is turned on, see below)
 
+## v26.14: Your lane, more backgrounds, a steadier mayor
+
+"Lifestyle focus" is now **Your lane**, and the skills have new names: Dealmaking, Money Smarts, Inside Game, Safe Streets, Education and Star Power. Character creation now has 16 backgrounds in their own section: the original five plus Nurse, Pastor, Union Electrician, Army Veteran, Firefighter, Tech Founder, Musician, Social Worker, High School Coach, Journalist and Real Estate Agent. Each adds skills, a starting boost with the voter groups who relate to it, and reactions from council members. Candidates also have 19 jobs to choose from (new: firefighter, musician, social worker, coach, journalist, real estate agent, attorney, barbershop owner, FedEx hub worker and Army veteran). The mayor's marker now stays where you last did something. It no longer shuttles between City Hall and home on its own.
+
 ## v26.12: A living city and its population
 
 **Menu.** The ☰ button beside the Bluff City Mayor logo (or Esc) opens a menu: back to the game, save, save and load, guide, music, and save and quit to the title screen.
