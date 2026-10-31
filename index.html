@@ -11,7 +11,7 @@
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#0d1822">
 <link rel="stylesheet" href="music.css?v=25">
-<link rel="stylesheet" href="home-interior.css?v=26.10">
+<link rel="stylesheet" href="home-interior.css?v=26.18">
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -320,6 +320,11 @@ button.brand:hover .bm-ic,button.brand:focus-visible .bm-ic{border-color:var(--a
 .act-float{position:absolute;left:70px;top:-6px;font-weight:700;font-size:12px;color:var(--amber);animation:actfloat 1.2s forwards;pointer-events:none;white-space:nowrap}@keyframes actfloat{to{transform:translateY(-18px);opacity:0}}
 .actcost{display:inline-flex;align-items:center;gap:4px;color:var(--amber);font-weight:600}.actcost i{width:8px;height:8px;border-radius:50%;background:var(--amber);display:inline-block}
 @media (prefers-reduced-motion:reduce){#hSlots.spent .pips,.act-float{animation:none}}
+.hudphone{pointer-events:auto;align-self:center;width:30px;height:30px;display:flex;align-items:center;justify-content:center;border:1px solid var(--line);border-radius:6px;background:rgba(19,33,45,.93);color:var(--amber);cursor:pointer;margin-right:6px;padding:0}.hudphone:hover{border-color:var(--amber)}
+.phlist{display:flex;flex-direction:column;gap:6px}.phrow{display:grid;grid-template-columns:auto 1fr auto;gap:4px 10px;align-items:center;border:1px solid var(--line);border-radius:6px;padding:8px 10px}
+.phwho{display:flex;flex-direction:column;min-width:0}.phwho small{color:var(--muted);font-size:12px;line-height:1.3}.phbtns{display:flex;gap:6px}.phbtns .btn{padding:6px 12px}.phwhere{grid-column:2/-1;color:var(--muted);font-size:11.5px}
+@media (max-width:560px){.phrow{grid-template-columns:auto 1fr}.phbtns{grid-column:1/-1}.phbtns .btn{flex:1}.phwhere{grid-column:1/-1}}
+.phic{width:40px;height:40px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:18px;color:#13212d}
 .pcat{margin-bottom:10px}.pcat h4{margin:6px 0 6px;font-family:var(--f-label);font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
 .bseats{display:flex;gap:5px;flex-wrap:wrap;margin:6px 0 2px}.bseats i,.bkey i{display:inline-block;width:16px;height:16px;border-radius:50%;border:2px solid var(--line)}
 .bkey{display:flex;flex-wrap:wrap;gap:4px 10px;align-items:center;margin:4px 0 8px}.bkey i{width:10px;height:10px;margin-right:3px;vertical-align:-1px}
@@ -571,7 +576,7 @@ details.analysis{margin-top:6px}details.analysis summary{cursor:pointer;color:va
 <div id="app">
   <div id="map" aria-label="Map of Memphis"></div>
   <div class="hud-top">
-    <button class="brand" id="bMenu" aria-label="Menu" title="Menu (Esc)"><span class="bm-ic" aria-hidden="true"><svg viewBox="0 0 16 16" width="16" height="16"><path d="M2 4h12M2 8h12M2 12h12" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></span><span class="bm-t">BLUFF CITY<span>MAYOR</span></span></button>
+    <button class="brand" id="bMenu" aria-label="Menu" title="Menu (Esc)"><span class="bm-ic" aria-hidden="true"><svg viewBox="0 0 16 16" width="16" height="16"><path d="M2 4h12M2 8h12M2 12h12" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></span><span class="bm-t">BLUFF CITY<span>MAYOR</span></span></button><button class="hudphone" id="bPhone" aria-label="Your phone: set up meetings" title="Your phone"><svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><rect x="4.2" y="1.2" width="7.6" height="13.6" rx="1.6" fill="none" stroke="currentColor" stroke-width="1.6"/><circle cx="8" cy="12.2" r=".9" fill="currentColor"/></svg></button>
     <button class="mchip" id="mchip" data-act="mayor" aria-label="Your character"><span id="mchipPt"></span><span class="mname"><b id="mchipName">Mayor</b><small id="mchipSk"></small></span></button>
     <div class="clock paused" id="clock"><button id="cPause" data-act="pause" aria-label="Resume time"><svg class="ico" viewBox="0 0 12 12" aria-hidden="true"><path d="M3.2 1.6v8.8l7.2-4.4z" fill="currentColor"/></svg></button><div class="cdate"><b id="hDate">1 Oct 2026</b><small id="hFY">FY2027</small><small id="hSlots" role="button" title="What you can do now"></small></div>
       <div class="cspeed"><button data-act="slower" aria-label="Slower" title="Slower (−)">−</button><div class="speeds" id="speeds"></div><button data-act="faster" aria-label="Faster" title="Faster (+)">+</button></div><span class="ptag">PAUSED</span></div>
@@ -617,7 +622,7 @@ details.analysis{margin-top:6px}details.analysis summary{cursor:pointer;color:va
     <button class="btn primary" data-act="pause" id="bPlay"><svg class="ico" viewBox="0 0 12 12" aria-hidden="true"><path d="M3.2 1.6v8.8l7.2-4.4z" fill="currentColor"/></svg> Resume <kbd>Space</kbd></button>
   </nav>
   <div class="status" id="status">Loading map…</div>
-  <div class="credit"><span class="ver" id="verTag">v26.17</span></div>
+  <div class="credit"><span class="ver" id="verTag">v26.18</span></div>
   <div class="tip" id="tip" hidden></div>
   <div class="toast" id="toast" role="status"></div>
   <section class="panel" id="panel" hidden aria-live="polite">
@@ -645,7 +650,7 @@ details.analysis{margin-top:6px}details.analysis summary{cursor:pointer;color:va
         <button class="btn" data-music-open>Music &amp; volume</button>
       </div>
       <div id="slotList" hidden></div>
-      <p class="note startv">Version <b class="ver" id="verStart">v26.17</b></p>
+      <p class="note startv">Version <b class="ver" id="verStart">v26.18</b></p>
     </div>
     <div class="startbox create" id="create" hidden>
       <h2>Create your mayor</h2>
@@ -1453,7 +1458,7 @@ function enact(s,p){DIVS.forEach(d=>{s.enacted[d.id]=p.divs[d.id];s.ratio[d.id]=
 // Voter groups. Each has a share of residents, turnout, home districts, concerns and an approval of you.
 // Citywide approval is the turnout-weighted average of the groups; each council district's approval comes from the groups that live there.
 // Shares, district mix and turnout are modeled, loosely grounded in Memphis demographics; they are not survey data.
-const VERSION='v26.17';
+const VERSION='v26.18';
 const GROUPS=[
  {id:'working',sh:'Working families',n:'Working families',ic:'⚒︎',c:'#f2a93b',share:24,turn:.5,start:56,w:{jobs:1,safety:.8,transit:.5},
   d:'Hourly workers in logistics, warehouses, health care and service jobs. The biggest bloc in the city.',dm:{1:1.1,2:.8,3:1.3,4:1.2,5:.6,6:1.2,7:1.1}},
@@ -2904,9 +2909,9 @@ function enterHome(){
   homeInit(S);const wasPaused=S.paused;
   if(typeof TUT!=='undefined'&&TUT)tutEnd(false);
   onClose=null;closeModal();closePanel();navReset();keysDown.clear();S.paused=true;refreshHUD();
-  BCInterior.open({state:()=>S,save,close:next=>{
+  BCInterior.open({state:()=>S,save,menu:()=>typeof laptopItems==='function'?laptopItems():[],close:next=>{
     keysDown.clear();S.paused=wasPaused;save();refreshHUD();
-    if(next==='news')openNews();else if(next==='campaign')openHQ();
+    if(next==='news')openNews();else if(next==='campaign')openHQ();else if(next&&typeof homeRoute==='function')homeRoute(next);
   }});
 }
 function hoodDistrict(id){const h=LMAP[id];return h?districtAt(h.lon,h.lat):null}
@@ -5184,6 +5189,82 @@ TUT_CAND.length=0;TUT_CAND.push(
  {sel:'#desk .weekly-card',mob:'#nextchip',t:()=>'Not sure what to do?',b:()=>'<b>This week</b> shows the most important next step. Once you hire a campaign manager, they pick it for you.'},
  {sel:'[data-flow-hub="campaign"]',t:()=>'Campaign HQ',b:()=>'Hire your campaign manager first. Then raise money, knock doors, run polls and ads, and prepare for the September debates.'},
  {sel:'#cPause',t:()=>'Time',b:()=>'Press ▶ to let days pass. Forums and debates stop the clock for you. The ☰ button at the top left opens the menu.'});
+// ======================= YOUR PHONE AND LAPTOP =======================
+// The phone is how you set up meetings: pick someone, pick "Meet", and you travel to see them (1 action).
+// A quick call is free, once a month per person. The laptop at home opens the screens you'd check from your desk.
+const VIPS=[
+ {id:'county',name:'Denise Whitaker',role:'Shelby County Mayor',g:'f',age:57,frame:'#8f9aa6',at:'county',cd:3,
+  d:'Runs county government, the jail and much of the schools\' money.',win:()=>{S.county=clamp((S.county||50)+6,0,100);return'Mayor Whitaker agreed to line up city and county on school funding and jail costs. County relations +6.'}},
+ {id:'supt',name:'Dr. Alan Pierce',role:'MSCS Superintendent',g:'m',age:52,frame:'#e0803a',at:'mscs',cd:3,
+  d:'Runs Memphis-Shelby County Schools under the state oversight board.',win:()=>{S.eduBoost=(S.eduBoost||0)+0.3;addGroupMod(S.groups.parents,'Mayor works with the schools',1.5);return'Dr. Pierce agreed to share space and tutors with the city\'s libraries and community centers. Parents noticed.'}},
+ {id:'chamber',name:'Brooke Hammond',role:'Greater Memphis Chamber President',g:'f',age:46,frame:'#d9a441',xy:[-90.0505,35.1468,'the Chamber offices Downtown'],cd:3,
+  d:'Speaks for the city\'s biggest employers.',win:()=>{addGroupMod(S.groups.business,'Mayor meets with business',2);S.jobsBoost=(S.jobsBoost||0)+0.3;return'The Chamber will co-host a hiring fair with the city. Business leaders feel heard.'}},
+ {id:'fedex',name:'Marcus Bell',role:'FedEx Vice President for Community Affairs',g:'m',age:55,frame:'#6b4fa0',xy:[-89.8053,35.0485,'FedEx World Headquarters'],cd:6,
+  d:'Memphis\'s biggest private employer.',win:()=>{S.met.jobs=clamp(S.met.jobs+1,0,100);addGroupMod(S.groups.working,'FedEx hiring push',1);return'FedEx agreed to recruit at three city job centers this spring. Jobs climate +1.'}},
+ {id:'pastors',name:'Bishop Earl Simmons',role:'Chair, Memphis pastors\' coalition',g:'m',age:66,frame:'#b98ee6',xy:[-90.0310,35.1180,'a church in South Memphis'],cd:3,
+  d:'Speaks for dozens of congregations.',win:()=>{addGroupMod(S.groups.faith,'Mayor met the pastors\' coalition',2.5);return'The pastors\' coalition will announce your youth programs from the pulpit.'}},
+ {id:'union',name:'Teresa Grant',role:'President, AFSCME Local 1733',g:'f',age:53,frame:'#e8644f',at:'pw',cd:3,
+  d:'Represents sanitation and public works employees.',win:()=>{addGroupMod(S.groups.labor,'Mayor met the union',2.5);return'Local 1733 appreciates the meeting and will hold off on public criticism for now.'}}];
+const VMAP=Object.fromEntries(VIPS.map(v=>[v.id,v]));
+let PH_TAB='vip';
+function phWhere(kind,id){let lon,lat,label;
+  try{if(kind==='council'){const m=S.council[+id],d=homeOf(m);const c=d<=7?districtCenter(d):null;if(c){[lon,lat]=c;label=`a coffee shop in District ${d}`}}
+    else if(kind==='staff'){const p=placeOf(STAFF_AT[id]||'cityhall');lon=p.lon;lat=p.lat;label=p.name}
+    else if(kind==='group'){const g=GMAP[id];const d=+Object.entries(g.dm||{}).sort((a,b)=>b[1]-a[1])[0][0];const c=districtCenter(d);if(c){[lon,lat]=c;label=`a community center in District ${d}`}}
+    else if(kind==='nb'){const g=GEO.nb[id];if(g){[lon,lat]=g.c;label=`${NEIGHBORS[id].city} City Hall`}}
+    else if(kind==='vip'){const v=VMAP[id];if(v.xy){lon=v.xy[0];lat=v.xy[1];label=v.xy[2]}else{const p=placeOf(v.at);lon=p.lon;lat=p.lat;label=p.name}}}catch(e){}
+  if(lon==null){lon=LM.cityhall.lon;lat=LM.cityhall.lat;label='City Hall'}return{lon,lat,label}}
+function phCallLeft(key){return cdLeft('call_'+key,1)}
+function phMeetWhy(kind,id){if(S.slots<=0)return'No actions left this month';const now=nowM();
+  if(kind==='council'){const m=S.council[+id];return m.met===now?'You already met this month':''}
+  if(kind==='staff'){const s=staffOf(id);return s.met===now?'You already met this month':''}
+  if(kind==='nb'){return S.nb[id].met===now?'You already met this month':''}
+  if(kind==='group'){if(isCand())return cdLeft('cg'+id,3)?`Again in ${cdLeft('cg'+id,3)} mo`:'';return cdLeft('g'+id,ACT_CD.group)?`Again in ${cdLeft('g'+id,ACT_CD.group)} mo`:''}
+  if(kind==='vip'){const v=VMAP[id],c=cdLeft('vip_'+id,v.cd);return c?`Again in ${c} mo`:''}return''}
+function phMeet(kind,id){if(phMeetWhy(kind,id))return;const W=phWhere(kind,id);let msg='';
+  if(kind==='council'){const m=S.council[+id];m.met=nowM();S.slots--;addMod(m,'Private meeting',meetGain(m));gainXP('dip',6);recompute(m);msg=`You met ${m.name} at ${W.label}. Opinion of you is now ${fmtOp(m.opinion)}.`}
+  else if(kind==='staff'){const s=staffOf(id);S.slots--;s.met=nowM();addMod(s,'Met with you privately',has(s,'gregarious')?12:8);gainXP('dip',4);msg=`You met ${s.name} at ${W.label}.`}
+  else if(kind==='nb'){const n=S.nb[id];n.met=nowM();S.slots--;addMod(n,'Met with the Memphis mayor',meetGain(n,8));gainXP('dip',6);recompute(n);msg=`You met Mayor ${n.name} at ${W.label}.`}
+  else if(kind==='group'){if(isCand())candMeet(id);else doMeetGroup(id);msg=`You met ${GMAP[id].n.toLowerCase()} leaders at ${W.label}.`}
+  else if(kind==='vip'){const v=VMAP[id];S.slots--;markAct('vip_'+id);gainXP('dip',6);msg=`You met ${v.name} at ${W.label}. `+v.win()}
+  goTo(W.lon,W.lat,W.label,2);try{S.approval=cityApproval(S)}catch(e){}logIt(msg);save();refreshHUD();try{sfx('good')}catch(e){}notify('people','Meeting done',msg,null,{silent:true});openPhone(PH_TAB)}
+function phCall(kind,id){const key=kind+'_'+id;if(phCallLeft(key))return;markAct('call_'+key);let who='';
+  if(kind==='council'){const m=S.council[+id];addMod(m,'Called to check in',2);recompute(m);who=m.name}
+  else if(kind==='staff'){const s=staffOf(id);addMod(s,'Called to check in',2);who=s.name}
+  else if(kind==='nb'){const n=S.nb[id];addMod(n,'Called to check in',2);recompute(n);who='Mayor '+n.name}
+  else if(kind==='vip'){who=VMAP[id].name}
+  save();toast(`Quick call with ${who}. They appreciated hearing from you.`);openPhone(PH_TAB)}
+function phRow(kind,id,face,name,role){const why=phMeetWhy(kind,id),W=phWhere(kind,id),canCall=kind!=='group'&&!phCallLeft(kind+'_'+id);
+  return`<div class="phrow">${face}<div class="phwho"><b>${name}</b><small>${role}</small></div><div class="phbtns"><button class="btn primary" data-phmeet="${kind}:${id}" ${why?'disabled':''} title="${why||'Meet at '+W.label}">Meet</button>${kind==='group'?'':`<button class="btn" data-phcall="${kind}:${id}" ${canCall?'':'disabled'} title="${canCall?'Free, once a month':'You called this month'}">Call</button>`}</div><small class="phwhere">${why?why:`Uses 1 action · at ${W.label}`}</small></div>`}
+function openPhone(tab){if(!S||!S.started)return;closePanel();const cand=isCand();
+  const tabs=cand?[['camp','Campaign'],['grp','Community']]:[['vip','Power players'],['council','Council'],['staff','Cabinet'],['grp','Community'],['nb','Suburbs']];
+  if(!tabs.some(t=>t[0]===tab))tab=tabs.some(t=>t[0]===PH_TAB)?PH_TAB:tabs[0][0];PH_TAB=tab;let body='';
+  if(tab==='vip')body=VIPS.map(v=>phRow('vip',v.id,portrait(v,40),v.name,`${v.role}. ${v.d}`)).join('');
+  else if(tab==='council')body=S.council.map((m,k)=>phRow('council',k,portrait(m,40),m.name,`${m.seat} · opinion ${fmtOp(m.opinion)}`)).join('');
+  else if(tab==='staff')body=STAFF_DEF.filter(D=>D.id!=='cos').map(D=>{const s=staffOf(D.id);return phRow('staff',D.id,portrait(s,40),s.name,D.role)}).join('');
+  else if(tab==='nb')body=NB_IDS.map(id=>{const n=S.nb[id];return phRow('nb',id,portrait(n,40),'Mayor '+n.name,`${n.city} · relations ${fmtOp(n.opinion)}`)}).join('');
+  else if(tab==='grp')body=GROUPS.map(g=>phRow('group',g.id,`<span class="phic" style="background:${g.c}">${g.ic}</span>`,g.n,`Support ${Math.round(S.groups[g.id].app)}%`)).join('');
+  else if(tab==='camp'){const m=curMgr();body=`<div class="phrow"><span class="phic" style="background:var(--amber)">☎</span><div class="phwho"><b>${m?m.name:'Hire a campaign manager'}</b><small>${m?'Your campaign manager. Ask for the plan.':'Your campaign starts when you hire one.'}</small></div><div class="phbtns"><button class="btn primary" data-phgo="mgr">${m?'Ask':'Hire'}</button></div></div>
+    <div class="phrow"><span class="phic" style="background:var(--good)">$</span><div class="phwho"><b>Donors</b><small>Fundraisers and major-donor dinners are in Campaign HQ.</small></div><div class="phbtns"><button class="btn" data-phgo="hq">Open</button></div></div>`}
+  openModal(`${S.slots} ${slotWord(S.slots)} left · meeting someone uses 1 and takes you to them`,'Your phone',`<div class="lsel" style="margin-bottom:8px">${tabs.map(([k,n])=>`<button data-phtab="${k}" class="${tab===k?'on':''}">${n}</button>`).join('')}</div><div class="phlist">${body}</div>
+   <p class="note">Meet: you travel to them and it uses 1 action. Call: free, once a month per person, a small boost.</p>`,true)}
+openPhone=navWrap('openPhone',openPhone);
+document.addEventListener('click',e=>{const b=e.target.closest('[data-phtab],[data-phmeet],[data-phcall],[data-phgo],#bPhone');if(!b||!S)return;e.preventDefault();e.stopImmediatePropagation();
+  if(b.id==='bPhone'){if(modalOpen){onClose=null;closeModal()}openPhone();return}
+  if(b.dataset.phtab){openPhone(b.dataset.phtab);return}
+  if(b.dataset.phmeet){const[k,i]=b.dataset.phmeet.split(':');phMeet(k,i);return}
+  if(b.dataset.phcall){const[k,i]=b.dataset.phcall.split(':');phCall(k,i);return}
+  if(b.dataset.phgo==='mgr'){onClose=null;closeModal();if(curMgr())mgrPop('What I\'d do right now');else openMgr();return}
+  if(b.dataset.phgo==='hq'){onClose=null;closeModal();openHQ();return}},true);
+// what the laptop at home can open
+function laptopItems(){const L=[];const n=(S.events||[]).length;
+  L.push({go:'desk',t:'Check your inbox',d:n?`${n} item${n===1?'':'s'} waiting on your desk`:'Nothing urgent waiting'});
+  L.push({go:'news',t:'Read the news',d:'What Memphis outlets are saying about you'});
+  if(S.camp||isCand())L.push({go:'campaign',t:'Campaign HQ',d:isCand()?'Money, polls, ads and debates':'Your re-election campaign'});
+  if(inOffice()){L.push({go:'budget',t:'City budget',d:'Spending, taxes and the reserve'});L.push({go:'power',t:'Power & influence',d:'Boards, council races and Nashville'})}
+  L.push({go:'pop',t:'City numbers',d:`Population ${(S.popn||605200).toLocaleString()} and how it's changing`});
+  L.push({go:'phone',t:'Schedule a meeting',d:'Open your phone contacts'});return L}
+function homeRoute(next){const R={desk:()=>openDesk(),budget:()=>openBudget(),pop:()=>openPop(),power:()=>openPower(),phone:()=>openPhone()};try{R[next]&&R[next]()}catch(e){console.warn(e)}}
 function openLedger(){const L=S.log||[];openPanel('Everything that has happened, newest first','Ledger',L.length?`<div class="logl">${L.map(x=>`<div><span>${x.d}</span><p style="margin:0">${x.t}</p></div>`).join('')}</div>`:'<p class="note">Nothing yet. Start the clock with Space or ▶.</p>','ledger')}
 function openPolicies(){const ks=Object.keys(POLICIES);
   openPanel('Ongoing programs you control','Your initiatives',`<p>Mid-year, these are paid from the reserve fund. In April they go into the budget you send the council.</p>
@@ -5811,7 +5892,7 @@ window.claude?.hot?.snapshot?.(()=>({S}));
 window.claude?.hot?.ready?window.claude.hot.ready(start):start(window.claude?.hot?.data??{});
 </script>
 <script src="home-renderer.js?v=26.11"></script>
-<script src="home-interior.js?v=26.11"></script>
+<script src="home-interior.js?v=26.18"></script>
 <script src="city-life.js?v=26.4"></script>
 <script src="city-flow.js?v=26.16"></script>
 <script src="music.js?v=25"></script>

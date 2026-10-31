@@ -4,6 +4,14 @@ A city-management game set in Memphis, Tennessee. You play the mayor. You handle
 
 **Play it:** https://erndae.github.io/Bluff-city-mayor/ (once GitHub Pages is turned on, see below)
 
+## v26.18: Your phone, your laptop and meetings around town
+
+**Phone.** A phone button sits beside the menu, and inside your home there's one in the header. Its contacts: power players (the Shelby County mayor, the MSCS superintendent, the Greater Memphis Chamber president, a FedEx executive, the pastors' coalition chair and the AFSCME Local 1733 president; all fictional people in real roles), the 13 council members, your cabinet, community leaders and the suburban mayors. **Meet** uses 1 action and takes you to them: a coffee shop in their district, their department, their city hall or their office. Your marker moves there. **Call** is free once a month per person and gives a small boost. Candidates see their campaign manager, donors and community leaders.
+
+**Laptop.** The writing desk now holds a laptop. "Use your laptop" opens your inbox, the news, Campaign HQ, the city budget, Power & influence, the city's numbers, or your phone to schedule a meeting, without walking back to the map.
+
+The extra arrow buttons inside the home are gone. Walk with the stick (or WASD) and drag to look.
+
 ## v26.17: A candidate's top bar
 
 As a candidate, the top bar shows **Campaign cash** (green, yellow or red by how much you have, with monthly spending or total raised underneath) and **Election Day** (days left, turning yellow inside 90 days and red inside 30) instead of the city reserve and council count. Tapping either opens Campaign HQ. Once you win, the bar switches back to Reserve fund and Council.

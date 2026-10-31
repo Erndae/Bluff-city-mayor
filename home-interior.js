@@ -7,7 +7,7 @@
     {id:'coffee',name:'Walnut coffee table',price:180,w:1.15,d:.65,color:'#77533c'},
     {id:'tv',name:'TV & media console',price:650,w:1.6,d:.45,color:'#77533c',use:'news'},
     {id:'bed',name:'Linen bed',price:900,w:1.7,d:2.2,color:'#ddd3b9',use:'rest'},
-    {id:'desk',name:'Writing desk',price:380,w:1.4,d:.7,color:'#866044',use:'campaign'},
+    {id:'desk',name:'Writing desk',price:380,w:1.4,d:.7,color:'#866044',use:'laptop'},
     {id:'shelf',name:'Bookcase',price:240,w:1.15,d:.35,color:'#8c6749'},
     {id:'plant',name:'Potted palm',price:65,w:.55,d:.55,color:'#567858'},
     {id:'lamp',name:'Floor lamp',price:110,w:.45,d:.45,color:'#e9c68d'},
@@ -157,7 +157,7 @@
     $('hi-room').textContent=room();
     if(proposed){$('hi-place').disabled=!valid||(!selection.uid&&s.purse.cash<ITEMS[selection.type].price);$('hi-placement-note').textContent=valid?'Clear spot · ready to place':'Blocked · move or turn toward open floor';}
     const near=h.items.filter(i=>!i.stored&&ITEMS[i.type].use&&Math.hypot(i.x-p.x,i.z-p.z)<2.5).sort((a,b)=>Math.hypot(a.x-p.x,a.z-p.z)-Math.hypot(b.x-p.x,b.z-p.z))[0];
-    const use=$('hi-use');use.hidden=!!selection||!near;if(near){use.dataset.uid=near.uid;use.textContent={news:'Watch the news',rest:'Rest on bed',campaign:'Review campaign'}[ITEMS[near.type].use];}
+    const use=$('hi-use');use.hidden=!!selection||!near;if(near){use.dataset.uid=near.uid;use.textContent={news:'Watch the news',rest:'Rest on bed',campaign:'Review campaign',laptop:'Use your laptop'}[ITEMS[near.type].use];}
   }
   function frame(now){if(!active)return;const dt=Math.min(.04,(now-last)/1000||0);last=now;
     if(!document.hidden){let forward=(keys.has('w')||keys.has('arrowup')?1:0)-(keys.has('s')||keys.has('arrowdown')?1:0)-stick.y;
@@ -167,8 +167,11 @@
     }
     raf=requestAnimationFrame(frame);
   }
+  function laptop(){const body=$('hi-panel-body');$('hi-panel').hidden=false;keys.clear();stick={x:0,y:0};$('hi-panel').querySelector('h2').textContent='Your laptop';$('hi-tabs').innerHTML='';
+    const list=(adapter.menu&&adapter.menu())||[];
+    body.innerHTML='<p>Check in on the city without leaving home.</p><div class="hi-laptop">'+list.map(x=>`<button data-hi-go="${x.go}"><b>${x.t}</b><small>${x.d||''}</small></button>`).join('')+'</div>';}
   function panel(){
-    const body=$('hi-panel-body');$('hi-panel').hidden=false;keys.clear();stick={x:0,y:0};
+    const body=$('hi-panel-body');$('hi-panel').hidden=false;keys.clear();stick={x:0,y:0};$('hi-panel').querySelector('h2').textContent='Make yourself at home';
     $('hi-tabs').innerHTML=[['shop','Furniture'],['owned','Your items'],['style','Room style']].map(([id,label])=>`<button data-hi-tab="${id}" aria-pressed="${tab===id}">${label}</button>`).join('');
     if(tab==='shop')body.innerHTML='<p>Preview first. Pay only when you place it. Prices are in-game.</p><div class="hi-catalog">'+CATALOG.map(b=>`<button data-hi-buy="${b.id}"><span class="hi-swatch" style="background:${b.color}"></span><b>${b.name}</b><small>${money(b.price)} · Preview</small></button>`).join('')+'</div>';
     else if(tab==='owned')body.innerHTML='<p>Move or store furniture for free. Stored items remain yours.</p>'+h.items.map(i=>`<div class="hi-owned"><span><b>${ITEMS[i.type].name}</b><small>${i.stored?'In storage':'In your home'}</small></span><button data-hi-move="${i.uid}">${i.stored?'Place':'Move'}</button>${i.stored?'':`<button data-hi-store="${i.uid}">Store</button>`}</div>`).join('');
@@ -182,22 +185,21 @@
     if(active)return;adapter=options;s=options.state();if(!s?.started||!s.home)return;h=ensure(s);p={x:3.5,z:1.05,yaw:0,pitch:.08};previousFocus=document.activeElement;active=true;
     host=document.createElement('section');host.id='home-interior';host.setAttribute('role','dialog');host.setAttribute('aria-modal','true');host.setAttribute('aria-label','Inside your home');
     host.innerHTML=`<canvas id="hi-view" aria-label="First-person view of your furnished home. Use the walking controls or WASD to move and drag the view to look around."></canvas>
-      <header class="hi-header"><div><small>YOUR HOME · CITY PAUSED</small><h2 id="hi-room">Living room</h2><span id="hi-cash"></span></div><button id="hi-exit">Leave home</button></header>
+      <header class="hi-header"><div><small>YOUR HOME · CITY PAUSED</small><h2 id="hi-room">Living room</h2><span id="hi-cash"></span></div><div class="hi-head-btns"><button id="hi-phone" aria-label="Your phone">Phone</button><button id="hi-exit">Leave home</button></div></header>
       <div class="hi-crosshair" aria-hidden="true">+</div><p id="hi-status" role="status" aria-live="polite"></p>
       <div class="hi-actions"><button id="hi-use" hidden></button><button id="hi-furnish">Furnish & decorate</button></div>
       <div id="hi-placement" hidden><strong id="hi-selected"></strong><small id="hi-placement-note"></small><div><button id="hi-rotate">Rotate ↻</button><button id="hi-place">Place</button><button id="hi-cancel">Cancel</button></div></div>
-      <div class="hi-controls"><div id="hi-stick" aria-label="Drag to walk"><span id="hi-stick-knob"></span><b>WALK</b></div><div class="hi-step-controls"><button data-hi-step="forward" aria-label="Walk forward">↑</button><button data-hi-step="back" aria-label="Walk backward">↓</button><button data-hi-step="left" aria-label="Turn left">↶</button><button data-hi-step="right" aria-label="Turn right">↷</button></div><span class="hi-look-help">Drag the room to look<br><span>WASD · arrows turn</span></span></div>
+      <div class="hi-controls"><div id="hi-stick" aria-label="Drag to walk"><span id="hi-stick-knob"></span><b>WALK</b></div><span class="hi-look-help">Drag the room to look<br><span>WASD · arrows turn</span></span></div>
       <aside id="hi-panel" hidden aria-label="Furnish your home"><div class="hi-panel-title"><h2>Make yourself at home</h2><button id="hi-panel-close" aria-label="Close furniture shop">×</button></div><nav id="hi-tabs" aria-label="Furniture categories"></nav><div id="hi-panel-body"></div></aside>`;
     document.body.appendChild(host);document.body.classList.add('inside-home');canvas=$('hi-view');renderer=root.BCHomeRenderer.create(canvas);canvas=renderer.canvas||canvas;scene=geometry(h);renderer.setScene(scene);resize();$('hi-cash').textContent=money(s.purse.cash)+' personal';$('hi-exit').focus();
     host.addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;const d=b.dataset;
-      if(b.id==='hi-exit'){exit();return;}if(b.id==='hi-furnish'){panel();return;}if(b.id==='hi-panel-close'){$('hi-panel').hidden=true;$('hi-furnish').focus();return;}
+      if(b.id==='hi-exit'){exit();return;}if(b.id==='hi-phone'){exit('phone');return;}if(d.hiGo){exit(d.hiGo);return;}if(b.id==='hi-furnish'){panel();return;}if(b.id==='hi-panel-close'){$('hi-panel').hidden=true;$('hi-furnish').focus();return;}
       if(d.hiTab){tab=d.hiTab;panel();return;}if(d.hiBuy){select(d.hiBuy);return;}if(d.hiMove){const i=h.items.find(x=>x.uid===+d.hiMove);if(i)select(i.type,i.uid);return;}
       if(d.hiStore){const i=h.items.find(x=>x.uid===+d.hiStore);if(i)i.stored=true;persist();panel();say('Stored. You can place it again for free.');return;}
       if(d.hiWall!==undefined||d.hiFloor!==undefined){if(d.hiWall!==undefined)h.wall=+d.hiWall;else h.floor=+d.hiFloor;persist();panel();return;}
       if(b.id==='hi-rotate'){selection.r=(selection.r+1)%4;dirty=true;}if(b.id==='hi-cancel')cancel();
       if(b.id==='hi-place'&&selection){const result=transact(s,draft(),p);if(result.ok){h=s.interior;cancel();persist();say(result.cost?'Placed · '+money(result.cost)+' from personal money.':'Furniture moved.');}else say(result.message);}
-      if(d.hiStep){if(d.hiStep==='left')p.yaw-=Math.PI/8;else if(d.hiStep==='right')p.yaw+=Math.PI/8;else{const n=d.hiStep==='forward'?.45:-.45;move(h,p,Math.sin(p.yaw)*n,Math.cos(p.yaw)*n);}dirty=true;}
-      if(b.id==='hi-use'){const item=h.items.find(i=>i.uid===+b.dataset.uid);if(item){const use=ITEMS[item.type].use;if(use==='rest')say('A quiet moment at home. City time stays paused while you rest.');else exit(use);}}
+      if(b.id==='hi-use'){const item=h.items.find(i=>i.uid===+b.dataset.uid);if(item){const use=ITEMS[item.type].use;if(use==='rest')say('A quiet moment at home. City time stays paused while you rest.');else if(use==='laptop')laptop();else exit(use);}}
     });
     canvas.addEventListener('webglcontextlost',()=>say('Graphics paused. Leave and re-enter your home to restore the view.'));
     canvas.addEventListener('pointerdown',e=>{if(e.button!==0)return;canvas.setPointerCapture(e.pointerId);look={id:e.pointerId,x:e.clientX,y:e.clientY};});
