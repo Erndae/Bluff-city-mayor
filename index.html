@@ -11,7 +11,7 @@
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#0d1822">
 <link rel="stylesheet" href="music.css?v=25">
-<link rel="stylesheet" href="home-interior.css?v=26.19">
+<link rel="stylesheet" href="home-interior.css?v=26.20">
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -324,7 +324,31 @@ button.brand:hover .bm-ic,button.brand:focus-visible .bm-ic{border-color:var(--a
 .phlist{display:flex;flex-direction:column;gap:6px}.phrow{display:grid;grid-template-columns:auto 1fr auto;gap:4px 10px;align-items:center;border:1px solid var(--line);border-radius:6px;padding:8px 10px}
 .phwho{display:flex;flex-direction:column;min-width:0}.phwho small{color:var(--muted);font-size:12px;line-height:1.3}.phbtns{display:flex;gap:6px}.phbtns .btn{padding:6px 12px}.phwhere{grid-column:2/-1;color:var(--muted);font-size:11.5px}
 @media (max-width:560px){.phrow{grid-template-columns:auto 1fr}.phbtns{grid-column:1/-1}.phbtns .btn{flex:1}.phwhere{grid-column:1/-1}}
+.phbtns .btn[disabled]{opacity:1;background:transparent;color:var(--muted);border:1px dashed var(--line);cursor:not-allowed}.phout{border:1px solid var(--bad);background:rgba(232,100,79,.12);border-radius:8px;padding:10px 12px;margin-bottom:10px;font-size:13.5px}
 .phic{width:40px;height:40px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:18px;color:#13212d}
+
+/* phone and laptop frames */
+.inside-home.dev-on #app{z-index:10001;background:transparent;pointer-events:none}
+.inside-home.dev-on #app>*:not(#modal):not(#panel){visibility:hidden}
+.dev-on #modal,.dev-on #panel{pointer-events:auto;visibility:visible}
+.dev-on #modal{background:rgba(6,10,14,.55)}
+.dev-laptop .sheet,.dev-laptop .sheet.wide{position:relative;width:min(980px,100%);height:min(640px,calc(100% - 46px));max-height:none;margin-bottom:36px;border:14px solid #15181d;border-top-width:22px;border-radius:16px;box-shadow:0 0 0 1px #3a3f48,0 30px 70px rgba(0,0,0,.6)}
+.dev-laptop .sheet::before{content:'';position:absolute;top:-15px;left:50%;width:7px;height:7px;margin-left:-3px;border-radius:50%;background:#2f343c}
+.dev-laptop .sheet::after{content:'';position:absolute;left:-9%;right:-9%;bottom:-48px;height:22px;background:linear-gradient(#cfd3da,#8e939b);border-radius:2px 2px 22px 22px;box-shadow:0 10px 24px rgba(0,0,0,.45)}
+.dev-laptop .sheet>header{background:#0f1820;border-bottom:1px solid var(--line)}
+.dev-laptop .sheet>header>div::before{content:'● ● ●';display:block;font-size:9px;letter-spacing:3px;color:#59616b;margin-bottom:4px}
+.dev-phone .sheet,.dev-phone .sheet.wide{position:relative;width:min(390px,100%);height:min(780px,100%);max-height:none;border:11px solid #0b0d10;border-radius:40px;box-shadow:0 0 0 2px #3a3f48,0 30px 70px rgba(0,0,0,.6);overflow:hidden}
+.dev-phone .sheet::after{content:'';position:absolute;bottom:7px;left:50%;width:120px;height:5px;margin-left:-60px;border-radius:3px;background:#e9e4d6;opacity:.7}
+.dev-phone .sheet .sbody{padding-bottom:22px}
+.dev-status{display:flex;justify-content:space-between;align-items:center;padding:8px 20px 4px;font-size:12px;font-weight:600;color:var(--text);position:relative}
+.dev-status::before{content:'';position:absolute;left:50%;top:6px;width:96px;height:22px;margin-left:-48px;border-radius:12px;background:#0b0d10}
+.dev-sig{display:flex;align-items:flex-end;gap:2px}.dev-sig i{display:inline-block;width:3px;background:var(--text);border-radius:1px}.dev-sig i:nth-child(1){height:4px}.dev-sig i:nth-child(2){height:6px}.dev-sig i:nth-child(3){height:8px}.dev-sig i:nth-child(4){height:10px;margin-right:4px}
+.dev-laptop #panel{position:fixed;left:50%;top:50%;transform:translate(-50%,-52%);width:min(980px,calc(100% - 32px));height:min(620px,calc(100% - 90px));max-height:none;border:14px solid #15181d;border-top-width:22px;border-radius:16px;z-index:30;box-shadow:0 0 0 1px #3a3f48,0 30px 70px rgba(0,0,0,.6)}
+.lapgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px}
+.lapapp{display:flex;flex-direction:column;align-items:flex-start;gap:4px;text-align:left;padding:14px;border:1px solid var(--line);border-radius:10px;background:var(--panel2,rgba(255,255,255,.04));color:inherit;font:inherit;cursor:pointer}
+.lapapp:hover{border-color:var(--amber)}.lapapp b{font-size:14px}.lapapp small{color:var(--muted);font-size:12px;line-height:1.3}
+.lapic{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:20px;background:linear-gradient(135deg,#f2a93b,#c9782a);color:#13212d;margin-bottom:4px}
+@media (max-width:560px){.dev-laptop .sheet,.dev-laptop .sheet.wide{border-width:8px;border-top-width:14px;margin-bottom:26px}.dev-laptop .sheet::after{bottom:-32px;height:16px}.lapgrid{grid-template-columns:1fr 1fr}.dev-phone .sheet{border-width:8px;border-radius:30px}}
 .pcat{margin-bottom:10px}.pcat h4{margin:6px 0 6px;font-family:var(--f-label);font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
 .bseats{display:flex;gap:5px;flex-wrap:wrap;margin:6px 0 2px}.bseats i,.bkey i{display:inline-block;width:16px;height:16px;border-radius:50%;border:2px solid var(--line)}
 .bkey{display:flex;flex-wrap:wrap;gap:4px 10px;align-items:center;margin:4px 0 8px}.bkey i{width:10px;height:10px;margin-right:3px;vertical-align:-1px}
@@ -622,7 +646,7 @@ details.analysis{margin-top:6px}details.analysis summary{cursor:pointer;color:va
     <button class="btn primary" data-act="pause" id="bPlay"><svg class="ico" viewBox="0 0 12 12" aria-hidden="true"><path d="M3.2 1.6v8.8l7.2-4.4z" fill="currentColor"/></svg> Resume <kbd>Space</kbd></button>
   </nav>
   <div class="status" id="status">Loading map…</div>
-  <div class="credit"><span class="ver" id="verTag">v26.19</span></div>
+  <div class="credit"><span class="ver" id="verTag">v26.20</span></div>
   <div class="tip" id="tip" hidden></div>
   <div class="toast" id="toast" role="status"></div>
   <section class="panel" id="panel" hidden aria-live="polite">
@@ -650,7 +674,7 @@ details.analysis{margin-top:6px}details.analysis summary{cursor:pointer;color:va
         <button class="btn" data-music-open>Music &amp; volume</button>
       </div>
       <div id="slotList" hidden></div>
-      <p class="note startv">Version <b class="ver" id="verStart">v26.19</b></p>
+      <p class="note startv">Version <b class="ver" id="verStart">v26.20</b></p>
     </div>
     <div class="startbox create" id="create" hidden>
       <h2>Create your mayor</h2>
@@ -1458,7 +1482,7 @@ function enact(s,p){DIVS.forEach(d=>{s.enacted[d.id]=p.divs[d.id];s.ratio[d.id]=
 // Voter groups. Each has a share of residents, turnout, home districts, concerns and an approval of you.
 // Citywide approval is the turnout-weighted average of the groups; each council district's approval comes from the groups that live there.
 // Shares, district mix and turnout are modeled, loosely grounded in Memphis demographics; they are not survey data.
-const VERSION='v26.19';
+const VERSION='v26.20';
 const GROUPS=[
  {id:'working',sh:'Working families',n:'Working families',ic:'⚒︎',c:'#f2a93b',share:24,turn:.5,start:56,w:{jobs:1,safety:.8,transit:.5},
   d:'Hourly workers in logistics, warehouses, health care and service jobs. The biggest bloc in the city.',dm:{1:1.1,2:.8,3:1.3,4:1.2,5:.6,6:1.2,7:1.1}},
@@ -2909,7 +2933,7 @@ function enterHome(){
   homeInit(S);const wasPaused=S.paused;
   if(typeof TUT!=='undefined'&&TUT)tutEnd(false);
   onClose=null;closeModal();closePanel();navReset();keysDown.clear();S.paused=true;refreshHUD();
-  BCInterior.open({state:()=>S,save,menu:()=>typeof laptopItems==='function'?laptopItems():[],tv:typeof homeTV==='function'?()=>homeTV():null,books:typeof homeBooks==='function'?()=>homeBooks():null,read:typeof homeRead==='function'?id=>homeRead(id):null,close:next=>{
+  BCInterior.open({state:()=>S,save,menu:()=>typeof laptopItems==='function'?laptopItems():[],device:typeof openDevice==='function'?k=>openDevice(k):null,tv:typeof homeTV==='function'?()=>homeTV():null,books:typeof homeBooks==='function'?()=>homeBooks():null,read:typeof homeRead==='function'?id=>homeRead(id):null,close:next=>{
     keysDown.clear();S.paused=wasPaused;save();refreshHUD();
     if(next==='news')openNews();else if(next==='campaign')openHQ();else if(next&&typeof homeRoute==='function')homeRoute(next);
   }});
@@ -5227,15 +5251,16 @@ function phMeet(kind,id){if(phMeetWhy(kind,id))return;const W=phWhere(kind,id);l
   else if(kind==='nb'){const n=S.nb[id];n.met=nowM();S.slots--;addMod(n,'Met with the Memphis mayor',meetGain(n,8));gainXP('dip',6);recompute(n);msg=`You met Mayor ${n.name} at ${W.label}.`}
   else if(kind==='group'){if(isCand())candMeet(id);else doMeetGroup(id);msg=`You met ${GMAP[id].n.toLowerCase()} leaders at ${W.label}.`}
   else if(kind==='vip'){const v=VMAP[id];S.slots--;markAct('vip_'+id);gainXP('dip',6);msg=`You met ${v.name} at ${W.label}. `+v.win()}
-  goTo(W.lon,W.lat,W.label,2);try{S.approval=cityApproval(S)}catch(e){}logIt(msg);save();refreshHUD();try{sfx('good')}catch(e){}notify('people','Meeting done',msg,null,{silent:true});openPhone(PH_TAB)}
+  goTo(W.lon,W.lat,W.label,2);try{S.approval=cityApproval(S)}catch(e){}logIt(msg);save();refreshHUD();try{sfx('good')}catch(e){}notify('people','Meeting done',msg,null,{silent:true});phRefresh(PH_TAB)}
 function phCall(kind,id){const key=kind+'_'+id;if(phCallLeft(key))return;markAct('call_'+key);let who='';
   if(kind==='council'){const m=S.council[+id];addMod(m,'Called to check in',2);recompute(m);who=m.name}
   else if(kind==='staff'){const s=staffOf(id);addMod(s,'Called to check in',2);who=s.name}
   else if(kind==='nb'){const n=S.nb[id];addMod(n,'Called to check in',2);recompute(n);who='Mayor '+n.name}
   else if(kind==='vip'){who=VMAP[id].name}
-  save();toast(`Quick call with ${who}. They appreciated hearing from you.`);openPhone(PH_TAB)}
+  save();toast(`Quick call with ${who}. They appreciated hearing from you.`);phRefresh(PH_TAB)}
+function phRefresh(tab){NAV.busy=true;try{openPhone(tab)}finally{NAV.busy=false}}
 function phRow(kind,id,face,name,role){const why=phMeetWhy(kind,id),W=phWhere(kind,id),canCall=kind!=='group'&&!phCallLeft(kind+'_'+id);
-  return`<div class="phrow">${face}<div class="phwho"><b>${name}</b><small>${role}</small></div><div class="phbtns"><button class="btn primary" data-phmeet="${kind}:${id}" ${why?'disabled':''} title="${why||'Meet at '+W.label}">Meet</button>${kind==='group'?'':`<button class="btn" data-phcall="${kind}:${id}" ${canCall?'':'disabled'} title="${canCall?'Free, once a month':'You called this month'}">Call</button>`}</div><small class="phwhere">${why?why:`Uses 1 action · at ${W.label}`}</small></div>`}
+  return`<div class="phrow">${face}<div class="phwho"><b>${name}</b><small>${role}</small></div><div class="phbtns"><button class="btn primary" data-phmeet="${kind}:${id}" ${why?'disabled':''} title="${why||'Meet at '+W.label}">${S.slots<=0?'No actions':why&&/met|Again/.test(why)?'Met':'Meet'}</button>${kind==='group'?'':`<button class="btn" data-phcall="${kind}:${id}" ${canCall?'':'disabled'} title="${canCall?'Free, once a month':'You called this month'}">Call</button>`}</div><small class="phwhere">${why?why:`Uses 1 action · at ${W.label}`}</small></div>`}
 function openPhone(tab){if(!S||!S.started)return;closePanel();const cand=isCand();
   const tabs=cand?[['camp','Campaign'],['grp','Community']]:[['vip','Power players'],['council','Council'],['staff','Cabinet'],['grp','Community'],['nb','Suburbs']];
   if(!tabs.some(t=>t[0]===tab))tab=tabs.some(t=>t[0]===PH_TAB)?PH_TAB:tabs[0][0];PH_TAB=tab;let body='';
@@ -5246,12 +5271,12 @@ function openPhone(tab){if(!S||!S.started)return;closePanel();const cand=isCand(
   else if(tab==='grp')body=GROUPS.map(g=>phRow('group',g.id,`<span class="phic" style="background:${g.c}">${g.ic}</span>`,g.n,`Support ${Math.round(S.groups[g.id].app)}%`)).join('');
   else if(tab==='camp'){const m=curMgr();body=`<div class="phrow"><span class="phic" style="background:var(--amber)">☎</span><div class="phwho"><b>${m?m.name:'Hire a campaign manager'}</b><small>${m?'Your campaign manager. Ask for the plan.':'Your campaign starts when you hire one.'}</small></div><div class="phbtns"><button class="btn primary" data-phgo="mgr">${m?'Ask':'Hire'}</button></div></div>
     <div class="phrow"><span class="phic" style="background:var(--good)">$</span><div class="phwho"><b>Donors</b><small>Fundraisers and major-donor dinners are in Campaign HQ.</small></div><div class="phbtns"><button class="btn" data-phgo="hq">Open</button></div></div>`}
-  openModal(`${S.slots} ${slotWord(S.slots)} left · meeting someone uses 1 and takes you to them`,'Your phone',`<div class="lsel" style="margin-bottom:8px">${tabs.map(([k,n])=>`<button data-phtab="${k}" class="${tab===k?'on':''}">${n}</button>`).join('')}</div><div class="phlist">${body}</div>
+  openModal(`${S.slots} ${slotWord(S.slots)} left · meeting someone uses 1 and takes you to them`,'Your phone',`${S.slots<=0?`<div class="phout"><b>You're out of actions until ${refillDate()}.</b> Meetings need an action. ${cand?'Your campaign manager and Campaign HQ are still open.':'Calls are still free, once a month per person.'}</div>`:''}<div class="lsel" style="margin-bottom:8px">${tabs.map(([k,n])=>`<button data-phtab="${k}" class="${tab===k?'on':''}">${n}</button>`).join('')}</div><div class="phlist">${body}</div>
    <p class="note">Meet: you travel to them and it uses 1 action. Call: free, once a month per person, a small boost.</p>`,true)}
 openPhone=navWrap('openPhone',openPhone);
 document.addEventListener('click',e=>{const b=e.target.closest('[data-phtab],[data-phmeet],[data-phcall],[data-phgo],#bPhone');if(!b||!S)return;e.preventDefault();e.stopImmediatePropagation();
-  if(b.id==='bPhone'){if(modalOpen){onClose=null;closeModal()}openPhone();return}
-  if(b.dataset.phtab){openPhone(b.dataset.phtab);return}
+  if(b.id==='bPhone'){if(modalOpen){onClose=null;closeModal()}openDevice('phone');return}
+  if(b.dataset.phtab){phRefresh(b.dataset.phtab);return}
   if(b.dataset.phmeet){const[k,i]=b.dataset.phmeet.split(':');phMeet(k,i);return}
   if(b.dataset.phcall){const[k,i]=b.dataset.phcall.split(':');phCall(k,i);return}
   if(b.dataset.phgo==='mgr'){onClose=null;closeModal();if(curMgr())mgrPop('What I\'d do right now');else openMgr();return}
@@ -5282,6 +5307,31 @@ function homeTV(){const ch=OUTMAP.ch6,st=[];const recent=(S.news||[]).filter(x=>
   const M=S.met;if(st.length<4)st.push({h:M.crime<=85?'Violent crime keeps falling':M.crime>=95?'Violent crime is up across the city':'Crime numbers hold steady',d:`The violent crime index is ${Math.round(M.crime)}. Population: ${(S.popn||605200).toLocaleString()}.`,tone:M.crime<=85?0.5:M.crime>=95?-0.6:0});
   return{channel:ch?ch.n:'Channel 6 Eyewitness News',anchor:`Evening news · ${dateStr()} · with anchor Dana Reeves`,stories:st.slice(0,4),signoff:'That\'s the news for tonight. Good night, Memphis.'}}
 function homeRoute(next){const R={desk:()=>openDesk(),budget:()=>openBudget(),pop:()=>openPop(),power:()=>openPower(),phone:()=>openPhone()};try{R[next]&&R[next]()}catch(e){console.warn(e)}}
+// ======================= PHONE AND LAPTOP SCREENS =======================
+// When you use your phone or laptop, game screens appear inside that device's frame. Close an app and you're back on
+// the laptop's desktop; close the laptop or phone and you're right where you were (in your home, or on the map).
+const DEV={kind:null,app:false};
+function devStatus(){let el=$('devStatus');if(!el){el=document.createElement('div');el.id='devStatus';el.className='dev-status'}
+  el.innerHTML=`<span>${dateStr()}</span><span class="dev-sig"><i></i><i></i><i></i><i></i> 5G ▮</span>`;return el}
+function devFrame(on){['sheet','panel'].forEach(id=>{const box=$(id);if(!box)return;const old=box.querySelector('.dev-status');if(old)old.remove();if(on&&DEV.kind==='phone')box.prepend(devStatus())})}
+function openDevice(kind){DEV.kind=kind;DEV.app=false;document.body.classList.remove('dev-phone','dev-laptop');document.body.classList.add('dev-on','dev-'+kind);try{keysDown.clear()}catch(e){}
+  if(kind==='laptop')laptopDesk();else{openPhone()}devFrame(true)}
+function endDevice(){DEV.kind=null;DEV.app=false;document.body.classList.remove('dev-on','dev-phone','dev-laptop');devFrame(false)}
+function laptopDesk(){DEV.app=false;const L=laptopItems().filter(x=>x.go!=='phone');const ic={desk:'✉',news:'▤',campaign:'✪',budget:'$',power:'⚖',pop:'◔'};
+  openModal(`${S.mayor.name.split(' ')[0]}'s laptop · ${dateStr()}`,'Desktop',`<div class="lapgrid">${L.map(x=>`<button class="lapapp" data-lapgo="${x.go}"><span class="lapic">${ic[x.go]||'◆'}</span><b>${x.t}</b><small>${x.d}</small></button>`).join('')}
+    <button class="lapapp" data-lapgo="phone"><span class="lapic">☎</span><b>Pick up your phone</b><small>Calls and meetings</small></button></div>`,true);devFrame(true)}
+function lapOpen(go){DEV.app=true;const R={desk:()=>openDesk(),news:()=>openNews(),campaign:()=>openHQ(),budget:()=>openBudget(),power:()=>openPower(),pop:()=>openPop()};
+  if(go==='phone'){onClose=null;closeModal();openDevice('phone');return}
+  onClose=null;closeModal();try{R[go]&&R[go]()}catch(e){console.warn(e)}devFrame(true)}
+document.addEventListener('click',e=>{const b=e.target.closest('[data-lapgo]');if(!b||!S)return;e.preventDefault();e.stopImmediatePropagation();lapOpen(b.dataset.lapgo)},true);
+// closing an app returns to the desktop; closing the device returns you to where you were
+function devAfterClose(){setTimeout(()=>{if(!DEV.kind)return;if(modalOpen||!$('panel').hidden){devFrame(true);return}
+  if(DEV.kind==='laptop'&&DEV.app){laptopDesk();return}endDevice()},0)}
+{const _cm=closeModal;closeModal=function(...a){const r=_cm.apply(this,a);devAfterClose();return r}}
+{const _cp=closePanel;closePanel=function(...a){const r=_cp.apply(this,a);if(DEV.kind)devAfterClose();return r}}
+{const _om=openModal;openModal=function(...a){const r=_om.apply(this,a);if(DEV.kind)devFrame(true);return r}}
+// a meeting means leaving the house
+{const _pm=phMeet;phMeet=function(kind,id){if(phMeetWhy(kind,id))return;if(window.BCInterior&&BCInterior.isOpen){endDevice();onClose=null;try{closeModal()}catch(e){}BCInterior.close();setTimeout(()=>{_pm(kind,id);try{onClose=null;closeModal()}catch(e){}},50);return}return _pm(kind,id)}}
 function openLedger(){const L=S.log||[];openPanel('Everything that has happened, newest first','Ledger',L.length?`<div class="logl">${L.map(x=>`<div><span>${x.d}</span><p style="margin:0">${x.t}</p></div>`).join('')}</div>`:'<p class="note">Nothing yet. Start the clock with Space or ▶.</p>','ledger')}
 function openPolicies(){const ks=Object.keys(POLICIES);
   openPanel('Ongoing programs you control','Your initiatives',`<p>Mid-year, these are paid from the reserve fund. In April they go into the budget you send the council.</p>
@@ -5909,7 +5959,7 @@ window.claude?.hot?.snapshot?.(()=>({S}));
 window.claude?.hot?.ready?window.claude.hot.ready(start):start(window.claude?.hot?.data??{});
 </script>
 <script src="home-renderer.js?v=26.11"></script>
-<script src="home-interior.js?v=26.19"></script>
+<script src="home-interior.js?v=26.20"></script>
 <script src="city-life.js?v=26.4"></script>
 <script src="city-flow.js?v=26.16"></script>
 <script src="music.js?v=25"></script>

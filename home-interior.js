@@ -197,13 +197,13 @@
       <aside id="hi-panel" hidden aria-label="Furnish your home"><div class="hi-panel-title"><h2>Make yourself at home</h2><button id="hi-panel-close" aria-label="Close furniture shop">×</button></div><nav id="hi-tabs" aria-label="Furniture categories"></nav><div id="hi-panel-body"></div></aside>`;
     document.body.appendChild(host);document.body.classList.add('inside-home');canvas=$('hi-view');renderer=root.BCHomeRenderer.create(canvas);canvas=renderer.canvas||canvas;scene=geometry(h);renderer.setScene(scene);resize();$('hi-cash').textContent=money(s.purse.cash)+' personal';$('hi-exit').focus();
     host.addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;const d=b.dataset;
-      if(b.id==='hi-exit'){exit();return;}if(b.id==='hi-phone'){exit('phone');return;}if(d.hiGo){exit(d.hiGo);return;}if(d.hiRead&&adapter.read){books(adapter.read(d.hiRead));return;}if(b.id==='hi-furnish'){panel();return;}if(b.id==='hi-panel-close'){$('hi-panel').hidden=true;$('hi-furnish').focus();return;}
+      if(b.id==='hi-exit'){exit();return;}if(b.id==='hi-phone'){if(adapter.device){keys.clear();stick={x:0,y:0};adapter.device('phone')}else exit('phone');return;}if(d.hiGo){exit(d.hiGo);return;}if(d.hiRead&&adapter.read){books(adapter.read(d.hiRead));return;}if(b.id==='hi-furnish'){panel();return;}if(b.id==='hi-panel-close'){$('hi-panel').hidden=true;$('hi-furnish').focus();return;}
       if(d.hiTab){tab=d.hiTab;panel();return;}if(d.hiBuy){select(d.hiBuy);return;}if(d.hiMove){const i=h.items.find(x=>x.uid===+d.hiMove);if(i)select(i.type,i.uid);return;}
       if(d.hiStore){const i=h.items.find(x=>x.uid===+d.hiStore);if(i)i.stored=true;persist();panel();say('Stored. You can place it again for free.');return;}
       if(d.hiWall!==undefined||d.hiFloor!==undefined){if(d.hiWall!==undefined)h.wall=+d.hiWall;else h.floor=+d.hiFloor;persist();panel();return;}
       if(b.id==='hi-rotate'){selection.r=(selection.r+1)%4;dirty=true;}if(b.id==='hi-cancel')cancel();
       if(b.id==='hi-place'&&selection){const result=transact(s,draft(),p);if(result.ok){h=s.interior;cancel();persist();say(result.cost?'Placed · '+money(result.cost)+' from personal money.':'Furniture moved.');}else say(result.message);}
-      if(b.id==='hi-use'){const item=h.items.find(i=>i.uid===+b.dataset.uid);if(item){const use=ITEMS[item.type].use;if(use==='rest')say('A quiet moment at home. City time stays paused while you rest.');else if(use==='laptop')laptop();else if(use==='news'&&adapter.tv)tv();else if(use==='books'&&adapter.books)books();else exit(use);}}
+      if(b.id==='hi-use'){const item=h.items.find(i=>i.uid===+b.dataset.uid);if(item){const use=ITEMS[item.type].use;if(use==='rest')say('A quiet moment at home. City time stays paused while you rest.');else if(use==='laptop'){if(adapter.device){keys.clear();stick={x:0,y:0};adapter.device('laptop')}else laptop();}else if(use==='news'&&adapter.tv)tv();else if(use==='books'&&adapter.books)books();else exit(use);}}
     });
     canvas.addEventListener('webglcontextlost',()=>say('Graphics paused. Leave and re-enter your home to restore the view.'));
     canvas.addEventListener('pointerdown',e=>{if(e.button!==0)return;canvas.setPointerCapture(e.pointerId);look={id:e.pointerId,x:e.clientX,y:e.clientY};});
@@ -215,7 +215,7 @@
     for(const event of ['pointerup','pointercancel','lostpointercapture'])pad.addEventListener(event,()=>{padId=null;stick={x:0,y:0};$('hi-stick-knob').style.transform='translate(0,0)';});
     root.addEventListener('resize',resize);root.addEventListener('blur',resetControls);document.addEventListener('visibilitychange',resetControls);last=performance.now();dirty=true;raf=requestAnimationFrame(frame);adapter.save();
   }
-  root.addEventListener('keydown',e=>{if(!active)return;if(e.key==='Tab'){const buttons=[...host.querySelectorAll('button')].filter(b=>!b.disabled&&b.getClientRects().length);if(e.shiftKey&&document.activeElement===buttons[0]){e.preventDefault();buttons.at(-1).focus();}else if(!e.shiftKey&&document.activeElement===buttons.at(-1)){e.preventDefault();buttons[0].focus();}e.stopImmediatePropagation();return;}
+  root.addEventListener('keydown',e=>{if(!active||document.body.classList.contains('dev-on'))return;if(e.key==='Tab'){const buttons=[...host.querySelectorAll('button')].filter(b=>!b.disabled&&b.getClientRects().length);if(e.shiftKey&&document.activeElement===buttons[0]){e.preventDefault();buttons.at(-1).focus();}else if(!e.shiftKey&&document.activeElement===buttons.at(-1)){e.preventDefault();buttons[0].focus();}e.stopImmediatePropagation();return;}
     e.stopImmediatePropagation();if(['Enter',' '].includes(e.key)&&e.target.tagName==='BUTTON')return;e.preventDefault();
     if(e.key==='Escape'){if(selection)cancel();else if(!$('hi-panel').hidden)$('hi-panel').hidden=true;else exit();return;}
     if($('hi-panel').hidden)keys.add(e.key.toLowerCase());
