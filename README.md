@@ -4,6 +4,11 @@ A city-management game set in Memphis, Tennessee. You play the mayor. You handle
 
 **Play it:** https://erndae.github.io/Bluff-city-mayor/ (once GitHub Pages is turned on, see below)
 
+## v26.33: Actions come from your Inside Game, and every skill has a job
+
+- **Actions per month = 3 + Inside Game bonus:** +1 at Inside Game 8, +2 at 12, +3 at 16 (up to 6 a month). Leveling up mid-month gives you the extra action right away. Character creation shows how many actions your build gets.
+- **Each skill has a clear benefit:** Dealmaking (one-on-one persuasion, meetings), Money Smarts (fundraisers and donor calls raise more, city revenue), Inside Game (more actions, pressure, memos), Safe Streets (crime), Education (every skill grows 4% faster per point above 8, school results), Star Power (speeches, festivals, debates, faster name recognition, votes).
+
 ## v26.32: A first-month checklist, Memphis events, and an opponent who fights back
 
 - **Getting started checklist.** A new, visible checklist walks candidates through the first month: platform, campaign manager, start the clock, knock doors, call donors, speak out, meet leaders, fundraiser, poll, first ad, endorsement. It shows as a chip under "This week" on phones, a card in the City hub and on your desk, and a full list with "Show me" buttons. Hide it any time; bring it back from the Guide.
