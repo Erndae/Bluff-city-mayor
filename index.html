@@ -326,6 +326,7 @@ button.brand:hover .bm-ic,button.brand:focus-visible .bm-ic{border-color:var(--a
 @media (max-width:560px){.phrow{grid-template-columns:auto 1fr}.phbtns{grid-column:1/-1}.phbtns .btn{flex:1}.phwhere{grid-column:1/-1}}
 .phbtns .btn[disabled]{opacity:1;background:transparent;color:var(--muted);border:1px dashed var(--line);cursor:not-allowed}.phout{border:1px solid var(--bad);background:rgba(232,100,79,.12);border-radius:8px;padding:10px 12px;margin-bottom:10px;font-size:13.5px}
 .hqtabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px}.hqtabs button{flex:none}
+.goflash{animation:goflash 1.6s ease-out}@keyframes goflash{0%{box-shadow:0 0 0 3px var(--amber)}100%{box-shadow:0 0 0 0 transparent}}
 .phic{width:40px;height:40px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:18px;color:#13212d}
 
 /* phone and laptop frames */
@@ -647,7 +648,7 @@ details.analysis{margin-top:6px}details.analysis summary{cursor:pointer;color:va
     <button class="btn primary" data-act="pause" id="bPlay"><svg class="ico" viewBox="0 0 12 12" aria-hidden="true"><path d="M3.2 1.6v8.8l7.2-4.4z" fill="currentColor"/></svg> Resume <kbd>Space</kbd></button>
   </nav>
   <div class="status" id="status">Loading map…</div>
-  <div class="credit"><span class="ver" id="verTag">v26.21</span></div>
+  <div class="credit"><span class="ver" id="verTag">v26.22</span></div>
   <div class="tip" id="tip" hidden></div>
   <div class="toast" id="toast" role="status"></div>
   <section class="panel" id="panel" hidden aria-live="polite">
@@ -675,7 +676,7 @@ details.analysis{margin-top:6px}details.analysis summary{cursor:pointer;color:va
         <button class="btn" data-music-open>Music &amp; volume</button>
       </div>
       <div id="slotList" hidden></div>
-      <p class="note startv">Version <b class="ver" id="verStart">v26.21</b></p>
+      <p class="note startv">Version <b class="ver" id="verStart">v26.22</b></p>
     </div>
     <div class="startbox create" id="create" hidden>
       <h2>Create your mayor</h2>
@@ -1414,7 +1415,7 @@ function expire(s,report){const now=s.y*12+s.m;
 
 // ======================= CALENDAR =======================
 // ---- real-time clock: days tick by, events arrive mid-month, the month closes on its last day ----
-const SPEEDS=[0,1,3,6,12,24]; // days per real second at speeds 1-5
+const SPEEDS=[0,0.35,1,3,8,20]; // days per real second at speeds 1-5
 function daysIn(y,m){return new Date(y,m,0).getDate()}
 function dateStr(){return`${S.day} ${MONTHS[S.m-1]} ${S.y}`}
 function logIt(t){S.log=S.log||[];S.log.unshift({d:dateStr(),t});if(S.log.length>120)S.log.length=120}
@@ -1483,7 +1484,7 @@ function enact(s,p){DIVS.forEach(d=>{s.enacted[d.id]=p.divs[d.id];s.ratio[d.id]=
 // Voter groups. Each has a share of residents, turnout, home districts, concerns and an approval of you.
 // Citywide approval is the turnout-weighted average of the groups; each council district's approval comes from the groups that live there.
 // Shares, district mix and turnout are modeled, loosely grounded in Memphis demographics; they are not survey data.
-const VERSION='v26.21';
+const VERSION='v26.22';
 const GROUPS=[
  {id:'working',sh:'Working families',n:'Working families',ic:'⚒︎',c:'#f2a93b',share:24,turn:.5,start:56,w:{jobs:1,safety:.8,transit:.5},
   d:'Hourly workers in logistics, warehouses, health care and service jobs. The biggest bloc in the city.',dm:{1:1.1,2:.8,3:1.3,4:1.2,5:.6,6:1.2,7:1.1}},
@@ -2828,14 +2829,14 @@ function moneyMonth(report,paid){const m=S.mfOp||{rev:0,spend:0,bonds:0,upkeep:0
   S.mf={r0:S.reserve};if(S.camp)S.camp.mf={};S.purse.mf={}}
 function openFinances(){const H=S.moneyHist||[],L=H[H.length-1],st=payStub();closePanel();const row=(n,v,f)=>`<div><span>${n}</span><b style="color:${v>0.0001?'var(--good)':v<-0.0001?'var(--bad)':''}">${f(v)}</b></div>`;
   const sM=v=>Math.abs(v)<0.05?'$0.0M':(v>=0?'+':'−')+fmtM(Math.abs(v)),sK=v=>Math.abs(v)<0.5?'$0K':(v>=0?'+':'−')+fmtK(Math.abs(v));
-  openModal(L?`Last closed month: ${L.d}`:'No month has closed yet','Your three accounts',`
-   <p class="note"><a href="#" data-act="outlook">Budget outlook: 12-month reserve forecast →</a></p><p class="note">Money never moves between the city and your campaign. Your own money can go to your campaign (capped), never the other way.</p>
+  openModal(L?`Last closed month: ${L.d}`:'No month has closed yet','Money',`
+   <p class="note"><a href="#" data-act="outlook">Budget outlook: 12-month reserve forecast →</a></p><p class="note">Your money and your campaign's money are yours to spend. The city's money is separate: it never moves to you or your campaign. Your own money can go to your campaign (capped), never the other way.</p>
    <div class="acct3">
-    <div class="facts"><h4>City treasury</h4><div class="big">${fmtM(S.reserve)}</div><p class="note">The reserve fund. Pays for city services, projects and staff. Fed by city revenue and bonds.</p>
+    <div class="facts" style="order:3"><h4>City treasury · not your money</h4><p class="note" style="margin:0 0 4px">${inOffice()?"The city's money. As mayor you manage it, but it isn't yours.":"The city's money. The mayor manages it; you can't touch it as a candidate."}</p><div class="big">${fmtM(S.reserve)}</div><p class="note">The reserve fund. Pays for city services, projects and staff. Fed by city revenue and bonds.</p>
      ${L?`<div class="opl">${row('Revenue',L.city.rev,sM)}${row('Operating costs',-L.city.ops,sM)}${row('Bond payments',-L.city.bonds,sM)}${row('Project upkeep',-L.city.upkeep,sM)}${row('Construction payments',-L.city.construction,sM)}${row('One-time decisions',L.city.oneTime,sM)}${row('Change this month',L.city.total,sM)}</div>`:''}</div>
-    <div class="facts"><h4>Campaign fund</h4><div class="big">${fmtK(S.camp?S.camp.cash:0)}</div><p class="note">Pays for ads, rallies, campaign staff, polling and outreach. Fed by donations, fundraisers and limited personal money.</p>
+    <div class="facts" style="order:2"><h4>Your campaign fund</h4><div class="big">${fmtK(S.camp?S.camp.cash:0)}</div><p class="note">Pays for ads, rallies, campaign staff, polling and outreach. Fed by donations, fundraisers and limited personal money.</p>
      ${L?`<div class="opl">${row('Small donations',L.camp.small||0,sK)}${row('Fundraisers',L.camp.events||0,sK)}${row('Major donors',L.camp.donors||0,sK)}${row('Your own money',L.camp.self||0,sK)}${row('Ads',-(L.camp.ads||0),sK)}${row('Organizers',-(L.camp.org||0),sK)}${row('Field offices',-(L.camp.off||0),sK)}${row('Polls',-(L.camp.polls||0),sK)}${row('Rallies',-(L.camp.rally||0),sK)}</div>`:''}</div>
-    <div class="facts"><h4>Personal money</h4><div class="big">${$0(S.purse.cash)}</div><p class="note">Your salary, minus your own rent or mortgage, utilities, food and getting around. Also for optional clothes, or a capped contribution to your campaign.</p>
+    <div class="facts" style="order:1"><h4>Your personal money</h4><div class="big">${$0(S.purse.cash)}</div><p class="note">Your salary, minus your own rent or mortgage, utilities, food and getting around. Also for optional clothes, or a capped contribution to your campaign.</p>
      ${L?`<div class="opl">${row('Take-home pay',L.purse.salary||0,$0)}${row('Household bills',-(L.purse.bills||0),$0)}${row('Moving and closing costs',-(L.purse.move||0),$0)}${row('Credit card interest',-(L.purse.interest||0),$0)}${row('Purchases',-(L.purse.buy||0),$0)}${row('To your campaign',-(L.purse.xfer||0),$0)}</div>`:''}<p class="note"><a href="#" data-act="household">Your household: home, bills and where you live →</a></p></div></div>
    <div class="facts"><h4>Your paycheck</h4><div class="opl"><div><span>Salary: $170,817 a year, ÷ 12</span><b>${$$(st.g)}</b></div>${st.ded.map(x=>`<div><span>${x.n}</span><b>−${$$(x.v)}</b></div>`).join('')}<div><span><b>Take-home each month</b></span><b>+${$$(st.net)}</b></div></div>
     <p class="note">Tennessee has no state income tax on wages.</p></div>
@@ -5378,7 +5379,30 @@ function hqApplyTabs(){const body=$('mBody');if(!body||$('mTitle').textContent.i
 document.addEventListener('click',e=>{const b=e.target.closest('[data-hqtab]');if(!b)return;e.preventDefault();e.stopImmediatePropagation();HQ_TAB=b.dataset.hqtab;const ex=$('mBody').querySelector('.hqextra');if(ex)ex.remove();hqApplyTabs();$('mBody').scrollTop=0},true);
 // the manager's suggestions open the right tab
 function hqTabFor(t){return/door/i.test(t)?'voters':/poll/i.test(t)?'voters':/money|donor|fundrais/i.test(t)?'money':/\bads?\b|attack|air/i.test(t)?'ads':/office|organizer/i.test(t)?'field':/endorse/i.test(t)?'endorse':/debate/i.test(t)?'debates':null}
-{const _cs=campStrategy;campStrategy=function(...a){const P=_cs.apply(this,a);if(P&&P.moves)P.moves.forEach(m=>{const g=m.go,tab=hqTabFor(m.t);if(tab)m.go=()=>{HQ_TAB=tab;g&&g()}});return P}}
+{const _cs=campStrategy;campStrategy=function(...a){const P=_cs.apply(this,a);if(P&&P.moves)P.moves.forEach(m=>{const g=m.go,tab=hqTabFor(m.t);if(tab)m.go=()=>{const sec={voters:/door/i.test(m.t)?'#hq-doors':'#hq-poll',money:'#hq-money',ads:'#hq-ads',field:/office/i.test(m.t)?'#hq-offices':'#hq-staff',endorse:'#hq-endorse',debates:'#hq-debates'}[tab];goSection(()=>{g&&g()},sec,tab)}});return P}}
+// re-rendering the same screen after an action keeps your place instead of jumping to the top
+{const _om=openModal;openModal=function(sub,title,...rest){const same=modalOpen&&$('mTitle').textContent===title,y=same?$('mBody').scrollTop:0;const r=_om.call(this,sub,title,...rest);if(same)$('mBody').scrollTop=y;return r}}
+{const _op=openPanel;openPanel=function(sub,title,...rest){const same=!$('panel').hidden&&$('pTitle').textContent===title,y=same?$('pBody').scrollTop:0;const r=_op.call(this,sub,title,...rest);if(same)$('pBody').scrollTop=y;return r}}
+// ---------- go straight to the thing you picked ----------
+// Open a screen, then scroll to the section whose heading (or id) matches, and flash it.
+function goSection(open,match,tab){if(tab)HQ_TAB=tab;try{open()}catch(e){console.warn(e);return}
+  setTimeout(()=>{const root=modalOpen?$('mBody'):$('pBody');if(!root)return;let el=null;
+    if(match&&match[0]==='#')el=root.querySelector(match);
+    if(!el&&match){const re=new RegExp(match.replace(/^#/,''),'i');el=[...root.querySelectorAll('.facts')].find(f=>!f.hidden&&re.test((f.querySelector('h4')||{}).textContent||''))}
+    if(!el)return;el.scrollIntoView({block:'start',behavior:'smooth'});el.classList.remove('goflash');void el.offsetWidth;el.classList.add('goflash')},60)}
+{const _br=bankRows;bankRows=function(){const R=_br();const T={
+   'Knock doors':()=>goSection(openHQ,'#hq-doors','voters'),
+   'Meet community leaders':()=>goSection(openCandActions,'Meet community leaders'),
+   'Speak out on an issue':()=>goSection(openCandActions,'Speak out'),
+   'Grassroots fundraiser':()=>goSection(openHQ,'#hq-money','money'),
+   'Major-donor dinner':()=>goSection(openHQ,'#hq-money','money'),
+   'Ask for an endorsement':()=>goSection(openHQ,'#hq-endorse','endorse'),
+   'Practice for the debates':()=>goSection(openHQ,'#hq-debates','debates'),
+   'Polls and ads':()=>goSection(openHQ,'#hq-ads','ads'),
+   'Town halls':()=>goSection(openActions,'Hold a town hall'),
+   'Executive orders':()=>goSection(openActions,'Executive orders'),
+   'Campaign door to door':()=>goSection(openHQ,'#hq-doors','voters')};
+  R.forEach(r=>{if(T[r.name])r.go=T[r.name]});return R}}
 function openLedger(){const L=S.log||[];openPanel('Everything that has happened, newest first','Ledger',L.length?`<div class="logl">${L.map(x=>`<div><span>${x.d}</span><p style="margin:0">${x.t}</p></div>`).join('')}</div>`:'<p class="note">Nothing yet. Start the clock with Space or ▶.</p>','ledger')}
 function openPolicies(){const ks=Object.keys(POLICIES);
   openPanel('Ongoing programs you control','Your initiatives',`<p>Mid-year, these are paid from the reserve fund. In April they go into the budget you send the council.</p>
