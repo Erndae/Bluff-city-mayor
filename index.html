@@ -649,7 +649,7 @@ details.analysis{margin-top:6px}details.analysis summary{cursor:pointer;color:va
     <button class="btn primary" data-act="pause" id="bPlay"><svg class="ico" viewBox="0 0 12 12" aria-hidden="true"><path d="M3.2 1.6v8.8l7.2-4.4z" fill="currentColor"/></svg> Resume <kbd>Space</kbd></button>
   </nav>
   <div class="status" id="status">Loading map…</div>
-  <div class="credit"><span class="ver" id="verTag">v26.23</span></div>
+  <div class="credit"><span class="ver" id="verTag">v26.24</span></div>
   <div class="tip" id="tip" hidden></div>
   <div class="toast" id="toast" role="status"></div>
   <section class="panel" id="panel" hidden aria-live="polite">
@@ -677,7 +677,7 @@ details.analysis{margin-top:6px}details.analysis summary{cursor:pointer;color:va
         <button class="btn" data-music-open>Music &amp; volume</button>
       </div>
       <div id="slotList" hidden></div>
-      <p class="note startv">Version <b class="ver" id="verStart">v26.23</b></p>
+      <p class="note startv">Version <b class="ver" id="verStart">v26.24</b></p>
     </div>
     <div class="startbox create" id="create" hidden>
       <h2>Create your mayor</h2>
@@ -1485,7 +1485,7 @@ function enact(s,p){DIVS.forEach(d=>{s.enacted[d.id]=p.divs[d.id];s.ratio[d.id]=
 // Voter groups. Each has a share of residents, turnout, home districts, concerns and an approval of you.
 // Citywide approval is the turnout-weighted average of the groups; each council district's approval comes from the groups that live there.
 // Shares, district mix and turnout are modeled, loosely grounded in Memphis demographics; they are not survey data.
-const VERSION='v26.23';
+const VERSION='v26.24';
 const GROUPS=[
  {id:'working',sh:'Working families',n:'Working families',ic:'⚒︎',c:'#f2a93b',share:24,turn:.5,start:56,w:{jobs:1,safety:.8,transit:.5},
   d:'Hourly workers in logistics, warehouses, health care and service jobs. The biggest bloc in the city.',dm:{1:1.1,2:.8,3:1.3,4:1.2,5:.6,6:1.2,7:1.1}},
@@ -2596,6 +2596,7 @@ const DONORS={
  realtors:{n:'Memphis Area Realtors PAC',g:'owners',amt:[35,60],exp:'Don\'t raise fines on out-of-town landlords',check:s=>!(s.laws||{}).landlord},
  educators:{n:'Educators for Memphis Kids',g:'parents',amt:[25,45],exp:'Fund tutoring or extended library hours within 6 months',check:s=>!!(s.policies.tutors||s.policies.libHours)||nowM()-(s.camp.donors.educators||{}).when<6},
 };
+function donorReady(){return Object.entries(DONORS).some(([id,D])=>{const st=S.camp.donors[id];return(!st||st.status==='given'&&nowM()-st.when>=6)&&S.groups[D.g].app>=42&&!(st&&st.status==='broken')})}
 function openDonorOffer(){const pool=Object.entries(DONORS).filter(([id,D])=>{const st=S.camp.donors[id];return(!st||st.status==='given'&&nowM()-st.when>=6)&&S.groups[D.g].app>=42&&!(st&&st.status==='broken')});
   if(!pool.length){toast('No major donors are interested right now. Raise your standing with their communities first.');return null}
   const[id,D]=pool.sort((a,b)=>S.groups[b[1].g].app-S.groups[a[1].g].app)[Math.floor(Math.random()*Math.min(3,pool.length))];
@@ -2728,7 +2729,7 @@ function openHQ(){campInit(S);const C=S.camp,R=S.rival,rc=R?R.camp:{};const e=el
     <div class="row"><button class="btn" data-act="poll" data-k="city" ${C.cash<20?'disabled':''}>Citywide poll · −$20K</button><button class="btn" data-act="poll" data-k="dist" ${C.cash<60?'disabled':''}>Citywide + all 7 districts · −$60K</button></div></div>
    <div class="facts"><h4>Raise money</h4><div class="choices">
     <button class="choice" data-act="fundraiser" ${S.slots<=0||cdLeft('fr_small',1)?'disabled':''}><b>Grassroots fundraiser</b><small>Uses 1 action · small donors give more when your supporters are fired up (about +${fmtK(Math.round(10+enthusiasm()*3))}) · once a month</small></button>
-    <button class="choice" data-act="donordinner" ${S.slots<=0||cdLeft('fr_big',2)?'disabled':''}><b>Major-donor dinner</b><small>Uses 1 action · a PAC or donor network offers a big check, with expectations attached · every 2 months</small></button>
+    <button class="choice" data-act="donordinner" ${S.slots<=0||cdLeft('fr_big',2)||!donorReady()?'disabled':''}><b>Major-donor dinner</b><small>Uses 1 action · a PAC or donor network offers a big check, with expectations attached · every 2 months${!donorReady()?' · <b style="color:var(--warn)">No donor network will back you yet. Get one community above 42% support first.</b>':''}</small></button>
     <button class="choice" data-act="selffund" ${S.purse.cash<1000||C.personal>=25000?'disabled':''}><b>Put in your own money</b><small>Move up to $5,000 at a time from your personal account (${'$'+Math.round(S.purse.cash).toLocaleString()}). Limit: $25,000 total (${'$'+C.personal.toLocaleString()} so far). It's on the public record.</small></button></div>
     ${Object.keys(C.donors).length?`<div class="dlist" style="margin-top:6px">${Object.entries(C.donors).map(([id,st])=>`<div class="drow" style="cursor:default;grid-template-columns:minmax(0,1fr) auto"><span>${DONORS[id].n} <small>· +${fmtK(st.amt)} · expects: ${DONORS[id].exp.toLowerCase()}</small></span><b style="color:${st.status==='broken'?'var(--bad)':DONORS[id].check(S)?'var(--good)':'var(--warn)'}">${st.status==='broken'?'switched sides':st.status==='declined'?'declined':DONORS[id].check(S)?'satisfied':'unhappy'}</b></div>`).join('')}</div>`:''}</div>
    <div class="facts"><h4>Ads</h4><p class="note">Ads amplify your record; they can't invent one. Promote things you've done, defend the attacks on you, or go after your opponent. Running the same ad again works half as well. Ads matter most in the last three months${adTiming()<1?` (right now they work at ${Math.round(adTiming()*100)}%)`:''}.</p>
@@ -3899,12 +3900,12 @@ function histAdd(m,how){return reignEnd(how,m)}
 function newCouncilFace(k){const m=S.council[k];if(!m)return;const g=Math.random()<.5?'f':'m';const pk=a=>a[Math.floor(Math.random()*a.length)];
   m.name=`${pk(NEWNAMES[g])} ${pk(NEWNAMES.l)}`;m.g=g;m.age=34+Math.floor(Math.random()*25);m.traits=[pk(Object.keys(TRAITS))];m.mods=[{t:'New to the council',v:0,perm:true}];m.favors=0;m.hook=null;m.look=null;m.limited=false;
   if(S.rel)for(const key in S.rel){const[a,b]=key.split('-').map(Number);if(a===k||b===k)delete S.rel[key]}}
-function becomeMayor(ch,how){const wasCand=isCand();if(!wasCand)histAdd(S.mayor,how);S.promises=null;S._pp=null;S.inc=null;const pk=a=>a[Math.floor(Math.random()*a.length)];
+function becomeMayor(ch,how){const wasCand=isCand();if(!wasCand)histAdd(S.mayor,how);S.promises=null;S._pp=null;if(!wasCand)S.inc=null;const pk=a=>a[Math.floor(Math.random()*a.length)];
   if(ch.k!=null&&ch.k>=0)newCouncilFace(ch.k);if(ch.staff){replaceStaff(ch.staff,true)}
   const sk={};['dip','stew','intr','safe','learn','cha'].forEach(k=>sk[k]=5+Math.floor(Math.random()*6));
   S.purse={cash:30000+Math.round(Math.random()*30000),owned:{},paid:0,subs:{},bcd:{}};S.home=null;homeInit(S);
   S.mayor={name:ch.name,g:ch.g||'m',age:ch.age||50,ptSkin:Math.floor(Math.random()*8),ptHair:Math.floor(Math.random()*5),ptStyle:0,ptGlasses:Math.random()<.3,look:defaultLook(ch.g||'m'),frame:'#f2a93b',traits:[],skills:sk,xp:{},trained:-99,focus:pk(['dip','stew','cha','safe'])};
-  GROUPS.forEach(g=>{const G=S.groups[g.id];G.app=clamp(G.app*0.5+26,25,75)});freshTerm(how);if(wasCand&&S.reign){S.reign.ai=false;S.reign.terms=(S.reign.terms||1)+1;S.reign.face=legacyFace(S.mayor)}else reignStart(S.mayor,false);onClose=null;closeModal();
+  GROUPS.forEach(g=>{const G=S.groups[g.id];G.app=clamp(G.app*0.5+26,25,75)});freshTerm(how);S.inc=null;if(wasCand&&S.reign){S.reign.ai=false;S.reign.terms=(S.reign.terms||1)+1;S.reign.face=legacyFace(S.mayor)}else reignStart(S.mayor,false);onClose=null;closeModal();
   openModal(`January 1, ${S.y}`,`Mayor ${S.mayor.name}`,`<p>You now play as <b>${S.mayor.name}</b>, Memphis's new mayor. The term runs to ${S.elY+1}; the next election is October ${S.elY}.</p>
    <div class="facts"><h4>Mayors of Memphis in this game</h4><ul>${(S.history||[]).map(h=>`<li>${h.name}, until ${h.to} (${h.how})${h.grade&&h.grade!=='–'?` · grade <b style="color:${GRADE_C[h.grade]}">${h.grade}</b>`:''}</li>`).join('')}<li><b>${S.mayor.name}</b>, from ${S.y}</li></ul><div class="row"><button class="btn" data-act="legacy">See every mayor's record</button></div></div>
    <p>Start by making three promises. Press Space when you're ready.</p><div class="row"><button class="btn primary" data-act="promises">Make your promises</button></div>`,true)}
@@ -4525,7 +4526,7 @@ function nextSteps(){const out=[];if(!S||!S.started||S.over)return out;const add
   try{
   if(isCand()){const C=S.camp||{};
     if(!S.promises)add(100,'Pick your platform','Three planks you\'ll campaign on.',()=>openPromises());
-    S.events.filter(e=>e.kind==='char').forEach(e=>add(95,'Answer: '+(CHAR_TYPES[e.type]?CHAR_TYPES[e.type].title(e):'a campaign event'),'Forums and debates move voters.',()=>openDesk()));
+    S.events.filter(e=>e.kind==='char').forEach(e=>add(95,'Answer: '+(CHAR_TYPES[e.type]?CHAR_TYPES[e.type].title(e):'a campaign event'),'Forums and debates move voters.',()=>openPlace(evAt(e))));
     if((C.cash||0)<60)add(80,'Raise money','Campaign HQ → Grassroots fundraiser or a donor dinner. Ads and organizers cost money.',()=>openHQ());
     const lp=(C.polls||[]).slice(-1)[0];if(!lp||now-(lp.m||0)>=3)add(70,'Run a poll','See where you stand against the mayor (Campaign HQ).',()=>openHQ());
     if(monthsToElection()<=4&&(C.cash||0)>=50)add(68,'Put ads on the air','Ads matter most in the last three months (Campaign HQ → Ads).',()=>openHQ());
@@ -4534,10 +4535,10 @@ function nextSteps(){const out=[];if(!S||!S.started||S.over)return out;const add
     if(S.slots>0)add(40,`${S.slots} action${S.slots===1?'':'s'} left this month`,'Meet a community group or knock doors (Actions).',()=>openActions());
     add(10,'Press ▶ and let time pass','The campaign moves day by day; the desk will flag what needs you.',()=>setPaused(false));
   }else if(inOffice()){
-    S.events.filter(e=>e.kind!=='budget'&&e.id!=='briefing'&&evLeftM(e)<=1).slice(0,2).forEach(e=>{let t='a decision';try{t=e.kind==='char'?CHAR_TYPES[e.type].title(e):evDef(e).title}catch(err){}add(100,'Decide before it expires: '+t,'Ignoring it costs you.',()=>{if(e.kind==='char'||e.kind==='request'||e.kind==='memo')openDesk();else openPlace(evAt(e))})});
+    S.events.filter(e=>e.kind!=='budget'&&e.id!=='briefing'&&evLeftM(e)<=1).slice(0,2).forEach(e=>{let t='a decision';try{t=evTitle(e)}catch(err){}add(100,'Decide before it expires: '+t,'Ignoring it costs you.',()=>{try{openPlace(evAt(e))}catch(err){openDesk()}})});
     if(S.events.some(e=>e.id==='briefing'))add(98,'Read your chief of staff\'s briefing','At City Hall.',()=>openPlace('cityhall'));
     if(!S.promises)add(99,'Make your three promises','They become your record on Election Day.',()=>openPromises());
-    if(S.stage==='draft')add(96,'Write and send your budget','The council votes in June. 7 votes to pass.',()=>openBudget());
+    if(S.stage==='draft')add(S.day>=15?102:99,'Write and send your budget','The council votes in June. 7 votes to pass.',()=>openBudget());
     if(sotcDue())add(90,'Give the State of the City','Pick three priorities for the year (T).',()=>openSotc());
     {let worst=null,age=0;for(const id in S.civic||{}){const c=S.civic[id];if(!c.out)continue;const a=now-(c.outSince??c.outM??now);if(a>=1&&a>age){age=a;worst=id}}if(worst)add(80,`Fix the problem at ${CIVMAP[worst].name}`,S.civic[worst].out,()=>openCivic(worst))}
     if(S.slots>0){let best=null,bv=999;for(let d=1;d<=7;d++){if(cdLeft('th'+d,ACT_CD.townhall))continue;const v=dApp(d);if(v<bv){bv=v;best=d}}if(best&&bv<42)add(70,`Hold a town hall in District ${best}`,`Your weakest district (${Math.round(bv)}% approve).`,()=>openDistrict(best,false))}
@@ -4776,7 +4777,7 @@ function bankRows(){const R=[];const add=(name,ready,when,go,note)=>R.push({name
     const gs=GROUPS.filter(g=>!cd('cg'+g.id,3)).length;add('Meet community leaders',gs>0&&sl,gs?`${gs} of 8 groups ready`:'Every group met recently',()=>openActions(),'Uses 1 action · each group every 3 months');
     const sp=cd('cspeak',1);add('Speak out on an issue',!sp,sp?`Again in ${sp} mo`:'Ready',()=>openActions(),'Once a month');
     const fr=cd('fr_small',1);add('Grassroots fundraiser',!fr&&sl,fr?`Again in ${fr} mo`:'Ready',()=>openHQ(),'Uses 1 action · once a month');
-    const dd=cd('fr_big',2);add('Major-donor dinner',!dd&&sl,dd?`Again in ${dd} mo`:'Ready',()=>openHQ(),'Uses 1 action · every 2 months');
+    const dd=cd('fr_big',2),dr=donorReady();add('Major-donor dinner',!dd&&sl&&dr,dd?`Again in ${dd} mo`:dr?'Ready':'No donors yet',()=>openHQ(),'Uses 1 action · every 2 months');
     add('Ask for an endorsement',sl&&S.m<7,S.m<7?'Ready':'Closed after June',()=>openHQ(),'Uses 1 action · before July');
     add('Practice for the debates',sl,(S.camp.prep||0)>=3?'Fully prepared':'Ready',()=>openHQ(),'Uses 1 action');
     add('Polls and ads',true,`$${Math.round(S.camp.cash)}K in campaign cash`,()=>openHQ(),'Cost money, not stops')}
@@ -4819,8 +4820,8 @@ function campStrategy(){const m=curMgr();if(!m||!S.camp)return null;const C=S.ca
   if(cand&&!cdLeft('cspeak',1))add(57,`Speak out on ${PRIO_LABEL[iss].toLowerCase()}`,`It's what ${wg?wg.n.toLowerCase():'the voters we need'} care about most.`,()=>openActions());
   if(sl&&(!cdLeft('fr_small',1)||!cdLeft('fr_big',2))&&(C.cash<(ph.id==='late'?150:250)))add(ph.id==='early'?66:52,'Raise money now',`We have $${Math.round(C.cash)}K. We'll want about $${ph.id==='late'?150:250}K for ads in the final months.`,()=>openHQ());
   if(S.m<7&&ph.id!=='early'&&sl&&Object.keys(C.seek||{}).length<3)add(63,'Ask for endorsements before July','Endorsements are decided July to September. Ask the groups closest to us now.',()=>openHQ());
-  if((ph.id==='late'||ph.id==='gotv')&&C.cash>=50)add(75,'Put ads on the air','This is when ads count most. Run our strongest message, and answer their attacks.',()=>openHQ());
-  if(S.rival&&S.rival.camp&&S.rival.camp.attack&&(S.rival.camp.ads||0)>0&&(ph.id==='late'||ph.id==='gotv'))add(68,'Answer their attack','They\'re hitting us on: '+S.rival.camp.attack.t+' A defense ad blunts it.',()=>openHQ());
+  if((ph.id==='late'||ph.id==='gotv')&&C.cash>=AD_COST.std&&adOptions().length)add(75,'Put ads on the air','This is when ads count most. Run our strongest message, and answer their attacks.',()=>openHQ());
+  if(S.rival&&S.rival.camp&&S.rival.camp.attack&&(S.rival.camp.ads||0)>0&&(ph.id==='late'||ph.id==='gotv')&&C.cash>=AD_COST.std)add(68,'Answer their attack','They\'re hitting us on: '+S.rival.camp.attack.t+' A defense ad blunts it.',()=>openHQ());
   if((ph.id==='late')&&closeD.length&&C.cash>=40)add(64,`Open an office in District ${closeD[0]}`,`It's a close race there. An office pays off most where it's tight.`,()=>openHQ());
   if((ph.id==='late'||ph.id==='gotv')&&C.organizers<3&&C.cash>=30)add(60,'Hire field organizers','They turn our supporters into voters, especially renters and young people.',()=>openHQ());
   if(S.m>=7&&S.m<=9&&mo<=4&&(C.prep||0)<3&&sl)add(66,'Practice for the debates','The debates are in September. Every practice widens your margin for error.',()=>openHQ());
@@ -5415,7 +5416,7 @@ function mgrTips(){const m=curMgr();if(!m||!S.camp)return[];const C=S.camp,sl=S.
   const doorsReady=[1,2,3,4,5,6,7].filter(d=>!cdLeft('kd'+d,2)).sort((a,b)=>dApp(a)-dApp(b));
   const grpReady=GROUPS.filter(g=>!cdLeft((cand?'cg':'g')+g.id,cand?3:ACT_CD.group)).sort((a,b)=>S.groups[a.id].app-S.groups[b.id].app);
   const lp=(C.polls||[]).slice(-1)[0],pollAge=lp?nowM()-(lp.m||0):99,ph=campPhase();
-  const fr=!cdLeft('fr_small',1),din=!cdLeft('fr_big',2);
+  const fr=!cdLeft('fr_small',1),din=!cdLeft('fr_big',2)&&donorReady();
   // specialty first
   if(m.id==='money'){if(sl&&fr)add(90,'Grassroots fundraiser is ready','Small donors give more when they feel part of it. Let\'s hold one this week.',()=>goSection(openHQ,'#hq-money','money'));
     if(sl&&din)add(85,'Book a major-donor dinner','One good dinner can fund a month of ads. Just watch the strings attached.',()=>goSection(openHQ,'#hq-money','money'));
@@ -5424,7 +5425,7 @@ function mgrTips(){const m=curMgr();if(!m||!S.camp)return[];const C=S.camp,sl=S.
     if((ph.id==='late'||ph.id==='gotv')&&C.organizers<3)add(82,'Hire field organizers','Organizers turn supporters into voters. This is when they count.',()=>goSection(openHQ,'#hq-staff','field'))}
   if(m.id==='media'){if(pollAge>=2)add(88,lp?`Our last poll is ${pollAge} months old`:'We need a poll','I can\'t tell our story without the numbers.',()=>goSection(openHQ,'#hq-poll','voters'));
     if(cand&&!cdLeft('cspeak',1))add(84,'Speak out this month','A clear message on one issue gets us on the evening news.',()=>goSection(openCandActions,'Speak out'));
-    if((ph.id==='late'||ph.id==='gotv')&&C.cash>=50)add(86,'Time to go on the air','Ads land hardest in the final months. Let\'s pick our strongest message.',()=>goSection(openHQ,'#hq-ads','ads'))}
+    if((ph.id==='late'||ph.id==='gotv')&&C.cash>=AD_COST.std&&adOptions().length)add(86,'Time to go on the air','Ads land hardest in the final months. Let\'s pick our strongest message.',()=>goSection(openHQ,'#hq-ads','ads'))}
   if(m.id==='coalition'){if(sl&&grpReady.length)add(90,`Sit down with ${grpReady[0].n.toLowerCase()}`,`They're at ${Math.round(S.groups[grpReady[0].id].app)}%. Their leaders can bring whole congregations and blocks with them.`,()=>cand?goSection(openCandActions,'Meet community leaders'):goSection(openActions,'Meet with community leaders'));
     if(sl&&S.m<7)add(84,'Ask for endorsements now','Groups decide July to September. Ask before they make up their minds.',()=>goSection(openHQ,'#hq-endorse','endorse'))}
   if(m.id==='debate'){if(sl&&(C.prep||0)<3)add(88,'Let\'s run debate prep','Every practice session widens our margin for error on stage.',()=>goSection(openHQ,'#hq-debates','debates'));
@@ -6069,7 +6070,7 @@ window.claude?.hot?.ready?window.claude.hot.ready(start):start(window.claude?.ho
 </script>
 <script src="home-renderer.js?v=26.11"></script>
 <script src="home-interior.js?v=26.21"></script>
-<script src="city-life.js?v=26.4"></script>
+<script src="city-life.js?v=26.24"></script>
 <script src="city-flow.js?v=26.16"></script>
 <script src="music.js?v=25"></script>
 </body>

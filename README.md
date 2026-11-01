@@ -4,6 +4,16 @@ A city-management game set in Memphis, Tennessee. You play the mayor. You handle
 
 **Play it:** https://erndae.github.io/Bluff-city-mayor/ (once GitHub Pages is turned on, see below)
 
+## v26.24: Playtest fixes
+
+Found by playing a full candidate race (March to Election Day, won) and nine months as mayor on a phone screen:
+- "Play as the winner" after losing as a candidate crashed the game every day; fixed.
+- "Answer: candidate forum" and "Decide before it expires" opened your desk, whose This-week card opened your desk again (a loop). Both now open the event itself. Expiring decisions no longer show the vague title "a decision".
+- The major-donor dinner looked ready but did nothing when no donor network would back you. It's now grayed out with the reason (a community needs to be above 42% support).
+- The manager no longer suggests ads or answering an attack when you can't afford an ad or have nothing on your record to run.
+- In April, "Write and send your budget" now outranks routine decisions after mid-month, so you don't miss it.
+- Result cards say "Your support", not "Approval", for candidates.
+
 ## v26.23: Action dots everywhere, and a manager who coaches you
 
 Any screen whose header says how many actions you have left now shows the action dots there too, red when you're out. Your campaign manager sends a short tip a few times a month (days 4, 8, 11, 19, 23 and 27), in their own voice and led by their specialty. Dana (money) flags fundraisers and low cash. Marcus (field) points to your weakest district to knock and to organizers late in the race. Priya (media) wants fresh polls, speeches and ads at the right time. Rev. Booker (coalition) points to community groups and endorsements. Elena (debate) books debate prep and practice speeches. Tapping a tip goes straight to that section. Their specialty tip also leads their pop-up plan, and their tips replace the generic Monday note so you aren't double-notified.
