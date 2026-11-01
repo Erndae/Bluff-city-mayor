@@ -4,6 +4,12 @@ A city-management game set in Memphis, Tennessee. You play the mayor. You handle
 
 **Play it:** https://erndae.github.io/Bluff-city-mayor/ (once GitHub Pages is turned on, see below)
 
+## v26.38: Memphis events are free, and you talk your way through them
+
+- Going to a Memphis event no longer uses an action. "Go and mingle" opens a two-part conversation: someone at the event (a pastor at MLK Day, a pitmaster at the barbecue contest, a nurse at the St. Jude Marathon) greets you, then a reporter asks about the issue that crowd cares about most.
+- Every answer is tied to a skill and shows your odds: Star Power (fire up the crowd, a quotable line), Dealmaking (handshakes, sharing credit), Education (listening, explaining your plan), Inside Game (staying on message), and Safe Streets or Money Smarts depending on the event. Pick the approach that fits your strengths.
+- A "How it went" card shows each answer, whether it worked and how much support you gained with the groups who were there. Two wins bring confetti and good press.
+
 ## v26.37: Free activities are short conversations, and next steps go straight to the thing
 
 - **Skill conversations.** Each free activity (speech coach, old dealmaker, City Hall insiders, the CFO, a professor, a police ride-along, donor calls) is a two-question conversation with a mentor. Pick how you'd answer; better answers teach you more (6 to 22 XP) and, for donor calls, raise more money. The clock pauses while you talk.

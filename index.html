@@ -678,7 +678,7 @@ details.analysis{margin-top:6px}details.analysis summary{cursor:pointer;color:va
     <button class="btn primary" data-act="pause" id="bPlay"><svg class="ico" viewBox="0 0 12 12" aria-hidden="true"><path d="M3.2 1.6v8.8l7.2-4.4z" fill="currentColor"/></svg> Resume <kbd>Space</kbd></button>
   </nav>
   <div class="status" id="status">Loading map…</div>
-  <div class="credit"><span class="ver" id="verTag">v26.37</span></div>
+  <div class="credit"><span class="ver" id="verTag">v26.38</span></div>
   <div class="tip" id="tip" hidden></div>
   <div class="toast" id="toast" role="status"></div>
   <section class="panel" id="panel" hidden aria-live="polite">
@@ -706,7 +706,7 @@ details.analysis{margin-top:6px}details.analysis summary{cursor:pointer;color:va
         <button class="btn" data-music-open>Music &amp; volume</button>
       </div>
       <div id="slotList" hidden></div>
-      <p class="note startv">Version <b class="ver" id="verStart">v26.37</b></p>
+      <p class="note startv">Version <b class="ver" id="verStart">v26.38</b></p>
     </div>
     <div class="startbox create" id="create" hidden>
       <h2>Create your mayor</h2>
@@ -1515,7 +1515,7 @@ function enact(s,p){DIVS.forEach(d=>{s.enacted[d.id]=p.divs[d.id];s.ratio[d.id]=
 // Voter groups. Each has a share of residents, turnout, home districts, concerns and an approval of you.
 // Citywide approval is the turnout-weighted average of the groups; each council district's approval comes from the groups that live there.
 // Shares, district mix and turnout are modeled, loosely grounded in Memphis demographics; they are not survey data.
-const VERSION='v26.37';
+const VERSION='v26.38';
 const GROUPS=[
  {id:'working',sh:'Working families',n:'Working families',ic:'⚒︎',c:'#f2a93b',share:24,turn:.5,start:56,w:{jobs:1,safety:.8,transit:.5},
   d:'Hourly workers in logistics, warehouses, health care and service jobs. The biggest bloc in the city.',dm:{1:1.1,2:.8,3:1.3,4:1.2,5:.6,6:1.2,7:1.1}},
@@ -6132,6 +6132,38 @@ try{const G=Object.fromEntries(GUIDE_MAYOR.map(q=>[q.id,q]));
  if(G.meet)G.meet.h='Use your phone: pick a member and tap Meet. It uses 1 action.';
  if(G.town)G.town.h='Pick a district where approval is low. It uses 1 action.';
  if(G.proj)G.proj.h='Pick a type and a district. It needs 7 council votes.';}catch(e){}
+// ======================= v26.38: MEMPHIS EVENTS ARE FREE, AND YOU TALK YOUR WAY THROUGH THEM =======================
+const FEST_HOST={mlk:'A pastor leading a volunteer crew',apr4:'An elder who marched in 1968',africa:'The festival\'s founder',bsmf:'A young promoter with a clipboard',bbq:'A pitmaster from a Whitehaven team',june:'A block-party organizer in Orange Mound',elvis:'A Whitehaven hotel owner',cy:'A Cooper-Young shop owner',grizz:'A Grizzlies season-ticket holder',stjude:'A St. Jude nurse running her first marathon',bowl:'A Liberty Bowl committee member'};
+const FEST_WHO={mlk:'the pastor',apr4:'the elder',africa:'the founder',bsmf:'the promoter',bbq:'the pitmaster',june:'the organizer',elvis:'the hotel owner',cy:'the shop owner',grizz:'the fan',stjude:'the nurse',bowl:'the committee member'};
+function festSteps(F){const g=GMAP[F.grp[0]],iss=PRIO_LABEL[topIssue(g)]||'jobs',isl=iss.toLowerCase(),host=FEST_HOST[F.id]||'An organizer';
+  return[{q:`${host} spots you in the crowd at the ${F.n}. "${isCand()?'So you\'re the one running for mayor.':'Mayor! Glad you made it.'} Folks here have a lot on their minds."`,a:[
+     {sk:'cha',b:0.5,t:'Grab a mic and fire up the crowd',ok:'The crowd chanted your name. Phones were up everywhere.',no:'The mic squealed and the crowd went back to their plates.'},
+     {sk:'dip',b:0.55,t:'Work the crowd one handshake at a time',ok:'You shook five hundred hands and remembered half the names.',no:'You got stuck in one long conversation and missed most of the crowd.'},
+     {sk:'learn',b:0.5,t:`Ask what people need, and take notes on ${isl}`,ok:'People saw you listening, really listening. Word got around.',no:'It came off like a survey. People drifted away.'},
+     {sk:F.risk>=0.15?'safe':'stew',b:0.5,t:F.risk>=0.15?'Check in with the officers and the medics on duty':'Talk with the vendors about how business is going',ok:F.risk>=0.15?'Officers told reporters the mayor actually showed up for them.':'Vendors told everyone you knew their numbers better than the bank does.',no:F.risk>=0.15?'You got in the way more than you helped.':'You promised help you couldn\'t give, and they knew it.'}]},
+   {q:`A reporter pushes in. "What are you going to do about ${isl}? People here want to know."`,a:[
+     {sk:'cha',b:0.5,t:`Give them one line about ${isl} they'll quote`,ok:'Your line led the evening news.',no:'The line fell flat, and the clip made you look rehearsed.'},
+     {sk:'learn',b:0.5,t:`Lay out your plan on ${isl} in plain words`,ok:'The reporter wrote, "the mayor knew the details cold."',no:'You got lost in the numbers. The story said so.'},
+     {sk:'dip',b:0.5,t:`Bring ${FEST_WHO[F.id]||'the organizer'} into the answer and share the credit`,ok:'They beamed. The photo of the two of you ran everywhere.',no:'It looked like you were hiding behind them.'},
+     {sk:'intr',b:0.5,t:`Steer it back to what everyone came to celebrate`,ok:'Smooth. You stayed on the good story and off the hard one.',no:'The reporter noticed the dodge and wrote about that instead.'}]}]}
+let FT=null;
+function festTalk(F){FT={F,steps:festSteps(F),i:0,res:[],last:''};festTalkRender()}
+function festTalkRender(){const{F,steps,i}=FT,st=steps[i];
+  openModal(`${F.n} · ${i+1} of ${steps.length} · free`,F.n,`${FT.last?`<p class="scnreply">${FT.last}</p>`:''}<div class="dq"><small>${i===0?'At the '+F.n:'A reporter'}</small><p>${st.q}</p></div>
+   <div class="choices">${st.a.map((x,j)=>`<button class="choice" data-ftalk="${j}"><b>${x.t}</b><small>${oddsTag(x.sk,x.b)}</small></button>`).join('')}</div><p class="note">Pick the approach that fits your strengths. Each one uses a different skill.</p>`,true)}
+document.addEventListener('click',e=>{const b=e.target.closest('[data-ftalk]');if(!b||!FT)return;e.preventDefault();e.stopImmediatePropagation();const{F,steps,i}=FT,x=steps[i].a[+b.dataset.ftalk];
+  const ok=persuade(x.sk,x.b,[],6);FT.res.push({x,ok});FT.last=ok?x.ok:x.no;const v=ok?(i===0?2.5:1.8):-0.6;F.grp.forEach(g=>groupLift(g,v,(ok?'Connected at ':'Rough moment at ')+F.n));if(ok&&isCand())recUp(0.02);
+  try{sfx(ok?(x.sk==='cha'?'cheer':'good'):'bad')}catch(err){}FT.i++;if(FT.i<steps.length){festTalkRender();return}
+  const wins=FT.res.filter(r=>r.ok).length;if(wins===2)try{celebrate(false)}catch(err){}if(wins===2&&inOffice())try{newsAdd(0.9,`Mayor works the crowd at the ${F.n}`)}catch(err){}
+  save();refreshHUD();const rows=FT.res.map(r=>`<div class="gitem${r.ok?' done':''}"><span class="gck">${r.ok?'✓':'✕'}</span><div><b>${r.x.t}</b><small>${skillName(r.x.sk)} · ${r.ok?r.x.ok:r.x.no}</small></div></div>`).join('');
+  const lift=FT.res.reduce((a,r,k)=>a+(r.ok?(k===0?2.5:1.8):-0.6),0);
+  openModal(`${F.n} · ${wins===2?'a great day':wins===1?'a good day':'a rough day'}`,'How it went',`${FT.last?`<p class="scnreply">${FT.last}</p>`:''}<div class="glist">${rows}</div>
+   <div class="learncard${lift>0?' up':''}"><div class="lc-h"><span class="lc-ic">★</span><div><b>${F.grp.map(g=>GMAP[g].n).join(', ')}</b><small>The people at the ${F.n}</small></div></div><div class="lc-xp"><b style="color:${lift>=0?'var(--good)':'var(--bad)'}">${lift>=0?'+':''}${lift.toFixed(1)}</b><span>support with each group${isCand()&&wins?' · name recognition up':''}</span></div></div>
+   <p class="note">Every approach you used also earned experience in that skill.</p><div class="row"><button class="btn primary" data-act="close">Back to work</button></div>`,true);FT=null},true);
+// the event card: going is free now
+{const T=CHAR_TYPES.fest;T.choices=[
+  {l:()=>'Go and mingle',s:ev=>`Free · a short conversation; your skills decide how well it goes · ${festNames(festFor(ev))}`,do:ev=>{const F=festFor(ev);try{goTo(LM[F.at].lon,LM[F.at].lat,F.n,2)}catch(e){}setTimeout(()=>{try{closePanel();festTalk(F)}catch(e){console.warn(e)}},250);return`You headed to the ${F.n}.`}},
+  T.choices.find(c=>/extra police/.test(c.l())),T.choices.find(c=>/campaign booth/.test(c.l())),T.choices.find(c=>/^Skip/.test(c.l()))].filter(Boolean)}
 function openLedger(){const L=S.log||[];openPanel('Everything that has happened, newest first','Ledger',L.length?`<div class="logl">${L.map(x=>`<div><span>${x.d}</span><p style="margin:0">${x.t}</p></div>`).join('')}</div>`:'<p class="note">Nothing yet. Start the clock with Space or ▶.</p>','ledger')}
 function openPolicies(){const ks=Object.keys(POLICIES);
   openPanel('Ongoing programs you control','Your initiatives',`<p>Mid-year, these are paid from the reserve fund. In April they go into the budget you send the council.</p>
