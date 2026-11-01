@@ -323,6 +323,9 @@ canvas.confetti{position:fixed;inset:0;z-index:100000;pointer-events:none}
 #hApp.bumpup{animation:bumpup .9s ease}#hApp.bumpdn{animation:bumpdn .9s ease}@keyframes bumpup{0%{transform:scale(1)}30%{transform:scale(1.25);color:var(--good)}100%{transform:scale(1)}}@keyframes bumpdn{0%{transform:scale(1)}30%{transform:scale(1.18);color:var(--bad)}100%{transform:scale(1)}}
 @media (prefers-reduced-motion:reduce){#hApp.bumpup,#hApp.bumpdn{animation:none}}
 @media (max-width:640px){table{min-width:0}th:first-child,td:first-child{white-space:normal;text-align:left}}.dev-on #sheet{overflow-x:hidden}
+.scnreply{font-style:italic;border-left:3px solid var(--amber);padding:4px 0 4px 10px;margin:0 0 10px;color:var(--text)}
+.learncard{border:1px solid var(--line);border-radius:10px;padding:12px;margin:8px 0 12px}.learncard.up{border-color:var(--good);background:color-mix(in srgb,var(--good) 10%,transparent)}.lc-h{display:flex;gap:10px;align-items:flex-start}.lc-ic{font-size:26px;line-height:1;width:34px;text-align:center}.lc-h small{display:block;color:var(--muted);font-size:13px}.lc-xp{display:flex;justify-content:space-between;align-items:baseline;gap:8px;margin:10px 0 4px}.lc-xp b{font-size:22px;color:var(--good)}.lc-xp span{color:var(--muted);font-size:13px}.lc-xp .lc-up{color:var(--good);font-weight:700;font-size:14px}.learncard .gbar{height:6px;background:var(--line);border-radius:3px;overflow:hidden}.learncard .gbar i{display:block;height:100%;background:var(--good)}
+.learnbig{text-align:center;margin:6px 0 4px}.learnbig small{display:block;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;font-size:12px}.learnbig b{font-size:34px;color:var(--good)}.learnbig span{display:block;color:var(--muted);font-size:13px}
 .adgain{display:block;width:100%;text-align:center;font-size:11px;font-weight:600;color:var(--good);margin-top:1px}
 #start{overflow-x:hidden;overflow-y:auto;touch-action:pan-y}.startbox{min-width:0;max-width:min(600px,100%);box-sizing:border-box}.startbox *{min-width:0}.create select,.create input{max-width:100%;width:100%;box-sizing:border-box;text-overflow:ellipsis}.create .tpick,.create .tpick>*{max-width:100%;box-sizing:border-box}
 @media (max-width:640px){.startbox{margin-left:0}#start{padding-left:max(16px,env(safe-area-inset-left,0px))}}
@@ -675,7 +678,7 @@ details.analysis{margin-top:6px}details.analysis summary{cursor:pointer;color:va
     <button class="btn primary" data-act="pause" id="bPlay"><svg class="ico" viewBox="0 0 12 12" aria-hidden="true"><path d="M3.2 1.6v8.8l7.2-4.4z" fill="currentColor"/></svg> Resume <kbd>Space</kbd></button>
   </nav>
   <div class="status" id="status">Loading map…</div>
-  <div class="credit"><span class="ver" id="verTag">v26.36</span></div>
+  <div class="credit"><span class="ver" id="verTag">v26.37</span></div>
   <div class="tip" id="tip" hidden></div>
   <div class="toast" id="toast" role="status"></div>
   <section class="panel" id="panel" hidden aria-live="polite">
@@ -703,7 +706,7 @@ details.analysis{margin-top:6px}details.analysis summary{cursor:pointer;color:va
         <button class="btn" data-music-open>Music &amp; volume</button>
       </div>
       <div id="slotList" hidden></div>
-      <p class="note startv">Version <b class="ver" id="verStart">v26.36</b></p>
+      <p class="note startv">Version <b class="ver" id="verStart">v26.37</b></p>
     </div>
     <div class="startbox create" id="create" hidden>
       <h2>Create your mayor</h2>
@@ -1512,7 +1515,7 @@ function enact(s,p){DIVS.forEach(d=>{s.enacted[d.id]=p.divs[d.id];s.ratio[d.id]=
 // Voter groups. Each has a share of residents, turnout, home districts, concerns and an approval of you.
 // Citywide approval is the turnout-weighted average of the groups; each council district's approval comes from the groups that live there.
 // Shares, district mix and turnout are modeled, loosely grounded in Memphis demographics; they are not survey data.
-const VERSION='v26.36';
+const VERSION='v26.37';
 const GROUPS=[
  {id:'working',sh:'Working families',n:'Working families',ic:'⚒︎',c:'#f2a93b',share:24,turn:.5,start:56,w:{jobs:1,safety:.8,transit:.5},
   d:'Hourly workers in logistics, warehouses, health care and service jobs. The biggest bloc in the city.',dm:{1:1.1,2:.8,3:1.3,4:1.2,5:.6,6:1.2,7:1.1}},
@@ -6031,6 +6034,104 @@ function skillBadge(text){if(REDUCED)return;const d=document.createElement('div'
 // the People hub gets a "Your team" tile
 {const _om=openModal;openModal=function(...a){const r=_om.apply(this,a);try{const n=NAV.cur&&NAV.depth>0?NAV.cur.name:'';if(n==='flow_people'){const g=$('mBody').querySelector('.flow-grid');if(g&&!g.querySelector('[data-teamopen]')&&(inOffice()||curMgr()||isCand())){g.insertAdjacentHTML('afterbegin',`<button class="flow-tile" data-teamopen="1"><b>Your team</b><span>${inOffice()?'Chief of staff':''}${inOffice()&&curMgr()?' and ':''}${curMgr()?'campaign manager':''}${!inOffice()&&!curMgr()?'Hire a campaign manager':''}: levels and morale</span></button>`)}}}catch(e){}return r}}
 document.addEventListener('click',e=>{const b=e.target.closest('[data-teamopen]');if(!b||!S)return;e.preventDefault();e.stopImmediatePropagation();openTeam()},true);
+// ======================= v26.37: FREE ACTIVITIES ARE SHORT CONVERSATIONS, AND YOU SEE WHAT YOU LEARNED =======================
+// Each one is two quick exchanges with a mentor. Better answers teach you more. A card at the end shows exactly what grew.
+// Answer quality: 3 = what a pro would say, 2 = fine, 1 = misses the point.
+const SCENES={
+ speech:[{who:'Your speech coach, a retired WREG anchor',steps:[
+   {q:'"Give me your opening line. You\'re at a church fish fry in Frayser and the mic just cut back on."',a:[[3,'"Y\'all go ahead and eat, I\'ll talk fast." Then a story about my grandmother\'s kitchen.','"Perfect. Make them laugh, then make them feel it."'],[2,'"Thank you all for having me. I\'m running because Memphis deserves better."','"Fine. Forgettable, but fine."'],[1,'Start with the three-point plan on property tax reform.','"You lost them at \'three-point.\' Nobody came for a plan."']]},
+   {q:'"A man yells that you\'re just another politician. What now?"',a:[[3,'Walk toward him, ask his name, and ask what we got wrong on his street.','"That\'s the clip that goes viral, for the right reasons."'],[2,'Smile, say "I hear you," and keep going.','"Safe. You didn\'t lose them."'],[1,'Tell him you\'ll take questions at the end.','"Now the whole room is on his side."']]}]},
+  {who:'Your speech coach',steps:[
+   {q:'"You have 20 seconds on the evening news. What\'s the one thing you say?"',a:[[3,'One sentence, one picture: "No kid in Memphis should walk past a boarded-up house to get to school."','"That\'s a line they\'ll quote."'],[2,'A quick summary of my three priorities.','"Three things is two too many for TV."'],[1,'Thank the people who organized the event.','"The producers just cut you."']]},
+   {q:'"Now slow it down. Where do you breathe?"',a:[[3,'Pause right before the line that matters, and let it sit.','"Silence is the loudest thing you\'ve got."'],[2,'At the commas.','"Okay. Mechanical, but okay."'],[1,'I just talk faster so I fit more in.','"And nobody remembers any of it."']]}]}],
+ deals:[{who:'A council veteran who served 24 years',steps:[
+   {q:'"You need one more vote and the member wants a stop sign on her street. What do you do?"',a:[[3,'Give her the stop sign, and make sure she announces it, not me.','"Now she owes you, and she likes you. That\'s the trick."'],[2,'Give her the stop sign in exchange for her vote.','"It works. It\'s a little cold."'],[1,'Tell her the vote should be about the merits.','"Then you\'ll lose on the merits."']]},
+   {q:'"Your ally just voted against you. Do you punish them?"',a:[[3,'Call them that night, ask why, and keep the door open for next time.','"Smart. You\'ll need them again in a month."'],[2,'Say nothing and remember it.','"Some do. It gets lonely."'],[1,'Cut their district\'s paving money.','"Everybody on the council saw that, and they\'ll vote together against you."']]}]},
+  {who:'A former mayor\'s deputy',steps:[
+   {q:'"Two members want the same new library in their district. You can only build one."',a:[[3,'Give one the library now and the other the next big project, in writing, in front of both.','"Both walk out thinking they won something."'],[2,'Pick the district that needs it more and explain why.','"Fair. One of them will be mad for a year."'],[1,'Let them fight it out in committee.','"And you look like you can\'t make a decision."']]},
+   {q:'"Last question. When do you walk away from a deal?"',a:[[3,'When what I\'d have to give up would cost me with the voters who sent me.','"That\'s the whole job, right there."'],[2,'When it costs too much money.','"Money\'s one cost. There are others."'],[1,'Never. A deal is always better than no deal.','"That\'s how people end up indicted."']]}]}],
+ insiders:[{who:'A longtime City Hall clerk',steps:[
+   {q:'"Want to know who really runs the seventh floor? What would you ask me first?"',a:[[3,'"Who do department heads call before they call me?"','"Now you\'re asking the right question." She tells you.'],[2,'"Who\'s loyal to me and who isn\'t?"','"Everybody\'s loyal till they aren\'t, honey."'],[1,'"What\'s the gossip?"','"Gossip\'s free. Information costs."']]},
+   {q:'"A deputy director is leaking to the Commercial Appeal. How do you find out who?"',a:[[3,'Tell three people three slightly different versions and see which one runs.','"Oldest trick in the building, and it works every time."'],[2,'Ask my chief of staff to look into it.','"She\'ll find out. Eventually."'],[1,'Call a staff meeting and demand they stop.','"The reporter will have the meeting notes by lunch."']]}]},
+  {who:'A political consultant who\'s run every big Memphis race',steps:[
+   {q:'"Before a council vote, who do you call first?"',a:[[3,'The member who\'s undecided but respected. The rest follow them.','"Right. Find the one the others watch."'],[2,'The members who already agree with me, to lock them in.','"Okay, but they were already yours."'],[1,'The ones most opposed, to change their minds.','"You\'ll spend all day and move nobody."']]},
+   {q:'"Somebody brings you a rumor about a rival. What do you do with it?"',a:[[3,'Check it quietly, and hold on to it unless I really need it.','"A secret is worth more before you use it."'],[2,'Ignore it. Not my style.','"Admirable. They won\'t return the favor."'],[1,'Give it to a reporter right away.','"And now everyone knows where it came from."']]}]}],
+ numbers:[{who:'Your city\'s chief financial officer',steps:[
+   {q:'"Revenue is coming in 2% short. What do you look at first?"',a:[[3,'Which revenue line is short, and whether it\'s a one-time dip or a trend.','"Exactly. Sales tax and property tax tell different stories."'],[2,'Where we can cut spending.','"Maybe. But you don\'t know what you\'re fixing yet."'],[1,'Whether we can dip into the reserve.','"That\'s the last thing you look at, not the first."']]},
+   {q:'"The credit agencies are calling. What do they care about most?"',a:[[3,'That the reserve stays healthy and the budget actually balances, year after year.','"That\'s it. Boring wins."'],[2,'That the city is growing.','"Helps, but it\'s not what they lead with."'],[1,'That I have a bold vision.','"They\'re not voters. They\'ll downgrade a bold vision."']]}]},
+  {who:'A budget analyst who\'s been here since the 1990s',steps:[
+   {q:'"A department says it needs $3 million more. What\'s your question back?"',a:[[3,'"What did the last $3 million get us, in numbers?"','"They\'ll hate that question. Ask it every time."'],[2,'"Can you do it for $2 million?"','"They padded it to $3 for exactly that reason."'],[1,'"Is this an emergency?"','"Everything\'s an emergency at budget time."']]},
+   {q:'"Why does a new fire station cost money every year, not just once?"',a:[[3,'Firefighters, trucks, fuel and repairs. The building is the cheap part.','"Now you can read a budget."'],[2,'Because of maintenance.','"That\'s part of it. People are the big part."'],[1,'It doesn\'t, once it\'s built.','"That\'s how cities go broke."']]}]}],
+ study:[{who:'A professor at the University of Memphis',steps:[
+   {q:'"Only about 1 in 4 MSCS students reads on grade level. Where would you start?"',a:[[3,'Early reading, before third grade. After that it gets much harder to catch up.','"That\'s what the research says, too."'],[2,'More money for the high schools.','"High school is late for reading."'],[1,'Better test prep.','"That raises scores for a year, not reading."']]},
+   {q:'"A study says your favorite program didn\'t work. What do you do?"',a:[[3,'Read how it was measured, then fix the program or end it.','"That\'s rare in a politician. Keep it up."'],[2,'Ask for another study.','"Sometimes fair. Often a stall."'],[1,'Question the researchers.','"And now nobody believes your numbers."']]}]},
+  {who:'A policy fellow at a Memphis think tank',steps:[
+   {q:'"Blight is up in South Memphis. What\'s the first number you want?"',a:[[3,'How many properties are vacant versus just neglected, and who owns them.','"Right. The fix depends completely on the owner."'],[2,'How much we spend on demolitions.','"Useful, but that\'s the end of the story."'],[1,'How many complaints came in.','"Complaints count the loud blocks, not the worst ones."']]},
+   {q:'"How do you know if a new bus route is working?"',a:[[3,'Riders per hour, and whether people get to jobs faster.','"Good. Most people only count total riders."'],[2,'If people complain less.','"It\'s a signal, not a measure."'],[1,'If the buses look full in photos.','"Photos lie."']]}]}],
+ ride:[{who:'A sergeant on the night shift in Raleigh',steps:[
+   {q:'"Call comes in: a fight outside a gas station. What should the officers do first?"',a:[[3,'Separate people, calm it down, and get anyone hurt some help.','"You\'d make a decent rookie."'],[2,'Arrest whoever started it.','"If you can tell. Usually you can\'t."'],[1,'Wait for backup before doing anything.','"Sometimes. Tonight someone gets hurt while we wait."']]},
+   {q:'"What would actually make my officers\' jobs easier?"',a:[[3,'Fewer calls that aren\'t police work: mental health, homelessness, noise. Send the right people.','"Now you\'re talking. Half our calls aren\'t crimes."'],[2,'More officers.','"Sure. If you can hire them."'],[1,'Tougher sentences.','"That\'s the courts, mayor. Not us."']]}]},
+  {who:'A violence interrupter from a neighborhood group',steps:[
+   {q:'"Two crews are beefing over a shooting. How do we stop the next one?"',a:[[3,'Get people both crews trust in a room tonight, before anyone retaliates.','"That\'s what we do. The police can\'t."'],[2,'Put more patrols on both blocks.','"It helps for a week."'],[1,'Wait and see what happens.','"Somebody\'s funeral is what happens."']]},
+   {q:'"What do these young men need most?"',a:[[3,'A job, a mentor and a reason to think they\'ll be alive at 25.','"Write that down and fund it."'],[2,'Somewhere to go after school.','"That\'s a start."'],[1,'A curfew.','"They\'re 19, mayor."']]}]}],
+ calls:[{who:'A FedEx vice president who gives every cycle',steps:[
+   {q:'"I\'ve got two minutes. Why should I write you a check?"',a:[[3,'Because my plan grows the workforce your hubs need, and I\'ll show you the numbers.','"Okay. You did your homework."'],[2,'Because Memphis needs new leadership.','"Everybody says that."'],[1,'Because the other side is worse.','"That\'s not a reason. That\'s a complaint."']]},
+   {q:'"What exactly would my money pay for?"',a:[[3,'Field organizers in the districts we can flip, and our first TV ad in August.','"Specific. I like that." He maxes out.'],[2,'General campaign costs.','"Hm." He gives something.'],[1,'Whatever the campaign needs.','"I\'ll think about it." He gives a little.']]}]},
+  {who:'A retired teacher who\'s been your supporter for years',steps:[
+   {q:'"Baby, you know I don\'t have much. Why should I give?"',a:[[3,'Every $25 tells the papers that real people are behind me, not just big donors.','"Well, when you put it that way."'],[2,'Because every dollar helps.','"I suppose."'],[1,'Honestly, you don\'t have to.','"Then I won\'t." She laughs and gives $10.']]},
+   {q:'"Can I give my grandson\'s number too? He\'s got a job now."',a:[[3,'Absolutely. Better yet, can he volunteer on a Saturday?','"He\'ll be there. I\'ll make sure."'],[2,'Sure, thank you.','"Alright then."'],[1,'Only if he can give $500.','"Hmph." The call ends quickly.']]}]}]};
+const SCN_SK={speech:'cha',deals:'dip',insiders:'intr',numbers:'stew',study:'learn',ride:'safe'};
+let SCN=null;
+function sceneShuffle(a){return a.map(x=>[Math.random(),x]).sort((p,q)=>p[0]-q[0]).map(x=>x[1])}
+function openScene(k){const f=FMAP[k];if(!f||freeLeft(k,f.cd)||(f.ok&&!f.ok()))return;const pool=SCENES[k];if(!pool){SCN_DIRECT=true;try{doFree(k)}finally{SCN_DIRECT=false}return}const sc=pool[Math.floor(Math.random()*pool.length)];
+  SCN={k,sc,i:0,score:0,last:'',back:NAV.cur?{name:NAV.cur.name,a:NAV.cur.a}:null};sceneRender()}
+function sceneRender(){const{k,sc,i}=SCN;const f=FMAP[k],st=sc.steps[i];
+  openModal(`${f.t} · ${i+1} of ${sc.steps.length}`,sc.who,`${SCN.last?`<p class="scnreply">${SCN.last}</p>`:''}<div class="dq"><small>${sc.who.split(',')[0]}</small><p>${st.q}</p></div>
+   <div class="choices">${sceneShuffle(st.a.map((x,j)=>[x,j])).map(([x,j])=>`<button class="choice" data-scn="${j}"><b>${x[1]}</b></button>`).join('')}</div>
+   <p class="note">There's no wrong answer that costs you anything. Better answers teach you more${k==='calls'?' and raise more money':''}.</p>`,true)}
+document.addEventListener('click',e=>{const b=e.target.closest('[data-scn]');if(!b||!SCN)return;e.preventDefault();e.stopImmediatePropagation();const st=SCN.sc.steps[SCN.i],x=st.a[+b.dataset.scn];SCN.score+=x[0];SCN.last=x[2];SCN.i++;
+  try{sfx(x[0]===3?'good':x[0]===2?'click':'bad')}catch(err){}if(SCN.i<SCN.sc.steps.length){sceneRender();return}sceneFinish()},true);
+function sceneFinish(){const{k,sc,score}=SCN,f=FMAP[k],max=sc.steps.length*3,q=score/max;S.free=S.free||{};S.free[k]=dayN();
+  const grade=q>=0.95?'Outstanding':q>=0.7?'Good':q>=0.5?'Okay':'Rough';let body='';
+  if(k==='calls'){const v=Math.max(2,Math.round(callYield()*(0.5+q*0.8)));S.camp.cash+=v;S.camp.raised=(S.camp.raised||0)+v;try{flowC('raise',v)}catch(e){}const g=skillGain('stew',Math.round(3+q*5));
+    body=`<div class="learnbig"><small>Raised</small><b>${fmtK(v)}</b><span>Campaign cash is now ${fmtK(S.camp.cash)}</span></div>${g.html}`;logIt(`Call time (${grade.toLowerCase()}): raised ${fmtK(v)}.`)}
+  else{const sk=SCN_SK[k];const g=skillGain(sk,Math.round(6+q*16));body=g.html;logIt(`${f.t} (${grade.toLowerCase()}): ${skillName(sk)} +${g.xp} XP.`)}
+  save();refreshHUD();const back=SCN.back;SCN=null;
+  openModal(`${f.t} · ${grade}`,'What you learned',`<p class="scnreply">${SCN_LAST_REPLY(sc,score)}</p>${body}<div class="row"><button class="btn primary" data-scnback="1">Done</button></div>`,true);
+  window.__scnBack=back}
+function SCN_LAST_REPLY(sc,score){return score>=sc.steps.length*3-0.5?'Two great answers. You walked away sharper.':score>=sc.steps.length*2?'Solid. You picked up something useful.':'Not your best day, but you still learned something.'}
+// grant XP and describe exactly what changed
+function skillGain(sk,amt){const M=S.mayor;M.xp=M.xp||{};const lv0=M.skills[sk],x0=M.xp[sk]||0,eff0=mskill(sk);gainXP(sk,amt);const lv1=M.skills[sk],x1=M.xp[sk]||0;const got=Math.round((lv1-lv0)*100+x1-x0);const up=lv1>lv0;
+  if(up)try{celebrate(false)}catch(e){}
+  const S2=SKILLS.find(s=>s.k===sk);return{xp:got,up,html:`<div class="learncard${up?' up':''}"><div class="lc-h"><span class="lc-ic">${S2.ic}</span><div><b>${S2.n}</b><small>${S2.d}</small></div></div>
+   <div class="lc-xp"><b>+${got} XP</b>${up?`<span class="lc-up">Level up! ${S2.n} is now ${mskill(sk)}</span>`:`<span>${Math.round(x1)}/100 to level ${mskill(sk)+1}</span>`}</div>
+   <div class="gbar"><i style="width:${up?100:Math.round(x1)}%"></i></div>${up&&sk==='intr'?`<p class="note">You now get ${actionsPerMonth()} actions a month.</p>`:''}</div>`}}
+document.addEventListener('click',e=>{const b=e.target.closest('[data-scnback]');if(!b||!S)return;e.preventDefault();e.stopImmediatePropagation();const back=window.__scnBack;onClose=null;closeModal();
+  if(back&&VIEWS[back.name]){NAV.busy=true;try{hideViews();VIEWS[back.name](...(back.a||[]))}finally{NAV.busy=false}}},true);
+// free activity buttons now start a conversation
+{const _df=doFree;doFree=function(k){if(SCENES[k]&&!SCN_DIRECT){openScene(k);return}return _df(k)}}
+let SCN_DIRECT=false;
+// ---------- every "next step" lands on the exact thing ----------
+const NEXT_ROUTES=[
+ [/^Start a project/,()=>openPlanner()],
+ [/^Raise money|fundraiser/i,()=>goSection(openHQ,'#hq-money','money')],
+ [/^Run a poll/,()=>goSection(openHQ,'#hq-poll','voters')],
+ [/^(Put ads on the air|Run campaign ads|Put your campaign on the air)/,()=>goSection(openHQ,'#hq-ads','ads')],
+ [/^Ask a group for its endorsement/,()=>goSection(openHQ,'#hq-endorse','endorse')],
+ [/^Knock doors in District/,()=>isCand()?goSection(openCandActions,'Knock doors'):goSection(openHQ,'#hq-doors','voters')],
+ [/^\d+ actions? left this month/,()=>openBank()]];
+function nextRoute(t){const r=NEXT_ROUTES.find(([re])=>re.test(t||''));return r?r[1]:null}
+{const _ns=nextSteps;nextSteps=function(){const L=_ns();try{L.forEach(x=>{const f=nextRoute(x.t);if(f)x.go=f})}catch(e){}return L}}
+// the getting-started checklist points at the exact screen too
+try{const G=Object.fromEntries(GUIDE_MAYOR.map(q=>[q.id,q]));
+ if(G.meet)G.meet.go=()=>{openDevice('phone');phRefresh('council')};
+ if(G.town)G.town.go=()=>goSection(openActions,'Hold a town hall');
+ if(G.proj)G.proj.go=()=>openPlanner();
+ if(G.fund)G.fund.go=()=>goSection(openHQ,'#hq-money','money');
+ if(G.civic)G.civic.go=()=>openCivicList('fire');
+ if(G.meet)G.meet.h='Use your phone: pick a member and tap Meet. It uses 1 action.';
+ if(G.town)G.town.h='Pick a district where approval is low. It uses 1 action.';
+ if(G.proj)G.proj.h='Pick a type and a district. It needs 7 council votes.';}catch(e){}
 function openLedger(){const L=S.log||[];openPanel('Everything that has happened, newest first','Ledger',L.length?`<div class="logl">${L.map(x=>`<div><span>${x.d}</span><p style="margin:0">${x.t}</p></div>`).join('')}</div>`:'<p class="note">Nothing yet. Start the clock with Space or ▶.</p>','ledger')}
 function openPolicies(){const ks=Object.keys(POLICIES);
   openPanel('Ongoing programs you control','Your initiatives',`<p>Mid-year, these are paid from the reserve fund. In April they go into the budget you send the council.</p>

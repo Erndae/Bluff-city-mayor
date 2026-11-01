@@ -4,6 +4,12 @@ A city-management game set in Memphis, Tennessee. You play the mayor. You handle
 
 **Play it:** https://erndae.github.io/Bluff-city-mayor/ (once GitHub Pages is turned on, see below)
 
+## v26.37: Free activities are short conversations, and next steps go straight to the thing
+
+- **Skill conversations.** Each free activity (speech coach, old dealmaker, City Hall insiders, the CFO, a professor, a police ride-along, donor calls) is a two-question conversation with a mentor. Pick how you'd answer; better answers teach you more (6 to 22 XP) and, for donor calls, raise more money. The clock pauses while you talk.
+- **What you learned.** A card at the end shows the skill, the XP you earned, a progress bar to the next level, and a level-up (with confetti) when it happens. If Inside Game levels up it also tells you your new actions per month.
+- **Next steps go to the exact place.** "Start a project" opens the project planner; "Raise money", "Run a poll", "Put ads on the air" and endorsements open that tab of Campaign HQ; door-knocking opens the doors section; "actions left" opens your available actions. Getting-started steps now open the phone's Council tab, the town hall section and the project planner directly.
+
 ## v26.36: A team that grows, a game that celebrates, and a phone pass
 
 - **Your team levels up.** Your chief of staff and campaign manager go from New to Seasoned, Veteran, Ace and Legend. They earn experience every month and more when you follow their advice. A higher-level manager makes their specialty work better; a higher-level chief of staff makes you learn faster, and at Ace gives you an extra action every month.
