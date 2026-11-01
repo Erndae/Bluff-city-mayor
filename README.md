@@ -4,6 +4,12 @@ A city-management game set in Memphis, Tennessee. You play the mayor. You handle
 
 **Play it:** https://erndae.github.io/Bluff-city-mayor/ (once GitHub Pages is turned on, see below)
 
+## v26.29: Candidates see the number that decides the race
+
+- A long candidate playtest ended with "Your support 54%" in the top bar and a loss on Election Day. That number was how many voters like you, not your share of the vote.
+- The top bar now says **Favorable** and shows a small **vote 48–52** badge beside it: your share against the mayor if the election were today. It turns green above 50.
+- The monthly summary leads with the head-to-head number, and the tour explains the difference.
+
 ## v26.28: Persuasion runs on your skills, and long-playtest fixes
 
 - Persuading people now depends on your skill. Each way of persuading uses a different one: Dealmaking for coffee and lunch, Star Power for public appeals, Inside Game for pressure behind closed doors. Every choice shows your skill and your chance of success before you pick it.
