@@ -301,6 +301,12 @@ button.seat:hover{border-color:var(--amber)}
 .skrow .xpbar i{display:block;height:100%;background:var(--amber)}
 .skrow small{grid-column:1/-1;font-size:12px;color:var(--muted);line-height:1.35}
 @media (max-width:640px){.cgrid{grid-template-columns:1fr}.mchip .mname{display:none}}
+.btn:disabled,.btn[disabled],button.choice:disabled,.choice[disabled],.lapapp:disabled{opacity:.38;filter:grayscale(.85);cursor:not-allowed;box-shadow:none;border-style:dashed}.btn:disabled small,.choice:disabled small{color:var(--muted)!important}
+.freebox{border:1px solid color-mix(in srgb,var(--good) 55%,transparent);background:color-mix(in srgb,var(--good) 8%,transparent);border-radius:10px;padding:10px 12px;margin:0 0 12px}.freebox h4{margin:0 0 8px;color:var(--good)}.freesk{margin-top:8px}.freesk summary{cursor:pointer;font-weight:600;padding:6px 0}.freeact .fsk{font-weight:400;color:var(--muted);margin-left:6px;font-size:12px}
+.cashchip{position:sticky;top:-2px;z-index:3;display:flex;flex-wrap:wrap;gap:6px 14px;justify-content:space-between;background:var(--panel,#13202b);border:1px solid var(--line);border-radius:8px;padding:7px 12px;margin:0 0 10px;font-size:14px}
+.drow.adrow>span{white-space:normal;min-width:0;overflow-wrap:anywhere}.drow.adrow .btn{min-width:0;white-space:normal!important;display:flex;flex-wrap:wrap;justify-content:center;align-items:center;gap:0 6px}.adgain{display:block;width:100%;text-align:center;font-size:11px;font-weight:600;color:var(--good);margin-top:1px}
+#start{overflow-x:hidden;overflow-y:auto;touch-action:pan-y}.startbox{min-width:0;max-width:min(600px,100%);box-sizing:border-box}.startbox *{min-width:0}.create select,.create input{max-width:100%;width:100%;box-sizing:border-box;text-overflow:ellipsis}.create .tpick,.create .tpick>*{max-width:100%;box-sizing:border-box}
+@media (max-width:640px){.startbox{margin-left:0}#start{padding-left:max(16px,env(safe-area-inset-left,0px))}}
 .startbox h1{margin:0;font-family:var(--f-display);font-weight:400;font-size:clamp(38px,7vw,64px);line-height:.95;color:var(--amber);text-shadow:0 0 26px rgba(242,169,59,.35);text-wrap:balance}
 .startbox h1 span{display:block;color:var(--text);font-size:.42em;letter-spacing:.3em;margin-top:8px;text-shadow:none}
 .startbox p{margin:0;line-height:1.55;max-width:60ch;color:#d9d1c1}
@@ -650,7 +656,7 @@ details.analysis{margin-top:6px}details.analysis summary{cursor:pointer;color:va
     <button class="btn primary" data-act="pause" id="bPlay"><svg class="ico" viewBox="0 0 12 12" aria-hidden="true"><path d="M3.2 1.6v8.8l7.2-4.4z" fill="currentColor"/></svg> Resume <kbd>Space</kbd></button>
   </nav>
   <div class="status" id="status">Loading map…</div>
-  <div class="credit"><span class="ver" id="verTag">v26.29</span></div>
+  <div class="credit"><span class="ver" id="verTag">v26.30</span></div>
   <div class="tip" id="tip" hidden></div>
   <div class="toast" id="toast" role="status"></div>
   <section class="panel" id="panel" hidden aria-live="polite">
@@ -678,7 +684,7 @@ details.analysis{margin-top:6px}details.analysis summary{cursor:pointer;color:va
         <button class="btn" data-music-open>Music &amp; volume</button>
       </div>
       <div id="slotList" hidden></div>
-      <p class="note startv">Version <b class="ver" id="verStart">v26.29</b></p>
+      <p class="note startv">Version <b class="ver" id="verStart">v26.30</b></p>
     </div>
     <div class="startbox create" id="create" hidden>
       <h2>Create your mayor</h2>
@@ -1197,7 +1203,7 @@ function newState(){
   return{y:2026,m:10,enacted,ratio,taxRate:3.39,raise:2,raiseCost:0,fyIndex:0,
     reserve:96,policies:{},met:{officers:1917,crime:88,reading:25.7,streets:46,blight:60,transit:40,jobs:55,health:42},
     approval:52,mood:0,jobsBoost:0,revBoost:0,county:35,eduBoost:0,
-    council:COUNCIL.map((c,k)=>initMember(c,k)),slots:3,mode:'real',commit:{},day:1,speed:2,paused:true,autoPause:true,queue:[],log:[],nb:initNeighbors(),
+    council:COUNCIL.map((c,k)=>initMember(c,k)),slots:3,mode:'real',commit:{},day:1,speed:2,paused:true,autoPause:false,pz2:1,queue:[],log:[],nb:initNeighbors(),
     events:[],used:{},stage:'none',draft:null,proposal:null,pending:null,term:1,over:false,
     layers:{council:false,superd:false,precinct:false,bld:true,labels:true,edge:true},started:false,projects:[],stories:{},record:[],notify:{...NOTIFY_DEF}}
 }
@@ -1487,7 +1493,7 @@ function enact(s,p){DIVS.forEach(d=>{s.enacted[d.id]=p.divs[d.id];s.ratio[d.id]=
 // Voter groups. Each has a share of residents, turnout, home districts, concerns and an approval of you.
 // Citywide approval is the turnout-weighted average of the groups; each council district's approval comes from the groups that live there.
 // Shares, district mix and turnout are modeled, loosely grounded in Memphis demographics; they are not survey data.
-const VERSION='v26.29';
+const VERSION='v26.30';
 const GROUPS=[
  {id:'working',sh:'Working families',n:'Working families',ic:'⚒︎',c:'#f2a93b',share:24,turn:.5,start:56,w:{jobs:1,safety:.8,transit:.5},
   d:'Hourly workers in logistics, warehouses, health care and service jobs. The biggest bloc in the city.',dm:{1:1.1,2:.8,3:1.3,4:1.2,5:.6,6:1.2,7:1.1}},
@@ -3906,7 +3912,7 @@ function takeOffice(){const plat=(S.promises||[]).map(st=>st.id);const inc=S.riv
   reignStart(S.mayor,false);if(plat.length)choosePromises(plat);onClose=null;closeModal();
   openModal(`January 1, ${S.y}`,`Mayor ${S.mayor.name}`,`<p>You took the oath of office at City Hall. Your term runs to ${S.elY+1}; the next election is October ${S.elY}.</p>
    <div class="facts"><div class="opl"><div><span>Reserve fund</span><b>${fmtM(S.reserve)}</b></div><div><span>Property tax rate</span><b>$${S.taxRate.toFixed(2)}</b></div><div><span>Your approval</span><b>${Math.round(S.approval)}%</b></div><div><span>Violent crime index</span><b>${Math.round(S.met.crime)}</b></div></div></div>
-   <p>Your platform is now your promise list, with a September ${S.elY} deadline. The budget is due in April. Press Space when you're ready.</p><div class="row"><button class="btn primary" data-act="close">Get to work</button></div>`,true);
+   <p>Your platform is now your promise list, with a September ${S.elY} deadline. The budget is due in April. Tap below when you're ready.</p><div class="row"><button class="btn primary" data-act="close">Get to work</button></div>`,true);
   notify('good',`Sworn in as mayor`,`Your promises are due by September ${S.elY}.`,()=>openPromises())}
 // ---------- succession ----------
 function histAdd(m,how){return reignEnd(how,m)}
@@ -3921,7 +3927,7 @@ function becomeMayor(ch,how){const wasCand=isCand();if(!wasCand)histAdd(S.mayor,
   GROUPS.forEach(g=>{const G=S.groups[g.id];G.app=clamp(G.app*0.5+26,25,75)});freshTerm(how);S.inc=null;if(wasCand&&S.reign){S.reign.ai=false;S.reign.terms=(S.reign.terms||1)+1;S.reign.face=legacyFace(S.mayor)}else reignStart(S.mayor,false);onClose=null;closeModal();
   openModal(`January 1, ${S.y}`,`Mayor ${S.mayor.name}`,`<p>You now play as <b>${S.mayor.name}</b>, Memphis's new mayor. The term runs to ${S.elY+1}; the next election is October ${S.elY}.</p>
    <div class="facts"><h4>Mayors of Memphis in this game</h4><ul>${(S.history||[]).map(h=>`<li>${h.name}, until ${h.to} (${h.how})${h.grade&&h.grade!=='–'?` · grade <b style="color:${GRADE_C[h.grade]}">${h.grade}</b>`:''}</li>`).join('')}<li><b>${S.mayor.name}</b>, from ${S.y}</li></ul><div class="row"><button class="btn" data-act="legacy">See every mayor's record</button></div></div>
-   <p>Start by making three promises. Press Space when you're ready.</p><div class="row"><button class="btn primary" data-act="promises">Make your promises</button></div>`,true)}
+   <p>Start by making three promises. Tap below when you're ready.</p><div class="row"><button class="btn primary" data-act="promises">Make your promises</button></div>`,true)}
 function runAgain(){const w=S._winner;if(S.phase!=='cand'&&w)histAdd(S.mayor,S.lastElection&&S.lastElection.succ?'term-limited':'lost re-election');
   // the winner governs; skip to March of the next election year
   const next=elYear()+4;const fromCand=S.phase==='cand';S.phase='ai';S.over=false;toJan();if(w&&w.k!=null&&w.k>=0)newCouncilFace(w.k);if(fromCand&&S.reign)S.reign.terms=(S.reign.terms||1)+1;else reignStart(w||{name:'Mayor'},true);let g=0;while(!(S.y===next&&S.m===3)&&g++<80)aiMonth();
@@ -5197,7 +5203,7 @@ renderBank=function(){const el=$('hSlots');if(!el||!S||!S.started)return;const n
   el.classList.toggle('empty',n<=0);el.setAttribute('aria-label',`${n} actions left this month. They refill on ${refillDate()}. Tap to see what you can do.`);el.title='Tap to see what you can do';
   if(BANK_LAST!=null&&n<BANK_LAST&&S.started){el.classList.remove('spent');void el.offsetWidth;el.classList.add('spent');
     const f=document.createElement('span');f.className='act-float';f.textContent='−1 action';el.appendChild(f);setTimeout(()=>f.remove(),1300);
-    if(n===0&&!S._outWarned){S._outWarned=nowM();setTimeout(()=>{try{notify('info','Out of actions this month',`They refill on ${refillDate()}. Press ▶ to keep time moving. Decisions on your desk don't need an action.`,null,{ttl:10})}catch(e){}},500)}}
+    if(n===0&&!S._outWarned){S._outWarned=nowM();setTimeout(()=>{try{notify('info','Out of actions this month',`They refill on ${refillDate()}. Tap to see what you can still do for free.`,()=>openFree(),{ttl:10})}catch(e){}},500)}}
   if(n>0&&S._outWarned&&S._outWarned!==nowM())S._outWarned=0;BANK_LAST=n};
 // a small action marker wherever a button says it uses an action
 function markActionCosts(root){if(!root)return;const W=document.createTreeWalker(root,NodeFilter.SHOW_TEXT,{acceptNode:n=>/[Uu]ses 1 action/.test(n.nodeValue)&&!(n.parentElement&&n.parentElement.closest('.actcost'))?NodeFilter.FILTER_ACCEPT:NodeFilter.FILTER_REJECT});
@@ -5220,7 +5226,7 @@ function decorate(root){try{markActionCosts(root);stripKeys(root)}catch(e){}}
 TUT_MAYOR.length=0;TUT_MAYOR.push(
  {t:()=>`Welcome, Mayor ${S.mayor.name.split(' ').pop()}`,b:()=>`You run Memphis until <b>Election Day, Thursday, October 7, 2027</b>. Fix problems, keep voters happy and win a second term. This tour takes 30 seconds.`},
  {sel:'#hSlots',t:()=>'Your actions',b:()=>'These dots are your <b>actions</b>. You get 3 a month. Meetings, visits, town halls and most moves use one. When they run out, they refill on the 1st. Tap the dots any time to see what you can do.'},
- {sel:'#cPause',t:()=>'Time',b:()=>'Time is paused. Press ▶ to let days pass. New problems stop the clock for you, and your chief of staff warns you near the end of the month if you still have actions left.'},
+ {sel:'#cPause',t:()=>'Time',b:()=>'Time is paused. Press ▶ to let days pass. Time keeps moving while you look around the menus. Big moments like council votes, debates and Election Day stop the clock for you.'},
  {sel:'.hud-top .stat.click',t:()=>'Approval',b:()=>'Approval is what wins elections. Clout, next to it, grows with approval and lets you push things you don\'t control.'},
  {sel:'#desk .weekly-card',mob:'#nextchip',t:()=>'Not sure what to do?',b:()=>'<b>This week</b> always shows the most important thing to do next. Tap it and your chief of staff takes you there.'},
  {t:()=>'The map',b:()=>'Amber pins are problems waiting for your decision. Tap one. Police, fire, hospitals and schools are places you can visit. Drag to move, pinch to zoom.'},
@@ -5384,11 +5390,11 @@ function hqTabOf(el){const id=el.id||'',h=(el.querySelector('h4')||{}).textConte
   if(/^hq-(doors|poll)$/.test(id))return'voters';if(id==='hq-money')return'money';if(id==='hq-ads')return'ads';if(/^hq-(staff|offices)$/.test(id))return'field';if(id==='hq-endorse')return'endorse';
   if(id==='hq-debates'||/^Debates/.test(h))return'debates';if(/Campaign log/.test(h))return'log';return'overview'}
 function hqApplyTabs(){const body=$('mBody');if(!body||$('mTitle').textContent.indexOf('Campaign HQ')<0&&!body.querySelector('#hq-money'))return;
-  const kids=[...body.children].filter(c=>!c.classList.contains('hqjump')&&!c.classList.contains('hqtabs'));const used=new Set(kids.map(hqTabOf));
+  const kids=[...body.children].filter(c=>!c.classList.contains('hqjump')&&!c.classList.contains('hqtabs')&&!c.classList.contains('cashchip'));const used=new Set(kids.map(hqTabOf));
   if(!used.has(HQ_TAB))HQ_TAB='overview';
   kids.forEach(c=>{c.hidden=hqTabOf(c)!==HQ_TAB});
   const old=body.querySelector('.hqjump');const extra=isCand()?'<button class="btn" data-act="actions">Groups and speeches</button>':'';
-  let bar=body.querySelector('.hqtabs');if(!bar){bar=document.createElement('div');bar.className='hqtabs lsel';body.prepend(bar)}else body.prepend(bar);
+  let bar=body.querySelector('.hqtabs');if(!bar){bar=document.createElement('div');bar.className='hqtabs lsel';body.prepend(bar)}else body.prepend(bar);{const ch=body.querySelector('.cashchip');if(ch)body.prepend(ch)}
   bar.innerHTML=HQ_TABS.filter(([k])=>used.has(k)).map(([k,n])=>`<button data-hqtab="${k}" class="${HQ_TAB===k?'on':''}">${n}</button>`).join('');
   if(old){old.remove()}
   if(HQ_TAB==='voters'&&extra&&!body.querySelector('.hqextra')){const d=document.createElement('div');d.className='row hqextra';d.innerHTML=extra;bar.after(d)}}
@@ -5534,6 +5540,94 @@ document.addEventListener('click',e=>{const b=e.target.closest('[data-ev]');if(!
 {const _da=devAfterClose;devAfterClose=function(){setTimeout(()=>{try{window.BCInterior&&BCInterior.refresh&&BCInterior.refresh()}catch(e){}if(DEV.kind==='aud'){if(modalOpen||!$('panel').hidden)return;if(DEV.app){openAudience();return}document.body.classList.remove('dev-aud');endDevice()}},0);if(DEV.kind!=='aud')_da()}}
 {const _ed=endDevice;endDevice=function(){document.body.classList.remove('dev-aud');return _ed()}}
 document.addEventListener('click',e=>{const b=e.target.closest('[data-meetphone]');if(!b||!S)return;e.preventDefault();e.stopImmediatePropagation();onClose=null;closeModal();openDevice('phone')},true);
+// ======================= v26.30: SOMETHING TO DO, A CLOCK THAT KEEPS MOVING, CLEARER CAMPAIGN SCREENS =======================
+// ---------- time keeps moving while you look around ----------
+// Menus you open yourself (screens, the phone, the laptop) no longer stop the clock. Big moments still do: debates,
+// votes, Election Day, the month-end briefing and anything else that pops up on its own.
+let MODAL_BROWSE=false;
+{const _om=openModal;openModal=function(...a){MODAL_BROWSE=NAV.depth>0||!!(typeof DEV!=='undefined'&&DEV.kind);return _om.apply(this,a)}}
+function clockHeld(){return modalOpen&&!MODAL_BROWSE}
+timeStep=function(dt){if(!S||!S.started||S.paused||S.over||clockHeld()||window.BCLife?.isOpen||window.BCMusic?.settingsOpen||!$('start').hidden){tAcc=0;return}
+  tAcc+=dt*SPEEDS[S.speed||2];let guard=0;while(tAcc>=1&&guard++<24){tAcc-=1;dayTick();if(S.paused||clockHeld()){tAcc=0;break}}};
+// new problems arrive as notifications instead of stopping the clock (the old behavior is still a map-layer setting)
+{const _el=enterLoaded;enterLoaded=function(s,...r){const out=_el.call(this,s,...r);try{if(S&&!S.pz2){S.pz2=1;S.autoPause=false;save()}}catch(e){}return out}}
+// your campaign manager no longer freezes time to talk
+{const _mp=mgrPop;mgrPop=function(reason,opts){opts={...(opts||{})};delete opts.pause;
+  if(S&&S.slots<=0&&/check-in|plan$/i.test(reason||'')){const P=campStrategy();if(!P||!P.moves.length)return}return _mp.call(this,reason,opts)}}
+// ---------- things you can do without an action ----------
+function dayN(){return Math.floor(Date.UTC(S.y,S.m-1,S.day)/864e5)}
+function freeLeft(k,cd){const t=(S.free||{})[k];return t==null?0:Math.max(0,cd-(dayN()-t))}
+function callYield(){const rec=isCand()?(S.cand?S.cand.rec:0.3):0.85;return Math.max(3,Math.round(2+mskill('stew')*0.35+rec*4+(curMgr()&&curMgr().id==='money'?2:0)))}
+const FREE=[
+ {k:'calls',t:'Call donors',d:()=>`An afternoon of call time. Raises about ${fmtK(callYield())}; more with higher Money Smarts.`,cd:7,ok:()=>!!S.camp&&(isCand()||monthsToElection()<=12),
+  run:()=>{const v=callYield();S.camp.cash+=v;S.camp.raised=(S.camp.raised||0)+v;try{flowC('raise',v)}catch(e){}gainXP('stew',5);return`Your call time brought in ${fmtK(v)}. Campaign cash is now ${fmtK(S.camp.cash)}.`}},
+ {k:'speech',t:'Practice your speaking',d:'Work with a speech coach. Grows Star Power.',cd:14,sk:'cha',run:()=>{gainXP('cha',14);return'You ran your speech until it landed every time.'}},
+ {k:'deals',t:'Learn from an old dealmaker',d:'Lunch with a retired council veteran. Grows Dealmaking.',cd:14,sk:'dip',run:()=>{gainXP('dip',14);return'You picked up a few tricks for getting people to yes.'}},
+ {k:'insiders',t:'Have coffee with insiders',d:'Hear what goes on behind closed doors. Grows Inside Game.',cd:14,sk:'intr',run:()=>{gainXP('intr',14);return'You heard who owes whom, and who\'s angry about it.'}},
+ {k:'numbers',t:'Go through the numbers',d:'Budget books and spreadsheets. Grows Money Smarts.',cd:14,sk:'stew',run:()=>{gainXP('stew',14);return'The city\'s money makes a little more sense now.'}},
+ {k:'study',t:'Study the issues',d:'Policy briefs and late nights. Grows Education.',cd:14,sk:'learn',run:()=>{gainXP('learn',14);return'You can answer the hard questions a little better now.'}},
+ {k:'ride',t:'Ride along with police',d:'A night shift in a squad car. Grows Safe Streets.',cd:14,sk:'safe',run:()=>{gainXP('safe',14);return'You saw the city the way officers see it at 2 a.m.'}}];
+const FMAP=Object.fromEntries(FREE.map(f=>[f.k,f]));
+function freeRow(f){const left=freeLeft(f.k,f.cd);const lvl=f.sk?` <small class="fsk">${skillName(f.sk)} ${mskill(f.sk)}</small>`:'';
+  return`<button class="choice freeact" data-free="${f.k}" ${left?'disabled':''}><b>${f.t}${lvl}</b><small>${left?`Again in ${left} day${left===1?'':'s'}`:(typeof f.d==='function'?f.d():f.d)} · free</small></button>`}
+function freeBoxHTML(title,openSk){const F=FREE.filter(f=>!f.ok||f.ok());const extra=[];
+  if(isCand()&&!cdLeft('cspeak',1))extra.push(`<button class="choice freeact" data-freego="speak"><b>Speak out on an issue</b><small>Once a month · free</small></button>`);
+  if(typeof homeBooks==='function'&&S.home)extra.push(`<button class="choice freeact" data-freego="home"><b>Go home and read</b><small>One book a month grows a skill · free</small></button>`);
+  if(S.events&&S.events.length)extra.push(`<button class="choice freeact" data-freego="desk"><b>Decide what's on your desk</b><small>${S.events.length} waiting · decisions never use an action</small></button>`);
+  const sk=F.filter(f=>f.sk),top=F.filter(f=>!f.sk),ready=sk.filter(f=>!freeLeft(f.k,f.cd)).length;
+  return`<div class="freebox" id="freebox"><h4>${title||'Free to do (no action needed)'}</h4><div class="choices">${extra.join('')}${top.map(freeRow).join('')}</div><details class="freesk"${openSk?' open':''}><summary>Build your skills · ${ready} of ${sk.length} ready</summary><div class="choices">${sk.map(freeRow).join('')}</div></details></div>`}
+function doFree(k){const f=FMAP[k];if(!f||freeLeft(k,f.cd)||(f.ok&&!f.ok()))return;S.free=S.free||{};S.free[k]=dayN();const msg=f.run();logIt(msg);save();refreshHUD();toast(msg);try{sfx('good')}catch(e){}
+  if(NAV.cur&&VIEWS[NAV.cur.name]&&modalOpen){NAV.busy=true;try{hideViews();VIEWS[NAV.cur.name](...NAV.cur.a)}finally{NAV.busy=false}}}
+function openFree(){closePanel();openModal(`${S.slots} ${slotWord(S.slots)} left · refill ${refillDate()}`,'While you wait',`${S.slots<=0?`<p>You're out of actions until <b>${refillDate()}</b>. These don't need one.</p>`:'<p>These don\'t use an action.</p>'}${freeBoxHTML('Free to do now',true)}
+  <div class="row"><button class="btn primary" data-freego="run">Let time run</button></div><p class="note">Time keeps moving while you look around. Debates, votes and Election Day stop the clock on their own.</p>`,true)}
+openFree=navWrap('openFree',openFree);
+document.addEventListener('click',e=>{const b=e.target.closest('[data-free],[data-freego]');if(!b||!S||!S.started)return;e.preventDefault();e.stopImmediatePropagation();if(b.disabled)return;
+  if(b.dataset.free){doFree(b.dataset.free);return}const g=b.dataset.freego;
+  if(g==='run'){hideViews();navReset();setPaused(false);updateClock();return}
+  if(g==='speak'){hideViews();goSection(openCandActions,'Speak out');return}
+  if(g==='home'){hideViews();try{enterHome()}catch(err){}return}
+  if(g==='desk'){hideViews();openDesk();return}},true);
+// show the free list on action screens when you're out, and always on the "Available actions" screen
+{const _om=openModal;openModal=function(...a){const r=_om.apply(this,a);try{const n=NAV.cur&&NAV.depth>0?NAV.cur.name:'';const body=$('mBody');
+  if(body&&!body.querySelector('#freebox')){if(n==='openBank')body.insertAdjacentHTML('beforeend',freeBoxHTML());
+    else if((n==='openCandActions'||n==='openActions')&&S.slots<=0)body.insertAdjacentHTML('afterbegin',`<div class="phout"><b>You're out of actions until ${refillDate()}.</b> Grayed-out moves come back then.</div>`+freeBoxHTML('Meanwhile, free to do'))}}catch(e){}return r}}
+// ---------- show what you can spend on campaign screens ----------
+{const _om=openModal;openModal=function(...a){const r=_om.apply(this,a);try{const n=NAV.cur&&NAV.depth>0?NAV.cur.name:'';const body=$('mBody');
+  if(S.camp&&body&&['openHQ','openCandActions','openMgr','openDonor'].includes(n)&&!body.querySelector('.cashchip'))body.insertAdjacentHTML('afterbegin',`<div class="cashchip"><span>Campaign cash <b style="color:${S.camp.cash<20?'var(--bad)':'var(--good)'}">${fmtK(S.camp.cash)}</b></span><span>${S.slots} ${slotWord(S.slots)} left</span>${typeof headToHead==='function'?`<span>Vote <b>${Math.round(headToHead()*100)}–${100-Math.round(headToHead()*100)}</b></span>`:''}</div>`);
+  if(n==='openHQ'&&body){const money=body.querySelector('#hq-money');if(money&&!money.querySelector('[data-free]')&&FMAP.calls.ok())money.insertAdjacentHTML('beforeend',`<div class="choices" style="margin-top:6px">${freeRow(FMAP.calls)}</div>`);
+    body.querySelectorAll('[data-act="ad"]').forEach(btn=>{if(btn.querySelector('.adgain'))return;const g=adGain(btn.dataset.ref,btn.dataset.size);btn.insertAdjacentHTML('beforeend',`<small class="adgain">${g>=0.1?`≈ +${g.toFixed(1)} pts`:'little effect now'}</small>`)})}}catch(e){console.warn(e)}return r}}
+// ---------- ads say what they did ----------
+function adGain(ref,size){try{const opt=adOptions().find(o=>o.ref===ref);if(!opt||!S.camp)return 0;const C=S.camp,uses=C.adUse[ref]||0,pts=(size==='big'?3.2:1.8)*Math.pow(0.5,uses)*adTiming()*mgrMul('media');
+  const h0=headToHead(),b0={...C.boost},rc=S.rival&&S.rival.camp,d0=rc?rc.dmg:0;
+  if(opt.kind==='promote')GROUPS.forEach(g=>{const w=opt.groups.includes(g.id)?1:0.35;C.boost[g.id]=Math.min(5,(C.boost[g.id]||0)+pts*w)});
+  else if(opt.kind==='defend')opt.groups.forEach(g=>C.boost[g]=Math.min(5,(C.boost[g]||0)+pts*0.6));else if(rc)rc.dmg=Math.min(6,(d0||0)+pts);
+  const h1=headToHead();C.boost=b0;if(rc)rc.dmg=d0;return(h1-h0)*100}catch(e){return 0}}
+{const _ba=buyAd;buyAd=function(ref,size){const c0=S.camp?S.camp.cash:0,h0=headToHead();const r=_ba.apply(this,arguments);if(!S.camp||S.camp.cash>=c0)return r;
+  const h1=headToHead(),d=(h1-h0)*100,you=Math.round(h1*100);S.camp.lastAd={d,m:nowM()};
+  setTimeout(()=>{try{notify('info',`Your ad is on the air: ${d>=0.05?'+'+d.toFixed(1):d.toFixed(1)} points`,`Head-to-head is now ${you}–${100-you}. ${d<0.3?'Voters have heard this message a lot, or the race is set for those groups. Try a different message. ':''}Ads fade about a quarter each month, so the last weeks count most.`,()=>goSection(openHQ,'#hq-ads','ads'),{ttl:12})}catch(e){}},400);return r}}
+// ---------- debates you can come back to ----------
+function debateOpen(){if(!S.camp)return 0;for(const n of [1,2]){const D=S.camp.debates[n];if(D&&!D.done)return n}return 0}
+{const _dh=debatesHTML;debatesHTML=function(){let h=_dh();const n=debateOpen();if(n)h=h.replace('<div class="row">',`<div class="row"><button class="btn primary" data-dbt="resume" data-n="${n}">Return to Debate ${n}</button>`);
+  if(DBT&&DBT.practice)h=h.replace('<div class="row">','<div class="row"><button class="btn primary" data-dbtprac="1">Finish your practice debate</button>');return h}}
+document.addEventListener('click',e=>{const b=e.target.closest('[data-dbtprac]');if(!b||!S)return;e.preventDefault();e.stopImmediatePropagation();if(DBT&&DBT.practice)dbtRender()},true);
+{const _cm=closeModal;closeModal=function(...a){const live=DBT&&!DBT.done;const r=_cm.apply(this,a);
+  if(live&&DBT&&$('modal').hidden){const n=DBT.n,pr=DBT.practice;setTimeout(()=>{if(!DBT||modalOpen)return;notify('event',pr?'Your practice debate is paused':`Debate ${n} is waiting for you`,'Tap to step back on stage.',()=>{if(pr)dbtRender();else openDebate(n)},{ttl:30})},50)}return r}}
+{const _ns=nextSteps;nextSteps=function(){const L=_ns();try{if(S&&S.camp){const n=debateOpen();if(n)L.unshift({pri:110,t:`Finish Debate ${n}`,h:'You stepped off the stage mid-debate. The cameras are still rolling.',go:()=>openDebate(n)});
+  if(S.slots<=0){const out=L.filter(x=>!NEEDS_ACT.test(x.t));L.length=0;L.push(...out)}}}catch(e){}return L}}
+// ---------- advice you can act on ----------
+const NEEDS_ACT=/^(Knock doors|Win over|Raise money|Ask for endorsements|Practice for the debates|Let's run debate prep|Sit down with|Grassroots fundraiser|Book a major|A fundraiser|Meet |Hold a town hall)/i;
+{const _cs=campStrategy;campStrategy=function(...a){const P=_cs.apply(this,a);try{if(P&&isCand()&&!(S.camp.polls||[]).length){const h=Math.round(headToHead()*100);P.read=`By our own read you'd get about ${h}% of the vote against ${S.rival?S.rival.name.split(' ').pop():'the mayor'} today. ${h<45?'We have ground to make up.':h<50?'It\'s close.':'We\'re ahead. Don\'t coast.'}`}}catch(e){}try{if(P&&S.slots<=0){P.moves=P.moves.filter(m=>!NEEDS_ACT.test(m.t));
+  P.moves.forEach(m=>{if(/^We're down to/.test(m.t)&&FMAP.calls.ok()&&!freeLeft('calls',7)){m.why='Call donors. It\'s free and doesn\'t need an action.';m.go=()=>openFree()}});
+  if(FMAP.calls.ok()&&!freeLeft('calls',7)&&S.camp.cash<150&&!P.moves.some(m=>/down to|Call donors/.test(m.t)))P.moves.push({pri:50,t:'Call donors',why:`Free call time: about ${fmtK(callYield())}. No action needed.`,go:()=>openFree()});
+  P.moves=P.moves.slice(0,3)}}catch(e){}return P}}
+{const _mt=mgrTips;mgrTips=function(){const T=_mt();try{if(S.slots<=0){const out=T.filter(x=>!NEEDS_ACT.test(x.t));out.forEach(x=>{if(/^We're down to/.test(x.t)&&FMAP.calls.ok()&&!freeLeft('calls',7)){x.h='Call donors. It\'s free and doesn\'t need an action.';x.go=()=>openFree()}});return out}}catch(e){}return T}}
+// ---------- candidates don't work with the council ----------
+const CAND_CHAR=new Set(['forum','scrutiny','incattack','surge']);
+{const _qc=queueChar;queueChar=function(spec,report){if(isCand()&&spec&&!CAND_CHAR.has(spec.type))return;return _qc.apply(this,arguments)}}
+function candSweep(){if(!S||!S.started||!isCand()||!S.events)return;const n=S.events.length;S.events=S.events.filter(e=>!(e.kind==='request'||e.kind==='memo'||(e.kind==='char'&&!CAND_CHAR.has(e.type))));if(S.queue)S.queue=S.queue.filter(q=>!(q.ev&&(q.ev.kind==='request'||q.ev.kind==='memo'||(q.ev.kind==='char'&&!CAND_CHAR.has(q.ev.type)))))}
+{const _rh=refreshHUD;refreshHUD=function(...a){try{candSweep()}catch(e){}return _rh.apply(this,a)}}
+{const _om=openModal;openModal=function(...a){const r=_om.apply(this,a);try{if(isCand()&&$('mTitle').textContent==='Council chamber'){$('mSub').textContent='Memphis City Council · view only until you win';
+  $('mBody').insertAdjacentHTML('afterbegin',`<div class="phout"><b>You're not mayor yet.</b> You can see who sits on the council and where they stand, but you can't meet, whip votes or make deals with them until you win. Win the election and they'll be waiting.</div>`)}}catch(e){}return r}}
 function openLedger(){const L=S.log||[];openPanel('Everything that has happened, newest first','Ledger',L.length?`<div class="logl">${L.map(x=>`<div><span>${x.d}</span><p style="margin:0">${x.t}</p></div>`).join('')}</div>`:'<p class="note">Nothing yet. Start the clock with Space or ▶.</p>','ledger')}
 function openPolicies(){const ks=Object.keys(POLICIES);
   openPanel('Ongoing programs you control','Your initiatives',`<p>Mid-year, these are paid from the reserve fund. In April they go into the budget you send the council.</p>
@@ -6162,8 +6256,8 @@ window.claude?.hot?.ready?window.claude.hot.ready(start):start(window.claude?.ho
 </script>
 <script src="home-renderer.js?v=26.11"></script>
 <script src="home-interior.js?v=26.27"></script>
-<script src="city-life.js?v=26.24"></script>
-<script src="city-flow.js?v=26.28"></script>
+<script src="city-life.js?v=26.30"></script>
+<script src="city-flow.js?v=26.30"></script>
 <script src="music.js?v=25"></script>
 </body>
 </html>

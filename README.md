@@ -4,6 +4,18 @@ A city-management game set in Memphis, Tennessee. You play the mayor. You handle
 
 **Play it:** https://erndae.github.io/Bluff-city-mayor/ (once GitHub Pages is turned on, see below)
 
+## v26.30: Something to do when you're out of actions, and a clock that keeps moving
+
+- **Free things to do.** Call donors (weekly, raises money based on Money Smarts), and build any skill every two weeks: practice speaking, learn from an old dealmaker, coffee with insiders, go through the numbers, study the issues, ride along with police. They show up when you're out of actions, on the Available actions screen, in Campaign HQ's Money tab, and in a new "While you wait" screen.
+- **Grayed out means unavailable.** Buttons you can't use right now are faded and dashed.
+- **Time keeps moving in menus.** Screens, the phone and the laptop no longer stop the clock. Debates, votes, Election Day and pop-up decisions still do. New problems arrive as notifications instead of pausing (the old behavior is still in Map layers).
+- **Advice you can act on.** With no actions left, your campaign manager and "This week" only suggest things you can actually do. "We're down to $X" points to free donor calls.
+- **Candidates and the council.** As a candidate the council is view only, and council members no longer bring you requests, memos or feuds.
+- **Campaign cash on campaign screens.** A bar at the top of Campaign HQ and the campaign trail shows your cash, actions left and head-to-head vote.
+- **Ads say what they did.** Each ad button shows its expected gain, and after buying you see the change in your vote share.
+- **Debates you can return to.** Leave mid-debate and you get a notification, a "Return to Debate" button in HQ and a top "This week" priority.
+- Fixed side-scrolling on the character screen and the ad list on phones, and removed "Press Space" from the oath screen.
+
 ## v26.29: Candidates see the number that decides the race
 
 - A long candidate playtest ended with "Your support 54%" in the top bar and a loss on Election Day. That number was how many voters like you, not your share of the vote.
