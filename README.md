@@ -6,7 +6,7 @@ A city-management game set in Memphis, Tennessee. You play the mayor. You handle
 
 ## v26.33: Actions come from your Inside Game, and every skill has a job
 
-- **Actions per month = 3 + Inside Game bonus:** +1 at Inside Game 8, +2 at 12, +3 at 16 (up to 6 a month). Leveling up mid-month gives you the extra action right away. Character creation shows how many actions your build gets.
+- **Actions per month = 4 + Inside Game bonus** (v26.34 raised the base from 3 to 4): +1 at Inside Game 8, +2 at 12, +3 at 16 (up to 7 a month). Leveling up mid-month gives you the extra action right away. Character creation shows how many actions your build gets.
 - **Each skill has a clear benefit:** Dealmaking (one-on-one persuasion, meetings), Money Smarts (fundraisers and donor calls raise more, city revenue), Inside Game (more actions, pressure, memos), Safe Streets (crime), Education (every skill grows 4% faster per point above 8, school results), Star Power (speeches, festivals, debates, faster name recognition, votes).
 
 ## v26.32: A first-month checklist, Memphis events, and an opponent who fights back
