@@ -308,6 +308,10 @@ button.seat:hover{border-color:var(--amber)}
 .qrhead{display:flex;flex-wrap:wrap;align-items:center;gap:8px 18px;margin-bottom:10px}.qrhead small{display:block;color:var(--muted);font-size:12px;letter-spacing:.04em;text-transform:uppercase}.qrbig{font-size:42px;line-height:1;margin-right:6px;font-family:var(--f-num,inherit)}.qrhead p{margin:0;flex:1 1 180px;font-size:16px}
 .qrgrid{display:grid;grid-template-columns:1fr 1fr;gap:4px 14px;margin-bottom:6px}.qrgrid small{color:var(--muted);font-size:12px}.qrgrid p{margin:3px 0;display:flex;justify-content:space-between;gap:6px;font-size:14px}.qrv{white-space:nowrap}@media (max-width:480px){.qrgrid{grid-template-columns:1fr}}
 .qradv{display:flex;gap:12px;align-items:flex-start;border:1px solid var(--amber);border-radius:10px;padding:10px 12px;margin:4px 0 10px}.qradv small{color:var(--muted)}.qradv b{display:block;margin:2px 0}.qradv p{margin:0;font-size:14px}
+.gcard{border:1px solid var(--amber);border-radius:10px;padding:10px 12px;margin:0 0 12px;background:rgba(242,169,59,.06)}.gcard-h{display:flex;justify-content:space-between;align-items:baseline}.gcard-h span{color:var(--muted);font-size:13px}.gcard .gbar{height:5px;background:var(--line);border-radius:3px;margin:6px 0 8px;overflow:hidden}.gcard .gbar i{display:block;height:100%;background:var(--amber)}.gcard-q{display:flex;gap:10px;align-items:center;justify-content:space-between}.gcard-q small{color:var(--amber);font-size:11px;letter-spacing:.08em}.gcard-q b{display:block}.gcard-q p{margin:2px 0 0;font-size:13px;color:var(--muted)}.gcard-q .btn{flex:none}.linkbtn{background:none;border:0;color:var(--amber);padding:6px 0 0;font:inherit;font-size:13px;cursor:pointer;text-decoration:underline}
+.glist{display:flex;flex-direction:column;gap:6px;margin-bottom:10px}.gitem{display:flex;gap:10px;align-items:center;border:1px solid var(--line);border-radius:8px;padding:8px 10px}.gitem>div{flex:1;min-width:0}.gitem small{display:block;color:var(--muted);font-size:13px}.gitem.done{opacity:.6}.gck{flex:none;width:22px;height:22px;border-radius:50%;border:2px solid var(--line);display:grid;place-items:center;font-weight:700;color:#0d1822}.gitem.done .gck{background:var(--good);border-color:var(--good)}
+#startchip{display:none}@media (max-width:860px){#startchip{display:flex;position:absolute;left:12px;max-width:calc(100% - 84px);z-index:4;align-items:center;gap:8px;background:rgba(13,24,34,.94);border:1px solid var(--amber);border-radius:16px;padding:5px 12px 5px 5px;color:var(--text);font:600 12.5px/1.2 var(--f-body);text-align:left;box-shadow:0 2px 8px rgba(0,0,0,.4)}#startchip[hidden]{display:none}#startchip span{background:var(--amber);color:#0d1822;border-radius:10px;padding:2px 7px;font-size:11px;flex:none}}
+.storytag.fest{color:var(--amber)}
 .adgain{display:block;width:100%;text-align:center;font-size:11px;font-weight:600;color:var(--good);margin-top:1px}
 #start{overflow-x:hidden;overflow-y:auto;touch-action:pan-y}.startbox{min-width:0;max-width:min(600px,100%);box-sizing:border-box}.startbox *{min-width:0}.create select,.create input{max-width:100%;width:100%;box-sizing:border-box;text-overflow:ellipsis}.create .tpick,.create .tpick>*{max-width:100%;box-sizing:border-box}
 @media (max-width:640px){.startbox{margin-left:0}#start{padding-left:max(16px,env(safe-area-inset-left,0px))}}
@@ -660,7 +664,7 @@ details.analysis{margin-top:6px}details.analysis summary{cursor:pointer;color:va
     <button class="btn primary" data-act="pause" id="bPlay"><svg class="ico" viewBox="0 0 12 12" aria-hidden="true"><path d="M3.2 1.6v8.8l7.2-4.4z" fill="currentColor"/></svg> Resume <kbd>Space</kbd></button>
   </nav>
   <div class="status" id="status">Loading map…</div>
-  <div class="credit"><span class="ver" id="verTag">v26.31</span></div>
+  <div class="credit"><span class="ver" id="verTag">v26.32</span></div>
   <div class="tip" id="tip" hidden></div>
   <div class="toast" id="toast" role="status"></div>
   <section class="panel" id="panel" hidden aria-live="polite">
@@ -688,7 +692,7 @@ details.analysis{margin-top:6px}details.analysis summary{cursor:pointer;color:va
         <button class="btn" data-music-open>Music &amp; volume</button>
       </div>
       <div id="slotList" hidden></div>
-      <p class="note startv">Version <b class="ver" id="verStart">v26.31</b></p>
+      <p class="note startv">Version <b class="ver" id="verStart">v26.32</b></p>
     </div>
     <div class="startbox create" id="create" hidden>
       <h2>Create your mayor</h2>
@@ -1497,7 +1501,7 @@ function enact(s,p){DIVS.forEach(d=>{s.enacted[d.id]=p.divs[d.id];s.ratio[d.id]=
 // Voter groups. Each has a share of residents, turnout, home districts, concerns and an approval of you.
 // Citywide approval is the turnout-weighted average of the groups; each council district's approval comes from the groups that live there.
 // Shares, district mix and turnout are modeled, loosely grounded in Memphis demographics; they are not survey data.
-const VERSION='v26.31';
+const VERSION='v26.32';
 const GROUPS=[
  {id:'working',sh:'Working families',n:'Working families',ic:'⚒︎',c:'#f2a93b',share:24,turn:.5,start:56,w:{jobs:1,safety:.8,transit:.5},
   d:'Hourly workers in logistics, warehouses, health care and service jobs. The biggest bloc in the city.',dm:{1:1.1,2:.8,3:1.3,4:1.2,5:.6,6:1.2,7:1.1}},
@@ -5707,6 +5711,111 @@ CHAR_TYPES.grudge={w:0,title:ev=>`${S.council[ev.a].name} has a grudge`,gen:()=>
    {l:()=>'Remind them who runs City Hall',s:ev=>`${oddsTag('intr',0.3,[S.council[ev.a]])} · works: they drop it · fails: −8 and District ${homeOf(S.council[ev.a])} −2`,do:ev=>{const m=S.council[ev.a];const ok=persuade('intr',0.3,[m],7);if(ok){S._memQuiet=1;addMod(m,'Backed down',0);S._memQuiet=0;return`${m.name} backed down. They won't raise it again.`}addMod(m,'Mayor threatened me',-8);bumpPlace('dist:'+homeOf(m),-2);return`${m.name} took it to the neighborhood paper.`}},
    {l:()=>'Show them the door',s:ev=>`${lastN(ev.a)} −6`,do:ev=>{const m=S.council[ev.a];addMod(m,'Shown the door',-6);return`${m.name} stormed out.`}}],
   ignore:ev=>{addMod(S.council[ev.a],'Ignored my complaint',-4)}};
+// ======================= v26.32: A FIRST-MONTH CHECKLIST, MEMPHIS EVENTS, AN OPPONENT WHO FIGHTS BACK =======================
+// ---------- getting started: a checklist you can see ----------
+GUIDE_CAND.length=0;GUIDE_CAND.push(
+ {id:'plat',t:'Choose your platform',h:'Three promises you run on. If you win, they become your agenda.',done:()=>!!S.promises,go:()=>openPromises()},
+ {id:'mgr',t:'Hire a campaign manager',h:'They plan your race, check in every two weeks and point you to the next move.',done:()=>!!curMgr(),go:()=>openMgr()},
+ {id:'clock',t:'Start the clock',h:'Tap ▶. Time keeps moving while you look around.',done:()=>!S.paused||S.day>=5||nowM()>(S.guide.m0||0),go:()=>setPaused(false)},
+ {id:'doors',t:'Knock doors in a district',h:'Uses 1 action. Builds support and name recognition where you knock.',done:()=>anyAct(/^kd\d/),go:()=>goSection(openCandActions,'Knock doors')},
+ {id:'calls',t:'Call donors',h:'Free, once a week. Money pays for ads, polls and organizers.',done:()=>!!(S.free&&S.free.calls!=null),go:()=>openFree()},
+ {id:'speak',t:'Speak out on an issue',h:'Free, once a month. Pick what your weakest groups care about.',done:()=>anyAct(/^cspeak/),go:()=>goSection(openCandActions,'Speak out')},
+ {id:'leaders',t:'Meet community leaders',h:'Uses 1 action. Pastors, union heads and PTA presidents bring their people with them.',done:()=>anyAct(/^cg/),go:()=>goSection(openCandActions,'Meet community leaders')},
+ {id:'fund',t:'Hold a grassroots fundraiser',h:'Uses 1 action. Your first real war chest.',done:()=>anyAct(/^fr_/),go:()=>goSection(openHQ,'#hq-money','money')},
+ {id:'poll',t:'Run a poll',h:'See exactly where you stand against the mayor, group by group.',done:()=>((S.camp||{}).polls||[]).length>0,go:()=>goSection(openHQ,'#hq-poll','voters')},
+ {id:'ad',t:'Run your first ad',h:'"Introduce yourself" raises name recognition. Ads count most in the final months.',done:()=>((S.camp||{}).ads||[]).length>0,go:()=>goSection(openHQ,'#hq-ads','ads')},
+ {id:'endorse',t:'Ask a group for its endorsement',h:'Before July. An endorsement swings that group\'s voters.',done:()=>Object.keys(((S.camp||{}).seek)||{}).length>0,go:()=>goSection(openHQ,'#hq-endorse','endorse')});
+const GTXT=t=>String(t||'').replace(/\s?\((?:[A-Z]|press [A-Z])\)/g,'').replace(/ \([A-Z]\)/g,'');
+function guideOn(){const G=guideInit();if(!G||G.off||S.phase==='ai')return null;const L=guideList(),n=L.filter(q=>G.done[q.id]).length;return n>=L.length?null:{G,L,n,next:L.find(q=>!G.done[q.id])}}
+function guideCard(){const g=guideOn();if(!g)return'';return`<div class="gcard"><div class="gcard-h"><b>Getting started</b><span>${g.n} of ${g.L.length} done</span></div><div class="gbar"><i style="width:${g.n/g.L.length*100}%"></i></div>
+  <div class="gcard-q"><div><small>NEXT</small><b>${g.next.t}</b><p>${GTXT(g.next.h)}</p></div><button class="btn primary" data-guide="${g.next.id}">Show me</button></div><button class="linkbtn" data-guidelist="1">See the whole checklist</button></div>`}
+function openGuide(){closePanel();const g=guideOn();const G=guideInit(),L=guideList();
+  openModal(`${L.filter(q=>G.done[q.id]).length} of ${L.length} done · each one teaches part of the game`,'Getting started',`<div class="glist">${L.map(q=>{const d=!!G.done[q.id];return`<div class="gitem${d?' done':''}"><span class="gck">${d?'✓':''}</span><div><b>${q.t}</b>${d?'':`<small>${GTXT(q.h)}</small>`}</div>${d?'':`<button class="btn" data-guide="${q.id}">Show me</button>`}</div>`}).join('')}</div>
+   <div class="row"><button class="btn" data-guideoff="1">Hide the checklist</button></div><p class="note">Each step you finish gives a small boost. You can bring the checklist back from the Guide.</p>`,true)}
+openGuide=navWrap('openGuide',openGuide);
+document.addEventListener('click',e=>{const b=e.target.closest('[data-guidelist],#startchip');if(!b||!S)return;e.preventDefault();e.stopImmediatePropagation();openGuide()},true);
+document.addEventListener('click',e=>{const b=e.target.closest('[data-guideon]');if(!b||!S)return;e.preventDefault();e.stopImmediatePropagation();const G=guideInit();if(G){G.off=false;save();openGuide()}},true);
+{const _rd=renderDesk;renderDesk=function(...a){const r=_rd.apply(this,a);try{const d=$('desk');if(d&&!d.querySelector('.gcard')){const c=guideCard();if(c){const w=d.querySelector('.weekly-card');if(w)w.insertAdjacentHTML('afterend',c);else d.insertAdjacentHTML('afterbegin',c)}}}catch(e){}return r}}
+{const _om=openModal;openModal=function(...a){const r=_om.apply(this,a);try{const n=NAV.cur&&NAV.depth>0?NAV.cur.name:'';if(n==='flow_city'){const b=$('mBody');if(b&&!b.querySelector('.gcard')){const c=guideCard();if(c){const w=b.querySelector('.weekly-card');if(w)w.insertAdjacentHTML('afterend',c);else b.insertAdjacentHTML('afterbegin',c)}}}
+  if(n==='openHelp'){const b=$('mBody')||$('pBody');const G=S&&guideInit();if(b&&G&&G.off&&!b.querySelector('[data-guideon]'))b.insertAdjacentHTML('afterbegin','<div class="row"><button class="btn" data-guideon="1">Show the getting-started checklist</button></div>')}}catch(e){}return r}}
+function renderStartChip(){let c=$('startchip');const g=S&&S.started&&$('start').hidden?guideOn():null;const nc=$('nextchip');const mob=window.innerWidth<=860;
+  if(!c){c=document.createElement('button');c.id='startchip';$('app').appendChild(c)}
+  if(!g||!mob||!nc||nc.hidden){c.hidden=true;return}c.hidden=false;const html=`<span>${g.n}/${g.L.length}</span>Getting started: ${g.next.t}`;if(c._h!==html){c.innerHTML=html;c._h=html}
+  try{const t=nc.offsetTop+nc.offsetHeight+6;if(c._t!==t){c.style.top=t+'px';c._t=t}}catch(e){}}
+{const _rh=refreshHUD;refreshHUD=function(...a){const r=_rh.apply(this,a);try{renderStartChip()}catch(e){}return r}}
+// ---------- Memphis on the calendar ----------
+const FESTS=[
+ {id:'mlk',m:1,day:16,at:'ncrm',n:'MLK Day of Service',d:'Volunteers fan out across the city, and the National Civil Rights Museum holds its commemoration.',grp:['faith','working','renters'],risk:0},
+ {id:'apr4',m:4,day:4,at:'ncrm',n:'April 4 remembrance at the Lorraine Motel',d:'Memphis marks the anniversary of Dr. King\'s assassination at the motel where it happened.',grp:['faith','working','young'],risk:0},
+ {id:'africa',m:4,day:19,at:'beale',n:'Africa in April',d:'A long-running festival of music, food and culture honoring a different African nation each year.',grp:['working','faith','young'],risk:0.1},
+ {id:'bsmf',m:5,day:2,at:'beale',n:'Beale Street Music Festival',d:'Memphis in May opens with three days of music on the riverfront. Big crowds, big traffic.',grp:['young','business','labor'],risk:0.25},
+ {id:'bbq',m:5,day:15,at:'beale',n:'World Championship Barbecue Cooking Contest',d:'Hundreds of teams smoke ribs and shoulder on the river. The city smells like hickory for a week.',grp:['working','owners','business'],risk:0.15},
+ {id:'june',m:6,day:19,at:'ncrm',n:'Juneteenth celebrations',d:'Cookouts, parades and block parties in neighborhoods across the city.',grp:['faith','working','renters'],risk:0.1},
+ {id:'elvis',m:8,day:12,at:'graceland',n:'Elvis Week at Graceland',d:'Fans from around the world fill Whitehaven for the candlelight vigil. Hotels are full and Elvis Presley Blvd. is jammed.',grp:['business','owners','labor'],risk:0.1},
+ {id:'cy',m:9,day:19,at:'zoo',n:'Cooper-Young Festival',d:'Midtown\'s biggest street party: artists, food trucks and a few hundred thousand neighbors.',grp:['young','business','parents'],risk:0.1},
+ {id:'grizz',m:10,day:24,at:'forum',n:'Grizzlies home opener',d:'FedExForum is sold out and Beale is packed before tip-off.',grp:['young','working','labor'],risk:0.1},
+ {id:'stjude',m:12,day:5,at:'stjude',n:'St. Jude Memphis Marathon',d:'Runners from every state raise money for St. Jude, and the route runs through the hospital campus.',grp:['owners','faith','parents'],risk:0.05},
+ {id:'bowl',m:12,day:28,at:'liberty',n:'AutoZone Liberty Bowl',d:'Bowl season brings two fan bases and a national TV audience to Liberty Park.',grp:['business','working','owners'],risk:0.1}];
+const FMAPS=Object.fromEntries(FESTS.map(f=>[f.id,f]));
+function festFor(ev){return FMAPS[ev.fid]}
+function groupLift(gid,v,label){const G=S.groups[gid];if(!G)return;if(isCand()){candBump(gid,v,label);return}addGroupMod(G,label,v*1.5);G.app=clamp(G.app+v,5,95)}
+function festNames(F){return F.grp.map(g=>GMAP[g].n.toLowerCase()).join(', ')}
+CHAR_TYPES.fest={w:0,title:ev=>festFor(ev).n,gen:()=>null,body:ev=>{const F=festFor(ev);return`${F.d} ${isCand()?'A good place to be seen by':'Expect to see'} ${festNames(F)}.${F.risk>=0.15&&inOffice()?' Crowds this size can get out of hand.':''}`},who:()=>[],
+  choices:[
+   {l:()=>'Show up and work the crowd',s:ev=>`Uses 1 action · ${festNames(festFor(ev))} +2${isCand()?' · name recognition up':''}`,need:()=>S.slots>0,do:ev=>{const F=festFor(ev);S.slots--;F.grp.forEach(g=>groupLift(g,2,'Showed up at '+F.n));if(isCand())recUp(0.025);gainXP('cha',6);try{goTo(LM[F.at].lon,LM[F.at].lat,F.n,2)}catch(e){}return`You shook hands at the ${F.n} all afternoon.`}},
+   {l:()=>'Speak from the stage',s:ev=>`Uses 1 action · ${oddsTag('cha',0.45)} · works: ${festNames(festFor(ev))} +4 · fails: they boo, −1.5`,need:()=>S.slots>0,do:ev=>{const F=festFor(ev);S.slots--;const ok=persuade('cha',0.45,[],8);if(ok){F.grp.forEach(g=>groupLift(g,4,'Great speech at '+F.n));if(isCand())recUp(0.04);try{newsAdd(0.8,`Mayor brings the crowd to its feet at ${F.n}`)}catch(e){}return'The crowd loved it. It was all over social media by evening.'}F.grp.forEach(g=>groupLift(g,-1.5,'Booed at '+F.n));try{newsAdd(-0.6,`Mayor booed at ${F.n}`)}catch(e){}return'A few boos turned into a lot of boos. Not your day.'}},
+   {l:()=>'Pay for extra police and cleanup',s:()=>`${fmtM(0.3)} from the reserve · no trouble, business community +1`,hide:()=>!inOffice(),need:()=>inOffice()&&S.reserve>=0.3,do:ev=>{const F=festFor(ev);S.reserve-=0.3;ev.safe=1;groupLift('business',1,'Kept '+F.n+' safe');return`Extra officers and sanitation crews kept the ${F.n} clean and calm.`}},
+   {l:()=>'Set up a campaign booth',s:()=>`${fmtK(5)} campaign cash · name recognition up, ${''}a small boost with everyone there`,hide:()=>!isCand(),need:()=>isCand()&&S.camp&&S.camp.cash>=5,do:ev=>{const F=festFor(ev);S.camp.cash-=5;S.camp.spent=(S.camp.spent||0)+5;recUp(0.035);F.grp.forEach(g=>groupLift(g,1,'Campaign booth at '+F.n));return`Your volunteers handed out a few thousand stickers at the ${F.n}.`}},
+   {l:()=>'Skip it',s:ev=>inOffice()&&festFor(ev).risk?'Free · if trouble breaks out, it\'s on you':'Free',do:ev=>festSkip(ev)}],
+  ignore:ev=>{festSkip(ev)}};
+function festSkip(ev){const F=festFor(ev);if(inOffice()&&!ev.safe&&Math.random()<F.risk){popHit(-1.2,'Trouble at '+F.n);try{newsAdd(-1,`Fights and gridlock at the ${F.n}. Where was City Hall?`)}catch(e){}try{notify('event',`Trouble at the ${F.n}`,'Fights and gridlock made the evening news. Approval dipped.',null,{ttl:10})}catch(e){}return`You stayed away. Trouble broke out and the news asked where City Hall was.`}return`You sat this one out. The ${F.n} went fine without you.`}
+{const _ce=charEventCard;charEventCard=function(ev,idx){let h=_ce.apply(this,arguments);if(ev.type!=='fest')return h;const T=CHAR_TYPES.fest;
+  h=h.replace('<div class="storytag">♟︎ People</div>','<div class="storytag fest">★ Memphis event</div>').replace(/<div class="due">[^<]*<\/div>/,`<div class="due">${MONTHS_L[festFor(ev).m-1]} ${festFor(ev).day} · decide in the next few days</div>`);
+  T.choices.forEach((c,ci)=>{if(c.hide&&c.hide(ev))h=h.replace(new RegExp(`<button class="choice" data-ev="${idx}" data-ci="${ci}"[\\s\\S]*?</button>`),'')});return h}}
+{const _ov=officeVisitors;officeVisitors=function(){return _ov().filter(v=>!(v.ev.kind==='char'&&v.ev.type==='fest'))}}
+function festDaily(){if(!S||!S.started||S.phase==='ai'||!S.groups)return;S.fest=S.fest||{};
+  // release on the day (a few days ahead), and let unanswered ones pass after the weekend
+  for(const F of FESTS){const key=F.id+S.y;if(S.fest[key])continue;if(S.m===F.m&&S.day>=F.day-3&&S.day<=F.day){S.fest[key]=1;const ev={kind:'char',type:'fest',fid:F.id,at:F.at,born:nowM(),expires:1,dd:dayN(),id:'fest_'+F.id+S.y};S.events.push(ev);logIt(`Coming up: ${F.n}`);
+    try{notify('event',`${F.n} ${S.day===F.day?'today':'this week'}`,`${LM[F.at]?LM[F.at].name:'Memphis'} · tap to decide how to show up`,()=>openPlace(F.at),{ttl:14})}catch(e){}}}
+  (S.events||[]).filter(e=>e.type==='fest'&&dayN()-(e.dd||0)>6).forEach(ev=>{const msg=festSkip(ev);S.events=S.events.filter(x=>x!==ev);logIt(`${festFor(ev).n}: ${msg}`)})}
+{const _dt=dayTick;dayTick=function(...a){const r=_dt.apply(this,a);try{festDaily()}catch(e){console.warn(e)}try{rivalDaily()}catch(e){console.warn(e)}return r}}
+{const _nd=nextDeadline;nextDeadline=function(){const base=_nd();try{if(S&&S.started){const now=dayN();const up=FESTS.map(F=>{let y=S.y;let t=Math.floor(Date.UTC(y,F.m-1,F.day)/864e5);if(t<now){y++;t=Math.floor(Date.UTC(y,F.m-1,F.day)/864e5)}return{F,t}}).sort((a,b)=>a.t-b.t)[0];if(up&&up.t-now<=10)return`${up.F.n} · ${MONTHS[up.F.m-1]} ${up.F.day}`}}catch(e){}return base}}
+// ---------- an opponent with a personality ----------
+const RSTYLE={brawler:{n:'Brawler',d:'Hits back hard and fast. Expect attack ads whenever you pull ahead.',k:1.3},wonk:{n:'Policy wonk',d:'Answers with plans and numbers, and goes after the groups you\'re winning.',k:0.9},showman:{n:'Showman',d:'Matches your big moments with bigger events of their own.',k:1}};
+function rivalStyle(){const R=S.rival;if(!R)return null;if(!R.style){const h=[...R.name].reduce((a,c)=>a+c.charCodeAt(0),0);R.style=['brawler','wonk','showman'][h%3]}return RSTYLE[R.style]}
+function rxOn(){return!!(S&&S.started&&S.rival&&S.rival.camp&&S.camp&&S.phase!=='ai'&&(isCand()||monthsToElection()<=10)&&!S.camp.voted)}
+function rxReady(k,mo){S.rx=S.rx||{};const t=S.rx[k];return t==null||nowM()-t>=mo}
+function rivalHit(groups,amt){const rc=S.rival.camp;rc.adBy=rc.adBy||{};const before=headToHead();groups.forEach(g=>rc.adBy[g]=Math.min(5,(rc.adBy[g]||0)+amt));return(before-headToHead())*100}
+function rivalReact(k,head,body,groups,amt){const R=S.rival,st=rivalStyle();S.rx[k]=nowM();const cost=rivalHit(groups,amt*st.k);S.rxOpen={k,head,groups,amt:amt*st.k,day:dayN()};clog(`${R.name}: ${head}`);logIt(`${R.name}: ${head}`);
+  try{newsAdd(-0.5,`${R.name}: ${head}`)}catch(e){}
+  try{notify('event',`${R.name.split(' ').pop()} hits back: ${head}`,`${body} You lost about ${Math.max(0.1,cost).toFixed(1)} points. Tap to answer.`,()=>openRivalAnswer(),{ttl:16})}catch(e){}}
+function rivalDaily(){if(!rxOn())return;S.rx=S.rx||{};const R=S.rival,st=rivalStyle(),last=R.name.split(' ').pop(),h=headToHead(),mo=monthsToElection();
+  if(S.rxOpen&&dayN()-S.rxOpen.day>21)S.rxOpen=null;
+  if(S.day%3)return; // a few times a month at most
+  // you pulled ahead
+  if(h>=0.51&&mo<=7&&rxReady('lead',2)&&(R.style==='brawler'||Math.random()<0.5)){rivalReact('lead',R.style==='wonk'?'a 20-page plan and an ad saying you have none':'a new attack ad',R.style==='wonk'?`${last} says you're all talk and no plan.`:`${last} is up on TV calling you a risk Memphis can't afford.`,GROUPS.map(g=>g.id),0.9);return}
+  // a debate you won
+  const won=[1,2].find(n=>{const D=(S.camp.debates||{})[n];return D&&D.done&&D.you>D.them&&!D.rx});if(won){S.camp.debates[won].rx=1;const spin=R.style==='showman'?'a rally the next morning, twice the size of the debate crowd':'a press conference saying the moderators went easy on you';S.camp.debate=(S.camp.debate||0)-Math.min(0.6,Math.abs((S.camp.debates[won].bonus||0))*0.35);rivalReact('debate',spin,`${last} is trying to erase your debate win.`,R.champs||[],0.5);return}
+  // a group you're winning fast
+  const T=S.trend||[];if(T.length>=2&&rxReady('surge',2)){const a=T[T.length-1],b=T[T.length-2];if(a.g&&b.g){const best=GROUPS.map(g=>({g,d:(a.g[g.id]||0)-(b.g[g.id]||0)})).sort((x,y)=>y.d-x.d)[0];if(best&&best.d>=2.5&&(R.style==='wonk'||Math.random()<0.4)){rivalReact('surge',`a pitch to ${best.g.n.toLowerCase()}`,`${last} noticed ${best.g.n.toLowerCase()} warming to you and is courting them hard.`,[best.g.id],1.6);return}}}
+  // you went negative
+  const atk=(S.camp.attacks||[]).filter(t=>nowM()-t<=1).length;if(atk&&rxReady('neg',2)){if(R.style==='brawler')rivalReact('neg','an attack ad of their own',`${last} answered your attack ad with one of their own.`,GROUPS.map(g=>g.id),0.7);else{S.rx.neg=nowM();popHit(-0.4,'Opponent called out your negative ads');try{notify('event',`${last} calls you out`,`${last} says Memphis deserves better than attack ads. Some voters agree.`,null,{ttl:10})}catch(e){}}return}
+  // an endorsement you won
+  const e=Object.entries(S.camp.endorse||{}).find(([k,v])=>v==='you'&&!(S.rxEnd||{})[k]);if(e){S.rxEnd=S.rxEnd||{};S.rxEnd[e[0]]=1;const other=GROUPS.filter(g=>!(R.champs||[]).includes(g.id)).sort((a,b)=>b.share-a.share)[0];rivalReact('endorse',`a counter-endorsement push with ${other.n.toLowerCase()}`,`After your endorsement, ${last} went looking for one of their own.`,[other.id],1.2);return}}
+function openRivalAnswer(){const X=S.rxOpen;if(!X){toast('That story has already moved on.');return}const R=S.rival;closePanel();
+  openModal(`${R.name} · ${rivalStyle().n}`,'How do you answer?',`<p><b>${R.name}</b> went after you with ${X.head}.</p><div class="choices">
+   <button class="choice" data-rxa="press"><b>Hit back at a press conference</b><small>${oddsTag('cha',0.42,[R])} · works: undo most of the damage · fails: the story grows</small></button>
+   <button class="choice" data-rxa="ad"><b>Answer with an ad</b><small>Opens your ads. A "Defend" ad blunts attacks on your record.</small></button>
+   <button class="choice" data-rxa="above"><b>Stay above it</b><small>Free · church community and homeowners like a candidate who doesn't take the bait (+1)</small></button></div>`,true)}
+openRivalAnswer=navWrap('openRivalAnswer',openRivalAnswer);
+document.addEventListener('click',e=>{const b=e.target.closest('[data-rxa]');if(!b||!S||!S.rxOpen)return;e.preventDefault();e.stopImmediatePropagation();const X=S.rxOpen,rc=S.rival.camp,a=b.dataset.rxa;
+  if(a==='ad'){S.rxOpen=null;onClose=null;closeModal();goSection(openHQ,'#hq-ads','ads');return}
+  let msg;if(a==='press'){const ok=persuade('cha',0.42,[S.rival],8);if(ok){X.groups.forEach(g=>rc.adBy[g]=Math.max(0,(rc.adBy[g]||0)-X.amt*0.75));msg='You turned it around on them. The evening news ran your answer, not their attack.'}else{X.groups.forEach(g=>rc.adBy[g]=Math.min(5,(rc.adBy[g]||0)+X.amt*0.3));msg='Your answer gave the story another day. It got worse.'}}
+  else{['faith','owners'].forEach(g=>groupLift(g,1,'Stayed above the fray'));msg='You stayed on message. Some voters noticed.'}
+  S.rxOpen=null;save();refreshHUD();onClose=null;closeModal();toast(msg);logIt(msg)},true);
+{const _rs=rivalStrategyCard;rivalStrategyCard=function(){let h=_rs();try{const st=rivalStyle();if(st)h=h.replace('<ul>',`<ul><li><b>Style: ${st.n}.</b> ${st.d}</li>`)}catch(e){}return h}}
+
+CAND_CHAR.add('fest');
 function openLedger(){const L=S.log||[];openPanel('Everything that has happened, newest first','Ledger',L.length?`<div class="logl">${L.map(x=>`<div><span>${x.d}</span><p style="margin:0">${x.t}</p></div>`).join('')}</div>`:'<p class="note">Nothing yet. Start the clock with Space or ▶.</p>','ledger')}
 function openPolicies(){const ks=Object.keys(POLICIES);
   openPanel('Ongoing programs you control','Your initiatives',`<p>Mid-year, these are paid from the reserve fund. In April they go into the budget you send the council.</p>

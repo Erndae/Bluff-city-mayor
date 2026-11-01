@@ -4,6 +4,12 @@ A city-management game set in Memphis, Tennessee. You play the mayor. You handle
 
 **Play it:** https://erndae.github.io/Bluff-city-mayor/ (once GitHub Pages is turned on, see below)
 
+## v26.32: A first-month checklist, Memphis events, and an opponent who fights back
+
+- **Getting started checklist.** A new, visible checklist walks candidates through the first month: platform, campaign manager, start the clock, knock doors, call donors, speak out, meet leaders, fundraiser, poll, first ad, endorsement. It shows as a chip under "This week" on phones, a card in the City hub and on your desk, and a full list with "Show me" buttons. Hide it any time; bring it back from the Guide.
+- **Memphis on the calendar.** MLK Day, the April 4 remembrance, Africa in April, Beale Street Music Festival, the World Championship Barbecue Cooking Contest, Juneteenth, Elvis Week, Cooper-Young Festival, the Grizzlies home opener, the St. Jude Memphis Marathon and the Liberty Bowl. Each shows up a few days ahead: work the crowd, speak from the stage (Star Power odds), pay for extra police and cleanup (mayor) or set up a campaign booth (candidate), or skip it. Big crowds can turn into trouble if the mayor skips the prep. The next one shows in "Next on the calendar."
+- **An opponent with a personality.** Your opponent is a Brawler, a Policy wonk or a Showman (shown in Campaign HQ). They react: attack ads when you pull ahead, spin after you win a debate, courting a group that's warming to you, answering your attack ads, chasing a counter-endorsement. Each reaction tells you what it cost and lets you answer: hit back at a press conference (Star Power odds), answer with an ad, or stay above it.
+
 ## v26.31: How you're doing, trend charts, and visitors who remember
 
 - **Quarterly report.** At the end of every March, June, September and December a report opens with your headline number (vote share during a race, approval otherwise) and how it moved in three months, a chart of your trend, which groups warmed to you or cooled, your strongest and weakest district, which of your moves actually changed the numbers, your money, and one suggestion from your campaign manager or chief of staff with a "Do that next" button. You can open it any time from City → How you're doing.
