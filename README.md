@@ -4,6 +4,12 @@ A city-management game set in Memphis, Tennessee. You play the mayor. You handle
 
 **Play it:** https://erndae.github.io/Bluff-city-mayor/ (once GitHub Pages is turned on, see below)
 
+## v26.26: Your office, and meetings you travel to
+
+**Your office.** As mayor, tap City Hall and choose **Go up to your office**, or use City → Your office. You walk in first person from the reception area into the mayor's office on the 7th floor: carpet, wood paneling, a big window over Downtown and the river, the city seal and flags. Your desk has the laptop, the TV plays the evening news, the bookcase builds skills, and the meeting table opens your phone to call people in. City time pauses inside.
+
+**Meetings take you there.** Tapping Meet closes the phone, flies the map camera to the place (a coffee shop in a council member's district, FedEx headquarters, a suburb's city hall), moves your marker there, and starts a conversation. They speak first about what they care about, and you choose a reply: listen (safe, small boost), make a commitment (bigger boost; follow through), or ask for help (Dealmaking decides it: success means they owe you, failure cools them). Then they answer and you see the result.
+
 ## v26.25: Candidates only see what they can do
 
 Mayor-only buttons (budget, orders, funding, council votes and the like) are now hidden from candidates instead of grayed out. A section left with nothing a candidate can use is hidden too. Once you win, everything appears.

@@ -18,9 +18,19 @@
   const ITEMS=Object.fromEntries(CATALOG.map(x=>[x.id,x]));
   const WALLS=[{name:'Warm ivory',color:'#e5ddc9'},{name:'Soft sage',color:'#bdc8b5'},{name:'Dusty blue',color:'#b5c5cb'},{name:'Clay',color:'#d5b8a4'}];
   const FLOORS=[{name:'Honey oak',color:'#b99165'},{name:'Walnut',color:'#816047'},{name:'Pale oak',color:'#c9b99a'}];
-  const STRUCTURE=[{x:0,z:5,w:.18,d:10},{x:12,z:5,w:.18,d:10},{x:6,z:0,w:12,d:.18},{x:6,z:10,w:12,d:.18},{x:7,z:1.9,w:.16,d:3.8},{x:7,z:7.8,w:.16,d:4.4},{x:1.1,z:6,w:2.2,d:.16},{x:5.8,z:6,w:2.4,d:.16}];
-  const FIXTURES=[{x:3.2,z:9.5,w:5.5,d:.85},{x:.65,z:8.65,w:.85,d:.85}];
-  const DOORWAYS=[{x:7,z:4.7,w:.85,d:1.8},{x:3.4,z:6,w:2.4,d:.85},{x:3.5,z:.6,w:1.6,d:1.2}];
+  let MODE='home';
+  const HOME_STRUCTURE=[{x:0,z:5,w:.18,d:10},{x:12,z:5,w:.18,d:10},{x:6,z:0,w:12,d:.18},{x:6,z:10,w:12,d:.18},{x:7,z:1.9,w:.16,d:3.8},{x:7,z:7.8,w:.16,d:4.4},{x:1.1,z:6,w:2.2,d:.16},{x:5.8,z:6,w:2.4,d:.16}];
+  const HOME_FIXTURES=[{x:3.2,z:9.5,w:5.5,d:.85},{x:.65,z:8.65,w:.85,d:.85}];
+  const HOME_DOORWAYS=[{x:7,z:4.7,w:.85,d:1.8},{x:3.4,z:6,w:2.4,d:.85},{x:3.5,z:.6,w:1.6,d:1.2}];
+  // The mayor's office on the 7th floor of City Hall: the office itself, and a reception area behind a partition.
+  const OFFICE_STRUCTURE=[{x:0,z:5,w:.18,d:10},{x:12,z:5,w:.18,d:10},{x:6,z:0,w:12,d:.18},{x:6,z:10,w:12,d:.18},{x:8,z:1.6,w:.16,d:3.2},{x:8,z:7.6,w:.16,d:4.8}];
+  const OFFICE_DOORWAYS=[{x:8,z:4.2,w:.85,d:2},{x:10,z:.6,w:1.6,d:1.2}];
+  let STRUCTURE=HOME_STRUCTURE,FIXTURES=HOME_FIXTURES,DOORWAYS=HOME_DOORWAYS;
+  function setMode(m){MODE=m==='office'?'office':'home';STRUCTURE=MODE==='office'?OFFICE_STRUCTURE:HOME_STRUCTURE;FIXTURES=MODE==='office'?[]:HOME_FIXTURES;DOORWAYS=MODE==='office'?OFFICE_DOORWAYS:HOME_DOORWAYS;}
+  function officeInitial(){return {version:1,wall:2,floor:1,next:12,items:[
+    {uid:1,type:'desk',x:3.6,z:7.6,r:0},{uid:2,type:'chair',x:3.6,z:8.6,r:2},{uid:3,type:'shelf',x:.25,z:7.5,r:1},{uid:4,type:'tv',x:.35,z:3.2,r:1},
+    {uid:5,type:'table',x:4.4,z:3.2,r:1},{uid:6,type:'chair',x:5.4,z:2.4,r:3},{uid:7,type:'chair',x:5.4,z:4,r:3},{uid:8,type:'rug',x:3.8,z:5.4,r:0},
+    {uid:9,type:'sofa',x:10.6,z:6.8,r:3},{uid:10,type:'plant',x:7.4,z:9.4,r:0},{uid:11,type:'lamp',x:11.4,z:9.3,r:0}]};}
   const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
   const money=n=>'$'+Math.round(n).toLocaleString('en-US');
   function rect(item){const b=ITEMS[item.type],swap=Math.abs(Math.round(item.r||0))%2;return {x:item.x,z:item.z,w:swap?b.d:b.w,d:swap?b.w:b.d};}
@@ -32,6 +42,7 @@
     {uid:10,type:'table',x:3.5,z:7.8,r:0},{uid:11,type:'art',x:8.2,z:8.8,r:0}
   ]};}
   function ensure(s){
+    if(MODE==='office'){if(!s.office||s.office.version!==1)s.office=officeInitial();const o=s.office;o.items=(o.items||[]).filter(i=>ITEMS[i.type]);o.next=Math.max(1,...o.items.map(i=>i.uid+1));return o;}
     if(!s.interior||s.interior.version!==1)s.interior=initial();
     const h=s.interior;h.wall=clamp(Math.floor(h.wall)||0,0,WALLS.length-1);h.floor=clamp(Math.floor(h.floor)||0,0,FLOORS.length-1);
     h.items=(Array.isArray(h.items)?h.items:[]).filter(i=>ITEMS[i.type]&&Number.isFinite(i.x)&&Number.isFinite(i.z)&&Number.isInteger(i.uid)).slice(0,64);
@@ -76,7 +87,8 @@
       for(const [dx,dy,dz] of [[-1,0,-1],[1,0,-1],[1,0,1],[-1,0,1],[-1,1,-1],[1,1,-1],[1,1,1],[-1,1,1]])p.push([x+dx*w/2*co+dz*d/2*si,y+dy*ht,z-dx*w/2*si+dz*d/2*co]);
       [[0,1,2,3,.6],[0,4,5,1,.82],[1,5,6,2,.9],[2,6,7,3,.96],[3,7,4,0,.87],[4,7,6,5,1.07]].forEach(a=>poly(a.slice(0,4).map(i=>p[i]),shade(c,a[4])));
     }
-    if(!itemsOnly){
+    if(!itemsOnly&&MODE==='office'){officeShell(poly,box,h);}
+    else if(!itemsOnly){
     const wall=WALLS[h.wall].color,floor=FLOORS[h.floor].color;
     // Continuous surfaces close the room; decorative boards sit above the base.
     poly([[0,-.015,0],[12,-.015,0],[12,-.015,10],[0,-.015,10]],'#8e7458');
@@ -103,6 +115,23 @@
     }
     h.items.filter(i=>!i.stored).forEach(item=>furniture(item,box));
     return faces;
+  }
+  function officeShell(poly,box,h){const wall=WALLS[h.wall].color;
+    poly([[0,-.015,0],[12,-.015,0],[12,-.015,10],[0,-.015,10]],'#4a3b30');poly([[0,3.1,0],[0,3.1,10],[12,3.1,10],[12,3.1,0]],'#ece7dc');
+    for(let x=0;x<12;x+=1)for(let z=0;z<10;z+=1)poly([[x,0,z],[x+.99,0,z],[x+.99,0,z+.99],[x,0,z+.99]],shade(x<8?'#5e3b3b':'#7a8a8f',1+((x+z)%2?.03:-.03)));
+    for(const b of STRUCTURE){const along=b.w>b.d,length=along?b.w:b.d,n=Math.ceil(length/.7);for(let i=0;i<n;i++){const x=along?b.x-b.w/2+(i+.5)*length/n:b.x,z=along?b.z:b.z-b.d/2+(i+.5)*length/n;
+      box(x,0,z,along?length/n:b.w,3.1,along?b.d:length/n,wall);box(x,0,z,along?length/n:b.w+.035,.15,along?b.d+.035:length/n,'#3d2e24');box(x,1,z,along?length/n:b.w+.03,.05,along?b.d+.03:length/n,'#b89a6a');}}
+    box(8,2.28,4.2,.2,.82,2,wall);box(10,0,.11,1.35,2.3,.07,'#5a3b28');box(10.5,1.05,.17,.07,.07,.06,'#d9b16b');
+    // the big window behind the desk looks out over Downtown and the river
+    box(4,.8,9.9,6,1.9,.06,'#e9e2cf');box(4,.9,9.86,5.7,1.7,.035,'#86aab8');
+    for(let j=0;j<12;j++)box(1.4+j*.48,.92,9.83,.36,.35+((j*7)%5)*.2,.02,j%3?'#5f7f8c':'#4d6a76');
+    box(4,.86,9.8,5.7,.12,.02,'#4c86a3');
+    // the city seal and the flags
+    box(3.6,2.05,9.86,.75,.75,.02,'#c9a15a');box(3.6,2.05,9.84,.55,.55,.02,'#2f4a6a');
+    for(const [x,c] of [[1.2,'#3a5fa8'],[6,'#b8342a']]){box(x,0,9.3,.05,2.1,.05,'#8a7a5a');box(x+.2,1.4,9.3,.4,.6,.02,c);}
+    // reception: a front desk and a nameplate
+    box(10,0,2.6,2.2,1,.5,'#6b4a33');box(10,1,2.6,2.3,.06,.6,'#d8c9a8');box(10,1.07,2.4,.5,.12,.04,'#c9a15a');
+    for(let k=0;k<4;k++)box(11.88,.6+k*.42,7,.02,.3,2.4,['#efe8d8','#d8e0e4','#efe8d8','#d8e0e4'][k]);
   }
   function furniture(i,box,tint){
     const b=ITEMS[i.type],r=i.r*Math.PI/2,co=Math.cos(r),si=Math.sin(r),c=tint||b.color;
@@ -147,7 +176,7 @@
   const $=id=>host.querySelector('#'+id);
   function say(message){$('hi-status').textContent=message;clearTimeout(noticeTimer);noticeTimer=setTimeout(()=>{$('hi-status').textContent=''},5000);}
   function persist(){adapter.save();dirty=true;scene=geometry(h);renderer.setScene(scene);$('hi-cash').textContent=money(s.purse.cash)+' personal';if(s._saveFail)say('Could not save: browser storage is full. Free space before leaving.');}
-  function room(){return p.x>7?'Bedroom':p.z>6?'Kitchen':'Living room';}
+  function room(){if(MODE==='office')return p.x>8?'Reception':'Mayor\'s office';return p.x>7?'Bedroom':p.z>6?'Kitchen':'Living room';}
   function resize(){const r=canvas.getBoundingClientRect(),scale=Math.min(root.devicePixelRatio||1,1.5,Math.sqrt(renderer.maxPixels/Math.max(1,r.width*r.height)));canvas.width=Math.max(1,Math.round(r.width*scale));canvas.height=Math.max(1,Math.round(r.height*scale));dirty=true;}
   function target(){const dist=clamp(1.62/Math.tan(Math.max(.38,p.pitch)),1.25,3.4);return {x:Math.round((p.x+Math.sin(p.yaw)*dist)*4)/4,z:Math.round((p.z+Math.cos(p.yaw)*dist)*4)/4};}
   function draft(){return selection?{...selection,...target()}:null;}
@@ -158,8 +187,8 @@
     renderer.setPreview(ghost);renderer.render(p);
     $('hi-room').textContent=room();
     if(proposed){$('hi-place').disabled=!valid||(!selection.uid&&s.purse.cash<ITEMS[selection.type].price);$('hi-placement-note').textContent=valid?'Clear spot · ready to place':'Blocked · move or turn toward open floor';}
-    const near=h.items.filter(i=>!i.stored&&ITEMS[i.type].use&&Math.hypot(i.x-p.x,i.z-p.z)<2.5).sort((a,b)=>Math.hypot(a.x-p.x,a.z-p.z)-Math.hypot(b.x-p.x,b.z-p.z))[0];
-    const use=$('hi-use');use.hidden=!!selection||!near;if(near){use.dataset.uid=near.uid;use.textContent={news:'Watch the news',rest:'Rest on bed',campaign:'Review campaign',laptop:'Use your laptop',books:'Pick a book'}[ITEMS[near.type].use];}
+    const near=h.items.filter(i=>!i.stored&&(ITEMS[i.type].use||(MODE==='office'&&i.type==='table'))&&Math.hypot(i.x-p.x,i.z-p.z)<2.5).sort((a,b)=>Math.hypot(a.x-p.x,a.z-p.z)-Math.hypot(b.x-p.x,b.z-p.z))[0];
+    const use=$('hi-use');use.hidden=!!selection||!near;if(near){use.dataset.uid=near.uid;use.textContent=(MODE==='office'&&near.type==='table'?'Hold a meeting':{news:'Watch the news',rest:'Rest on bed',campaign:'Review campaign',laptop:'Use your laptop',books:'Pick a book'}[ITEMS[near.type].use]);}
   }
   function frame(now){if(!active)return;const dt=Math.min(.04,(now-last)/1000||0);last=now;
     if(!document.hidden){let forward=(keys.has('w')||keys.has('arrowup')?1:0)-(keys.has('s')||keys.has('arrowdown')?1:0)-stick.y;
@@ -186,26 +215,26 @@
   function select(type,uid){selection={type,uid:uid||null,r:uid?(h.items.find(i=>i.uid===uid)?.r||0):0};$('hi-panel').hidden=true;$('hi-placement').hidden=false;$('hi-place').textContent=uid?'Place item':'Buy & place · '+money(ITEMS[type].price);$('hi-selected').textContent=ITEMS[type].name;$('hi-furnish').hidden=true;dirty=true;say('Face open floor. Move closer or farther, then place.');}
   function cancel(){selection=null;$('hi-placement').hidden=true;$('hi-furnish').hidden=false;dirty=true;}
   function resetControls(){keys.clear();stick={x:0,y:0};look=null;if(host)$('hi-stick-knob').style.transform='translate(0,0)';}
-  function exit(next){if(!active)return;active=false;cancelAnimationFrame(raf);clearTimeout(noticeTimer);resetControls();renderer.destroy();host.remove();root.removeEventListener('resize',resize);root.removeEventListener('blur',resetControls);document.removeEventListener('visibilitychange',resetControls);document.body.classList.remove('inside-home');adapter.close(next);previousFocus?.focus?.();}
+  function exit(next){if(!active)return;active=false;cancelAnimationFrame(raf);clearTimeout(noticeTimer);resetControls();renderer.destroy();host.remove();root.removeEventListener('resize',resize);root.removeEventListener('blur',resetControls);document.removeEventListener('visibilitychange',resetControls);document.body.classList.remove('inside-home');const how=MODE;setMode('home');adapter.close(next);previousFocus?.focus?.();}
   function open(options){
-    if(active)return;adapter=options;s=options.state();if(!s?.started||!s.home)return;h=ensure(s);p={x:3.5,z:1.05,yaw:0,pitch:.08};previousFocus=document.activeElement;active=true;
+    if(active)return;adapter=options;setMode(options.place);s=options.state();if(!s?.started||(MODE==='home'&&!s.home))return;h=ensure(s);p=MODE==='office'?{x:10.6,z:4.2,yaw:-Math.PI/2-.25,pitch:.12}:{x:3.5,z:1.05,yaw:0,pitch:.08};previousFocus=document.activeElement;active=true;
     host=document.createElement('section');host.id='home-interior';host.setAttribute('role','dialog');host.setAttribute('aria-modal','true');host.setAttribute('aria-label','Inside your home');
     host.innerHTML=`<canvas id="hi-view" aria-label="First-person view of your furnished home. Use the walking controls or WASD to move and drag the view to look around."></canvas>
-      <header class="hi-header"><div><small>YOUR HOME · CITY PAUSED</small><h2 id="hi-room">Living room</h2><span id="hi-cash"></span></div><div class="hi-head-btns"><button id="hi-phone" aria-label="Your phone">Phone</button><button id="hi-exit">Leave home</button></div></header>
+      <header class="hi-header"><div><small>${MODE==='office'?'CITY HALL, 7TH FLOOR · CITY PAUSED':'YOUR HOME · CITY PAUSED'}</small><h2 id="hi-room">Living room</h2><span id="hi-cash"></span></div><div class="hi-head-btns"><button id="hi-phone" aria-label="Your phone">Phone</button><button id="hi-exit">${MODE==='office'?'Leave the office':'Leave home'}</button></div></header>
       <div class="hi-crosshair" aria-hidden="true">+</div><p id="hi-status" role="status" aria-live="polite"></p>
       <div class="hi-actions"><button id="hi-use" hidden></button><button id="hi-furnish">Furnish & decorate</button></div>
       <div id="hi-placement" hidden><strong id="hi-selected"></strong><small id="hi-placement-note"></small><div><button id="hi-rotate">Rotate ↻</button><button id="hi-place">Place</button><button id="hi-cancel">Cancel</button></div></div>
       <div class="hi-controls"><div id="hi-stick" aria-label="Drag to walk"><span id="hi-stick-knob"></span><b>WALK</b></div><span class="hi-look-help">Drag the room to look<br><span>WASD · arrows turn</span></span></div>
       <aside id="hi-panel" hidden aria-label="Furnish your home"><div class="hi-panel-title"><h2>Make yourself at home</h2><button id="hi-panel-close" aria-label="Close furniture shop">×</button></div><nav id="hi-tabs" aria-label="Furniture categories"></nav><div id="hi-panel-body"></div></aside>`;
-    document.body.appendChild(host);document.body.classList.add('inside-home');canvas=$('hi-view');renderer=root.BCHomeRenderer.create(canvas);canvas=renderer.canvas||canvas;scene=geometry(h);renderer.setScene(scene);resize();$('hi-cash').textContent=money(s.purse.cash)+' personal';$('hi-exit').focus();
+    document.body.appendChild(host);document.body.classList.add('inside-home');if(MODE==='office')$('hi-furnish').hidden=true;canvas=$('hi-view');renderer=root.BCHomeRenderer.create(canvas);canvas=renderer.canvas||canvas;scene=geometry(h);renderer.setScene(scene);resize();$('hi-cash').textContent=money(s.purse.cash)+' personal';$('hi-exit').focus();
     host.addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;const d=b.dataset;
       if(b.id==='hi-exit'){exit();return;}if(b.id==='hi-phone'){if(adapter.device){keys.clear();stick={x:0,y:0};adapter.device('phone')}else exit('phone');return;}if(d.hiGo){exit(d.hiGo);return;}if(d.hiRead&&adapter.read){books(adapter.read(d.hiRead));return;}if(b.id==='hi-furnish'){panel();return;}if(b.id==='hi-panel-close'){$('hi-panel').hidden=true;$('hi-furnish').focus();return;}
       if(d.hiTab){tab=d.hiTab;panel();return;}if(d.hiBuy){select(d.hiBuy);return;}if(d.hiMove){const i=h.items.find(x=>x.uid===+d.hiMove);if(i)select(i.type,i.uid);return;}
       if(d.hiStore){const i=h.items.find(x=>x.uid===+d.hiStore);if(i)i.stored=true;persist();panel();say('Stored. You can place it again for free.');return;}
       if(d.hiWall!==undefined||d.hiFloor!==undefined){if(d.hiWall!==undefined)h.wall=+d.hiWall;else h.floor=+d.hiFloor;persist();panel();return;}
       if(b.id==='hi-rotate'){selection.r=(selection.r+1)%4;dirty=true;}if(b.id==='hi-cancel')cancel();
-      if(b.id==='hi-place'&&selection){const result=transact(s,draft(),p);if(result.ok){h=s.interior;cancel();persist();say(result.cost?'Placed · '+money(result.cost)+' from personal money.':'Furniture moved.');}else say(result.message);}
-      if(b.id==='hi-use'){const item=h.items.find(i=>i.uid===+b.dataset.uid);if(item){const use=ITEMS[item.type].use;if(use==='rest')say('A quiet moment at home. City time stays paused while you rest.');else if(use==='laptop'){if(adapter.device){keys.clear();stick={x:0,y:0};adapter.device('laptop')}else laptop();}else if(use==='news'&&adapter.tv)tv();else if(use==='books'&&adapter.books)books();else exit(use);}}
+      if(b.id==='hi-place'&&selection){const result=transact(s,draft(),p);if(result.ok){h=MODE==='office'?s.office:s.interior;cancel();persist();say(result.cost?'Placed · '+money(result.cost)+' from personal money.':'Furniture moved.');}else say(result.message);}
+      if(b.id==='hi-use'){const item=h.items.find(i=>i.uid===+b.dataset.uid);if(item){const use=ITEMS[item.type].use;if(MODE==='office'&&item.type==='table'){if(adapter.device){keys.clear();stick={x:0,y:0};adapter.device('phone')}return;}if(use==='rest')say('A quiet moment at home. City time stays paused while you rest.');else if(use==='laptop'){if(adapter.device){keys.clear();stick={x:0,y:0};adapter.device('laptop')}else laptop();}else if(use==='news'&&adapter.tv)tv();else if(use==='books'&&adapter.books)books();else exit(use);}}
     });
     canvas.addEventListener('webglcontextlost',()=>say('Graphics paused. Leave and re-enter your home to restore the view.'));
     canvas.addEventListener('pointerdown',e=>{if(e.button!==0)return;canvas.setPointerCapture(e.pointerId);look={id:e.pointerId,x:e.clientX,y:e.clientY};});

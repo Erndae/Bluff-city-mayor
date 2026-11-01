@@ -328,6 +328,7 @@ button.brand:hover .bm-ic,button.brand:focus-visible .bm-ic{border-color:var(--a
 .hqtabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px}.hqtabs button{flex:none}
 .goflash{animation:goflash 1.6s ease-out}@keyframes goflash{0%{box-shadow:0 0 0 3px var(--amber)}100%{box-shadow:0 0 0 0 transparent}}
 .subpips{display:inline-flex;gap:3px;margin-right:8px;vertical-align:1px}.subpips i{width:10px;height:10px}.subpips.out i{border-color:var(--bad)}
+.meetscene{text-align:center}.dlgbub{text-align:left;background:var(--panel2,rgba(255,255,255,.05));border:1px solid var(--line);border-radius:12px 12px 12px 2px;padding:10px 14px;margin:0 0 12px}.dlgbub b{color:var(--amber);font-size:13px}.dlgbub p{margin:4px 0 0;font-size:15px;line-height:1.45}.dlgpick .choice b{font-style:italic}.meetfaces{display:flex;align-items:center;justify-content:center;gap:14px;margin:4px 0 12px}.meetdots{color:var(--amber);letter-spacing:3px}
 .phic{width:40px;height:40px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:18px;color:#13212d}
 
 /* phone and laptop frames */
@@ -649,7 +650,7 @@ details.analysis{margin-top:6px}details.analysis summary{cursor:pointer;color:va
     <button class="btn primary" data-act="pause" id="bPlay"><svg class="ico" viewBox="0 0 12 12" aria-hidden="true"><path d="M3.2 1.6v8.8l7.2-4.4z" fill="currentColor"/></svg> Resume <kbd>Space</kbd></button>
   </nav>
   <div class="status" id="status">Loading map…</div>
-  <div class="credit"><span class="ver" id="verTag">v26.25</span></div>
+  <div class="credit"><span class="ver" id="verTag">v26.26</span></div>
   <div class="tip" id="tip" hidden></div>
   <div class="toast" id="toast" role="status"></div>
   <section class="panel" id="panel" hidden aria-live="polite">
@@ -677,7 +678,7 @@ details.analysis{margin-top:6px}details.analysis summary{cursor:pointer;color:va
         <button class="btn" data-music-open>Music &amp; volume</button>
       </div>
       <div id="slotList" hidden></div>
-      <p class="note startv">Version <b class="ver" id="verStart">v26.25</b></p>
+      <p class="note startv">Version <b class="ver" id="verStart">v26.26</b></p>
     </div>
     <div class="startbox create" id="create" hidden>
       <h2>Create your mayor</h2>
@@ -1485,7 +1486,7 @@ function enact(s,p){DIVS.forEach(d=>{s.enacted[d.id]=p.divs[d.id];s.ratio[d.id]=
 // Voter groups. Each has a share of residents, turnout, home districts, concerns and an approval of you.
 // Citywide approval is the turnout-weighted average of the groups; each council district's approval comes from the groups that live there.
 // Shares, district mix and turnout are modeled, loosely grounded in Memphis demographics; they are not survey data.
-const VERSION='v26.25';
+const VERSION='v26.26';
 const GROUPS=[
  {id:'working',sh:'Working families',n:'Working families',ic:'⚒︎',c:'#f2a93b',share:24,turn:.5,start:56,w:{jobs:1,safety:.8,transit:.5},
   d:'Hourly workers in logistics, warehouses, health care and service jobs. The biggest bloc in the city.',dm:{1:1.1,2:.8,3:1.3,4:1.2,5:.6,6:1.2,7:1.1}},
@@ -5258,7 +5259,7 @@ function phMeet(kind,id){if(phMeetWhy(kind,id))return;const W=phWhere(kind,id);l
   else if(kind==='nb'){const n=S.nb[id];n.met=nowM();S.slots--;addMod(n,'Met with the Memphis mayor',meetGain(n,8));gainXP('dip',6);recompute(n);msg=`You met Mayor ${n.name} at ${W.label}.`}
   else if(kind==='group'){if(isCand())candMeet(id);else doMeetGroup(id);msg=`You met ${GMAP[id].n.toLowerCase()} leaders at ${W.label}.`}
   else if(kind==='vip'){const v=VMAP[id];S.slots--;markAct('vip_'+id);gainXP('dip',6);msg=`You met ${v.name} at ${W.label}. `+v.win()}
-  goTo(W.lon,W.lat,W.label,2);try{S.approval=cityApproval(S)}catch(e){}logIt(msg);save();refreshHUD();try{sfx('good')}catch(e){}notify('people','Meeting done',msg,null,{silent:true});phRefresh(PH_TAB)}
+  goTo(W.lon,W.lat,W.label,2);try{S.approval=cityApproval(S)}catch(e){}logIt(msg);save();refreshHUD();try{sfx('good')}catch(e){}phRefresh(PH_TAB)}
 function phCall(kind,id){const key=kind+'_'+id;if(phCallLeft(key))return;markAct('call_'+key);let who='';
   if(kind==='council'){const m=S.council[+id];addMod(m,'Called to check in',2);recompute(m);who=m.name}
   else if(kind==='staff'){const s=staffOf(id);addMod(s,'Called to check in',2);who=s.name}
@@ -5444,6 +5445,52 @@ function mgrTipDaily(){if(!S||!S.started||S.over||!curMgr()||!S.camp)return;if(!
 {const _dt=dayTick;dayTick=function(){_dt();try{mgrTipDaily()}catch(e){console.warn('mgrtip',e)}}}
 // the manager's pop-up and "Ask" button lead with their specialty too
 {const _cs2=campStrategy;campStrategy=function(...a){const P=_cs2.apply(this,a);try{if(P&&P.moves){const tips=mgrTips().filter(t=>t.pri>=80);if(tips.length&&!P.moves.some(m=>m.t===tips[0].t)){P.moves.unshift({t:tips[0].t,why:tips[0].h,go:tips[0].go,pri:99});P.moves=P.moves.slice(0,3)}}}catch(e){}return P}}
+// ---------- your office at City Hall ----------
+function enterOffice(){if(!S?.started||!inOffice()||!window.BCInterior||BCInterior.isOpen)return;const wasPaused=S.paused;
+  try{if(typeof TUT!=='undefined'&&TUT)tutEnd(false)}catch(e){}onClose=null;closeModal();closePanel();navReset();keysDown.clear();S.paused=true;
+  goTo(LM.cityhall.lon,LM.cityhall.lat,'Your office at City Hall',2);refreshHUD();
+  BCInterior.open({place:'office',state:()=>S,save,menu:()=>laptopItems(),device:k=>openDevice(k),tv:()=>homeTV(),books:()=>homeBooks(),read:id=>homeRead(id),close:next=>{
+    keysDown.clear();S.paused=wasPaused;save();refreshHUD();if(next==='news')openNews();else if(next==='campaign')openHQ();else if(next)homeRoute(next)}})}
+{const _op=openPlace;openPlace=function(at,...r){const res=_op.call(this,at,...r);try{if(at==='cityhall'&&inOffice()&&!$('pBody').querySelector('[data-act="office"]'))$('pBody').insertAdjacentHTML('afterbegin',`<div class="facts"><button class="btn primary" data-act="office" style="width:100%">Go up to your office</button><p class="note" style="margin:6px 0 0">The 7th floor. Your desk and laptop, a meeting table for calls and visitors, the TV and your books.</p></div>`)}catch(e){}return res}}
+document.addEventListener('click',e=>{const b=e.target.closest('[data-act="office"]');if(!b||!S)return;e.preventDefault();e.stopImmediatePropagation();enterOffice()},true);
+// ---------- meetings take you there ----------
+function phWho(kind,id){try{if(kind==='council'){const m=S.council[+id];return{n:m.name,face:portrait(m,64),line:'They pulled up a chair in a coffee shop in their district.'}}
+  if(kind==='staff'){const s=staffOf(id);return{n:s.name,face:portrait(s,64),line:'They walked you through what their department needs.'}}
+  if(kind==='nb'){const n=S.nb[id];return{n:'Mayor '+n.name,face:portrait(n,64),line:'You talked roads, jobs and how the region gets along.'}}
+  if(kind==='vip'){const v=VMAP[id];return{n:v.name,face:portrait(v,64),line:v.role+'.'}}
+  if(kind==='group'){const g=GMAP[id];return{n:g.n+' leaders',face:`<span class="phic" style="background:${g.c};width:64px;height:64px;font-size:28px">${g.ic}</span>`,line:'A room full of neighbors with a lot to say.'}}}catch(e){}return{n:'Your meeting',face:'',line:''}}
+{const _pm=phMeet;phMeet=function(kind,id){if(phMeetWhy(kind,id))return;const W=phWhere(kind,id),who=phWho(kind,id),sl=S.slots,logN=(S.log||[]).length;
+  if(window.BCInterior&&BCInterior.isOpen){endDevice();onClose=null;try{closeModal()}catch(e){}BCInterior.close();setTimeout(()=>phMeet(kind,id),60);return}
+  _pm(kind,id);if(S.slots>=sl&&kind!=='group')return;
+  endDevice();onClose=null;try{closeModal()}catch(e){}closePanel();
+  try{camFly({center:[W.lon,W.lat],zoom:Math.max(15.6,map.getZoom())})}catch(e){}
+  const res=((S.log||[])[0]||{}).t||'';
+  setTimeout(()=>dlgStart(kind,id,W,who,res),700)}}
+// ---------- meetings play out as a conversation ----------
+let DLG=null;
+function dlgTopic(kind,id){try{if(kind==='council'){const m=S.council[+id],p=m.prio[0];return{issue:p,open:`Mayor, I'll be straight with you. My district wants to see you deliver on ${PRIO_LABEL[p].toLowerCase()}. What can you do for us?`}}
+  if(kind==='staff'){const D=STAFFMAP[id];return{issue:null,open:`Thanks for coming by. Running ${D.role==='Chief of Staff'?'your office':'this department'} is stretched thin right now. I need to know you have my back.`}}
+  if(kind==='nb'){const n=S.nb[id];return{issue:'jobs',open:`Glad you made the drive out to ${n.city}. Our residents work in Memphis and shop in Memphis. We want a partner on roads and jobs, not a rival.`}}
+  if(kind==='vip'){const v=VMAP[id];const L={county:['education','The county pays for most of the schools. If the city wants a say, I need to know you\'ll share the load.'],supt:['education','Our kids are behind in reading. I can\'t fix it with school hours alone.'],chamber:['jobs','Our members want to grow here. Tell me how City Hall will make that easier.'],fedex:['jobs','We hire thousands of Memphians. We want a workforce that\'s ready, and streets our trucks can use.'],pastors:['safety','Our congregations are burying too many young people. What are you going to do about it?'],union:['labor','My members keep this city clean in the heat and the cold. They want respect, and a raise.']}[id]||['jobs','What can we do together?'];return{issue:L[0],open:L[1]}}
+  if(kind==='group'){const g=GMAP[id],p=Object.entries(g.w).sort((a,b)=>b[1]-a[1])[0][0];return{issue:p,open:`We've got a room full of people who care about ${PRIO_LABEL[p]?PRIO_LABEL[p].toLowerCase():p}. They want to hear it from you directly.`}}}catch(e){}return{issue:null,open:'Thanks for making the time.'}}
+function dlgFace(){return DLG?`<div class="meetfaces">${portrait(S.mayor,64)}<span class="meetdots">• • •</span>${DLG.who.face}</div>`:''}
+function dlgStart(kind,id,W,who,res){const T=dlgTopic(kind,id);DLG={kind,id,W,who,res,T};const iss=T.issue&&PRIO_LABEL[T.issue]?PRIO_LABEL[T.issue].toLowerCase():'this';const cand=isCand();
+  openModal(`${dateStr()} · ${W.label}`,`Meeting with ${who.n}`,`<div class="meetscene">${dlgFace()}<div class="dlgbub them"><b>${who.n}</b><p>“${T.open}”</p></div></div>
+   <div class="choices dlgpick"><button class="choice" data-dlg="listen"><b>“Tell me more. I'm listening.”</b><small>Safe. They feel heard.</small></button>
+   <button class="choice" data-dlg="commit"><b>“${T.issue?`I'll make ${iss} a priority.`:'You have my support.'}”</b><small>Wins them over more. ${cand?'It becomes part of your message.':'They\'ll remember it if you don\'t follow through.'}</small></button>
+   <button class="choice" data-dlg="ask"><b>“${kind==='council'?'I\'ll need your vote soon.':kind==='group'?'I need your people behind me.':'I need your help on something.'}”</b><small>Dealmaking ${mskill('dip')} decides it. Works: they owe you. Fails: they cool on you.</small></button></div>`,false)}
+function dlgApply(v,why){const k=DLG.kind,id=DLG.id;try{if(k==='council'){const m=S.council[+id];addMod(m,why,v);recompute(m)}else if(k==='staff'){addMod(staffOf(id),why,v)}else if(k==='nb'){const n=S.nb[id];addMod(n,why,v);recompute(n)}else if(k==='group'){addGroupMod(S.groups[id],why,v*0.5)}else if(k==='vip'){const T=DLG.T;const g={education:'parents',jobs:'working',safety:'faith',labor:'labor'}[T.issue];if(g&&S.groups[g])addGroupMod(S.groups[g],why,v*0.3)}}catch(e){}}
+function dlgPick(c){if(!DLG)return;const k=DLG.kind,id=DLG.id,name=DLG.who.n;let reply,out;
+  if(c==='listen'){dlgApply(2,'You listened');reply='I appreciate that. Not many people at City Hall take the time.';out='They feel heard. A small boost.'}
+  else if(c==='commit'){dlgApply(5,'You made them a commitment');if(isCand()&&DLG.T.issue&&S.camp){try{addGroupMod(S.groups.working,'Clear message on the trail',0.3)}catch(e){}}reply='Then I\'ll hold you to it. Let\'s see it happen.';out='They\'re with you for now. Follow through on it.'}
+  else{const ok=Math.random()<clamp(0.3+mskill('dip')*0.035,0.25,0.9);gainXP('dip',3);if(ok){dlgApply(3,'Agreed to help the mayor');if(k==='council'){const m=S.council[+id];m.favors=(m.favors||0)+1}reply='All right. You can count on me when it matters.';out=k==='council'?'They owe you a favor on a future vote.':'They\'ll help when you ask.'}
+    else{dlgApply(-3,'Mayor pushed too hard');reply='That\'s a lot to ask in one meeting. Let me think about it.';out='You pushed too hard. They cooled a little.'}}
+  save();refreshHUD();
+  openModal(`${dateStr()} · ${DLG.W.label}`,`Meeting with ${name}`,`<div class="meetscene">${dlgFace()}<div class="dlgbub them"><b>${name}</b><p>“${reply}”</p></div>
+   <p class="note" style="margin-top:10px"><b>${out}</b>${DLG.res?' '+DLG.res.replace(/^You met [^.]*\.\s*/,''):''}</p></div>
+   <div class="row"><button class="btn primary" data-act="close">Back to work</button><button class="btn" data-meetphone="1">Set up another meeting</button></div>`,false);DLG=null}
+document.addEventListener('click',e=>{const b=e.target.closest('[data-dlg]');if(!b||!S)return;e.preventDefault();e.stopImmediatePropagation();dlgPick(b.dataset.dlg)},true);
+document.addEventListener('click',e=>{const b=e.target.closest('[data-meetphone]');if(!b||!S)return;e.preventDefault();e.stopImmediatePropagation();onClose=null;closeModal();openDevice('phone')},true);
 function openLedger(){const L=S.log||[];openPanel('Everything that has happened, newest first','Ledger',L.length?`<div class="logl">${L.map(x=>`<div><span>${x.d}</span><p style="margin:0">${x.t}</p></div>`).join('')}</div>`:'<p class="note">Nothing yet. Start the clock with Space or ▶.</p>','ledger')}
 function openPolicies(){const ks=Object.keys(POLICIES);
   openPanel('Ongoing programs you control','Your initiatives',`<p>Mid-year, these are paid from the reserve fund. In April they go into the budget you send the council.</p>
@@ -6071,9 +6118,9 @@ window.claude?.hot?.snapshot?.(()=>({S}));
 window.claude?.hot?.ready?window.claude.hot.ready(start):start(window.claude?.hot?.data??{});
 </script>
 <script src="home-renderer.js?v=26.11"></script>
-<script src="home-interior.js?v=26.21"></script>
+<script src="home-interior.js?v=26.26"></script>
 <script src="city-life.js?v=26.24"></script>
-<script src="city-flow.js?v=26.16"></script>
+<script src="city-flow.js?v=26.26"></script>
 <script src="music.js?v=25"></script>
 </body>
 </html>
