@@ -4,6 +4,12 @@ A city-management game set in Memphis, Tennessee. You play the mayor. You handle
 
 **Play it:** https://erndae.github.io/Bluff-city-mayor/ (once GitHub Pages is turned on, see below)
 
+## v26.31: How you're doing, trend charts, and visitors who remember
+
+- **Quarterly report.** At the end of every March, June, September and December a report opens with your headline number (vote share during a race, approval otherwise) and how it moved in three months, a chart of your trend, which groups warmed to you or cooled, your strongest and weakest district, which of your moves actually changed the numbers, your money, and one suggestion from your campaign manager or chief of staff with a "Do that next" button. You can open it any time from City → How you're doing.
+- **Trend chart in Campaign HQ.** The Overview tab shows your favorable (or approval) and your head-to-head vote month by month, with a dashed line at 50%.
+- **Visitors who remember.** When a council member's opinion of you swings hard (you granted or refused a request, took sides in a feud, threatened them), they remember it. A few months later they show up in your office: to return the favor (call in a vote, talk you up in their district) or with a grudge you can settle by apologizing, charming them, or reminding them who runs City Hall. Persuasion odds use your skills.
+
 ## v26.30: Something to do when you're out of actions, and a clock that keeps moving
 
 - **Free things to do.** Call donors (weekly, raises money based on Money Smarts), and build any skill every two weeks: practice speaking, learn from an old dealmaker, coffee with insiders, go through the numbers, study the issues, ride along with police. They show up when you're out of actions, on the Available actions screen, in Campaign HQ's Money tab, and in a new "While you wait" screen.

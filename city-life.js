@@ -48,7 +48,7 @@ window.BCLife = (() => {
     const groups=after.groups.map(g=>({...g,delta:g.app-(before.groups.find(b=>b.id===g.id)?.app??g.app)})).filter(g=>Math.abs(g.delta)>=.05);
     const later=[...extra];if(after.organizers!==before.organizers&&before.organizers!=null)later.push(`Organizer wages are now ${fmtK(after.organizers*4)} per month, paid from campaign cash.`);if(after.offices!==before.offices&&before.offices!=null)later.push(`Office costs are now ${fmtK(after.offices*6)} per month, paid from campaign cash.`);for(const k of after.policies.filter(k=>!before.policies.includes(k)))later.push(`${POLICIES[k]?.name||k}: ${fmtM(POLICIES[k]?.cost||0)} each year while funded.`);
     if(after.stories.some(k=>!before.stories.includes(k)))later.push('A developing story has begun. Watch the Mayor’s Desk for follow-up decisions.');
-    const r={id:Date.now()+'-'+Math.random().toString(36).slice(2,7),date:dateStr(),title,summary:summary||'Action completed.',place,changes,reactions,groups,later,reserveDelta:after.reserve-before.reserve};state().history.unshift(r);state().history.length=Math.min(40,state().history.length);save();sync();
+    const r={id:Date.now()+'-'+Math.random().toString(36).slice(2,7),date:dateStr(),m:(typeof nowM==='function'?nowM():null),title,summary:summary||'Action completed.',place,changes,reactions,groups,later,reserveDelta:after.reserve-before.reserve};state().history.unshift(r);state().history.length=Math.min(40,state().history.length);save();sync();
     // Let the existing action finish refreshing its panel before opening the receipt.
     if(window.__bcQuiet){r.quiet=true;window.__bcQuiet=false;queueMicrotask(()=>quietReport(r))}else queueMicrotask(()=>report(r));return r;
   }

@@ -304,7 +304,11 @@ button.seat:hover{border-color:var(--amber)}
 .btn:disabled,.btn[disabled],button.choice:disabled,.choice[disabled],.lapapp:disabled{opacity:.38;filter:grayscale(.85);cursor:not-allowed;box-shadow:none;border-style:dashed}.btn:disabled small,.choice:disabled small{color:var(--muted)!important}
 .freebox{border:1px solid color-mix(in srgb,var(--good) 55%,transparent);background:color-mix(in srgb,var(--good) 8%,transparent);border-radius:10px;padding:10px 12px;margin:0 0 12px}.freebox h4{margin:0 0 8px;color:var(--good)}.freesk{margin-top:8px}.freesk summary{cursor:pointer;font-weight:600;padding:6px 0}.freeact .fsk{font-weight:400;color:var(--muted);margin-left:6px;font-size:12px}
 .cashchip{position:sticky;top:-2px;z-index:3;display:flex;flex-wrap:wrap;gap:6px 14px;justify-content:space-between;background:var(--panel,#13202b);border:1px solid var(--line);border-radius:8px;padding:7px 12px;margin:0 0 10px;font-size:14px}
-.drow.adrow>span{white-space:normal;min-width:0;overflow-wrap:anywhere}.drow.adrow .btn{min-width:0;white-space:normal!important;display:flex;flex-wrap:wrap;justify-content:center;align-items:center;gap:0 6px}.adgain{display:block;width:100%;text-align:center;font-size:11px;font-weight:600;color:var(--good);margin-top:1px}
+.drow.adrow>span{white-space:normal;min-width:0;overflow-wrap:anywhere}.drow.adrow .btn{min-width:0;white-space:normal!important;display:flex;flex-wrap:wrap;justify-content:center;align-items:center;gap:0 6px}.trendsvg{width:100%;height:auto;display:block;max-height:220px}.trendkey{display:flex;gap:6px 14px;flex-wrap:wrap;font-size:12px;color:var(--muted);margin-top:4px}.trendkey i{display:inline-block;width:14px;height:3px;border-radius:2px;margin-right:5px;vertical-align:middle}.trendkey i.dash{background:none;border-top:2px dashed var(--muted);height:0}
+.qrhead{display:flex;flex-wrap:wrap;align-items:center;gap:8px 18px;margin-bottom:10px}.qrhead small{display:block;color:var(--muted);font-size:12px;letter-spacing:.04em;text-transform:uppercase}.qrbig{font-size:42px;line-height:1;margin-right:6px;font-family:var(--f-num,inherit)}.qrhead p{margin:0;flex:1 1 180px;font-size:16px}
+.qrgrid{display:grid;grid-template-columns:1fr 1fr;gap:4px 14px;margin-bottom:6px}.qrgrid small{color:var(--muted);font-size:12px}.qrgrid p{margin:3px 0;display:flex;justify-content:space-between;gap:6px;font-size:14px}.qrv{white-space:nowrap}@media (max-width:480px){.qrgrid{grid-template-columns:1fr}}
+.qradv{display:flex;gap:12px;align-items:flex-start;border:1px solid var(--amber);border-radius:10px;padding:10px 12px;margin:4px 0 10px}.qradv small{color:var(--muted)}.qradv b{display:block;margin:2px 0}.qradv p{margin:0;font-size:14px}
+.adgain{display:block;width:100%;text-align:center;font-size:11px;font-weight:600;color:var(--good);margin-top:1px}
 #start{overflow-x:hidden;overflow-y:auto;touch-action:pan-y}.startbox{min-width:0;max-width:min(600px,100%);box-sizing:border-box}.startbox *{min-width:0}.create select,.create input{max-width:100%;width:100%;box-sizing:border-box;text-overflow:ellipsis}.create .tpick,.create .tpick>*{max-width:100%;box-sizing:border-box}
 @media (max-width:640px){.startbox{margin-left:0}#start{padding-left:max(16px,env(safe-area-inset-left,0px))}}
 .startbox h1{margin:0;font-family:var(--f-display);font-weight:400;font-size:clamp(38px,7vw,64px);line-height:.95;color:var(--amber);text-shadow:0 0 26px rgba(242,169,59,.35);text-wrap:balance}
@@ -656,7 +660,7 @@ details.analysis{margin-top:6px}details.analysis summary{cursor:pointer;color:va
     <button class="btn primary" data-act="pause" id="bPlay"><svg class="ico" viewBox="0 0 12 12" aria-hidden="true"><path d="M3.2 1.6v8.8l7.2-4.4z" fill="currentColor"/></svg> Resume <kbd>Space</kbd></button>
   </nav>
   <div class="status" id="status">Loading map…</div>
-  <div class="credit"><span class="ver" id="verTag">v26.30</span></div>
+  <div class="credit"><span class="ver" id="verTag">v26.31</span></div>
   <div class="tip" id="tip" hidden></div>
   <div class="toast" id="toast" role="status"></div>
   <section class="panel" id="panel" hidden aria-live="polite">
@@ -684,7 +688,7 @@ details.analysis{margin-top:6px}details.analysis summary{cursor:pointer;color:va
         <button class="btn" data-music-open>Music &amp; volume</button>
       </div>
       <div id="slotList" hidden></div>
-      <p class="note startv">Version <b class="ver" id="verStart">v26.30</b></p>
+      <p class="note startv">Version <b class="ver" id="verStart">v26.31</b></p>
     </div>
     <div class="startbox create" id="create" hidden>
       <h2>Create your mayor</h2>
@@ -1493,7 +1497,7 @@ function enact(s,p){DIVS.forEach(d=>{s.enacted[d.id]=p.divs[d.id];s.ratio[d.id]=
 // Voter groups. Each has a share of residents, turnout, home districts, concerns and an approval of you.
 // Citywide approval is the turnout-weighted average of the groups; each council district's approval comes from the groups that live there.
 // Shares, district mix and turnout are modeled, loosely grounded in Memphis demographics; they are not survey data.
-const VERSION='v26.30';
+const VERSION='v26.31';
 const GROUPS=[
  {id:'working',sh:'Working families',n:'Working families',ic:'⚒︎',c:'#f2a93b',share:24,turn:.5,start:56,w:{jobs:1,safety:.8,transit:.5},
   d:'Hourly workers in logistics, warehouses, health care and service jobs. The biggest bloc in the city.',dm:{1:1.1,2:.8,3:1.3,4:1.2,5:.6,6:1.2,7:1.1}},
@@ -5628,6 +5632,81 @@ function candSweep(){if(!S||!S.started||!isCand()||!S.events)return;const n=S.ev
 {const _rh=refreshHUD;refreshHUD=function(...a){try{candSweep()}catch(e){}return _rh.apply(this,a)}}
 {const _om=openModal;openModal=function(...a){const r=_om.apply(this,a);try{if(isCand()&&$('mTitle').textContent==='Council chamber'){$('mSub').textContent='Memphis City Council · view only until you win';
   $('mBody').insertAdjacentHTML('afterbegin',`<div class="phout"><b>You're not mayor yet.</b> You can see who sits on the council and where they stand, but you can't meet, whip votes or make deals with them until you win. Win the election and they'll be waiting.</div>`)}}catch(e){}return r}}
+// ======================= v26.31: HOW YOU'RE DOING, TREND CHARTS, VISITORS WHO REMEMBER =======================
+// ---------- a monthly record of where you stand ----------
+function trendRow(y,m){const vote=(typeof headToHead==='function'&&S.camp&&S.rival&&(isCand()||monthsToElection()<=14))?Math.round(headToHead()*1000)/10:null;
+  const g={};GROUPS.forEach(x=>{if(S.groups[x.id])g[x.id]=Math.round(S.groups[x.id].app*10)/10});const d={};for(let k=1;k<=7;k++)d[k]=Math.round(dApp(k)*10)/10;
+  return{y,m,ph:S.phase,ap:Math.round(S.approval*10)/10,vote,g,d,cash:S.camp?Math.round(S.camp.cash):null,res:Math.round(S.reserve*10)/10,cand:isCand()}}
+function trendSeed(){if(!S||!S.started||S.phase==='ai')return;if(S.trend)S.trend=S.trend.filter(r=>r.ph!=='ai');if(S.trend&&S.trend.length)return;S.trend=[{...trendRow(S.y,S.m),start:1}]}
+function trendLabel(r){return r.now?'Now':r.start?'Start':MONTHS[(r.m+11)%12]}
+const QNAME={3:'Winter',6:'Spring',9:'Summer',12:'Fall'};
+{const _eom=endOfMonth;endOfMonth=function(...a){const y=S.y,mo=S.m;trendSeed();const r=_eom.apply(this,a);
+  try{if(S&&S.started&&S.phase!=='ai'){S.trend=S.trend||[];S.trend.push(trendRow(y,mo));if(S.trend.length>60)S.trend.splice(0,S.trend.length-60);
+    if(mo%3===0&&S.trend.length>=3&&!S.over){S.qrDue={y,m:mo}}
+    memMonth()}}catch(e){console.warn('trend',e)}return r}}
+// ---------- the chart ----------
+function trendChart(rows,o){o=o||{};rows=rows.slice(-(o.n||12));if(rows.length<2)return`<p class="note">The chart fills in at the end of each month.</p>`;
+  const W=320,H=o.h||130,L=26,R=8,T=10,B=20,iw=W-L-R,ih=H-T-B;const keys=[['ap',isCand()?'Favorable':'Approval','var(--amber)'],['vote','Vote vs. opponent','var(--good)']].filter(([k])=>rows.some(r=>r[k]!=null));
+  const vals=rows.flatMap(r=>keys.map(([k])=>r[k]).filter(v=>v!=null));let lo=Math.min(40,...vals),hi=Math.max(60,...vals);lo=Math.max(0,Math.floor((lo-3)/10)*10);hi=Math.min(100,Math.ceil((hi+3)/10)*10);
+  const X=i=>L+iw*(rows.length===1?0.5:i/(rows.length-1)),Y=v=>T+ih*(1-(v-lo)/(hi-lo));
+  const grid=[lo,50,hi].filter((v,i,a)=>a.indexOf(v)===i).map(v=>`<line x1="${L}" x2="${W-R}" y1="${Y(v)}" y2="${Y(v)}" style="stroke:var(--line)" ${v===50?'stroke-dasharray="4 3" stroke-width="1.4"':'stroke-width=".6"'}/><text x="${L-4}" y="${Y(v)+3}" text-anchor="end" style="fill:var(--muted)" font-size="9">${v}</text>`).join('');
+  const lines=keys.map(([k,n,c])=>{const pts=rows.map((r,i)=>r[k]!=null?[X(i),Y(r[k])]:null);let d='',pen=false;pts.forEach(p=>{if(!p){pen=false;return}d+=(pen?'L':'M')+p[0].toFixed(1)+' '+p[1].toFixed(1);pen=true});
+    const last=rows.map((r,i)=>[r[k],i]).filter(x=>x[0]!=null).pop();return`<path d="${d}" fill="none" style="stroke:${c}" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round"/>${pts.map(p=>p?`<circle cx="${p[0]}" cy="${p[1]}" r="2.4" style="fill:${c}"/>`:'').join('')}${last?`<text x="${Math.min(W-R,X(last[1]))}" y="${Y(last[0])-6}" text-anchor="end" font-size="10" font-weight="700" style="fill:${c}">${Math.round(last[0])}%</text>`:''}`}).join('');
+  const xl=rows.map((r,i)=>(i===0||i===rows.length-1||rows.length<=7||i%3===0)?`<text x="${X(i)}" y="${H-5}" text-anchor="middle" font-size="9" style="fill:var(--muted)">${trendLabel(r)}</text>`:'').join('');
+  return`<svg class="trendsvg" viewBox="0 0 ${W} ${H}" role="img" aria-label="${keys.map(k=>k[1]).join(' and ')} by month">${grid}${lines}${xl}</svg><div class="trendkey">${keys.map(([k,n,c])=>`<span><i style="background:${c}"></i>${n}</span>`).join('')}<span><i class="dash"></i>50%: the line to win</span></div>`}
+// ---------- the quarterly report ----------
+function qrData(){const T=(S.trend||[]).slice();trendSeed();const now=trendRow(S.y,S.m);const then=T.length>=4?T[T.length-4]:T[0]||now;const last=T[T.length-1]||now;
+  const gch=GROUPS.filter(g=>then.g&&then.g[g.id]!=null).map(g=>({g,now:now.g[g.id],d:now.g[g.id]-then.g[g.id]})).sort((a,b)=>b.d-a.d);
+  const dch=[1,2,3,4,5,6,7].map(k=>({k,now:now.d[k],d:now.d[k]-((then.d||{})[k]??now.d[k])})).sort((a,b)=>b.now-a.now);
+  const since=nowM()-3,hist=((S.life&&S.life.history)||[]).filter(r=>r.m==null?false:r.m>=since);const by={};
+  hist.forEach(r=>{const c=(r.changes||[]).find(c=>c.name==='Your vote share')||(r.changes||[]).find(c=>/^(Approval|Favorable|Your support)$/.test(c.name));if(!c)return;const k=String(r.title).replace(/ · .*$/,'');by[k]=by[k]||{t:k,n:0,v:0};by[k].n++;by[k].v+=c.delta});
+  const acts=Object.values(by).sort((a,b)=>b.v-a.v);return{now,then,gch,dch,good:acts.filter(a=>a.v>0.05).slice(0,3),bad:acts.filter(a=>a.v<-0.05).slice(-2).reverse()}}
+function sgn(v,u){return`<b style="color:${v>0.05?'var(--good)':v<-0.05?'var(--bad)':'var(--muted)'}">${v>0?'+':v<0?'−':''}${Math.abs(v).toFixed(1)}${u||''}</b>`}
+function qrHTML(auto){const D=qrData(),A=advisor(),cand=isCand(),camp=D.now.vote!=null;const main=camp?'vote':'ap',mN=camp?'Your vote against '+(S.rival?S.rival.name.split(' ').pop():'your opponent'):(cand?'Favorable':'Approval');
+  const dv=(D.now[main]??0)-((D.then[main]??D.now[main])??0);const tip=(()=>{try{if(curMgr()&&S.camp&&(cand||monthsToElection()<=8)){const P=campStrategy();if(P&&P.moves[0])return{t:P.moves[0].t,h:P.moves[0].why,go:P.moves[0].go}}const p=BCFlow.current();return p?{t:p.t,h:p.h,go:p.go}:null}catch(e){return null}})();QR_GO=tip&&tip.go;
+  const verdict=camp?(D.now.vote>=52?'You\'re ahead. Keep doing what works.':D.now.vote>=48?'It\'s a toss-up. Small moves decide it now.':'You\'re behind. Something needs to change.'):(D.now.ap>=55?'Memphis likes how things are going.':D.now.ap>=45?'Voters are split on you.':'Voters are unhappy. Fix what they care about.');
+  return`<div class="qrhead"><div><small>${mN}</small><b class="qrbig">${Math.round(D.now[main])}%</b>${sgn(dv,' pts')} <small>in 3 months</small></div><p>${verdict}</p></div>
+   <div class="facts"><h4>The last ${Math.min(12,(S.trend||[]).length+1)} months</h4>${trendChart([...(S.trend||[]),{...D.now,m:S.m,now:1}])}</div>
+   <div class="facts"><h4>Who moved</h4><div class="qrgrid"><div><small>Warming to you</small>${D.gch.filter(x=>x.d>0.05).length?'':'<p class="note">Nobody this quarter.</p>'}${D.gch.filter(x=>x.d>0.05).slice(0,2).map(x=>`<p><span>${x.g.ic} ${x.g.n}</span> <span class="qrv">${Math.round(x.now)}% ${sgn(x.d)}</span></p>`).join('')}</div><div><small>Cooling on you</small>${D.gch.filter(x=>x.d<-0.05).length?'':'<p class="note">Nobody turned on you.</p>'}${D.gch.filter(x=>x.d<-0.05).slice(-2).reverse().map(x=>`<p><span>${x.g.ic} ${x.g.n}</span> <span class="qrv">${Math.round(x.now)}% ${sgn(x.d)}</span></p>`).join('')}</div></div>
+     <div class="qrgrid"><div><small>Strongest district</small><p><span>District ${D.dch[0].k}</span> <span class="qrv">${Math.round(D.dch[0].now)}% ${sgn(D.dch[0].d)}</span></p></div><div><small>Weakest district</small><p><span>District ${D.dch[6].k}</span> <span class="qrv">${Math.round(D.dch[6].now)}% ${sgn(D.dch[6].d)}</span></p></div></div></div>
+   <div class="facts"><h4>What worked</h4>${D.good.length?`<ul>${D.good.map(a=>`<li>${a.t}${a.n>1?` (${a.n}×)`:''} ${sgn(a.v,' pts')}</li>`).join('')}</ul>`:'<p class="note">Nothing you did moved the numbers much this quarter.</p>'}${D.bad.length?`<p class="note" style="margin:6px 0 2px">Cost you:</p><ul>${D.bad.map(a=>`<li>${a.t} ${sgn(a.v,' pts')}</li>`).join('')}</ul>`:''}
+     <p class="note">${cand||camp?`Campaign cash ${fmtK(D.now.cash||0)} (${(()=>{const v=(D.now.cash||0)-(D.then.cash??D.now.cash??0);return`<b style="color:${v>0?'var(--good)':v<0?'var(--bad)':'var(--muted)'}">${v>0?'+':v<0?'−':''}${fmtK(Math.abs(v))}</b>`})()}).`:''} ${!cand?`City reserve ${fmtM(S.reserve)} (${sgn(D.now.res-(D.then.res??D.now.res),'M')}).`:''}</p></div>
+   ${tip?`<div class="qradv">${A?A.face:''}<div><small>${A?A.name+' · your '+A.role:'Your next step'}</small><b>${tip.t}</b><p>${tip.h||''}</p></div></div>`:''}
+   <div class="row">${tip?'<button class="btn primary" data-qr="go">Do that next</button>':''}<button class="btn" data-qr="close">${auto?'Back to work':'Close'}</button></div>`}
+let QR_GO=null;
+function qrTitle(){const q=S.qrLast||{y:S.y,m:S.m};return`${QNAME[q.m]||'Quarterly'} ${q.y} report`}
+function openQuarterAuto(){S.qrLast=S.qrDue;S.qrDue=null;save();openModal(dateStr()+' · every three months','How you\'re doing: '+qrTitle(),qrHTML(true),true)}
+function openQuarter(){closePanel();openModal(dateStr()+' · updated every month','How you\'re doing',qrHTML(false),true)}
+openQuarter=navWrap('openQuarter',openQuarter);
+document.addEventListener('click',e=>{const b=e.target.closest('[data-qr]');if(!b||!S)return;e.preventDefault();e.stopImmediatePropagation();const g=QR_GO;onClose=null;closeModal();if(b.dataset.qr==='go'&&g)try{g()}catch(err){}},true);
+setInterval(()=>{try{if(!S||!S.started||!S.qrDue||S.over)return;if(modalOpen||!$('panel').hidden||document.querySelector('dialog[open]')||(typeof TUT!=='undefined'&&TUT)||!$('start').hidden||(window.BCInterior&&BCInterior.isOpen)||(typeof DEV!=='undefined'&&DEV.kind))return;openQuarterAuto()}catch(e){}},1200);
+{const _rh=refreshHUD;refreshHUD=function(...a){const r=_rh.apply(this,a);try{trendSeed()}catch(e){}return r}}
+document.addEventListener('click',e=>{if(!e.target.closest('#cGo'))return;setTimeout(()=>{try{if(S&&S.started&&$('start').hidden){S.trend=[];S.mem={};S.qrDue=null;trendSeed();save()}}catch(err){}},300)},true);
+// the trend in Campaign HQ
+{const _om=openModal;openModal=function(...a){const r=_om.apply(this,a);try{const n=NAV.cur&&NAV.depth>0?NAV.cur.name:'';const body=$('mBody');if(n==='openHQ'&&body&&!body.querySelector('#hq-trend')&&S.trend){
+  const rows=[...S.trend,{...trendRow(S.y,S.m),m:S.m}];body.insertAdjacentHTML('afterbegin',`<div class="facts" id="hq-trend"><h4>Your race, month by month</h4>${trendChart(rows)}<div class="row"><button class="btn" data-flow-route="report">Full report: what worked and who moved</button></div></div>`)}}catch(e){console.warn(e)}return r}}
+// ---------- council members remember how you treated them ----------
+{const _am=addMod;addMod=function(m,t,v,perm){const r=_am.apply(this,arguments);try{if(S&&S.council&&!S._memQuiet){const i=S.council.indexOf(m);if(i>=0&&Math.abs(v)>=8&&!/meeting|Called|check in|thank|gracious|apolog|charm|door|waiting|backed down|^Gave in|Pork|re-election|public is behind|My voters|overreached|Regional|Promoted|Cleared|Won |Voted with|Knows where|Glad to help/i.test(t)){S.mem=S.mem||{};S.mem[i]={t,v,m:nowM(),done:0}}}}catch(e){}return r}}
+function memMonth(){if(!inOffice()||!S.mem)return;const open=(S.events||[]).concat((S.queue||[]).map(q=>q.ev)).some(e=>e&&e.kind==='char'&&(e.type==='thanks'||e.type==='grudge'));if(open)return;
+  const ready=Object.entries(S.mem).filter(([i,x])=>!x.done&&nowM()-x.m>=2&&nowM()-x.m<=9).sort((a,b)=>Math.abs(b[1].v)-Math.abs(a[1].v));if(!ready.length||Math.random()>0.55)return;
+  const[i,x]=ready[0];x.done=1;queueChar({type:x.v>0?'thanks':'grudge',a:+i,r:x.t,rm:x.m,at:'cityhall'})}
+function memWhen(ev){const y=Math.floor((ev.rm-1)/12),mo=ev.rm-y*12;return`${MONTHS_L[mo-1]}`}
+function lastN(i){return S.council[i].name.split(' ').pop()}
+CHAR_TYPES.thanks={w:0,title:ev=>`${S.council[ev.a].name} wants to return the favor`,gen:()=>null,
+  body:ev=>{const m=S.council[ev.a];return`${m.name} came by your office. They still talk about what happened in ${memWhen(ev)}: “${ev.r}.” They haven't forgotten, and they want to pay it back.`},
+  who:ev=>[['char',ev.a]],
+  choices:[{l:()=>'Ask them to back you on a big vote',s:ev=>`${lastN(ev.a)} owes you a favor you can call in later`,do:ev=>{const m=S.council[ev.a];m.favors=(m.favors||0)+1;S._memQuiet=1;addMod(m,'Glad to help the mayor',3);S._memQuiet=0;return`${m.name} promised their vote when you need it. They now owe you ${m.favors} favor${m.favors===1?'':'s'}.`}},
+   {l:ev=>`Ask them to talk you up in District ${homeOf(S.council[ev.a])}`,s:ev=>`Support in District ${homeOf(S.council[ev.a])} +3`,do:ev=>{const m=S.council[ev.a];bumpPlace('dist:'+homeOf(m),3);return`${m.name} spent the weekend telling neighbors what you got done.`}},
+   {l:()=>'Tell them it was nothing',s:ev=>`${lastN(ev.a)} +6`,do:ev=>{const m=S.council[ev.a];addMod(m,'Mayor was gracious',6);return`${m.name} left smiling.`}}],
+  ignore:ev=>{addMod(S.council[ev.a],'Kept me waiting',-2)}};
+CHAR_TYPES.grudge={w:0,title:ev=>`${S.council[ev.a].name} has a grudge`,gen:()=>null,
+  body:ev=>{const m=S.council[ev.a];return`${m.name} is still angry about what happened in ${memWhen(ev)}: “${ev.r}.” They came to have it out with you, and they'll keep holding it against you until something changes.`},
+  who:ev=>[['char',ev.a]],
+  choices:[{l:()=>'Apologize and make it right',s:ev=>`${oddsTag('dip',0.38,[S.council[ev.a]])} · works: +12 · fails: −3`,do:ev=>{const m=S.council[ev.a];const ok=persuade('dip',0.38,[m],7);if(ok){addMod(m,'Mayor apologized',12);return`${m.name} accepted your apology. The air is clearer.`}addMod(m,'Empty apology',-3);return`${m.name} didn't buy it.`}},
+   {l:()=>'Win them over with charm',s:ev=>`${oddsTag('cha',0.3,[S.council[ev.a]])} · works: +10 · fails: −4`,do:ev=>{const m=S.council[ev.a];const ok=persuade('cha',0.3,[m],7);if(ok){addMod(m,'Mayor won me over',10);return`By the end ${m.name} was laughing at your stories.`}addMod(m,'Mayor tried to charm me',-4);return`${m.name} saw right through it.`}},
+   {l:()=>'Remind them who runs City Hall',s:ev=>`${oddsTag('intr',0.3,[S.council[ev.a]])} · works: they drop it · fails: −8 and District ${homeOf(S.council[ev.a])} −2`,do:ev=>{const m=S.council[ev.a];const ok=persuade('intr',0.3,[m],7);if(ok){S._memQuiet=1;addMod(m,'Backed down',0);S._memQuiet=0;return`${m.name} backed down. They won't raise it again.`}addMod(m,'Mayor threatened me',-8);bumpPlace('dist:'+homeOf(m),-2);return`${m.name} took it to the neighborhood paper.`}},
+   {l:()=>'Show them the door',s:ev=>`${lastN(ev.a)} −6`,do:ev=>{const m=S.council[ev.a];addMod(m,'Shown the door',-6);return`${m.name} stormed out.`}}],
+  ignore:ev=>{addMod(S.council[ev.a],'Ignored my complaint',-4)}};
 function openLedger(){const L=S.log||[];openPanel('Everything that has happened, newest first','Ledger',L.length?`<div class="logl">${L.map(x=>`<div><span>${x.d}</span><p style="margin:0">${x.t}</p></div>`).join('')}</div>`:'<p class="note">Nothing yet. Start the clock with Space or ▶.</p>','ledger')}
 function openPolicies(){const ks=Object.keys(POLICIES);
   openPanel('Ongoing programs you control','Your initiatives',`<p>Mid-year, these are paid from the reserve fund. In April they go into the budget you send the council.</p>
@@ -6256,8 +6335,8 @@ window.claude?.hot?.ready?window.claude.hot.ready(start):start(window.claude?.ho
 </script>
 <script src="home-renderer.js?v=26.11"></script>
 <script src="home-interior.js?v=26.27"></script>
-<script src="city-life.js?v=26.30"></script>
-<script src="city-flow.js?v=26.30"></script>
+<script src="city-life.js?v=26.31"></script>
+<script src="city-flow.js?v=26.31"></script>
 <script src="music.js?v=25"></script>
 </body>
 </html>
