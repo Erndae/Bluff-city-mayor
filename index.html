@@ -650,7 +650,7 @@ details.analysis{margin-top:6px}details.analysis summary{cursor:pointer;color:va
     <button class="btn primary" data-act="pause" id="bPlay"><svg class="ico" viewBox="0 0 12 12" aria-hidden="true"><path d="M3.2 1.6v8.8l7.2-4.4z" fill="currentColor"/></svg> Resume <kbd>Space</kbd></button>
   </nav>
   <div class="status" id="status">Loading map…</div>
-  <div class="credit"><span class="ver" id="verTag">v26.27</span></div>
+  <div class="credit"><span class="ver" id="verTag">v26.28</span></div>
   <div class="tip" id="tip" hidden></div>
   <div class="toast" id="toast" role="status"></div>
   <section class="panel" id="panel" hidden aria-live="polite">
@@ -678,7 +678,7 @@ details.analysis{margin-top:6px}details.analysis summary{cursor:pointer;color:va
         <button class="btn" data-music-open>Music &amp; volume</button>
       </div>
       <div id="slotList" hidden></div>
-      <p class="note startv">Version <b class="ver" id="verStart">v26.27</b></p>
+      <p class="note startv">Version <b class="ver" id="verStart">v26.28</b></p>
     </div>
     <div class="startbox create" id="create" hidden>
       <h2>Create your mayor</h2>
@@ -1377,6 +1377,7 @@ function resolve(ev,ci){S.stats=S.stats||{};if(ev.id!=='briefing')S.stats.resolv
   if(ev.kind==='projx')return resolveProjIssue(ev,ci);
   if(ev.kind==='char')return resolveChar(ev,ci);
   const def=evDef(ev);let msg='';
+  if(!def){S.events=S.events.filter(e=>e!==ev);save();refreshHUD();return ''}
   if(ev.kind==='request'){const m=S.council[ev.mi],R=REQUESTS[ev.pr]||REQUESTS.streets;
     if(ci===0&&R.cost>=APPROP_MIN&&!approp(R.cost,`${m.name}'s request for District ${ev.d}`,{d:ev.d,key:'req:'+ev.mi+':'+ev.pr})){const dm=`The council voted down the money for ${m.name}'s request. You can still turn it down, or ask again later.`;save();toast(dm);refreshHUD();return dm}
     if(ci===0){S.reserve-=R.cost;applyFx(S,R.fx);if(R.side)applyCouncil(S,R.side,'Gave in to '+m.name.split(' ').pop());m.favors=(m.favors||0)+1;addMod(m,'Granted my request',12+(mHas('compassionate')?4:0));bumpPlace('dist:'+ev.d,3);gainXP('dip',5);
@@ -1486,7 +1487,7 @@ function enact(s,p){DIVS.forEach(d=>{s.enacted[d.id]=p.divs[d.id];s.ratio[d.id]=
 // Voter groups. Each has a share of residents, turnout, home districts, concerns and an approval of you.
 // Citywide approval is the turnout-weighted average of the groups; each council district's approval comes from the groups that live there.
 // Shares, district mix and turnout are modeled, loosely grounded in Memphis demographics; they are not survey data.
-const VERSION='v26.27';
+const VERSION='v26.28';
 const GROUPS=[
  {id:'working',sh:'Working families',n:'Working families',ic:'⚒︎',c:'#f2a93b',share:24,turn:.5,start:56,w:{jobs:1,safety:.8,transit:.5},
   d:'Hourly workers in logistics, warehouses, health care and service jobs. The biggest bloc in the city.',dm:{1:1.1,2:.8,3:1.3,4:1.2,5:.6,6:1.2,7:1.1}},
@@ -1644,7 +1645,7 @@ function eventCard(ev,idx){
   if(ev.kind==='request'){const m=S.council[ev.mi],R=REQUESTS[ev.pr]||REQUESTS.streets;recompute(m);
     return`<div class="card rq"><div class="who"><button class="ptbtn" data-char="${ev.mi}">${portrait(m,58)}</button><div><div class="ttl">${m.name} has a request</div><div class="note">${m.seat} · opinion <b style="color:${opColor(m.opinion)}">${fmtOp(m.opinion)}</b>${m.favors?` · owes you ${m.favors}`:''}</div><div class="due">${left<=1?'Answer this month':`Answer within ${left} months`}</div></div></div>
      <p>"${ev.text}." ${ev.why||R.why}</p>
-     <div class="choices"><button class="choice" data-ev="${idx}" data-ci="0"><b>Grant it</b><small>${[R.cost?fmtM(-R.cost)+' reserves':'',describe({fx:R.fx}),'They owe you a favor','Opinion +12',R.cost>=1?'Frugal members see pork (−3)':'',R.cost>=APPROP_MIN?apropHint(R.cost,{d:ev.d,key:'req:'+ev.mi+':'+ev.pr}):'',R.side?'Annoys public-safety members':''].filter(Boolean).join(' · ')}</small></button>
+     <div class="choices"><button class="choice" data-ev="${idx}" data-ci="0" ${R.cost>=APPROP_MIN&&apropWait('req:'+ev.mi+':'+ev.pr)?'disabled':''}><b>Grant it</b><small>${[R.cost?fmtM(-R.cost)+' reserves':'',describe({fx:R.fx}),'They owe you a favor','Opinion +12',R.cost>=1?'Frugal members see pork (−3)':'',R.cost>=APPROP_MIN?apropHint(R.cost,{d:ev.d,key:'req:'+ev.mi+':'+ev.pr}):'',R.side?'Annoys public-safety members':''].filter(Boolean).join(' · ')}</small></button>
      <button class="choice" data-ev="${idx}" data-ci="1"><b>Turn it down</b><small>Opinion −12 · ignoring it costs −8</small></button></div></div>`}
   if(ev.kind==='memo'){const m=S.council[ev.mi];recompute(m);
     return`<div class="card memo"><div class="who"><button class="ptbtn" data-char="${ev.mi}">${portrait(m,58)}</button><div><div class="ttl">Confidential: ${m.name}</div><div class="note">${m.seat} · opinion <b style="color:${opColor(m.opinion)}">${fmtOp(m.opinion)}</b></div><div class="due">${left<=1?'Decide this month':`Decide within ${left} months`}</div></div></div>
@@ -2629,7 +2630,7 @@ function endorsementFor(g){const E=ENDORSERS.find(x=>x.g===g.id);return E?S.camp
 // Offices work where the race is close: a district where you're far ahead or far behind gets little from one.
 function districtCloseness(d){return clamp(1-Math.abs(dApp(d)-50)/14,0.15,1)}
 function officeReach(g){const offs=Object.keys(S.camp.offices||{}).map(Number);if(!offs.length)return 0;let a=0,t=0;for(let d=1;d<=7;d++){const c=dComp(d)[g.id];t+=c;if(offs.includes(d))a+=c*districtCloseness(d)}return a/t}
-const CHALLENGER_EDGE=7; // voters give a fresh face the benefit of the doubt; a sitting mayor runs on the record
+const CHALLENGER_EDGE=4; // voters give a fresh face the benefit of the doubt; a sitting mayor runs on the record
 function groupSupport(g,o){o=o||{};const G=S.groups[g.id],R=S.rival||{champs:[]},rc=R.camp||{};const champ=R.champs.includes(g.id);const SUCC=S.term>=2&&!isCand();
   let b=(SUCC?20+G.app*0.66+(S.succ?S.succ.bonus:-4):G.app)+(S.mayor&&!SUCC?(mskill('cha')-8)*0.4:0)-(champ?(isCand()?3:6):0)-(isCand()||SUCC?0:CHALLENGER_EDGE);
   if(!o.noAds)b+=(S.camp.boost[g.id]||0);
@@ -3615,6 +3616,12 @@ const STAFF_ASKS={
  mata:{t:'wants money to restore cut bus routes',d:'Bring back three routes cut in past budgets.',cost:1.5,fx:()=>{S.met.transit+=2.5;addGroupMod(S.groups.renters,'Bus routes restored',1.5)},ok:'Three routes come back next month.'},
  press:{t:'wants a media push on your record',d:'Radio spots and a neighborhood newsletter about what the city has done.',cost:0.2,fx:()=>{S.mood+=1},ok:'The push runs all month.'},
  cos:{t:'wants a cabinet retreat',d:'A day away from City Hall to settle turf fights. Uses 1 action.',cost:0,slot:true,fx:()=>{STAFF_DEF.forEach(D=>addMod(staffOf(D.id),'Cabinet retreat',5))},ok:'The retreat cooled some tempers.'}};
+// ======================= PERSUASION =======================
+// One rule for every attempt to change someone's mind: your skill in the approach you pick, how much they already like
+// you, and their temperament. Higher skill, better odds. Each approach shows its chance before you commit.
+function persuadeOdds(sk,base,targets){let p=base+(mskill(sk)-8)*0.035;(targets||[]).forEach(m=>{if(!m)return;p+=clamp((m.opinion||0)/400,-0.12,0.12);if(has(m,'stubborn'))p-=0.1;if(sk==='dip'&&has(m,'pragmatic'))p+=0.06;if(sk==='cha'&&has(m,'gregarious'))p+=0.06;if(sk==='intr'&&has(m,'reformer'))p-=0.08});return clamp(p,0.1,0.92)}
+function oddsTag(sk,base,targets){const p=Math.round(persuadeOdds(sk,base,targets)*100);return`${skillName(sk)} ${mskill(sk)} · ${p}% chance`}
+function persuade(sk,base,targets,xp){gainXP(sk,xp||6);return Math.random()<persuadeOdds(sk,base,targets)}
 const CHAR_TYPES={
  feud:{w:3,title:ev=>`Feud: ${S.council[ev.a].name.split(' ').pop()} vs. ${S.council[ev.b].name.split(' ').pop()}`,
   gen(){const pairs=[];relInit();S.used=S.used||{};for(const k in S.rel)if(S.rel[k]==='rival'&&(!S.used['feud'+k]||nowM()-S.used['feud'+k]>=20)){const[a,b]=k.split('-').map(Number);pairs.push([a,b,k])}if(!pairs.length)return null;const[a,b,k]=pairs[Math.floor(Math.random()*pairs.length)];S.used['feud'+k]=nowM();return{a,b,at:'cityhall'}},
@@ -3622,7 +3629,9 @@ const CHAR_TYPES={
   who:ev=>[['char',ev.a],['char',ev.b]],
   choices:[{l:ev=>`Side with ${S.council[ev.a].name.split(' ').pop()}`,s:ev=>`${S.council[ev.a].name.split(' ').pop()} +14 · ${S.council[ev.b].name.split(' ').pop()} −14`,do:ev=>{addMod(S.council[ev.a],'You took my side',14);addMod(S.council[ev.b],'You sided against me',-14);return`You backed ${S.council[ev.a].name}.`}},
    {l:ev=>`Side with ${S.council[ev.b].name.split(' ').pop()}`,s:ev=>`${S.council[ev.b].name.split(' ').pop()} +14 · ${S.council[ev.a].name.split(' ').pop()} −14`,do:ev=>{addMod(S.council[ev.b],'You took my side',14);addMod(S.council[ev.a],'You sided against me',-14);return`You backed ${S.council[ev.b].name}.`}},
-   {l:()=>'Broker a truce',s:()=>'Uses 1 action · Dealmaking decides it · success makes them allies',need:()=>S.slots>0,do:ev=>{S.slots--;gainXP('dip',8);const ok=Math.random()<0.25+mskill('dip')*0.03;if(ok){setRel(ev.a,ev.b,null);addMod(S.council[ev.a],'Brokered a truce',6);addMod(S.council[ev.b],'Brokered a truce',6);return'They shook hands in your office. The feud is over.'}addMod(S.council[ev.a],'Meddled in my business',-3);addMod(S.council[ev.b],'Meddled in my business',-3);return'The truce talks fell apart. Both resent the meddling.'}}],
+   {l:()=>'Broker a truce over coffee',s:ev=>`Uses 1 action · ${oddsTag('dip',0.3,[S.council[ev.a],S.council[ev.b]])} · works: the feud ends, both +6`,need:()=>S.slots>0,do:ev=>{S.slots--;const ok=persuade('dip',0.3,[S.council[ev.a],S.council[ev.b]],8);if(ok){setRel(ev.a,ev.b,null);addMod(S.council[ev.a],'Brokered a truce',6);addMod(S.council[ev.b],'Brokered a truce',6);return'They shook hands in your office. The feud is over.'}addMod(S.council[ev.a],'Meddled in my business',-3);addMod(S.council[ev.b],'Meddled in my business',-3);return'The truce talks fell apart. Both resent the meddling.'}},
+   {l:()=>'Call for unity in public',s:ev=>`${oddsTag('cha',0.2,[S.council[ev.a],S.council[ev.b]])} · works: the feud ends and voters like it · fails: you look weak`,do:ev=>{const ok=persuade('cha',0.2,[S.council[ev.a],S.council[ev.b]],7);if(ok){setRel(ev.a,ev.b,null);S.mood+=0.3;addMod(S.council[ev.a],'Mayor called for unity',3);addMod(S.council[ev.b],'Mayor called for unity',3);return'Your remarks shamed them into a handshake on the council floor.'}S.mood-=0.2;return'Neither backed down. The press called it a mayor who can\'t control the room.'}},
+   {l:()=>'Lean on them both privately',s:ev=>`${oddsTag('intr',0.25,[S.council[ev.a],S.council[ev.b]])} · works: the feud ends · fails: both −6`,do:ev=>{const ok=persuade('intr',0.25,[S.council[ev.a],S.council[ev.b]],7);if(ok){setRel(ev.a,ev.b,null);return'You reminded each of them what they stood to lose. The feud went quiet.'}addMod(S.council[ev.a],'Mayor tried to strong-arm me',-6);addMod(S.council[ev.b],'Mayor tried to strong-arm me',-6);return'They compared notes and resented the pressure.'}}],
   ignore:ev=>{addMod(S.council[ev.a],'You stayed out of it',-2);addMod(S.council[ev.b],'You stayed out of it',-2)}},
  pact:{w:2,title:ev=>`Voting pact: ${S.council[ev.a].name.split(' ').pop()} and ${S.council[ev.b].name.split(' ').pop()}`,
   gen(){const C=S.council;const free=[];for(let a=0;a<C.length;a++)for(let b=a+1;b<C.length;b++)if(!relOf(a,b)&&relList(a,'ally').length<2&&relList(b,'ally').length<2&&Math.abs(C[a].opinion-C[b].opinion)<25)free.push([a,b]);if(!free.length)return null;const[a,b]=free[Math.floor(Math.random()*free.length)];return{a,b,at:'cityhall'}},
@@ -3630,14 +3639,17 @@ const CHAR_TYPES={
   who:ev=>[['char',ev.a],['char',ev.b]],
   choices:[{l:()=>'Court them both',s:ev=>`Uses 1 action · both +8 · they become allies`,need:()=>S.slots>0,do:ev=>{S.slots--;setRel(ev.a,ev.b,'ally');addMod(S.council[ev.a],'Mayor courted our bloc',8);addMod(S.council[ev.b],'Mayor courted our bloc',8);gainXP('dip',5);return'They left your office as allies, and friendlier to you.'}},
    {l:()=>'Let it happen',s:()=>'They become allies',do:ev=>{setRel(ev.a,ev.b,'ally');return'The new bloc forms on its own.'}},
-   {l:()=>'Quietly split them up',s:()=>'Inside Game decides it · success makes them rivals · failure: both −8',do:ev=>{gainXP('intr',8);if(Math.random()<0.25+mskill('intr')*0.035){setRel(ev.a,ev.b,'rival');return'A few well-placed words, and the pact collapsed into a grudge.'}addMod(S.council[ev.a],'Tried to split our pact',-8);addMod(S.council[ev.b],'Tried to split our pact',-8);setRel(ev.a,ev.b,'ally');return'They found out what you were doing. The pact holds, and both are angry.'}}],
+   {l:()=>'Quietly split them up',s:ev=>`${oddsTag('intr',0.28,[S.council[ev.a],S.council[ev.b]])} · works: they become rivals · fails: both −8`,do:ev=>{if(persuade('intr',0.28,[S.council[ev.a],S.council[ev.b]],8)){setRel(ev.a,ev.b,'rival');return'A few well-placed words, and the pact collapsed into a grudge.'}addMod(S.council[ev.a],'Tried to split our pact',-8);addMod(S.council[ev.b],'Tried to split our pact',-8);setRel(ev.a,ev.b,'ally');return'They found out what you were doing. The pact holds, and both are angry.'}},
+   {l:ev=>`Win ${S.council[ev.a].name.split(' ').pop()} over to your side instead`,s:ev=>`Uses 1 action · ${oddsTag('dip',0.32,[S.council[ev.a]])} · works: no pact, ${S.council[ev.a].name.split(' ').pop()} +10 · fails: the pact forms`,need:()=>S.slots>0,do:ev=>{S.slots--;const m=S.council[ev.a];if(persuade('dip',0.32,[m],7)){addMod(m,'Mayor made me a better offer',10);return`${m.name} decided working with you beats a bloc.`}setRel(ev.a,ev.b,'ally');return`${m.name} listened, then went ahead with the pact.`}}],
   ignore:ev=>{setRel(ev.a,ev.b,'ally')}},
  poach:{w:3,title:ev=>`${S.rival?S.rival.name.split(' ').pop():'Your opponent'} is courting ${S.council[ev.a].name.split(' ').pop()}`,
   gen(){if(!S.rival||monthsToElection()>12||monthsToElection()<0)return null;const C=S.council.map((m,k)=>({m,k})).filter(x=>x.k!==S.rival.k&&Math.abs(x.m.opinion)<30);if(!C.length)return null;const x=C[Math.floor(Math.random()*C.length)];return{a:x.k,at:'cityhall'}},
   body:ev=>`${S.rival.name} took ${S.council[ev.a].name} to lunch and asked for an endorsement. ${S.council[ev.a].name.split(' ')[0]} hasn't said yes yet.`,
   who:ev=>[['char',ev.a],['char',S.rival.k]],
   choices:[{l:()=>'Fund a project in their district',s:ev=>'−$1.0M reserve · they +12 and owe you a favor · frugal members −3 · '+apropHint(1,{d:homeOf(S.council[ev.a])}).replace(/<[^>]+>/g,''),need:()=>S.reserve>=6,do:ev=>{const m=S.council[ev.a];if(!approp(1,`a District ${homeOf(m)} project`,{d:homeOf(m)})){addMod(m,'Mayor tried to deliver for my district',4);return`The council voted down the money. ${m.name} appreciates that you tried.`}S.reserve-=1;addMod(m,'Mayor delivered for my district',12);m.favors=(m.favors||0)+1;S.council.forEach(o=>{if(o!==m&&has(o,'frugal'))addMod(o,'Pork-barrel spending',-3)});return`${m.name} stays with you, and owes you one.`}},
-   {l:()=>'Remind them who has the votes',s:()=>'Inside Game decides it · works: +4 · fails: −10',do:ev=>{const m=S.council[ev.a];gainXP('intr',6);if(Math.random()<0.3+mskill('intr')*0.03){addMod(m,'Knows where power is',4);return`${m.name} decided not to cross you.`}addMod(m,'Mayor threatened me',-10);return`${m.name} didn't like being leaned on.`}},
+   {l:()=>'Remind them who has the votes',s:ev=>`${oddsTag('intr',0.3,[S.council[ev.a]])} · works: +4 · fails: −10`,do:ev=>{const m=S.council[ev.a];if(persuade('intr',0.3,[m],6)){addMod(m,'Knows where power is',4);return`${m.name} decided not to cross you.`}addMod(m,'Mayor threatened me',-10);return`${m.name} didn't like being leaned on.`}},
+   {l:()=>'Make your case over lunch',s:ev=>`Uses 1 action · ${oddsTag('dip',0.32,[S.council[ev.a]])} · works: +8 and they stay with you · fails: they lean to your opponent`,need:()=>S.slots>0,do:ev=>{S.slots--;const m=S.council[ev.a];if(persuade('dip',0.32,[m],6)){addMod(m,'Mayor made the case to me',8);return`${m.name} told your opponent no.`}charLost(ev.a);return`${m.name} heard you out, but is leaning toward your opponent.`}},
+   {l:()=>'Rally their district',s:ev=>`${oddsTag('cha',0.2+(dApp(homeOf(S.council[ev.a]))-50)/100,[S.council[ev.a]])} · stronger where you're popular · works: +6 · fails: −6`,do:ev=>{const m=S.council[ev.a],b=0.2+(dApp(homeOf(m))-50)/100;if(persuade('cha',b,[m],6)){addMod(m,'My voters back the mayor',6);return`Calls from ${m.name.split(' ')[0]}'s own voters did the trick.`}addMod(m,'Mayor stirred up my district',-6);return`${m.name} didn't appreciate the pressure from home.`}},
    {l:()=>'Let it go',s:()=>'They −8 · their allies −3',do:ev=>{charLost(ev.a);return`${S.council[ev.a].name} is leaning toward your opponent.`}}],
   ignore:ev=>charLost(ev.a)},
  endorse:{w:2,title:ev=>`${S.council[ev.a].name.split(' ').pop()} asks for your endorsement`,
@@ -3812,7 +3824,7 @@ Object.assign(CHAR_TYPES,{
   body:ev=>`The room is full and Mayor ${S.rival.name} is on the stage with you. The moderator asks about ${PRIO_LABEL[ev.issue].toLowerCase()}, where the city is struggling.`,
   who:ev=>[['me'],['inc']],
   choices:[{l:()=>'Talk about your platform',s:()=>'Safe · groups who care about your platform warm up · name recognition ▲',do:ev=>{(S.promises||[]).forEach(st=>(PMAP[st.id].grp||[]).forEach(g=>candBump(g,1.6,'Your platform at a forum')));recUp(0.05);S.stats=S.stats||{};S.stats.forums=(S.stats.forums||0)+1;gainXP('cha',5);return'Solid answers. People in the room learned your name.'}},
-   {l:ev=>`Go after the mayor on ${PRIO_LABEL[ev.issue].toLowerCase()}`,s:()=>'Risky · Star Power decides it · a hit wins over the frustrated · a miss looks negative',do:ev=>{S.stats=S.stats||{};S.stats.forums=(S.stats.forums||0)+1;gainXP('cha',6);const ok=Math.random()<0.35+mskill('cha')*0.03;
+   {l:ev=>`Go after the mayor on ${PRIO_LABEL[ev.issue].toLowerCase()}`,s:()=>`Risky · ${oddsTag('cha',0.42,[])} · a hit wins over the frustrated · a miss looks negative`,do:ev=>{S.stats=S.stats||{};S.stats.forums=(S.stats.forums||0)+1;const ok=persuade('cha',0.42,[],6);
      if(ok){GROUPS.filter(g=>g.w[ev.issue]).forEach(g=>candBump(g.id,3*g.w[ev.issue],`Took on the mayor over ${PRIO_LABEL[ev.issue].toLowerCase()}`));recUp(0.07);return'The line got applause and made the evening news.'}
      GROUPS.forEach(g=>candBump(g.id,-0.8,'Came off as negative at a forum'));recUp(0.03);return'It landed flat. The mayor had a ready answer and you looked angry.'}},
    {l:ev=>`Speak to the ${GMAP[ev.host].n.toLowerCase()} in the room`,s:ev=>`${GMAP[ev.host].n} ▲▲ · everyone else barely notices`,do:ev=>{candBump(ev.host,4,'Spoke to their concerns at a forum');recUp(0.03);S.stats=S.stats||{};S.stats.forums=(S.stats.forums||0)+1;return'The hosts liked what they heard.'}}],
@@ -3828,7 +3840,7 @@ Object.assign(CHAR_TYPES,{
   body:()=>`Mayor ${S.rival.name} tells reporters you've "never run anything bigger than a ${OCCS[S.cand.occ].n==='Small business owner'?'lunch counter':'committee meeting'}" and that Memphis can't afford on-the-job training.`,
   who:()=>[['inc']],
   choices:[{l:()=>'Answer with an ad',s:()=>'−$25K campaign · cancels the damage · name recognition ▲',need:()=>S.camp.cash>=25,do:()=>{S.camp.cash-=25;S.camp.spent+=25;flowC('ads',25);recUp(0.04);return'Your response ad ran all week.'}},
-   {l:()=>'Laugh it off at your next stop',s:()=>'Star Power decides it',do:()=>{if(Math.random()<0.3+mskill('cha')*0.035){recUp(0.04);GROUPS.forEach(g=>candBump(g.id,0.8,'Laughed off the mayor\'s attack'));return'Your comeback went viral.'}GROUPS.forEach(g=>candBump(g.id,-1.2,'The mayor\'s attack stuck'));return'It didn\'t land. The attack stuck.'}}],
+   {l:()=>'Laugh it off at your next stop',s:()=>oddsTag('cha',0.4,[]),do:()=>{if(persuade('cha',0.4,[],5)){recUp(0.04);GROUPS.forEach(g=>candBump(g.id,0.8,'Laughed off the mayor\'s attack'));return'Your comeback went viral.'}GROUPS.forEach(g=>candBump(g.id,-1.2,'The mayor\'s attack stuck'));return'It didn\'t land. The attack stuck.'}}],
   ignore:()=>{GROUPS.forEach(g=>candBump(g.id,-1.5,'The mayor\'s attack went unanswered'))}},
  surge:{w:0,title:()=>'Volunteers are showing up',
   body:()=>'After your last appearance, people are walking into your office asking how to help.',
@@ -4539,7 +4551,7 @@ function nextSteps(){const out=[];if(!S||!S.started||S.over)return out;const add
     add(10,'Press ▶ and let time pass','The campaign moves day by day; the desk will flag what needs you.',()=>setPaused(false));
   }else if(inOffice()){
     S.events.filter(e=>e.kind!=='budget'&&e.id!=='briefing'&&evLeftM(e)<=1).slice(0,2).forEach(e=>{let t='a decision';try{t=evTitle(e)}catch(err){}add(100,'Decide before it expires: '+t,'Ignoring it costs you.',()=>{try{if(inOffice()&&(e.kind==='char'||e.kind==='request'||e.kind==='memo'||evAt(e)==='cityhall')){enterOffice();setTimeout(openAudience,400)}else openPlace(evAt(e))}catch(err){openDesk()}})});
-    if(S.events.some(e=>e.id==='briefing'))add(98,'Read your chief of staff\'s briefing','At City Hall.',()=>openPlace('cityhall'));
+    if(S.events.some(e=>e.id==='briefing'))add(98,'Read your chief of staff\'s briefing',inOffice()?'She\'s waiting in your office.':'At City Hall.',()=>{if(inOffice()&&typeof enterOffice==='function'){enterOffice();setTimeout(openAudience,400)}else openPlace('cityhall')});
     if(!S.promises)add(99,'Make your three promises','They become your record on Election Day.',()=>openPromises());
     if(S.stage==='draft')add(S.day>=15?102:99,'Write and send your budget','The council votes in June. 7 votes to pass.',()=>openBudget());
     if(sotcDue())add(90,'Give the State of the City','Pick three priorities for the year (T).',()=>openSotc());
@@ -4609,7 +4621,7 @@ window.addEventListener('click',e=>{if(!S||!S.started||!isCand()||curMgr())retur
 document.addEventListener('click',e=>{const b=e.target.closest('[data-mgr],[data-act="mgr"]');if(!b||!S)return;e.preventDefault();e.stopImmediatePropagation();if(b.dataset.mgr){hireMgr(b.dataset.mgr);return}if(modalOpen){onClose=null;closeModal()}openMgr()},true);
 // the manager's voice on the desk
 {const _ns=nextSteps;nextSteps=function(){const L=_ns();if(!S||!S.started||S.over)return L;const m=curMgr();const now=nowM();
-  if(!m&&S.camp&&(isCand()||(inOffice()&&monthsToElection()<=12)))L.push({pri:isCand()?101:74,t:'Hire a campaign manager',h:isCand()?'Your campaign starts with them. Each one is good at something different.':'Election Day is within a year. A manager runs the campaign and points you to your next move.',go:()=>openMgr()});
+  if(!m&&S.camp&&(isCand()||(inOffice()&&monthsToElection()<=12)))L.push({pri:isCand()?101:monthsToElection()<=8?101:74,t:'Hire a campaign manager',h:isCand()?'Your campaign starts with them. Each one is good at something different.':'Election Day is within a year. A manager runs the campaign and points you to your next move.',go:()=>openMgr()});
   if(m)L.forEach(x=>{if(m.focus.test(x.t+' '+x.h))x.pri+=12});
   return L.sort((a,b)=>b.pri-a.pri)}}
 {const _ns2=nextSteps;let memoK='',memoT=0,memoV=null;nextSteps=function(){const k=S?[nowM(),S.day,S.events.length,S.slots,S.camp&&S.camp.mgr,!!S.promises,S.stage,S.phase,Object.keys(S.policies||{}).length,S.reserve|0,JSON.stringify(S.acts||{}),S.camp?.polls?.length,S.projects?.length,S.approval?.toFixed(2)].join(':'):'';const t=performance.now();if(k===memoK&&memoV&&t-memoT<2000)return memoV.slice();memoK=k;memoT=t;memoV=_ns2();return memoV.slice()}}
@@ -5433,11 +5445,17 @@ function mgrTips(){const m=curMgr();if(!m||!S.camp)return[];const C=S.camp,sl=S.
     if(sl&&S.m<7)add(84,'Ask for endorsements now','Groups decide July to September. Ask before they make up their minds.',()=>goSection(openHQ,'#hq-endorse','endorse'))}
   if(m.id==='debate'){if(sl&&(C.prep||0)<3)add(88,'Let\'s run debate prep','Every practice session widens our margin for error on stage.',()=>goSection(openHQ,'#hq-debates','debates'));
     if(cand&&!cdLeft('cspeak',1))add(84,'Practice the message in public','Speak out on an issue. It sharpens the answers we\'ll need in September.',()=>goSection(openCandActions,'Speak out'))}
+  if((ph.id==='late'||ph.id==='gotv')&&C.cash>=AD_COST.std*2&&adOptions().length)add(92,`We have ${fmtK(C.cash)} in the bank`,'Money doesn\'t vote. Put it on the air now, when ads count most.',()=>goSection(openHQ,'#hq-ads','ads'));
   // anyone can remind you of the basics
   if(sl&&doorsReady.length&&m.id!=='field')add(50,`Knock doors in District ${doorsReady[0]}`,`It's our weakest district right now.`,()=>goSection(openHQ,'#hq-doors','voters'));
   if(sl&&fr&&m.id!=='money')add(45,'A fundraiser is ready','It would keep the lights on.',()=>goSection(openHQ,'#hq-money','money'));
   if(pollAge>=3&&m.id!=='media')add(40,'Run a poll','It\'s been a while since we checked the numbers.',()=>goSection(openHQ,'#hq-poll','voters'));
   return T.sort((a,b)=>b.pri-a.pri)}
+// in the last three months, unspent campaign money is the most important thing on a mayor's list
+{const _nsx=nextSteps;nextSteps=function(){const L=_nsx();try{if(S&&S.started&&inOffice()&&S.camp&&curMgr()&&monthsToElection()<=3&&S.camp.cash>=AD_COST.std&&adOptions().length){const last=(S.camp.ads||[]).slice(-1)[0];if(!last||nowM()-(last.m||0)>=1){L.push({pri:101,t:'Put your campaign on the air',h:`You have ${fmtK(S.camp.cash)} in campaign cash and ${Math.round(daysToElection())} days left. Unspent money doesn't win votes.`,go:()=>goSection(openHQ,'#hq-ads','ads')});L.sort((a,b)=>b.pri-a.pri)}}}catch(e){}return L}}
+function cosCampaignNudge(){if(!S||!S.started||!inOffice()||curMgr()||!S.camp)return;const mo=monthsToElection();if(mo>8||S.day!==3)return;S.cosNudge=S.cosNudge||{};if(S.cosNudge[nowM()])return;S.cosNudge[nowM()]=1;
+  try{notify('alert',`${staffOf('cos').name}: your campaign hasn't started`,`Election Day is ${Math.round(daysToElection())} days away and ${S.rival?S.rival.name:'your opponent'} is already raising money. Hire a campaign manager.`,()=>openMgr(),{ttl:16})}catch(e){}}
+{const _dt=dayTick;dayTick=function(){_dt();try{cosCampaignNudge()}catch(e){}}}
 function mgrTipDaily(){if(!S||!S.started||S.over||!curMgr()||!S.camp)return;if(![4,8,11,19,23,27].includes(S.day))return;
   S.mgrTipLast=S.mgrTipLast||{};const key=nowM()+'_'+S.day;if(S.mgrTipLast[key])return;S.mgrTipLast={[key]:1};
   const used=S.mgrTipSeen||{};const T=mgrTips().filter(t=>used[t.t]!==nowM());const t=T[0];if(!t)return;S.mgrTipSeen={...used,[t.t]:nowM()};
@@ -5478,12 +5496,12 @@ function dlgStart(kind,id,W,who,res){const T=dlgTopic(kind,id);DLG={kind,id,W,wh
   openModal(`${dateStr()} · ${W.label}`,`Meeting with ${who.n}`,`<div class="meetscene">${dlgFace()}<div class="dlgbub them"><b>${who.n}</b><p>“${T.open}”</p></div></div>
    <div class="choices dlgpick"><button class="choice" data-dlg="listen"><b>“Tell me more. I'm listening.”</b><small>Safe. They feel heard.</small></button>
    <button class="choice" data-dlg="commit"><b>“${T.issue?`I'll make ${iss} a priority.`:'You have my support.'}”</b><small>Wins them over more. ${cand?'It becomes part of your message.':'They\'ll remember it if you don\'t follow through.'}</small></button>
-   <button class="choice" data-dlg="ask"><b>“${kind==='council'?'I\'ll need your vote soon.':kind==='group'?'I need your people behind me.':'I need your help on something.'}”</b><small>Dealmaking ${mskill('dip')} decides it. Works: they owe you. Fails: they cool on you.</small></button></div>`,false)}
+   <button class="choice" data-dlg="ask"><b>“${kind==='council'?'I\'ll need your vote soon.':kind==='group'?'I need your people behind me.':'I need your help on something.'}”</b><small>${oddsTag('dip',0.32,kind==='council'?[S.council[+id]]:[])}. Works: they owe you. Fails: they cool on you.</small></button></div>`,false)}
 function dlgApply(v,why){const k=DLG.kind,id=DLG.id;try{if(k==='council'){const m=S.council[+id];addMod(m,why,v);recompute(m)}else if(k==='staff'){addMod(staffOf(id),why,v)}else if(k==='nb'){const n=S.nb[id];addMod(n,why,v);recompute(n)}else if(k==='group'){addGroupMod(S.groups[id],why,v*0.5)}else if(k==='vip'){const T=DLG.T;const g={education:'parents',jobs:'working',safety:'faith',labor:'labor'}[T.issue];if(g&&S.groups[g])addGroupMod(S.groups[g],why,v*0.3)}}catch(e){}}
 function dlgPick(c){if(!DLG)return;const k=DLG.kind,id=DLG.id,name=DLG.who.n;let reply,out;
   if(c==='listen'){dlgApply(2,'You listened');reply='I appreciate that. Not many people at City Hall take the time.';out='They feel heard. A small boost.'}
   else if(c==='commit'){dlgApply(5,'You made them a commitment');if(isCand()&&DLG.T.issue&&S.camp){try{addGroupMod(S.groups.working,'Clear message on the trail',0.3)}catch(e){}}reply='Then I\'ll hold you to it. Let\'s see it happen.';out='They\'re with you for now. Follow through on it.'}
-  else{const ok=Math.random()<clamp(0.3+mskill('dip')*0.035,0.25,0.9);gainXP('dip',3);if(ok){dlgApply(3,'Agreed to help the mayor');if(k==='council'){const m=S.council[+id];m.favors=(m.favors||0)+1}reply='All right. You can count on me when it matters.';out=k==='council'?'They owe you a favor on a future vote.':'They\'ll help when you ask.'}
+  else{const ok=persuade('dip',0.32,k==='council'?[S.council[+id]]:[],3);if(ok){dlgApply(3,'Agreed to help the mayor');if(k==='council'){const m=S.council[+id];m.favors=(m.favors||0)+1}reply='All right. You can count on me when it matters.';out=k==='council'?'They owe you a favor on a future vote.':'They\'ll help when you ask.'}
     else{dlgApply(-3,'Mayor pushed too hard');reply='That\'s a lot to ask in one meeting. Let me think about it.';out='You pushed too hard. They cooled a little.'}}
   save();refreshHUD();
   openModal(`${dateStr()} · ${DLG.W.label}`,`Meeting with ${name}`,`<div class="meetscene">${dlgFace()}<div class="dlgbub them"><b>${name}</b><p>“${reply}”</p></div>
@@ -5500,7 +5518,7 @@ function visitorOf(ev){let who=null,role='';try{
   else if(ev.kind==='request'&&ev.mi!=null){who=S.council[ev.mi];role=who.seat}
   else{const P=presenterFor(ev,evDef(ev));if(P.kind==='staff'){who=staffOf(P.id);role=STAFFMAP[P.id].role}else if(P.kind==='nb'){who=S.nb[P.id];role='Mayor of '+NEIGHBORS[P.id].city}else{who=S.council[P.id];role='Council Member'}}}catch(e){}
   return{ev,who,role,title:(()=>{try{return evTitle(ev)}catch(e){return'A request'}})()}}
-function officeVisitors(){if(!S||!inOffice())return[];return(S.events||[]).filter(e=>e.kind==='char'||e.kind==='request'||e.kind==='memo'||(e.kind!=='budget'&&e.id!=='briefing'&&evAt(e)==='cityhall')).map(visitorOf).filter(v=>v.who)}
+function officeVisitors(){if(!S||!inOffice())return[];return(S.events||[]).filter(e=>e.kind==='char'||e.kind==='request'||e.kind==='memo'||(e.kind!=='budget'&&evAt(e)==='cityhall')).map(visitorOf).filter(v=>v.who)}
 function visitorLook(v){const w=v.who||{};const h=(w.name||'x').length;return{suit:['#2b3a55','#3a3048','#22382e','#4a2530','#2b2f36'][h%5],skin:VSKINS[w.ptSkin!=null?w.ptSkin:(h*3)%8],hair:w.g==='f'?'#3d281a':'#17110d'}}
 function openAudience(){const V=officeVisitors();DEV.kind='aud';DEV.app=false;document.body.classList.add('dev-on','dev-aud');try{keysDown.clear()}catch(e){}
   if(!V.length){openModal('Office hours','Nobody is waiting',`<p>Your calendar is clear. Your chief of staff will send people up as they ask to see you.</p><div class="row"><button class="btn primary" data-act="close">Back to the office</button><button class="btn" data-meetphone="1">Call someone in</button></div>`,false);return}
@@ -6145,7 +6163,7 @@ window.claude?.hot?.ready?window.claude.hot.ready(start):start(window.claude?.ho
 <script src="home-renderer.js?v=26.11"></script>
 <script src="home-interior.js?v=26.27"></script>
 <script src="city-life.js?v=26.24"></script>
-<script src="city-flow.js?v=26.27"></script>
+<script src="city-flow.js?v=26.28"></script>
 <script src="music.js?v=25"></script>
 </body>
 </html>

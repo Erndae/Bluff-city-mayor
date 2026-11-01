@@ -4,6 +4,15 @@ A city-management game set in Memphis, Tennessee. You play the mayor. You handle
 
 **Play it:** https://erndae.github.io/Bluff-city-mayor/ (once GitHub Pages is turned on, see below)
 
+## v26.28: Persuasion runs on your skills, and long-playtest fixes
+
+- Persuading people now depends on your skill. Each way of persuading uses a different one: Dealmaking for coffee and lunch, Star Power for public appeals, Inside Game for pressure behind closed doors. Every choice shows your skill and your chance of success before you pick it.
+- The other person matters too. How much they like you, whether they're stubborn, and their personality (pragmatic, outgoing, reformer) push the odds up or down. Odds stay between 10% and 92%.
+- New ways to persuade: a public call for unity or private pressure in feuds, winning over a member of a voting pact, and lunch or rallying their district when poaching a vote.
+- A long mayor playtest showed mayors who never campaign lose even at about 60% approval. Your chief of staff now pushes you to hire a campaign manager in the last 8 months, the manager gives campaign advice once you're within 6 months, and "Put your campaign on the air" comes up in the final 3 months when you have money and no ads running. With ads, the test mayor won a second term.
+- The challenger's built-in edge is smaller (7 → 4 points).
+- Fixed an error when an outdated event was answered, and a council request that could be granted twice while its vote was pending.
+
 ## v26.27: A real desk, furniture that faces the right way, and office hours
 
 **Furniture.** The mayor's office has an executive desk (wood pedestals, a modesty panel, laptop, papers, a brass nameplate and a desk lamp) with an office chair behind it facing the room, two guest armchairs facing the desk, a conference table with four office chairs, the TV and bookcase on the wall facing in, and a sofa in reception. At home, the writing desk gets an office chair, and the sofa and TV now face each other (they were turned toward the walls). The bookcase faces the room. Existing saves are fixed once. Two new furniture items are in the shop: Executive desk and Office chair.

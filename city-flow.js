@@ -20,7 +20,7 @@
   function options(){
     if(!S?.started||S.over)return [];
     const next=nextSteps(),urgent=next.filter(x=>x.pri>=95);
-    const plan=isCand()&&curMgr()?campStrategy():null;
+    const plan=(isCand()||(inOffice()&&monthsToElection()<=6))&&curMgr()?campStrategy():null;
     const list=plan?[...urgent,...plan.moves.map(x=>({...x,h:x.why})),...next.filter(x=>x.pri<95)]:next;
     const seen=new Set();return list.filter(x=>!seen.has(x.t)&&seen.add(x.t));
   }
