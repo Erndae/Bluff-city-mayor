@@ -327,6 +327,7 @@ button.brand:hover .bm-ic,button.brand:focus-visible .bm-ic{border-color:var(--a
 .phbtns .btn[disabled]{opacity:1;background:transparent;color:var(--muted);border:1px dashed var(--line);cursor:not-allowed}.phout{border:1px solid var(--bad);background:rgba(232,100,79,.12);border-radius:8px;padding:10px 12px;margin-bottom:10px;font-size:13.5px}
 .hqtabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px}.hqtabs button{flex:none}
 .goflash{animation:goflash 1.6s ease-out}@keyframes goflash{0%{box-shadow:0 0 0 3px var(--amber)}100%{box-shadow:0 0 0 0 transparent}}
+.subpips{display:inline-flex;gap:3px;margin-right:8px;vertical-align:1px}.subpips i{width:10px;height:10px}.subpips.out i{border-color:var(--bad)}
 .phic{width:40px;height:40px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:18px;color:#13212d}
 
 /* phone and laptop frames */
@@ -648,7 +649,7 @@ details.analysis{margin-top:6px}details.analysis summary{cursor:pointer;color:va
     <button class="btn primary" data-act="pause" id="bPlay"><svg class="ico" viewBox="0 0 12 12" aria-hidden="true"><path d="M3.2 1.6v8.8l7.2-4.4z" fill="currentColor"/></svg> Resume <kbd>Space</kbd></button>
   </nav>
   <div class="status" id="status">Loading map…</div>
-  <div class="credit"><span class="ver" id="verTag">v26.22</span></div>
+  <div class="credit"><span class="ver" id="verTag">v26.23</span></div>
   <div class="tip" id="tip" hidden></div>
   <div class="toast" id="toast" role="status"></div>
   <section class="panel" id="panel" hidden aria-live="polite">
@@ -676,7 +677,7 @@ details.analysis{margin-top:6px}details.analysis summary{cursor:pointer;color:va
         <button class="btn" data-music-open>Music &amp; volume</button>
       </div>
       <div id="slotList" hidden></div>
-      <p class="note startv">Version <b class="ver" id="verStart">v26.22</b></p>
+      <p class="note startv">Version <b class="ver" id="verStart">v26.23</b></p>
     </div>
     <div class="startbox create" id="create" hidden>
       <h2>Create your mayor</h2>
@@ -1484,7 +1485,7 @@ function enact(s,p){DIVS.forEach(d=>{s.enacted[d.id]=p.divs[d.id];s.ratio[d.id]=
 // Voter groups. Each has a share of residents, turnout, home districts, concerns and an approval of you.
 // Citywide approval is the turnout-weighted average of the groups; each council district's approval comes from the groups that live there.
 // Shares, district mix and turnout are modeled, loosely grounded in Memphis demographics; they are not survey data.
-const VERSION='v26.22';
+const VERSION='v26.23';
 const GROUPS=[
  {id:'working',sh:'Working families',n:'Working families',ic:'⚒︎',c:'#f2a93b',share:24,turn:.5,start:56,w:{jobs:1,safety:.8,transit:.5},
   d:'Hourly workers in logistics, warehouses, health care and service jobs. The biggest bloc in the city.',dm:{1:1.1,2:.8,3:1.3,4:1.2,5:.6,6:1.2,7:1.1}},
@@ -5198,7 +5199,7 @@ function decorate(root){try{markActionCosts(root);stripKeys(root)}catch(e){}}
 {const _nt=notify;notify=function(kind,title,text,act,opts){const box=$('notes');if(box)box.querySelectorAll('.note-card').forEach(c=>{const b=c.querySelector('.nc-tx b');if(b&&b.textContent===String(title).replace(/<[^>]+>/g,''))c.remove()});
   const el=_nt.apply(this,arguments);const mx=innerWidth<700?2:4;const bx=$('notes');if(bx)while(bx.children.length>mx)bx.lastChild.remove();return el}}
 // the weekly note from your advisor matches the "This week" card
-{const _ad=advisorDaily;advisorDaily=function(){if(S&&window.BCFlow&&BCFlow.current){const dow=new Date(S.y,S.m-1,S.day).getDay();if(dow===1){S.brief=S.brief||{};const key='wk'+nowM()+'_'+S.day;if(!S.brief[key]){const A=advisor();const p=BCFlow.current();if(A&&p&&p.pri>=40){S.brief[key]=1;try{notify('people',`${A.name}: this week`,`${p.t}${S.slots>0?` · ${S.slots} action${S.slots===1?'':'s'} left`:''}`,()=>{try{p.go()}catch(e){}},{silent:true})}catch(e){}}else S.brief[key]=1}}}return _ad.apply(this,arguments)}}
+{const _ad=advisorDaily;advisorDaily=function(){if(S&&window.BCFlow&&BCFlow.current){const dow=new Date(S.y,S.m-1,S.day).getDay();if(dow===1){S.brief=S.brief||{};const key='wk'+nowM()+'_'+S.day;if(isCand()&&curMgr())S.brief[key]=1;if(!S.brief[key]){const A=advisor();const p=BCFlow.current();if(A&&p&&p.pri>=40){S.brief[key]=1;try{notify('people',`${A.name}: this week`,`${p.t}${S.slots>0?` · ${S.slots} action${S.slots===1?'':'s'} left`:''}`,()=>{try{p.go()}catch(e){}},{silent:true})}catch(e){}}else S.brief[key]=1}}}return _ad.apply(this,arguments)}}
 // a shorter tour that matches the screen you see
 TUT_MAYOR.length=0;TUT_MAYOR.push(
  {t:()=>`Welcome, Mayor ${S.mayor.name.split(' ').pop()}`,b:()=>`You run Memphis until <b>Election Day, Thursday, October 7, 2027</b>. Fix problems, keep voters happy and win a second term. This tour takes 30 seconds.`},
@@ -5403,6 +5404,43 @@ function goSection(open,match,tab){if(tab)HQ_TAB=tab;try{open()}catch(e){console
    'Executive orders':()=>goSection(openActions,'Executive orders'),
    'Campaign door to door':()=>goSection(openHQ,'#hq-doors','voters')};
   R.forEach(r=>{if(T[r.name])r.go=T[r.name]});return R}}
+// ---------- action dots in screen headers ----------
+function pipSub(el){if(!el||el.querySelector('.subpips'))return;const m=el.textContent.match(/(\d+) actions? left/i);if(!m)return;const n=+m[1],mx=Math.max(3,n);
+  const sp=document.createElement('span');sp.className='subpips pips'+(n?'':' out');sp.innerHTML=Array.from({length:mx},(_,i)=>`<i class="${i<n?'on':''}"></i>`).join('');sp.title=`${n} action${n===1?'':'s'} left`;el.prepend(sp)}
+{const _om=openModal;openModal=function(...a){const r=_om.apply(this,a);try{pipSub($('mSub'))}catch(e){}return r}}
+{const _op=openPanel;openPanel=function(...a){const r=_op.apply(this,a);try{pipSub($('pSub'))}catch(e){}return r}}
+// ---------- your campaign manager helps along the way ----------
+// Every few days your manager sends a short tip in their own voice, chosen by their specialty and what's ready right now.
+function mgrTips(){const m=curMgr();if(!m||!S.camp)return[];const C=S.camp,sl=S.slots>0,T=[],cand=isCand();const add=(pri,t,h,go)=>T.push({pri,t,h,go});
+  const doorsReady=[1,2,3,4,5,6,7].filter(d=>!cdLeft('kd'+d,2)).sort((a,b)=>dApp(a)-dApp(b));
+  const grpReady=GROUPS.filter(g=>!cdLeft((cand?'cg':'g')+g.id,cand?3:ACT_CD.group)).sort((a,b)=>S.groups[a.id].app-S.groups[b.id].app);
+  const lp=(C.polls||[]).slice(-1)[0],pollAge=lp?nowM()-(lp.m||0):99,ph=campPhase();
+  const fr=!cdLeft('fr_small',1),din=!cdLeft('fr_big',2);
+  // specialty first
+  if(m.id==='money'){if(sl&&fr)add(90,'Grassroots fundraiser is ready','Small donors give more when they feel part of it. Let\'s hold one this week.',()=>goSection(openHQ,'#hq-money','money'));
+    if(sl&&din)add(85,'Book a major-donor dinner','One good dinner can fund a month of ads. Just watch the strings attached.',()=>goSection(openHQ,'#hq-money','money'));
+    if(C.cash<30)add(80,`We're down to ${fmtK(C.cash)}`,'We can\'t run ads on fumes. Money first.',()=>goSection(openHQ,'#hq-money','money'))}
+  if(m.id==='field'){if(sl&&doorsReady.length)add(90,`Knock doors in District ${doorsReady[0]}`,`It's our weakest district (${Math.round(dApp(doorsReady[0]))}%). Porches win elections.`,()=>goSection(openHQ,'#hq-doors','voters'));
+    if((ph.id==='late'||ph.id==='gotv')&&C.organizers<3)add(82,'Hire field organizers','Organizers turn supporters into voters. This is when they count.',()=>goSection(openHQ,'#hq-staff','field'))}
+  if(m.id==='media'){if(pollAge>=2)add(88,lp?`Our last poll is ${pollAge} months old`:'We need a poll','I can\'t tell our story without the numbers.',()=>goSection(openHQ,'#hq-poll','voters'));
+    if(cand&&!cdLeft('cspeak',1))add(84,'Speak out this month','A clear message on one issue gets us on the evening news.',()=>goSection(openCandActions,'Speak out'));
+    if((ph.id==='late'||ph.id==='gotv')&&C.cash>=50)add(86,'Time to go on the air','Ads land hardest in the final months. Let\'s pick our strongest message.',()=>goSection(openHQ,'#hq-ads','ads'))}
+  if(m.id==='coalition'){if(sl&&grpReady.length)add(90,`Sit down with ${grpReady[0].n.toLowerCase()}`,`They're at ${Math.round(S.groups[grpReady[0].id].app)}%. Their leaders can bring whole congregations and blocks with them.`,()=>cand?goSection(openCandActions,'Meet community leaders'):goSection(openActions,'Meet with community leaders'));
+    if(sl&&S.m<7)add(84,'Ask for endorsements now','Groups decide July to September. Ask before they make up their minds.',()=>goSection(openHQ,'#hq-endorse','endorse'))}
+  if(m.id==='debate'){if(sl&&(C.prep||0)<3)add(88,'Let\'s run debate prep','Every practice session widens our margin for error on stage.',()=>goSection(openHQ,'#hq-debates','debates'));
+    if(cand&&!cdLeft('cspeak',1))add(84,'Practice the message in public','Speak out on an issue. It sharpens the answers we\'ll need in September.',()=>goSection(openCandActions,'Speak out'))}
+  // anyone can remind you of the basics
+  if(sl&&doorsReady.length&&m.id!=='field')add(50,`Knock doors in District ${doorsReady[0]}`,`It's our weakest district right now.`,()=>goSection(openHQ,'#hq-doors','voters'));
+  if(sl&&fr&&m.id!=='money')add(45,'A fundraiser is ready','It would keep the lights on.',()=>goSection(openHQ,'#hq-money','money'));
+  if(pollAge>=3&&m.id!=='media')add(40,'Run a poll','It\'s been a while since we checked the numbers.',()=>goSection(openHQ,'#hq-poll','voters'));
+  return T.sort((a,b)=>b.pri-a.pri)}
+function mgrTipDaily(){if(!S||!S.started||S.over||!curMgr()||!S.camp)return;if(![4,8,11,19,23,27].includes(S.day))return;
+  S.mgrTipLast=S.mgrTipLast||{};const key=nowM()+'_'+S.day;if(S.mgrTipLast[key])return;S.mgrTipLast={[key]:1};
+  const used=S.mgrTipSeen||{};const T=mgrTips().filter(t=>used[t.t]!==nowM());const t=T[0];if(!t)return;S.mgrTipSeen={...used,[t.t]:nowM()};
+  const m=curMgr();try{notify('people',`${m.name.split(' ')[0]==='Rev.'?'Rev. Booker':m.name.split(' ')[0]}: ${t.t}`,`${t.h}${S.slots>0?` · ${S.slots} action${S.slots===1?'':'s'} left`:''}`,()=>{try{t.go()}catch(e){}},{ttl:14})}catch(e){}}
+{const _dt=dayTick;dayTick=function(){_dt();try{mgrTipDaily()}catch(e){console.warn('mgrtip',e)}}}
+// the manager's pop-up and "Ask" button lead with their specialty too
+{const _cs2=campStrategy;campStrategy=function(...a){const P=_cs2.apply(this,a);try{if(P&&P.moves){const tips=mgrTips().filter(t=>t.pri>=80);if(tips.length&&!P.moves.some(m=>m.t===tips[0].t)){P.moves.unshift({t:tips[0].t,why:tips[0].h,go:tips[0].go,pri:99});P.moves=P.moves.slice(0,3)}}}catch(e){}return P}}
 function openLedger(){const L=S.log||[];openPanel('Everything that has happened, newest first','Ledger',L.length?`<div class="logl">${L.map(x=>`<div><span>${x.d}</span><p style="margin:0">${x.t}</p></div>`).join('')}</div>`:'<p class="note">Nothing yet. Start the clock with Space or ▶.</p>','ledger')}
 function openPolicies(){const ks=Object.keys(POLICIES);
   openPanel('Ongoing programs you control','Your initiatives',`<p>Mid-year, these are paid from the reserve fund. In April they go into the budget you send the council.</p>

@@ -4,6 +4,10 @@ A city-management game set in Memphis, Tennessee. You play the mayor. You handle
 
 **Play it:** https://erndae.github.io/Bluff-city-mayor/ (once GitHub Pages is turned on, see below)
 
+## v26.23: Action dots everywhere, and a manager who coaches you
+
+Any screen whose header says how many actions you have left now shows the action dots there too, red when you're out. Your campaign manager sends a short tip a few times a month (days 4, 8, 11, 19, 23 and 27), in their own voice and led by their specialty. Dana (money) flags fundraisers and low cash. Marcus (field) points to your weakest district to knock and to organizers late in the race. Priya (media) wants fresh polls, speeches and ads at the right time. Rev. Booker (coalition) points to community groups and endorsements. Elena (debate) books debate prep and practice speeches. Tapping a tip goes straight to that section. Their specialty tip also leads their pop-up plan, and their tips replace the generic Monday note so you aren't double-notified.
+
 ## v26.22: Slower start speed and going straight to things
 
 The slowest speed is now about 3 seconds per day (it was 1); the speeds run roughly 3 s, 1 s, ⅓ s, ⅛ s and 1/20 s per day. The money screen is called **Money**: your personal money and your campaign fund come first, and the city treasury is labeled "not your money." Tapping a row in **What you can do now** opens that exact thing: the right Campaign HQ tab, scrolled to that section, which flashes so you can see it. The same goes for your campaign manager's suggestions. When an action re-opens the same screen, you keep your place instead of jumping back to the top.
