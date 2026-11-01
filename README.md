@@ -4,6 +4,10 @@ A city-management game set in Memphis, Tennessee. You play the mayor. You handle
 
 **Play it:** https://erndae.github.io/Bluff-city-mayor/ (once GitHub Pages is turned on, see below)
 
+## v26.25: Candidates only see what they can do
+
+Mayor-only buttons (budget, orders, funding, council votes and the like) are now hidden from candidates instead of grayed out. A section left with nothing a candidate can use is hidden too. Once you win, everything appears.
+
 ## v26.24: Playtest fixes
 
 Found by playing a full candidate race (March to Election Day, won) and nine months as mayor on a phone screen:

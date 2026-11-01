@@ -649,7 +649,7 @@ details.analysis{margin-top:6px}details.analysis summary{cursor:pointer;color:va
     <button class="btn primary" data-act="pause" id="bPlay"><svg class="ico" viewBox="0 0 12 12" aria-hidden="true"><path d="M3.2 1.6v8.8l7.2-4.4z" fill="currentColor"/></svg> Resume <kbd>Space</kbd></button>
   </nav>
   <div class="status" id="status">Loading map…</div>
-  <div class="credit"><span class="ver" id="verTag">v26.24</span></div>
+  <div class="credit"><span class="ver" id="verTag">v26.25</span></div>
   <div class="tip" id="tip" hidden></div>
   <div class="toast" id="toast" role="status"></div>
   <section class="panel" id="panel" hidden aria-live="polite">
@@ -677,7 +677,7 @@ details.analysis{margin-top:6px}details.analysis summary{cursor:pointer;color:va
         <button class="btn" data-music-open>Music &amp; volume</button>
       </div>
       <div id="slotList" hidden></div>
-      <p class="note startv">Version <b class="ver" id="verStart">v26.24</b></p>
+      <p class="note startv">Version <b class="ver" id="verStart">v26.25</b></p>
     </div>
     <div class="startbox create" id="create" hidden>
       <h2>Create your mayor</h2>
@@ -1485,7 +1485,7 @@ function enact(s,p){DIVS.forEach(d=>{s.enacted[d.id]=p.divs[d.id];s.ratio[d.id]=
 // Voter groups. Each has a share of residents, turnout, home districts, concerns and an approval of you.
 // Citywide approval is the turnout-weighted average of the groups; each council district's approval comes from the groups that live there.
 // Shares, district mix and turnout are modeled, loosely grounded in Memphis demographics; they are not survey data.
-const VERSION='v26.24';
+const VERSION='v26.25';
 const GROUPS=[
  {id:'working',sh:'Working families',n:'Working families',ic:'⚒︎',c:'#f2a93b',share:24,turn:.5,start:56,w:{jobs:1,safety:.8,transit:.5},
   d:'Hourly workers in logistics, warehouses, health care and service jobs. The biggest bloc in the city.',dm:{1:1.1,2:.8,3:1.3,4:1.2,5:.6,6:1.2,7:1.1}},
@@ -4476,7 +4476,9 @@ function citizenMsg(){return isCand()?'Only the sitting mayor can do that. As a 
 window.addEventListener('click',e=>{if(!S||!S.started||inOffice())return;const b=e.target.closest('button,[data-act],.choice');if(!b||!mayorOnlyBtn(b))return;e.preventDefault();e.stopImmediatePropagation();toast(citizenMsg())},true);
 // mark those buttons in every menu so a candidate can see why they're off
 function citizenMark(root){if(!S||!S.started||inOffice()||!root)return;root.querySelectorAll('button,.choice,[data-act]').forEach(b=>{if(b.dataset.citz||!mayorOnlyBtn(b))return;b.dataset.citz=1;
-  if(b.dataset.act==='platform'||b.dataset.act==='sotc'){b.style.display='none';return}b.disabled=true;b.setAttribute('aria-disabled','true');b.title='Only the mayor can do this';b.classList.add('mayoronly')})}
+  if(b.dataset.act==='platform'||b.dataset.act==='sotc'){b.style.display='none';return}b.disabled=true;b.setAttribute('aria-disabled','true');b.classList.add('mayoronly');b.style.display='none'});
+  // a section left with nothing a candidate can use disappears too
+  root.querySelectorAll('.choices,.row,.facts,.dlist').forEach(box=>{if(box.dataset.citzBox)return;const all=[...box.querySelectorAll('button,.choice,[data-act]')];if(!all.length)return;if(all.every(b=>b.classList.contains('mayoronly')||b.style.display==='none')&&all.some(b=>b.classList.contains('mayoronly'))){box.dataset.citzBox=1;box.style.display='none'}})}
 {let q=false;const run=()=>{q=false;['modal','panel'].forEach(id=>citizenMark($(id)))};new MutationObserver(()=>{if(!q){q=true;queueMicrotask(run)}}).observe(document.body,{childList:true,subtree:true})}
 // screens that only make sense for the mayor
 ['openWhip','openBudget','openCabinet','openStaff','openPolicies','openPlatform','openSotc','openOutlook','openPlanner','openPropose','openDeal'].forEach(n=>{try{const f=window[n]||eval(n);if(typeof f!=='function')return;const w=function(...a){if(S&&S.started&&!inOffice()){toast(citizenMsg());return}return f.apply(this,a)};eval(n+'=w')}catch(e){}});
