@@ -11,7 +11,7 @@
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#0d1822">
 <link rel="stylesheet" href="music.css?v=25">
-<link rel="stylesheet" href="home-interior.css?v=26.21">
+<link rel="stylesheet" href="home-interior.css?v=26.27">
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -328,7 +328,7 @@ button.brand:hover .bm-ic,button.brand:focus-visible .bm-ic{border-color:var(--a
 .hqtabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px}.hqtabs button{flex:none}
 .goflash{animation:goflash 1.6s ease-out}@keyframes goflash{0%{box-shadow:0 0 0 3px var(--amber)}100%{box-shadow:0 0 0 0 transparent}}
 .subpips{display:inline-flex;gap:3px;margin-right:8px;vertical-align:1px}.subpips i{width:10px;height:10px}.subpips.out i{border-color:var(--bad)}
-.meetscene{text-align:center}.dlgbub{text-align:left;background:var(--panel2,rgba(255,255,255,.05));border:1px solid var(--line);border-radius:12px 12px 12px 2px;padding:10px 14px;margin:0 0 12px}.dlgbub b{color:var(--amber);font-size:13px}.dlgbub p{margin:4px 0 0;font-size:15px;line-height:1.45}.dlgpick .choice b{font-style:italic}.meetfaces{display:flex;align-items:center;justify-content:center;gap:14px;margin:4px 0 12px}.meetdots{color:var(--amber);letter-spacing:3px}
+.audlist{display:flex;flex-direction:column;gap:8px;margin:8px 0}.audrow{display:grid;grid-template-columns:auto 1fr auto;gap:10px;align-items:center;border:1px solid var(--line);border-radius:8px;padding:8px 10px;background:linear-gradient(90deg,rgba(201,161,90,.08),transparent)}.audwho{display:flex;flex-direction:column;min-width:0}.audwho small{color:var(--muted);font-size:12px}.audwho span{font-size:14px;margin-top:2px}.audwho em{color:var(--warn);font-size:11.5px;font-style:normal}.meetscene{text-align:center}.dlgbub{text-align:left;background:var(--panel2,rgba(255,255,255,.05));border:1px solid var(--line);border-radius:12px 12px 12px 2px;padding:10px 14px;margin:0 0 12px}.dlgbub b{color:var(--amber);font-size:13px}.dlgbub p{margin:4px 0 0;font-size:15px;line-height:1.45}.dlgpick .choice b{font-style:italic}.meetfaces{display:flex;align-items:center;justify-content:center;gap:14px;margin:4px 0 12px}.meetdots{color:var(--amber);letter-spacing:3px}
 .phic{width:40px;height:40px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:18px;color:#13212d}
 
 /* phone and laptop frames */
@@ -650,7 +650,7 @@ details.analysis{margin-top:6px}details.analysis summary{cursor:pointer;color:va
     <button class="btn primary" data-act="pause" id="bPlay"><svg class="ico" viewBox="0 0 12 12" aria-hidden="true"><path d="M3.2 1.6v8.8l7.2-4.4z" fill="currentColor"/></svg> Resume <kbd>Space</kbd></button>
   </nav>
   <div class="status" id="status">Loading map…</div>
-  <div class="credit"><span class="ver" id="verTag">v26.26</span></div>
+  <div class="credit"><span class="ver" id="verTag">v26.27</span></div>
   <div class="tip" id="tip" hidden></div>
   <div class="toast" id="toast" role="status"></div>
   <section class="panel" id="panel" hidden aria-live="polite">
@@ -678,7 +678,7 @@ details.analysis{margin-top:6px}details.analysis summary{cursor:pointer;color:va
         <button class="btn" data-music-open>Music &amp; volume</button>
       </div>
       <div id="slotList" hidden></div>
-      <p class="note startv">Version <b class="ver" id="verStart">v26.26</b></p>
+      <p class="note startv">Version <b class="ver" id="verStart">v26.27</b></p>
     </div>
     <div class="startbox create" id="create" hidden>
       <h2>Create your mayor</h2>
@@ -1486,7 +1486,7 @@ function enact(s,p){DIVS.forEach(d=>{s.enacted[d.id]=p.divs[d.id];s.ratio[d.id]=
 // Voter groups. Each has a share of residents, turnout, home districts, concerns and an approval of you.
 // Citywide approval is the turnout-weighted average of the groups; each council district's approval comes from the groups that live there.
 // Shares, district mix and turnout are modeled, loosely grounded in Memphis demographics; they are not survey data.
-const VERSION='v26.26';
+const VERSION='v26.27';
 const GROUPS=[
  {id:'working',sh:'Working families',n:'Working families',ic:'⚒︎',c:'#f2a93b',share:24,turn:.5,start:56,w:{jobs:1,safety:.8,transit:.5},
   d:'Hourly workers in logistics, warehouses, health care and service jobs. The biggest bloc in the city.',dm:{1:1.1,2:.8,3:1.3,4:1.2,5:.6,6:1.2,7:1.1}},
@@ -4538,7 +4538,7 @@ function nextSteps(){const out=[];if(!S||!S.started||S.over)return out;const add
     if(S.slots>0)add(40,`${S.slots} action${S.slots===1?'':'s'} left this month`,'Meet a community group or knock doors (Actions).',()=>openActions());
     add(10,'Press ▶ and let time pass','The campaign moves day by day; the desk will flag what needs you.',()=>setPaused(false));
   }else if(inOffice()){
-    S.events.filter(e=>e.kind!=='budget'&&e.id!=='briefing'&&evLeftM(e)<=1).slice(0,2).forEach(e=>{let t='a decision';try{t=evTitle(e)}catch(err){}add(100,'Decide before it expires: '+t,'Ignoring it costs you.',()=>{try{openPlace(evAt(e))}catch(err){openDesk()}})});
+    S.events.filter(e=>e.kind!=='budget'&&e.id!=='briefing'&&evLeftM(e)<=1).slice(0,2).forEach(e=>{let t='a decision';try{t=evTitle(e)}catch(err){}add(100,'Decide before it expires: '+t,'Ignoring it costs you.',()=>{try{if(inOffice()&&(e.kind==='char'||e.kind==='request'||e.kind==='memo'||evAt(e)==='cityhall')){enterOffice();setTimeout(openAudience,400)}else openPlace(evAt(e))}catch(err){openDesk()}})});
     if(S.events.some(e=>e.id==='briefing'))add(98,'Read your chief of staff\'s briefing','At City Hall.',()=>openPlace('cityhall'));
     if(!S.promises)add(99,'Make your three promises','They become your record on Election Day.',()=>openPromises());
     if(S.stage==='draft')add(S.day>=15?102:99,'Write and send your budget','The council votes in June. 7 votes to pass.',()=>openBudget());
@@ -5449,9 +5449,9 @@ function mgrTipDaily(){if(!S||!S.started||S.over||!curMgr()||!S.camp)return;if(!
 function enterOffice(){if(!S?.started||!inOffice()||!window.BCInterior||BCInterior.isOpen)return;const wasPaused=S.paused;
   try{if(typeof TUT!=='undefined'&&TUT)tutEnd(false)}catch(e){}onClose=null;closeModal();closePanel();navReset();keysDown.clear();S.paused=true;
   goTo(LM.cityhall.lon,LM.cityhall.lat,'Your office at City Hall',2);refreshHUD();
-  BCInterior.open({place:'office',state:()=>S,save,menu:()=>laptopItems(),device:k=>openDevice(k),tv:()=>homeTV(),books:()=>homeBooks(),read:id=>homeRead(id),close:next=>{
+  BCInterior.open({place:'office',state:()=>S,save,visitors:()=>officeVisitors().map(visitorLook),audience:()=>openAudience(),menu:()=>laptopItems(),device:k=>openDevice(k),tv:()=>homeTV(),books:()=>homeBooks(),read:id=>homeRead(id),close:next=>{
     keysDown.clear();S.paused=wasPaused;save();refreshHUD();if(next==='news')openNews();else if(next==='campaign')openHQ();else if(next)homeRoute(next)}})}
-{const _op=openPlace;openPlace=function(at,...r){const res=_op.call(this,at,...r);try{if(at==='cityhall'&&inOffice()&&!$('pBody').querySelector('[data-act="office"]'))$('pBody').insertAdjacentHTML('afterbegin',`<div class="facts"><button class="btn primary" data-act="office" style="width:100%">Go up to your office</button><p class="note" style="margin:6px 0 0">The 7th floor. Your desk and laptop, a meeting table for calls and visitors, the TV and your books.</p></div>`)}catch(e){}return res}}
+{const _op=openPlace;openPlace=function(at,...r){const res=_op.call(this,at,...r);try{if(at==='cityhall'&&inOffice()&&!$('pBody').querySelector('[data-act="office"]'))$('pBody').insertAdjacentHTML('afterbegin',`<div class="facts"><button class="btn primary" data-act="office" style="width:100%">Go up to your office${(()=>{const n=officeVisitors().length;return n?` · ${n} waiting to see you`:''})()}</button><p class="note" style="margin:6px 0 0">The 7th floor. Your desk and laptop, a meeting table for calls and visitors, the TV and your books.</p></div>`)}catch(e){}return res}}
 document.addEventListener('click',e=>{const b=e.target.closest('[data-act="office"]');if(!b||!S)return;e.preventDefault();e.stopImmediatePropagation();enterOffice()},true);
 // ---------- meetings take you there ----------
 function phWho(kind,id){try{if(kind==='council'){const m=S.council[+id];return{n:m.name,face:portrait(m,64),line:'They pulled up a chair in a coffee shop in their district.'}}
@@ -5490,6 +5490,31 @@ function dlgPick(c){if(!DLG)return;const k=DLG.kind,id=DLG.id,name=DLG.who.n;let
    <p class="note" style="margin-top:10px"><b>${out}</b>${DLG.res?' '+DLG.res.replace(/^You met [^.]*\.\s*/,''):''}</p></div>
    <div class="row"><button class="btn primary" data-act="close">Back to work</button><button class="btn" data-meetphone="1">Set up another meeting</button></div>`,false);DLG=null}
 document.addEventListener('click',e=>{const b=e.target.closest('[data-dlg]');if(!b||!S)return;e.preventDefault();e.stopImmediatePropagation();dlgPick(b.dataset.dlg)},true);
+// ---------- office hours: people come to your office to ask for things ----------
+// Like a throne room: council members, cabinet members and others with a request, a favor, a feud or a problem
+// wait in your office. Receive them one at a time and decide.
+const VSKINS=['#5a3825','#6b4226','#8d5524','#a8693f','#c68642','#e0ac69','#f1c27d','#ffdbac'];
+function visitorOf(ev){let who=null,role='';try{
+  if(ev.kind==='char'&&ev.sid){who=staffOf(ev.sid);role=STAFFMAP[ev.sid].role}
+  else if(ev.kind==='char'&&ev.a!=null&&S.council[ev.a]){who=S.council[ev.a];role=who.seat}
+  else if(ev.kind==='request'&&ev.mi!=null){who=S.council[ev.mi];role=who.seat}
+  else{const P=presenterFor(ev,evDef(ev));if(P.kind==='staff'){who=staffOf(P.id);role=STAFFMAP[P.id].role}else if(P.kind==='nb'){who=S.nb[P.id];role='Mayor of '+NEIGHBORS[P.id].city}else{who=S.council[P.id];role='Council Member'}}}catch(e){}
+  return{ev,who,role,title:(()=>{try{return evTitle(ev)}catch(e){return'A request'}})()}}
+function officeVisitors(){if(!S||!inOffice())return[];return(S.events||[]).filter(e=>e.kind==='char'||e.kind==='request'||e.kind==='memo'||(e.kind!=='budget'&&e.id!=='briefing'&&evAt(e)==='cityhall')).map(visitorOf).filter(v=>v.who)}
+function visitorLook(v){const w=v.who||{};const h=(w.name||'x').length;return{suit:['#2b3a55','#3a3048','#22382e','#4a2530','#2b2f36'][h%5],skin:VSKINS[w.ptSkin!=null?w.ptSkin:(h*3)%8],hair:w.g==='f'?'#3d281a':'#17110d'}}
+function openAudience(){const V=officeVisitors();DEV.kind='aud';DEV.app=false;document.body.classList.add('dev-on','dev-aud');try{keysDown.clear()}catch(e){}
+  if(!V.length){openModal('Office hours','Nobody is waiting',`<p>Your calendar is clear. Your chief of staff will send people up as they ask to see you.</p><div class="row"><button class="btn primary" data-act="close">Back to the office</button><button class="btn" data-meetphone="1">Call someone in</button></div>`,false);return}
+  openModal(`Office hours · ${V.length} waiting`,'Your visitors',`<p class="note" style="margin-top:0">People who asked to see you are waiting in your office. Receiving someone doesn't use an action; some of their requests do.</p>
+   <div class="audlist">${V.map((v,i)=>`<div class="audrow">${portrait(v.who,52)}<div class="audwho"><b>${v.who.name}</b><small>${v.role}</small><span>${v.title}</span>${evLeftM(v.ev)<=0?'<em>Leaves at the end of the month</em>':''}</div><button class="btn primary" data-audrecv="${i}">Receive</button></div>`).join('')}</div>
+   <div class="row"><button class="btn" data-act="close">Close the door</button></div>`,true)}
+let AUD_V=[];
+document.addEventListener('click',e=>{const b=e.target.closest('[data-audrecv]');if(!b||!S)return;e.preventDefault();e.stopImmediatePropagation();const v=officeVisitors()[+b.dataset.audrecv];if(!v)return;DEV.app=true;onClose=null;closeModal();
+  setTimeout(()=>{try{const i=S.events.indexOf(v.ev);openPanel(`Office hours · ${v.role}`,`Audience with ${v.who.name}`,eventCard(v.ev,i),'aud')}catch(err){console.warn(err)}devFrame(true)},30)},true);
+// once you decide, the visitor leaves and the next one is up
+document.addEventListener('click',e=>{const b=e.target.closest('[data-ev]');if(!b||panelFor!=='aud')return;setTimeout(()=>{if(panelFor==='aud'&&!$('panel').hidden)closePanel()},50)});
+// after a visitor's business is done, the list comes back; the 3D office updates who's still standing there
+{const _da=devAfterClose;devAfterClose=function(){setTimeout(()=>{try{window.BCInterior&&BCInterior.refresh&&BCInterior.refresh()}catch(e){}if(DEV.kind==='aud'){if(modalOpen||!$('panel').hidden)return;if(DEV.app){openAudience();return}document.body.classList.remove('dev-aud');endDevice()}},0);if(DEV.kind!=='aud')_da()}}
+{const _ed=endDevice;endDevice=function(){document.body.classList.remove('dev-aud');return _ed()}}
 document.addEventListener('click',e=>{const b=e.target.closest('[data-meetphone]');if(!b||!S)return;e.preventDefault();e.stopImmediatePropagation();onClose=null;closeModal();openDevice('phone')},true);
 function openLedger(){const L=S.log||[];openPanel('Everything that has happened, newest first','Ledger',L.length?`<div class="logl">${L.map(x=>`<div><span>${x.d}</span><p style="margin:0">${x.t}</p></div>`).join('')}</div>`:'<p class="note">Nothing yet. Start the clock with Space or ▶.</p>','ledger')}
 function openPolicies(){const ks=Object.keys(POLICIES);
@@ -6118,9 +6143,9 @@ window.claude?.hot?.snapshot?.(()=>({S}));
 window.claude?.hot?.ready?window.claude.hot.ready(start):start(window.claude?.hot?.data??{});
 </script>
 <script src="home-renderer.js?v=26.11"></script>
-<script src="home-interior.js?v=26.26"></script>
+<script src="home-interior.js?v=26.27"></script>
 <script src="city-life.js?v=26.24"></script>
-<script src="city-flow.js?v=26.26"></script>
+<script src="city-flow.js?v=26.27"></script>
 <script src="music.js?v=25"></script>
 </body>
 </html>

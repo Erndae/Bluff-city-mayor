@@ -13,7 +13,9 @@
     {id:'lamp',name:'Floor lamp',price:110,w:.45,d:.45,color:'#e9c68d'},
     {id:'rug',name:'Woven rug',price:140,w:2.5,d:1.8,color:'#b87857',flat:true},
     {id:'table',name:'Dining table',price:360,w:1.35,d:.85,color:'#886146'},
-    {id:'art',name:'Memphis art easel',price:95,w:.65,d:.4,color:'#c9915d'}
+    {id:'art',name:'Memphis art easel',price:95,w:.65,d:.4,color:'#c9915d'},
+    {id:'odesk',name:'Executive desk',price:1200,w:1.9,d:.9,color:'#5a3b28',use:'laptop'},
+    {id:'ochair',name:'Office chair',price:180,w:.62,d:.62,color:'#1f2a33'}
   ];
   const ITEMS=Object.fromEntries(CATALOG.map(x=>[x.id,x]));
   const WALLS=[{name:'Warm ivory',color:'#e5ddc9'},{name:'Soft sage',color:'#bdc8b5'},{name:'Dusty blue',color:'#b5c5cb'},{name:'Clay',color:'#d5b8a4'}];
@@ -27,27 +29,30 @@
   const OFFICE_DOORWAYS=[{x:8,z:4.2,w:.85,d:2},{x:10,z:.6,w:1.6,d:1.2}];
   let STRUCTURE=HOME_STRUCTURE,FIXTURES=HOME_FIXTURES,DOORWAYS=HOME_DOORWAYS;
   function setMode(m){MODE=m==='office'?'office':'home';STRUCTURE=MODE==='office'?OFFICE_STRUCTURE:HOME_STRUCTURE;FIXTURES=MODE==='office'?[]:HOME_FIXTURES;DOORWAYS=MODE==='office'?OFFICE_DOORWAYS:HOME_DOORWAYS;}
-  function officeInitial(){return {version:1,wall:2,floor:1,next:12,items:[
-    {uid:1,type:'desk',x:3.6,z:7.6,r:0},{uid:2,type:'chair',x:3.6,z:8.6,r:2},{uid:3,type:'shelf',x:.25,z:7.5,r:1},{uid:4,type:'tv',x:.35,z:3.2,r:1},
-    {uid:5,type:'table',x:4.4,z:3.2,r:1},{uid:6,type:'chair',x:5.4,z:2.4,r:3},{uid:7,type:'chair',x:5.4,z:4,r:3},{uid:8,type:'rug',x:3.8,z:5.4,r:0},
-    {uid:9,type:'sofa',x:10.6,z:6.8,r:3},{uid:10,type:'plant',x:7.4,z:9.4,r:0},{uid:11,type:'lamp',x:11.4,z:9.3,r:0}]};}
+  function officeInitial(){return {version:2,wall:2,floor:1,next:17,items:[
+    {uid:1,type:'odesk',x:3.6,z:7.7,r:2},{uid:2,type:'ochair',x:3.6,z:8.65,r:0},{uid:3,type:'chair',x:2.9,z:6.5,r:2},{uid:4,type:'chair',x:4.3,z:6.5,r:2},
+    {uid:5,type:'shelf',x:.3,z:7.5,r:3},{uid:6,type:'tv',x:.35,z:3,r:3},{uid:7,type:'table',x:4.4,z:3,r:1},
+    {uid:8,type:'ochair',x:5.3,z:2.6,r:1},{uid:9,type:'ochair',x:5.3,z:3.4,r:1},{uid:10,type:'ochair',x:3.5,z:2.6,r:3},{uid:11,type:'ochair',x:3.5,z:3.4,r:3},
+    {uid:12,type:'rug',x:4,z:5,r:0},{uid:13,type:'sofa',x:11.4,z:7,r:1},{uid:14,type:'plant',x:7.4,z:9.4,r:0},{uid:15,type:'lamp',x:11.4,z:9.3,r:0},{uid:16,type:'plant',x:.6,z:9.4,r:0}]};}
   const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
   const money=n=>'$'+Math.round(n).toLocaleString('en-US');
   function rect(item){const b=ITEMS[item.type],swap=Math.abs(Math.round(item.r||0))%2;return {x:item.x,z:item.z,w:swap?b.d:b.w,d:swap?b.w:b.d};}
   function overlaps(a,b,pad=0){return Math.abs(a.x-b.x)<(a.w+b.w)/2+pad&&Math.abs(a.z-b.z)<(a.d+b.d)/2+pad;}
   function initial(){return {version:1,wall:0,floor:0,next:12,items:[
-    {uid:1,type:'sofa',x:1.15,z:3,r:1},{uid:2,type:'tv',x:5.95,z:3,r:3},{uid:3,type:'coffee',x:3.4,z:3,r:0},
+    {uid:1,type:'sofa',x:1.15,z:3,r:3},{uid:2,type:'tv',x:5.95,z:3,r:1},{uid:3,type:'coffee',x:3.4,z:3,r:0},
     {uid:4,type:'rug',x:3.4,z:3,r:0},{uid:5,type:'plant',x:.6,z:5.2,r:0},{uid:6,type:'lamp',x:1.2,z:1.3,r:0},
     {uid:7,type:'bed',x:10,z:7.8,r:0},{uid:8,type:'desk',x:10,z:1.1,r:2},{uid:9,type:'shelf',x:11.65,z:4,r:1},
-    {uid:10,type:'table',x:3.5,z:7.8,r:0},{uid:11,type:'art',x:8.2,z:8.8,r:0}
-  ]};}
+    {uid:10,type:'table',x:3.5,z:7.8,r:0},{uid:11,type:'art',x:8.2,z:8.8,r:0},{uid:12,type:'ochair',x:10,z:1.85,r:0}
+  ],layoutFix:2};}
   function ensure(s){
-    if(MODE==='office'){if(!s.office||s.office.version!==1)s.office=officeInitial();const o=s.office;o.items=(o.items||[]).filter(i=>ITEMS[i.type]);o.next=Math.max(1,...o.items.map(i=>i.uid+1));return o;}
+    if(MODE==='office'){if(!s.office||s.office.version!==2)s.office=officeInitial();const o=s.office;o.items=(o.items||[]).filter(i=>ITEMS[i.type]);o.next=Math.max(1,...o.items.map(i=>i.uid+1));return o;}
     if(!s.interior||s.interior.version!==1)s.interior=initial();
     const h=s.interior;h.wall=clamp(Math.floor(h.wall)||0,0,WALLS.length-1);h.floor=clamp(Math.floor(h.floor)||0,0,FLOORS.length-1);
     h.items=(Array.isArray(h.items)?h.items:[]).filter(i=>ITEMS[i.type]&&Number.isFinite(i.x)&&Number.isFinite(i.z)&&Number.isInteger(i.uid)).slice(0,64);
     h.items.forEach(i=>{i.r=((Math.round(i.r)||0)%4+4)%4;i.x=clamp(i.x,.2,11.8);i.z=clamp(i.z,.2,9.8)});
     // the original bookcase faced the wall; turn it around once so its books face the room
+    if((h.layoutFix||0)<2){h.layoutFix=2;const so=h.items.find(i=>i.uid===1&&i.type==='sofa'&&i.x===1.15&&i.z===3);if(so)so.r=3;const tv=h.items.find(i=>i.uid===2&&i.type==='tv'&&i.x===5.95&&i.z===3);if(tv)tv.r=1;
+      const dk=h.items.find(i=>i.uid===8&&i.type==='desk'&&i.x===10&&i.z===1.1);if(dk&&!h.items.some(i=>i.type==='ochair')){const n=Math.max(12,...h.items.map(i=>i.uid+1));h.items.push({uid:n,type:'ochair',x:10,z:1.85,r:0});}}
     if(!h.shelfFix){h.shelfFix=1;const sh=h.items.find(i=>i.uid===9&&i.type==='shelf'&&i.x===11.65&&i.z===4&&i.r===3);if(sh)sh.r=1;}
     h.next=Math.max(1,...h.items.map(i=>i.uid+1),Number.isInteger(h.next)?h.next:1);return h;
   }
@@ -132,6 +137,11 @@
     // reception: a front desk and a nameplate
     box(10,0,2.6,2.2,1,.5,'#6b4a33');box(10,1,2.6,2.3,.06,.6,'#d8c9a8');box(10,1.07,2.4,.5,.12,.04,'#c9a15a');
     for(let k=0;k<4;k++)box(11.88,.6+k*.42,7,.02,.3,2.4,['#efe8d8','#d8e0e4','#efe8d8','#d8e0e4'][k]);
+    // people waiting to see you stand in the office
+    const V=(adapter&&adapter.visitors)?adapter.visitors():[];const spots=[[2.4,5.7],[3.6,5.5],[4.8,5.7],[9.4,5.6],[10.4,4.6],[9.6,7.2]];
+    V.slice(0,6).forEach((v,k)=>{const [x,z]=spots[k];const suit=v.suit||'#2b3a55',skin=v.skin||'#8d5524';
+      box(x-.1,0,z,.14,.85,.16,'#2a2a2a');box(x+.1,0,z,.14,.85,.16,'#2a2a2a');box(x,.85,z,.5,.65,.26,suit);box(x,1.5,z,.12,.08,.12,skin);box(x,1.58,z,.26,.3,.26,skin);box(x,1.86,z,.27,.06,.27,v.hair||'#2c1d13');
+      box(x-.31,.95,z,.1,.55,.14,suit);box(x+.31,.95,z,.1,.55,.14,suit);});
   }
   function furniture(i,box,tint){
     const b=ITEMS[i.type],r=i.r*Math.PI/2,co=Math.cos(r),si=Math.sin(r),c=tint||b.color;
@@ -146,6 +156,15 @@
       legs(b.w,b.d,.2);part(0,.15,0,b.w,.3,b.d,'#8c684e');part(0,.43,0,b.w-.04,.2,b.d-.04,'#efe8d8');
       part(0,.64,-.3,b.w-.03,.045,1.45,'#718f8d');part(0,.15,1.04,b.w,1.05,.13,'#99795a');
       for(const x of [-.43,.43])part(x,.65,.68,.64,.12,.4,'#f6efdf');
+    }else if(i.type==='ochair'){
+      part(0,.02,0,.62,.04,.08,'#2b2b2b');part(0,.02,0,.08,.04,.62,'#2b2b2b');part(0,.06,0,.06,.36,.06,'#5d6166');
+      part(0,.42,0,.54,.1,.52,c);part(0,.52,.23,.5,.62,.08,c);part(0,1.04,.24,.42,.12,.07,c);
+      for(const x of [-.28,.28]){part(x,.52,.02,.05,.2,.05,'#3a3f45');part(x,.71,-.02,.06,.04,.34,'#3a3f45');}
+    }else if(i.type==='odesk'){
+      for(const x of [-.78,.78])part(x,0,0,.34,.74,.84,c);part(0,.74,0,1.9,.07,.9,'#6b4a33');part(0,.12,.38,1.3,.62,.05,c);
+      for(const x of [-.78,.78])for(const y of [.2,.45])part(x,y,-.425,.24,.02,.02,'#c9a15a');
+      part(.35,.81,.12,.44,.29,.05,'#344e52');part(.35,.81,-.02,.44,.025,.26,'#45585a');part(-.45,.81,-.05,.32,.02,.38,'#efe6cc');
+      part(0,.81,.36,.42,.08,.05,'#c9a15a');part(-.8,.81,.25,.12,.3,.12,'#2f4a3e');part(-.8,1.1,.25,.28,.1,.2,'#e9d6a0');
     }else if(['coffee','desk','table'].includes(i.type)){
       const h=i.type==='coffee'?.4:.76;legs(b.w,b.d,h);part(0,h,0,b.w,.075,b.d,c);
       if(i.type==='desk'){part(.3,.84,.12,.42,.28,.05,'#344e52');part(.3,.83,0,.42,.025,.24,'#45585a');part(-.4,.84,-.05,.25,.035,.3,'#e8d6a8');}
@@ -188,6 +207,7 @@
     $('hi-room').textContent=room();
     if(proposed){$('hi-place').disabled=!valid||(!selection.uid&&s.purse.cash<ITEMS[selection.type].price);$('hi-placement-note').textContent=valid?'Clear spot · ready to place':'Blocked · move or turn toward open floor';}
     const near=h.items.filter(i=>!i.stored&&(ITEMS[i.type].use||(MODE==='office'&&i.type==='table'))&&Math.hypot(i.x-p.x,i.z-p.z)<2.5).sort((a,b)=>Math.hypot(a.x-p.x,a.z-p.z)-Math.hypot(b.x-p.x,b.z-p.z))[0];
+    {const a=$('hi-aud'),n=MODE==='office'&&adapter.visitors?adapter.visitors().length:0;a.hidden=!n;if(n)a.textContent=`Receive visitors (${n})`;}
     const use=$('hi-use');use.hidden=!!selection||!near;if(near){use.dataset.uid=near.uid;use.textContent=(MODE==='office'&&near.type==='table'?'Hold a meeting':{news:'Watch the news',rest:'Rest on bed',campaign:'Review campaign',laptop:'Use your laptop',books:'Pick a book'}[ITEMS[near.type].use]);}
   }
   function frame(now){if(!active)return;const dt=Math.min(.04,(now-last)/1000||0);last=now;
@@ -222,13 +242,13 @@
     host.innerHTML=`<canvas id="hi-view" aria-label="First-person view of your furnished home. Use the walking controls or WASD to move and drag the view to look around."></canvas>
       <header class="hi-header"><div><small>${MODE==='office'?'CITY HALL, 7TH FLOOR · CITY PAUSED':'YOUR HOME · CITY PAUSED'}</small><h2 id="hi-room">Living room</h2><span id="hi-cash"></span></div><div class="hi-head-btns"><button id="hi-phone" aria-label="Your phone">Phone</button><button id="hi-exit">${MODE==='office'?'Leave the office':'Leave home'}</button></div></header>
       <div class="hi-crosshair" aria-hidden="true">+</div><p id="hi-status" role="status" aria-live="polite"></p>
-      <div class="hi-actions"><button id="hi-use" hidden></button><button id="hi-furnish">Furnish & decorate</button></div>
+      <div class="hi-actions"><button id="hi-aud" hidden></button><button id="hi-use" hidden></button><button id="hi-furnish">Furnish & decorate</button></div>
       <div id="hi-placement" hidden><strong id="hi-selected"></strong><small id="hi-placement-note"></small><div><button id="hi-rotate">Rotate ↻</button><button id="hi-place">Place</button><button id="hi-cancel">Cancel</button></div></div>
       <div class="hi-controls"><div id="hi-stick" aria-label="Drag to walk"><span id="hi-stick-knob"></span><b>WALK</b></div><span class="hi-look-help">Drag the room to look<br><span>WASD · arrows turn</span></span></div>
       <aside id="hi-panel" hidden aria-label="Furnish your home"><div class="hi-panel-title"><h2>Make yourself at home</h2><button id="hi-panel-close" aria-label="Close furniture shop">×</button></div><nav id="hi-tabs" aria-label="Furniture categories"></nav><div id="hi-panel-body"></div></aside>`;
     document.body.appendChild(host);document.body.classList.add('inside-home');if(MODE==='office')$('hi-furnish').hidden=true;canvas=$('hi-view');renderer=root.BCHomeRenderer.create(canvas);canvas=renderer.canvas||canvas;scene=geometry(h);renderer.setScene(scene);resize();$('hi-cash').textContent=money(s.purse.cash)+' personal';$('hi-exit').focus();
     host.addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;const d=b.dataset;
-      if(b.id==='hi-exit'){exit();return;}if(b.id==='hi-phone'){if(adapter.device){keys.clear();stick={x:0,y:0};adapter.device('phone')}else exit('phone');return;}if(d.hiGo){exit(d.hiGo);return;}if(d.hiRead&&adapter.read){books(adapter.read(d.hiRead));return;}if(b.id==='hi-furnish'){panel();return;}if(b.id==='hi-panel-close'){$('hi-panel').hidden=true;$('hi-furnish').focus();return;}
+      if(b.id==='hi-exit'){exit();return;}if(b.id==='hi-aud'){if(adapter.audience){keys.clear();stick={x:0,y:0};adapter.audience()}return;}if(b.id==='hi-phone'){if(adapter.device){keys.clear();stick={x:0,y:0};adapter.device('phone')}else exit('phone');return;}if(d.hiGo){exit(d.hiGo);return;}if(d.hiRead&&adapter.read){books(adapter.read(d.hiRead));return;}if(b.id==='hi-furnish'){panel();return;}if(b.id==='hi-panel-close'){$('hi-panel').hidden=true;$('hi-furnish').focus();return;}
       if(d.hiTab){tab=d.hiTab;panel();return;}if(d.hiBuy){select(d.hiBuy);return;}if(d.hiMove){const i=h.items.find(x=>x.uid===+d.hiMove);if(i)select(i.type,i.uid);return;}
       if(d.hiStore){const i=h.items.find(x=>x.uid===+d.hiStore);if(i)i.stored=true;persist();panel();say('Stored. You can place it again for free.');return;}
       if(d.hiWall!==undefined||d.hiFloor!==undefined){if(d.hiWall!==undefined)h.wall=+d.hiWall;else h.floor=+d.hiFloor;persist();panel();return;}
@@ -253,5 +273,7 @@
   },true);
   root.addEventListener('keyup',e=>{if(active){keys.delete(e.key.toLowerCase());e.stopImmediatePropagation();}},true);
   root.addEventListener('pagehide',()=>{if(active)adapter.save();});
-  Object.assign(api,{open,close:exit});Object.defineProperty(api,'isOpen',{get:()=>active});root.BCInterior=api;
+  function refresh(){if(!active)return;scene=geometry(h);renderer.setScene(scene);dirty=true;}
+  function view(x,z,yaw,pitch){if(!active)return;Object.assign(p,{x,z,yaw,pitch:pitch??p.pitch});dirty=true;}
+  Object.assign(api,{open,close:exit,refresh,view});Object.defineProperty(api,'isOpen',{get:()=>active});root.BCInterior=api;
 })(typeof window!=='undefined'?window:globalThis);

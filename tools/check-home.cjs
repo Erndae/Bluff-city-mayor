@@ -3,7 +3,7 @@ const fs=require('node:fs');
 const vm=require('node:vm');
 const H=require('../home-interior.js');
 const state={started:true,home:{id:'midtown'},purse:{cash:5000,mf:{buy:20}},reserve:120,camp:{cash:45}};
-const h=H.ensure(state);assert.equal(h.items.length,11);
+const h=H.ensure(state);assert.equal(h.items.length,12);
 assert(H.walkable(h,3.5,1.05));
 // Real door openings connect all three rooms; wall segments remain solid.
 assert(H.walkable(h,7,4.7));assert(!H.walkable(h,7,2));assert(H.walkable(h,3.4,6));assert(!H.walkable(h,1,6));
@@ -19,7 +19,7 @@ assert.equal(H.transact(state,{type:'sofa',x:7,z:4.7,r:0}).ok,false);assert.equa
 const bought=H.transact(state,trial);assert(bought.ok);assert.equal(state.purse.cash,before-65);assert.equal(state.purse.mf.buy,85);assert.equal(state.reserve,120);assert.equal(state.camp.cash,45);
 const moved=H.transact(state,{...bought.item,x:5.5,z:4.7,r:1});assert(moved.ok);assert.equal(moved.cost,0);assert.equal(state.purse.cash,before-65);
 bought.item.stored=true;assert(H.transact(state,{...bought.item,x:5.5,z:5}).ok);assert.equal(state.purse.cash,before-65);
-const poor={started:true,purse:{cash:0},home:{}};H.ensure(poor);assert(!H.transact(poor,trial).ok);assert.equal(poor.interior.items.length,11);
+const poor={started:true,purse:{cash:0},home:{}};H.ensure(poor);assert(!H.transact(poor,trial).ok);assert.equal(poor.interior.items.length,12);
 assert(H.canPlace(h,{type:'rug',x:3.4,z:3,r:0}),'rugs may sit under solid furniture');
 const saved=JSON.parse(JSON.stringify(state));saved.home={id:'downtown'};H.ensure(saved);assert.deepEqual(saved.interior,state.interior,'layout persists after reload and a house move');
 const faces=H.geometry(h);assert(faces.length>500);assert(faces.every(f=>f.points.every(p=>p.every(Number.isFinite))));

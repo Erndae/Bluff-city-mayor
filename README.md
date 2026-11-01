@@ -4,6 +4,12 @@ A city-management game set in Memphis, Tennessee. You play the mayor. You handle
 
 **Play it:** https://erndae.github.io/Bluff-city-mayor/ (once GitHub Pages is turned on, see below)
 
+## v26.27: A real desk, furniture that faces the right way, and office hours
+
+**Furniture.** The mayor's office has an executive desk (wood pedestals, a modesty panel, laptop, papers, a brass nameplate and a desk lamp) with an office chair behind it facing the room, two guest armchairs facing the desk, a conference table with four office chairs, the TV and bookcase on the wall facing in, and a sofa in reception. At home, the writing desk gets an office chair, and the sofa and TV now face each other (they were turned toward the walls). The bookcase faces the room. Existing saves are fixed once. Two new furniture items are in the shop: Executive desk and Office chair.
+
+**Office hours.** People who want something from you (council requests and favors, cabinet asks, feuds, pacts and other decisions at City Hall) wait in your office, standing in the room. Tap **Receive visitors (N)** to see who's waiting: portrait, role and what they want. **Receive** someone to hear them out and decide; then the next visitor is up. City Hall's "Go up to your office" button and City → Your office show how many are waiting, and expiring decisions from visitors take you to the office.
+
 ## v26.26: Your office, and meetings you travel to
 
 **Your office.** As mayor, tap City Hall and choose **Go up to your office**, or use City → Your office. You walk in first person from the reception area into the mayor's office on the 7th floor: carpet, wood paneling, a big window over Downtown and the river, the city seal and flags. Your desk has the laptop, the TV plays the evening news, the bookcase builds skills, and the meeting table opens your phone to call people in. City time pauses inside.
