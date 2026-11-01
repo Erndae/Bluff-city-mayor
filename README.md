@@ -4,6 +4,15 @@ A city-management game set in Memphis, Tennessee. You play the mayor. You handle
 
 **Play it:** https://erndae.github.io/Bluff-city-mayor/ (once GitHub Pages is turned on, see below)
 
+## v26.39: See the money and who it affects
+
+- Every decision card has a **"$ See the money and who it affects"** button. For each option it shows:
+  - **The money:** one-time cost from the reserve (as a share of the reserve and per Memphian), yearly program costs, revenue gained or lost, other funding sources named in the deal (e.g. tourism tax revenue), and whether the council has to approve it.
+  - **What changes in the city:** each service measure before and after (jobs climate, crime, streets, blight, transit, officers) and public mood.
+  - **How residents would feel:** each group's share of voters, roughly how many people that is, what they care about most, and their long-run change in support, worked out by simulating the choice on a copy of the city.
+  - **The council:** who would like it and who would resent it, by how much.
+- "Needs attention" on the Take action screen now lists exactly which stations, hospitals or schools have a problem, what the problem is, and opens each one when tapped.
+
 ## v26.38: Memphis events are free, and you talk your way through them
 
 - Going to a Memphis event no longer uses an action. "Go and mingle" opens a two-part conversation: someone at the event (a pastor at MLK Day, a pitmaster at the barbecue contest, a nurse at the St. Jude Marathon) greets you, then a reporter asks about the issue that crowd cares about most.
