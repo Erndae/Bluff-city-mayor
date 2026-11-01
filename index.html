@@ -313,6 +313,9 @@ button.seat:hover{border-color:var(--amber)}
 #startchip{display:none}@media (max-width:860px){#startchip{display:flex;position:absolute;left:12px;max-width:calc(100% - 84px);z-index:4;align-items:center;gap:8px;background:rgba(13,24,34,.94);border:1px solid var(--amber);border-radius:16px;padding:5px 12px 5px 5px;color:var(--text);font:600 12.5px/1.2 var(--f-body);text-align:left;box-shadow:0 2px 8px rgba(0,0,0,.4)}#startchip[hidden]{display:none}#startchip span{background:var(--amber);color:#0d1822;border-radius:10px;padding:2px 7px;font-size:11px;flex:none}}
 .storytag.fest{color:var(--amber)}
 .cacts{border:1px solid var(--amber);border-radius:8px;padding:8px 10px;margin:4px 0 8px;font-size:14px;background:rgba(242,169,59,.06)}.cacts b{color:var(--amber)}
+.h100card{border:1px solid var(--good);border-radius:10px;padding:10px 12px;margin:0 0 12px;background:color-mix(in srgb,var(--good) 7%,transparent)}.h100card .gbar{height:5px;background:var(--line);border-radius:3px;margin:6px 0 8px;overflow:hidden}.h100card .gbar i{display:block;height:100%;background:var(--good)}.h100card .gbar.sm{height:3px;margin:4px 0 0}.h100row{display:flex;gap:10px;align-items:center;justify-content:space-between;padding:6px 0;border-top:1px solid var(--line)}.h100row>div{flex:1;min-width:0}.h100row small{display:block;color:var(--muted);font-size:13px}.h100row.kept b{color:var(--good)}
+.h100pick .choice.on{border-color:var(--good);background:color-mix(in srgb,var(--good) 14%,transparent)}.h100pick .choice.on b::before{content:'✓ ';color:var(--good)}
+.crisisbar{display:inline-block;background:var(--bad);color:#fff;font-weight:800;letter-spacing:.12em;border-radius:6px;padding:4px 10px;margin-bottom:8px;font-size:13px}.crisisbar.ok{background:var(--good);color:#0d1822}.crisisch small{line-height:1.35}
 .adgain{display:block;width:100%;text-align:center;font-size:11px;font-weight:600;color:var(--good);margin-top:1px}
 #start{overflow-x:hidden;overflow-y:auto;touch-action:pan-y}.startbox{min-width:0;max-width:min(600px,100%);box-sizing:border-box}.startbox *{min-width:0}.create select,.create input{max-width:100%;width:100%;box-sizing:border-box;text-overflow:ellipsis}.create .tpick,.create .tpick>*{max-width:100%;box-sizing:border-box}
 @media (max-width:640px){.startbox{margin-left:0}#start{padding-left:max(16px,env(safe-area-inset-left,0px))}}
@@ -665,7 +668,7 @@ details.analysis{margin-top:6px}details.analysis summary{cursor:pointer;color:va
     <button class="btn primary" data-act="pause" id="bPlay"><svg class="ico" viewBox="0 0 12 12" aria-hidden="true"><path d="M3.2 1.6v8.8l7.2-4.4z" fill="currentColor"/></svg> Resume <kbd>Space</kbd></button>
   </nav>
   <div class="status" id="status">Loading map…</div>
-  <div class="credit"><span class="ver" id="verTag">v26.34</span></div>
+  <div class="credit"><span class="ver" id="verTag">v26.35</span></div>
   <div class="tip" id="tip" hidden></div>
   <div class="toast" id="toast" role="status"></div>
   <section class="panel" id="panel" hidden aria-live="polite">
@@ -693,7 +696,7 @@ details.analysis{margin-top:6px}details.analysis summary{cursor:pointer;color:va
         <button class="btn" data-music-open>Music &amp; volume</button>
       </div>
       <div id="slotList" hidden></div>
-      <p class="note startv">Version <b class="ver" id="verStart">v26.34</b></p>
+      <p class="note startv">Version <b class="ver" id="verStart">v26.35</b></p>
     </div>
     <div class="startbox create" id="create" hidden>
       <h2>Create your mayor</h2>
@@ -1502,7 +1505,7 @@ function enact(s,p){DIVS.forEach(d=>{s.enacted[d.id]=p.divs[d.id];s.ratio[d.id]=
 // Voter groups. Each has a share of residents, turnout, home districts, concerns and an approval of you.
 // Citywide approval is the turnout-weighted average of the groups; each council district's approval comes from the groups that live there.
 // Shares, district mix and turnout are modeled, loosely grounded in Memphis demographics; they are not survey data.
-const VERSION='v26.34';
+const VERSION='v26.35';
 const GROUPS=[
  {id:'working',sh:'Working families',n:'Working families',ic:'⚒︎',c:'#f2a93b',share:24,turn:.5,start:56,w:{jobs:1,safety:.8,transit:.5},
   d:'Hourly workers in logistics, warehouses, health care and service jobs. The biggest bloc in the city.',dm:{1:1.1,2:.8,3:1.3,4:1.2,5:.6,6:1.2,7:1.1}},
@@ -5555,7 +5558,7 @@ document.addEventListener('click',e=>{const b=e.target.closest('[data-meetphone]
 // votes, Election Day, the month-end briefing and anything else that pops up on its own.
 let MODAL_BROWSE=false;
 {const _om=openModal;openModal=function(...a){MODAL_BROWSE=NAV.depth>0||!!(typeof DEV!=='undefined'&&DEV.kind);return _om.apply(this,a)}}
-function clockHeld(){return modalOpen&&!MODAL_BROWSE}
+function clockHeld(){return(modalOpen&&!MODAL_BROWSE)||!!(S&&S.crisis&&S.crisis.ci==null)}
 timeStep=function(dt){if(!S||!S.started||S.paused||S.over||clockHeld()||window.BCLife?.isOpen||window.BCMusic?.settingsOpen||!$('start').hidden){tAcc=0;return}
   tAcc+=dt*SPEEDS[S.speed||2];let guard=0;while(tAcc>=1&&guard++<24){tAcc-=1;dayTick();if(S.paused||clockHeld()){tAcc=0;break}}};
 // new problems arrive as notifications instead of stopping the clock (the old behavior is still a map-layer setting)
@@ -5836,6 +5839,108 @@ document.addEventListener('click',e=>{if(!e.target.closest('#cGo'))return;setTim
   el.innerHTML=`<b>${n} actions a month</b> with Inside Game ${v}.${nx?` Raise it to ${nx} for ${n+1}.`:' That\'s the most you can get.'} Actions are your monthly moves: meetings, door-knocking, fundraisers, town halls.`}catch(e){}return r}}
 // the actions meter explains where they come from
 {const _rb=renderBank;renderBank=function(...a){const r=_rb.apply(this,a);try{const el=$('hSlots');if(el)el.title=`${actionsPerMonth()} actions a month (4 + ${actionBonus()} from Inside Game ${mskill('intr')}). Tap to see what you can do.`}catch(e){}return r}}
+// ======================= v26.35: YOUR FIRST 100 DAYS, AND CRISES THAT TEST YOU =======================
+// ---------- first 100 days ----------
+const H100=[
+ {id:'council',t:'Sit down with the council',d:'Meet 6 council members in private.',goal:6,prog:h=>S.council.filter(m=>m.met!=null&&m.met>=h.startM).length,go:()=>openCouncil()},
+ {id:'listen',t:'Listening tour',d:'Hold town halls in 3 districts.',goal:3,prog:h=>[1,2,3,4,5,6,7].filter(d=>(S.acts||{})['th'+d]!=null&&S.acts['th'+d]>=h.startM).length,go:()=>goSection(openActions,'Hold a town hall')},
+ {id:'desk',t:'Clear the backlog',d:'Decide 8 issues on your desk.',goal:8,prog:h=>((S.stats||{}).resolved||0)-h.base.resolved,go:()=>openDesk()},
+ {id:'streets',t:'Fix the streets',d:'Raise street condition by 3 points.',goal:3,prog:h=>Math.max(0,Math.round(((S.met.streets||0)-h.base.streets)*10)/10),go:()=>openActions()},
+ {id:'crime',t:'A safer spring',d:'Bring the violent crime index down 2 points.',goal:2,prog:h=>Math.max(0,Math.round((h.base.crime-(S.met.crime||0))*10)/10),go:()=>openCivicList('police')},
+ {id:'cabinet',t:'Know your team',d:'Meet 4 of your department heads.',goal:4,prog:h=>{try{return STAFF_DEF.filter(D=>{const s=staffOf(D.id);return s&&s.met!=null&&s.met>=h.startM}).length}catch(e){return 0}},go:()=>openCabinet()},
+ {id:'clout',t:'Fight for Memphis',d:'Use your clout twice: the schools, the county or Nashville.',goal:2,prog:h=>((S.stats||{}).push||0)-h.base.push,go:()=>openPlatform()},
+ {id:'books',t:'Keep the books balanced',d:'End your 100 days with the reserve no lower than you found it.',goal:1,end:true,prog:h=>S.reserve>=h.base.reserve-0.05?1:0,go:()=>openBudget()}];
+const H100M=Object.fromEntries(H100.map(x=>[x.id,x]));
+{const _ft=freshTerm;freshTerm=function(...a){const r=_ft.apply(this,a);try{if(inOffice()){S.h100=null;S.h100Pick=1;save()}}catch(e){}return r}}
+function h100Day(){const h=S.h100;return h?Math.min(100,dayN()-h.start):0}
+function h100PickHTML(){return`<p>Every new mayor gets 100 days to show Memphis what kind of mayor they'll be. Pick <b>three</b> things to get done. Keep them and voters notice; miss them and the papers will too.</p>
+  <div class="choices h100pick">${H100.map(x=>`<button class="choice" data-h100="${x.id}"><b>${x.t}</b><small>${x.d}</small></button>`).join('')}</div>
+  <div class="row"><button class="btn primary" data-h100go="1" disabled>Announce my agenda (pick 3)</button></div>`}
+function openH100Pick(){S.h100Pick=0;H100SEL=[];openModal(`${dateStr()} · your first 100 days start now`,'Your first 100 days',h100PickHTML(),true)}
+let H100SEL=[];
+document.addEventListener('click',e=>{const b=e.target.closest('[data-h100],[data-h100go]');if(!b||!S)return;e.preventDefault();e.stopImmediatePropagation();
+  if(b.dataset.h100){const id=b.dataset.h100;H100SEL=H100SEL.includes(id)?H100SEL.filter(x=>x!==id):H100SEL.length<3?[...H100SEL,id]:H100SEL;
+    document.querySelectorAll('[data-h100]').forEach(x=>x.classList.toggle('on',H100SEL.includes(x.dataset.h100)));const g=document.querySelector('[data-h100go]');if(g){g.disabled=H100SEL.length!==3;g.textContent=H100SEL.length===3?'Announce my agenda':`Announce my agenda (pick ${3-H100SEL.length} more)`}return}
+  if(H100SEL.length!==3)return;S.h100={start:dayN(),startM:nowM(),items:H100SEL.slice(),kept:{},missed:{},base:{resolved:(S.stats||{}).resolved||0,push:(S.stats||{}).push||0,streets:S.met.streets||0,crime:S.met.crime||0,reserve:S.reserve}};
+  logIt(`First 100 days agenda: ${H100SEL.map(i=>H100M[i].t).join(', ')}.`);try{newsAdd(0.6,`New mayor lays out a 100-day agenda: ${H100SEL.map(i=>H100M[i].t.toLowerCase()).join(', ')}`)}catch(err){}
+  save();onClose=null;closeModal();refreshHUD();toast('Your 100-day agenda is public. The clock is running.')},true);
+function h100Card(){const h=S&&S.h100;if(!h||h.over||!inOffice())return'';const day=h100Day();
+  return`<div class="h100card"><div class="gcard-h"><b>Your first 100 days</b><span>Day ${day} of 100</span></div><div class="gbar"><i style="width:${day}%"></i></div>${h.items.map(id=>{const x=H100M[id],p=Math.min(x.goal,x.prog(h)),k=h.kept[id];
+    return`<div class="h100row${k?' kept':''}"><div><b>${k?'✓ ':''}${x.t}</b><small>${x.d}${x.end?'':` · ${Math.round(p*10)/10} of ${x.goal}`}</small><div class="gbar sm"><i style="width:${Math.min(100,p/x.goal*100)}%"></i></div></div>${k?'':`<button class="btn" data-h100show="${id}">Go</button>`}</div>`}).join('')}</div>`}
+document.addEventListener('click',e=>{const b=e.target.closest('[data-h100show]');if(!b||!S)return;e.preventDefault();e.stopImmediatePropagation();const x=H100M[b.dataset.h100show];hideViews();try{x.go()}catch(err){}},true);
+function h100Reward(id,kept){const x=H100M[id];if(kept){popHit(1.2,`Kept a 100-day promise: ${x.t}`);try{newsAdd(0.8,`Mayor delivers on 100-day pledge: ${x.t.toLowerCase()}`)}catch(e){}}else{popHit(-1,`Missed a 100-day promise: ${x.t}`);try{newsAdd(-0.8,`Mayor falls short on 100-day pledge: ${x.t.toLowerCase()}`)}catch(e){}}}
+function h100Daily(){const h=S.h100;if(!h||h.over||!inOffice())return;const day=h100Day();
+  h.items.forEach(id=>{const x=H100M[id];if(h.kept[id]||x.end)return;if(x.prog(h)>=x.goal){h.kept[id]=1;h100Reward(id,true);addRecord({t:`Kept a 100-day promise: ${x.t}`,kind:'h100'});notify('good',`100-day promise kept: ${x.t}`,`Day ${day}. Voters noticed (+approval).`,()=>openQuarterH100(),{ttl:10})}});
+  if(day>=100){h.over=1;h.items.forEach(id=>{const x=H100M[id];if(h.kept[id])return;if(x.end&&x.prog(h)>=1){h.kept[id]=1;h100Reward(id,true);return}h.missed[id]=1;h100Reward(id,false)});
+    const n=Object.keys(h.kept).length;if(n===3){GROUPS.forEach(g=>groupLift(g.id,1,'A strong first 100 days'));gainXP(S.mayor.focus||'dip',20)}addRecord({t:`First 100 days: ${n} of 3 kept`,kind:'h100'});S.h100Show=1}
+  save()}
+function h100SummaryHTML(){const h=S.h100,n=Object.keys(h.kept).length;return`<p class="qrhead"><b class="qrbig">${n}/3</b><span>${n===3?'A clean sweep. The papers are calling it the strongest start in years, and every group gave you a little more credit.':n===2?'A solid start. One promise slipped, and your opponents will remember it.':n===1?'A rough start. Most of your agenda didn\'t happen.':'Nothing on your agenda got done. That\'s the story now.'}</span></p>
+  <div class="glist">${h.items.map(id=>{const x=H100M[id],k=h.kept[id];return`<div class="gitem${k?' done':''}"><span class="gck">${k?'✓':'✕'}</span><div><b>${x.t}</b><small>${k?'Kept (+approval)':'Missed (−approval)'}</small></div></div>`}).join('')}</div><div class="row"><button class="btn primary" data-act="close">Back to work</button></div>`}
+function openQuarterH100(){if(!S.h100)return;closePanel();openModal(`Day ${h100Day()} of 100`,'Your first 100 days',(S.h100.over?h100SummaryHTML():h100Card()+'<div class="row"><button class="btn primary" data-act="close">Back to work</button></div>'),true)}
+openQuarterH100=navWrap('openQuarterH100',openQuarterH100);
+// show the agenda on the desk, the City hub and "This week"
+{const _rd=renderDesk;renderDesk=function(...a){const r=_rd.apply(this,a);try{const d=$('desk');const c=h100Card();if(d&&c&&!d.querySelector('.h100card')){const w=d.querySelector('.weekly-card');if(w)w.insertAdjacentHTML('afterend',c);else d.insertAdjacentHTML('afterbegin',c)}}catch(e){}return r}}
+{const _om=openModal;openModal=function(...a){const r=_om.apply(this,a);try{const n=NAV.cur&&NAV.depth>0?NAV.cur.name:'';if(n==='flow_city'){const b=$('mBody'),c=h100Card();if(b&&c&&!b.querySelector('.h100card')){const w=b.querySelector('.weekly-card');if(w)w.insertAdjacentHTML('afterend',c);else b.insertAdjacentHTML('afterbegin',c)}}}catch(e){}return r}}
+{const _ns=nextSteps;nextSteps=function(){const L=_ns();try{const h=S&&S.h100;if(h&&!h.over&&inOffice()){const left=h.items.filter(id=>!h.kept[id]&&!H100M[id].end).map(id=>H100M[id]);const x=left[0];if(x)L.push({pri:h100Day()>=70?96:72,t:`100-day promise: ${x.t}`,h:`${x.d} Day ${h100Day()} of 100.`,go:x.go});L.sort((a,b)=>b.pri-a.pri)}}catch(e){}return L}}
+// ---------- crises ----------
+// Rare, big and fast. Everything stops, you choose how to lead, your skills decide how it goes, and a few days later you
+// find out how Memphis judged you.
+const CRISES=[
+ {id:'ice',mo:[12,1,2],t:'Ice storm knocks out power',at:'mlgw',intro:'Freezing rain coated Memphis overnight. Trees are down on lines across the city and MLGW says 120,000 customers have no power. Tonight\'s low is 15°.',
+  ch:[{l:'Open warming centers and send crews door to door',sk:'intr',b:0.55,cost:0.8,ok:['renters','owners','faith'],okT:'Warming centers filled every night and crews checked on 9,000 seniors. Nobody froze on your watch.',noT:'The centers opened a day late and the lines were long. People noticed.'},
+   {l:'Lean on MLGW to bring in out-of-state crews',sk:'dip',b:0.5,ok:['business','working'],okT:'Crews from five states rolled in. Most of the city had power back in four days instead of ten.',noT:'MLGW dragged its feet, and you owned the delay.'},
+   {l:'Go on TV every night with updates',sk:'cha',b:0.5,ok:['owners','young','parents'],okT:'Your nightly briefings became the city\'s lifeline. People trusted the timeline.',noT:'You promised a timeline MLGW missed by three days.'}]},
+ {id:'water',mo:[11,12,1,2,3],t:'Boil-water notice for the whole city',at:'mlgw',intro:'A 48-inch water main burst under Poplar Avenue overnight. Pressure dropped citywide and MLGW issued a boil-water notice. Schools and restaurants are closing.',
+  ch:[{l:'Hand out bottled water at every fire station',sk:'intr',b:0.55,cost:0.5,ok:['renters','parents','faith'],okT:'Fire stations handed out two million bottles in three days. Lines moved fast.',noT:'Some stations ran dry by noon. Neighbors posted the empty pallets.'},
+   {l:'Order an independent review of the city\'s pipes',sk:'learn',b:0.5,ok:['owners','business'],okT:'Engineers praised the review and it became the plan to replace the oldest mains.',noT:'The review turned into a turf war with MLGW\'s board.'},
+   {l:'Reassure Memphis on TV and online',sk:'cha',b:0.5,ok:['young','working'],okT:'Your calm, plain updates kept panic down.',noT:'Your "it\'ll be over tomorrow" turned into four days.'}]},
+ {id:'video',mo:[1,2,3,4,5,6,7,8,9,10,11,12],t:'A police video goes viral',at:'mpd',intro:'Body-camera footage from an MPD traffic stop is everywhere online. Protesters are gathering outside City Hall and national reporters are on the way.',
+  ch:[{l:'Release the full footage and call for an independent review',sk:'safe',b:0.5,ok:['renters','young','faith'],bad:['labor'],okT:'Releasing it all, fast, won you credit for honesty. The protests stayed peaceful.',noT:'The review stalled and both sides said you botched it.'},
+   {l:'Meet the family and community leaders tonight',sk:'dip',b:0.5,ok:['faith','working','renters'],okT:'The family thanked you publicly for listening. Pastors helped keep the city calm.',noT:'The meeting went badly and the family said so on camera.'},
+   {l:'Back the officers until the investigation is done',sk:'safe',b:0.45,ok:['owners','labor'],bad:['renters','young'],okT:'Officers and their families appreciated it, and the investigation backed your caution.',noT:'The protests grew. People said you picked a side before the facts were in.'},
+   {l:'Speak to the crowd yourself',sk:'cha',b:0.4,ok:['young','renters','faith','working'],okT:'Your speech on the City Hall steps turned a protest into a vigil.',noT:'The crowd shouted you down. The clip ran on every network.'}]},
+ {id:'storm',mo:[3,4,5],t:'Tornadoes tear through southeast Memphis',at:'cityhall',intro:'A line of severe storms spun up tornadoes in Hickory Hill overnight. Roofs are off, roads are blocked and two schools are damaged.',
+  ch:[{l:'Declare an emergency and ask Nashville for help',sk:'dip',b:0.5,ok:['owners','parents'],okT:'The governor sent the Guard and state money. The reserve gets ${1.5M} back.',refund:1.5,noT:'Nashville took its time, and you had to pay for the cleanup alone.'},
+   {l:'Send every city crew to clear roads and roofs',sk:'intr',b:0.6,cost:0.6,ok:['working','renters','owners'],okT:'Every street was open in two days and tarps were on every roof in four.',noT:'Crews got tangled in their own paperwork. Cleanup took two weeks.'},
+   {l:'Tour the damage and talk to families',sk:'cha',b:0.5,ok:['faith','parents','working'],okT:'You stood in the rubble with the families who lost the most. Memphis saw a mayor who showed up.',noT:'The visit looked like a photo op. Neighbors said so.'}]},
+ {id:'heat',mo:[7,8],t:'Deadly heat wave',at:'mlgw',intro:'The heat index has topped 110° four days straight. MLGW cutoff notices are going out and emergency rooms are filling up.',
+  ch:[{l:'Pay MLGW to pause all cutoffs for 30 days',sk:'stew',b:0.55,cost:0.7,ok:['renters','working'],okT:'Nobody lost air conditioning during the worst of it.',noT:'The deal fell through on the details. Cutoffs went out anyway.'},
+   {l:'Open cooling centers and run free MATA buses to them',sk:'intr',b:0.55,cost:0.4,ok:['renters','owners','faith'],okT:'Thousands rode free to cooling centers. ER visits fell.',noT:'Buses ran late and some centers were locked.'},
+   {l:'Send firefighters door to door to check on seniors',sk:'safe',b:0.5,ok:['owners','faith'],okT:'Firefighters found and helped 300 seniors in trouble.',noT:'Crews were stretched thin and calls went unanswered.'}]},
+ {id:'bridge',mo:[1,2,3,4,5,6,7,8,9,10,11,12],t:'The I-40 bridge is closed',at:'airport',intro:'Inspectors found a crack in the Hernando de Soto Bridge and closed it to all traffic. Trucks are backed up onto the I-55 bridge for miles, and FedEx and the logistics companies are worried.',
+  ch:[{l:'Push TDOT and Arkansas to speed up repairs',sk:'dip',b:0.5,ok:['business','labor'],okT:'Both states agreed to round-the-clock repairs. The bridge reopened weeks early.',noT:'The states argued over who pays. The bridge stayed closed longer.'},
+   {l:'Retime every signal and reroute trucks downtown',sk:'intr',b:0.55,cost:0.3,ok:['working','business'],okT:'Traffic engineers kept downtown moving. Commutes barely changed.',noT:'The new routes jammed South Memphis for a week.'},
+   {l:'Hold daily briefings so people can plan',sk:'cha',b:0.5,ok:['working','young'],okT:'People planned around the closure, and your briefings became a habit.',noT:'Your updates were vague. People stopped tuning in.'}]}];
+const CMAP=Object.fromEntries(CRISES.map(c=>[c.id,c]));
+function crisisMonth(){if(!inOffice()||S.over||S.crisis)return;S.crisisLog=S.crisisLog||{};const last=S.crisisLast||0;if(nowM()-last<5)return;if(Math.random()>0.22)return;
+  const pool=CRISES.filter(c=>c.mo.includes(S.m)&&(!S.crisisLog[c.id]||nowM()-S.crisisLog[c.id]>=24));if(!pool.length)return;const c=pool[Math.floor(Math.random()*pool.length)];
+  S.crisisDue={id:c.id,day:Math.min(daysIn(S.y,S.m)-2,3+Math.floor(Math.random()*20))}}
+function crisisDaily(){if(!inOffice())return;if(S.crisis&&S.crisis.ci==null&&!modalOpen&&!document.querySelector('dialog[open]')){openCrisis();return}const d=S.crisisDue;if(d&&S.day>=d.day&&!S.crisis){S.crisisDue=null;crisisStart(d.id);return}
+  const c=S.crisis;if(c&&c.ci!=null&&!c.fu&&dayN()-c.day>=5){c.fu=1;crisisFollow()}}
+function crisisStart(id){const C=CMAP[id];S.crisis={id,day:dayN(),ci:null};S.crisisLast=nowM();S.crisisLog=S.crisisLog||{};S.crisisLog[id]=nowM();setPaused(true);try{sfx('bad')}catch(e){}
+  try{goTo(LM[C.at].lon,LM[C.at].lat,C.t,2)}catch(e){}logIt(`Crisis: ${C.t}`);openCrisis()}
+function crisisChoiceHTML(C){return C.ch.map((x,i)=>`<button class="choice crisisch" data-crisis="${i}" ${x.cost&&S.reserve<x.cost?'disabled':''}><b>${x.l}</b><small>${oddsTag(x.sk,x.b)}${x.cost?` · ${fmtM(x.cost)} from the reserve`:''} · works: ${x.ok.map(g=>GMAP[g].n.toLowerCase()).join(', ')} rally to you${x.bad?`, but ${x.bad.map(g=>GMAP[g].n.toLowerCase()).join(', ')} won't like it`:''}</small></button>`).join('')+`<button class="choice crisisch" data-crisis="wait"><b>Let the departments handle it</b><small>Free · no risk of a misstep, but Memphis will ask where the mayor was</small></button>`}
+function openCrisis(){const c=S.crisis,C=CMAP[c.id];if(!C||c.ci!=null)return;closePanel();
+  openModal(`${dateStr()} · the clock is stopped until you decide`,C.t,`<div class="crisisbar">⚠ CRISIS</div><p>${C.intro}</p><p class="note">Everyone is waiting on you. Pick one way to lead. Your skills set the odds.</p><div class="choices">${crisisChoiceHTML(C)}</div>`,true)}
+document.addEventListener('click',e=>{const b=e.target.closest('[data-crisis]');if(!b||!S||!S.crisis)return;e.preventDefault();e.stopImmediatePropagation();if(b.disabled)return;const c=S.crisis,C=CMAP[c.id];
+  if(b.dataset.crisis==='wait'){c.ci=-1;c.ok=false;popHit(-2.2,`Absent during the ${C.t.toLowerCase()}`);try{newsAdd(-1.4,`Where was the mayor? ${C.t}`)}catch(err){}
+    addRecord({t:`Stayed out of sight during: ${C.t}`,camp:{d:-1.5},kind:'crisis'});save();refreshHUD();openModal(dateStr(),C.t,`<p>You let the departments handle it. They did their jobs, but people wanted to see their mayor.</p><p class="note">Approval −2.2. Expect this one in your opponent's ads.</p><div class="row"><button class="btn primary" data-act="close">Back to work</button></div>`,true);return}
+  const i=+b.dataset.crisis,x=C.ch[i];c.ci=i;if(x.cost)S.reserve-=x.cost;const ok=persuade(x.sk,x.b,[],12);c.ok=ok;
+  if(ok){x.ok.forEach(g=>groupLift(g,3.5,`Handled the ${C.t.toLowerCase()}`));(x.bad||[]).forEach(g=>groupLift(g,-2,`Disagreed with your call in the ${C.t.toLowerCase()}`));popHit(0.8,`Steady in the ${C.t.toLowerCase()}`);if(x.refund)S.reserve+=x.refund;
+    addRecord({t:`Led Memphis through: ${C.t}`,good:x.ok,camp:{d:2},kind:'crisis'});try{newsAdd(1.3,`Mayor takes charge: ${C.t}`)}catch(err){}}
+  else{popHit(-1.4,`Stumbled in the ${C.t.toLowerCase()}`);(x.bad||[]).forEach(g=>groupLift(g,-1.5,`Disagreed with your call in the ${C.t.toLowerCase()}`));addRecord({t:`Stumbled during: ${C.t}`,bad:x.ok,camp:{d:-1.5},kind:'crisis'});try{newsAdd(-1.2,`Mayor stumbles: ${C.t}`)}catch(err){}}
+  save();refreshHUD();openModal(dateStr(),C.t,`<div class="crisisbar ${ok?'ok':''}">${ok?'✓ IT WORKED':'✕ IT DIDN\'T GO TO PLAN'}</div><p><b>${x.l}.</b></p><p>${ok?x.okT.replace('${1.5M}',fmtM(x.refund||0)):x.noT}</p><p class="note">${ok?`${x.ok.map(g=>GMAP[g].n).join(', ')} rally to you. You'll hear how the city judged it in a few days.`:'Approval dipped. You\'ll hear how it played in a few days.'}</p><div class="row"><button class="btn primary" data-act="close">Back to work</button></div>`,true)},true);
+function crisisFollow(){const c=S.crisis,C=CMAP[c.id];if(!C)return;const x=C.ch[c.ci];
+  const msg=c.ci<0?'The crisis passed, but your absence is still the story.':c.ok?`A week later: ${x.okT.split('.')[0]}. People are still talking about how you handled it.`:`A week later: ${x.noT.split('.')[0]}. Your opponents are already using it.`;
+  try{notify(c.ok?'good':'event',`${C.t}: the verdict`,msg,null,{ttl:14})}catch(e){}logIt(`${C.t}: ${msg}`);S.crisis=null;save()}
+// the crisis can't be dodged by closing the window
+{const _cm=closeModal;closeModal=function(...a){const r=_cm.apply(this,a);try{if(S&&S.crisis&&S.crisis.ci==null)setTimeout(()=>{if(S.crisis&&S.crisis.ci==null&&!modalOpen)openCrisis()},80)}catch(e){}return r}}
+// hook the calendar
+{const _eom2=endOfMonth;endOfMonth=function(...a){const r=_eom2.apply(this,a);try{if(S&&S.started&&S.phase!=='ai')crisisMonth()}catch(e){console.warn(e)}return r}}
+{const _dt2=dayTick;dayTick=function(...a){const r=_dt2.apply(this,a);try{if(S&&S.started&&S.phase!=='ai'){h100Daily();crisisDaily()}}catch(e){console.warn(e)}return r}}
+// the 100-day picker and summary open when nothing else is on screen
+setInterval(()=>{try{if(!S||!S.started||S.over||!inOffice())return;if(!S.h100Pick&&!S.h100Show)return;if(modalOpen||!$('panel').hidden||document.querySelector('dialog[open]')||(typeof TUT!=='undefined'&&TUT)||!$('start').hidden||(window.BCInterior&&BCInterior.isOpen))return;
+  if(S.h100Pick){openH100Pick();return}if(S.h100Show){S.h100Show=0;save();openModal('Day 100','Your first 100 days',h100SummaryHTML(),true)}}catch(e){}},1300);
 function openLedger(){const L=S.log||[];openPanel('Everything that has happened, newest first','Ledger',L.length?`<div class="logl">${L.map(x=>`<div><span>${x.d}</span><p style="margin:0">${x.t}</p></div>`).join('')}</div>`:'<p class="note">Nothing yet. Start the clock with Space or ▶.</p>','ledger')}
 function openPolicies(){const ks=Object.keys(POLICIES);
   openPanel('Ongoing programs you control','Your initiatives',`<p>Mid-year, these are paid from the reserve fund. In April they go into the budget you send the council.</p>

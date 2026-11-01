@@ -4,6 +4,11 @@ A city-management game set in Memphis, Tennessee. You play the mayor. You handle
 
 **Play it:** https://erndae.github.io/Bluff-city-mayor/ (once GitHub Pages is turned on, see below)
 
+## v26.35: Your first 100 days, and crises that test you
+
+- **First 100 days.** When you take office, pick 3 of 8 goals: sit down with the council, a listening tour, clear the backlog, fix the streets, a safer spring, know your team, fight for Memphis (use clout), keep the books balanced. A tracker on your desk and in the City hub counts the days and your progress, and "This week" pushes the next goal (harder after day 70). Each kept goal raises approval and makes the news; each missed one costs you. Keep all three for a bonus with every group. A day-100 report sums it up.
+- **Crises.** About once or twice a term, something big happens: an ice storm and MLGW outages, a citywide boil-water notice, a viral police video, tornadoes in Hickory Hill, a deadly heat wave, or the I-40 bridge closing. The clock stops until you choose how to lead. Each choice shows which skill it uses and your odds, plus who it will win over (and who it may anger). Letting the departments handle it is safe but costs approval. A week later you hear the verdict, and the outcome goes on your record for the next campaign.
+
 ## v26.33: Actions come from your Inside Game, and every skill has a job
 
 - **Actions per month = 4 + Inside Game bonus** (v26.34 raised the base from 3 to 4): +1 at Inside Game 8, +2 at 12, +3 at 16 (up to 7 a month). Leveling up mid-month gives you the extra action right away. Character creation shows how many actions your build gets.
