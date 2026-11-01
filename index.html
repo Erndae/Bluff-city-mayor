@@ -316,6 +316,13 @@ button.seat:hover{border-color:var(--amber)}
 .h100card{border:1px solid var(--good);border-radius:10px;padding:10px 12px;margin:0 0 12px;background:color-mix(in srgb,var(--good) 7%,transparent)}.h100card .gbar{height:5px;background:var(--line);border-radius:3px;margin:6px 0 8px;overflow:hidden}.h100card .gbar i{display:block;height:100%;background:var(--good)}.h100card .gbar.sm{height:3px;margin:4px 0 0}.h100row{display:flex;gap:10px;align-items:center;justify-content:space-between;padding:6px 0;border-top:1px solid var(--line)}.h100row>div{flex:1;min-width:0}.h100row small{display:block;color:var(--muted);font-size:13px}.h100row.kept b{color:var(--good)}
 .h100pick .choice.on{border-color:var(--good);background:color-mix(in srgb,var(--good) 14%,transparent)}.h100pick .choice.on b::before{content:'✓ ';color:var(--good)}
 .crisisbar{display:inline-block;background:var(--bad);color:#fff;font-weight:800;letter-spacing:.12em;border-radius:6px;padding:4px 10px;margin-bottom:8px;font-size:13px}.crisisbar.ok{background:var(--good);color:#0d1822}.crisisch small{line-height:1.35}
+.teamrow{display:flex;gap:12px;align-items:flex-start;border:1px solid var(--line);border-radius:10px;padding:10px 12px;margin-bottom:10px}.teamwho{flex:1;min-width:0}.teamwho>small{display:block;color:var(--muted);font-size:13px;margin-top:2px}.tlv{display:flex;align-items:center;gap:8px;margin:5px 0}.tlv .gbar{flex:1;height:4px;background:var(--line);border-radius:2px;overflow:hidden}.tlv .gbar i{display:block;height:100%;background:var(--amber)}.tlv small{color:var(--muted);font-size:12px;white-space:nowrap}.tbadge{font-size:11px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;border-radius:10px;padding:2px 8px;background:var(--line);color:var(--text)}.tbadge.l2{background:#3f6e8f}.tbadge.l3{background:#3f8f6a}.tbadge.l4{background:#b0782a}.tbadge.l5{background:linear-gradient(90deg,#f2a93b,#e8644f);color:#0d1822}.teamrow .btn{flex:none}@media (max-width:480px){.teamrow{flex-wrap:wrap}.teamrow .btn{width:100%}}
+canvas.confetti{position:fixed;inset:0;z-index:100000;pointer-events:none}
+.screenflash{position:fixed;inset:0;z-index:99999;pointer-events:none;animation:sflash 1.2s ease-out forwards}.screenflash.crisis{box-shadow:inset 0 0 0 6px var(--bad),inset 0 0 120px rgba(232,100,79,.55)}.screenflash.bad{background:rgba(232,100,79,.18)}@keyframes sflash{0%{opacity:0}15%{opacity:1}60%{opacity:.8}100%{opacity:0}}
+.skillpop{position:fixed;left:50%;top:22%;transform:translateX(-50%);z-index:100001;pointer-events:none;background:rgba(13,24,34,.96);border:2px solid var(--amber);border-radius:14px;padding:10px 18px;text-align:center;animation:spop 2.5s ease forwards;box-shadow:0 8px 30px rgba(0,0,0,.5)}.skillpop b{display:block;color:var(--amber);letter-spacing:.1em;text-transform:uppercase;font-size:13px}.skillpop span{font-size:17px;font-weight:700}@keyframes spop{0%{opacity:0;transform:translate(-50%,10px) scale(.8)}12%{opacity:1;transform:translate(-50%,0) scale(1.06)}20%{transform:translate(-50%,0) scale(1)}80%{opacity:1}100%{opacity:0;transform:translate(-50%,-14px)}}
+#hApp.bumpup{animation:bumpup .9s ease}#hApp.bumpdn{animation:bumpdn .9s ease}@keyframes bumpup{0%{transform:scale(1)}30%{transform:scale(1.25);color:var(--good)}100%{transform:scale(1)}}@keyframes bumpdn{0%{transform:scale(1)}30%{transform:scale(1.18);color:var(--bad)}100%{transform:scale(1)}}
+@media (prefers-reduced-motion:reduce){#hApp.bumpup,#hApp.bumpdn{animation:none}}
+@media (max-width:640px){table{min-width:0}th:first-child,td:first-child{white-space:normal;text-align:left}}.dev-on #sheet{overflow-x:hidden}
 .adgain{display:block;width:100%;text-align:center;font-size:11px;font-weight:600;color:var(--good);margin-top:1px}
 #start{overflow-x:hidden;overflow-y:auto;touch-action:pan-y}.startbox{min-width:0;max-width:min(600px,100%);box-sizing:border-box}.startbox *{min-width:0}.create select,.create input{max-width:100%;width:100%;box-sizing:border-box;text-overflow:ellipsis}.create .tpick,.create .tpick>*{max-width:100%;box-sizing:border-box}
 @media (max-width:640px){.startbox{margin-left:0}#start{padding-left:max(16px,env(safe-area-inset-left,0px))}}
@@ -668,7 +675,7 @@ details.analysis{margin-top:6px}details.analysis summary{cursor:pointer;color:va
     <button class="btn primary" data-act="pause" id="bPlay"><svg class="ico" viewBox="0 0 12 12" aria-hidden="true"><path d="M3.2 1.6v8.8l7.2-4.4z" fill="currentColor"/></svg> Resume <kbd>Space</kbd></button>
   </nav>
   <div class="status" id="status">Loading map…</div>
-  <div class="credit"><span class="ver" id="verTag">v26.35</span></div>
+  <div class="credit"><span class="ver" id="verTag">v26.36</span></div>
   <div class="tip" id="tip" hidden></div>
   <div class="toast" id="toast" role="status"></div>
   <section class="panel" id="panel" hidden aria-live="polite">
@@ -696,7 +703,7 @@ details.analysis{margin-top:6px}details.analysis summary{cursor:pointer;color:va
         <button class="btn" data-music-open>Music &amp; volume</button>
       </div>
       <div id="slotList" hidden></div>
-      <p class="note startv">Version <b class="ver" id="verStart">v26.35</b></p>
+      <p class="note startv">Version <b class="ver" id="verStart">v26.36</b></p>
     </div>
     <div class="startbox create" id="create" hidden>
       <h2>Create your mayor</h2>
@@ -1505,7 +1512,7 @@ function enact(s,p){DIVS.forEach(d=>{s.enacted[d.id]=p.divs[d.id];s.ratio[d.id]=
 // Voter groups. Each has a share of residents, turnout, home districts, concerns and an approval of you.
 // Citywide approval is the turnout-weighted average of the groups; each council district's approval comes from the groups that live there.
 // Shares, district mix and turnout are modeled, loosely grounded in Memphis demographics; they are not survey data.
-const VERSION='v26.35';
+const VERSION='v26.36';
 const GROUPS=[
  {id:'working',sh:'Working families',n:'Working families',ic:'⚒︎',c:'#f2a93b',share:24,turn:.5,start:56,w:{jobs:1,safety:.8,transit:.5},
   d:'Hourly workers in logistics, warehouses, health care and service jobs. The biggest bloc in the city.',dm:{1:1.1,2:.8,3:1.3,4:1.2,5:.6,6:1.2,7:1.1}},
@@ -5941,6 +5948,89 @@ function crisisFollow(){const c=S.crisis,C=CMAP[c.id];if(!C)return;const x=C.ch[
 // the 100-day picker and summary open when nothing else is on screen
 setInterval(()=>{try{if(!S||!S.started||S.over||!inOffice())return;if(!S.h100Pick&&!S.h100Show)return;if(modalOpen||!$('panel').hidden||document.querySelector('dialog[open]')||(typeof TUT!=='undefined'&&TUT)||!$('start').hidden||(window.BCInterior&&BCInterior.isOpen))return;
   if(S.h100Pick){openH100Pick();return}if(S.h100Show){S.h100Show=0;save();openModal('Day 100','Your first 100 days',h100SummaryHTML(),true)}}catch(e){}},1300);
+// ======================= v26.36: A TEAM THAT GROWS, AND A GAME THAT CELEBRATES =======================
+// ---------- your chief of staff and campaign manager level up ----------
+const TLV=[0,30,70,120,180],TLN=['New','Seasoned','Veteran','Ace','Legend'];
+function teamInit(){S.team=S.team||{cos:{xp:0,id:null},mgr:{xp:0,id:null,mor:65},fol:{}};const T=S.team;try{const s=staffOf('cos');if(T.cos.id!==s.name){T.cos={xp:0,id:s.name}}}catch(e){}const m=curMgr();if(m&&T.mgr.id!==m.id)T.mgr={xp:0,id:m.id,mor:65};return T}
+function tLvl(xp){let l=1;TLV.forEach((v,i)=>{if(xp>=v)l=i+1});return l}
+function tNext(xp){const l=tLvl(xp);return l>=5?null:TLV[l]}
+function mgrLvl(){if(!S||!S.team||!curMgr())return 1;return tLvl(S.team.mgr.xp)}
+function cosLvl(){if(!S||!S.team||!inOffice())return 1;return tLvl(S.team.cos.xp)}
+function teamXP(who,v){const T=teamInit();const r=T[who];if(!r||(who==='mgr'&&!curMgr()))return;const l0=tLvl(r.xp);r.xp+=v;const l1=tLvl(r.xp);
+  if(l1>l0){const n=who==='mgr'?curMgr().name:staffOf('cos').name;try{sfx('levelup')}catch(e){}notify('good',`${n} is now ${/^[AE]/.test(TLN[l1-1])?'an':'a'} ${TLN[l1-1]} ${who==='mgr'?'campaign manager':'chief of staff'}`,teamPerk(who,l1),()=>openTeam(),{ttl:12})}}
+function teamPerk(who,l){return who==='mgr'?`Their specialty works ${Math.round((l-1)*6)}% better${l>=3?', and their advice is sharper':''}.`:`You learn ${Math.round((l-1)*4)}% faster${l>=4?' and get 1 extra action a month':''}.`}
+// manager level strengthens their specialty
+{const _mm=mgrMul;mgrMul=function(k){const r=_mm(k);return r>1?1+(r-1)*(1+(mgrLvl()-1)*0.25)+(mgrLvl()-1)*0.03:r}}
+// chief of staff level: faster learning, and an extra action at Ace
+{const _gx=gainXP;gainXP=function(k,a){return _gx.call(this,k,a*(1+(cosLvl()-1)*0.04))}}
+{const _ab=actionBonus;actionBonus=function(){return _ab()+(cosLvl()>=4?1:0)}}
+// following their advice is how they grow, and how they stay happy
+document.addEventListener('click',e=>{if(!S||!S.started)return;const b=e.target.closest('[data-mgrgo],[data-weekly],[data-qr="go"]');if(!b)return;const T=teamInit();
+  const who=(curMgr()&&(isCand()||monthsToElection()<=8))?'mgr':inOffice()?'cos':null;if(!who)return;T.fol[who]=(T.fol[who]||0)+1;teamXP(who,4);if(who==='mgr')T.mgr.mor=Math.min(100,T.mgr.mor+3);else try{addMod(staffOf('cos'),'You took my advice',1)}catch(err){}},true);
+function teamMonth(){if(!S||!S.started||S.phase==='ai')return;const T=teamInit();
+  if(inOffice())teamXP('cos',6+Math.min(4,T.fol.cos||0)*2);
+  if(curMgr()){teamXP('mgr',6+Math.min(4,T.fol.mgr||0)*2);T.mgr.mor=clamp(T.mgr.mor+((T.fol.mgr||0)?2:-6)+(S.camp.cash<10?-4:0),0,100)}
+  T.fol={};
+  // someone tries to hire them away
+  if(T.poach)return;const mo=monthsToElection();
+  if(curMgr()&&mgrLvl()>=2&&T.mgr.mor<40&&Math.random()<0.4)T.poach={who:'mgr',day:3+Math.floor(Math.random()*20)};
+  else if(inOffice()&&cosLvl()>=2){const op=staffOpinion(staffOf('cos'));if(op<0&&Math.random()<0.3)T.poach={who:'cos',day:3+Math.floor(Math.random()*20)}}}
+function teamDaily(){const T=S&&S.team;if(!T||!T.poach||T.poach.open||S.day<T.poach.day)return;T.poach.open=1;
+  const p=T.poach,mg=p.who==='mgr',n=mg?curMgr().name:staffOf('cos').name,role=mg?'campaign manager':'chief of staff',L=TLN[(mg?mgrLvl():cosLvl())-1];
+  const who=mg?{name:n,opinion:(T.mgr.mor-50)*2,traits:[]}:staffOf('cos');
+  const bribe=mg?'$15K campaign cash':fmtM(0.15)+' from the reserve';
+  openModal(`${dateStr()} · ${L} ${role}`,`Someone is trying to hire ${n.split(' ')[0]==='Rev.'?n:n.split(' ')[0]} away`,`<p>${mg?`A statewide campaign offered <b>${n}</b> a bigger job. They feel overlooked here: you haven't been taking their advice.`:`A Fortune 500 company in Nashville offered <b>${n}</b> a job. They've been unhappy on the seventh floor lately.`}</p>
+   <div class="choices"><button class="choice" data-poach="pay" ${mg?(S.camp.cash<15?'disabled':''):(S.reserve<0.15?'disabled':'')}><b>Match the offer</b><small>${bribe} · they stay, and they're happier</small></button>
+   <button class="choice" data-poach="talk"><b>Remind them why they signed on</b><small>${oddsTag('dip',0.45,[who])} · works: they stay · fails: they leave</small></button>
+   <button class="choice" data-poach="go"><b>Wish them well</b><small>They leave. ${mg?'You\'ll need to hire a new manager.':'A new chief of staff starts at the bottom.'}</small></button></div>`,true)}
+document.addEventListener('click',e=>{const b=e.target.closest('[data-poach]');if(!b||!S||!S.team||!S.team.poach)return;e.preventDefault();e.stopImmediatePropagation();if(b.disabled)return;const T=S.team,mg=T.poach.who==='mgr',n=mg?curMgr().name:staffOf('cos').name;let stay=true,msg;
+  if(b.dataset.poach==='pay'){if(mg){S.camp.cash-=15;S.camp.spent+=15;T.mgr.mor=Math.min(100,T.mgr.mor+30)}else{S.reserve-=0.15;addMod(staffOf('cos'),'You matched the offer',25)}msg=`${n} is staying. They appreciated being valued.`}
+  else if(b.dataset.poach==='talk'){const who=mg?{opinion:(T.mgr.mor-50)*2,traits:[]}:staffOf('cos');stay=persuade('dip',0.45,[who],8);if(stay){if(mg)T.mgr.mor=Math.min(100,T.mgr.mor+18);else addMod(staffOf('cos'),'The mayor made the case to me',12);msg=`${n} is staying. That talk meant a lot.`}else msg=`${n} took the other job.`}
+  else{stay=false;msg=`${n} took the other job. You wished them well.`}
+  if(!stay){if(mg){S.camp.mgr=null;T.mgr={xp:0,id:null,mor:65}}else{replaceStaff('cos',true);T.cos={xp:0,id:staffOf('cos').name}}logIt(msg)}
+  T.poach=null;save();refreshHUD();onClose=null;closeModal();toast(msg);if(!stay&&mg)setTimeout(()=>{try{openMgr()}catch(err){}},400)},true);
+// your team screen
+function teamRow(who){const T=teamInit(),r=T[who],mg=who==='mgr';const m=mg?curMgr():null;if(mg&&!m)return`<div class="teamrow"><div class="teamwho"><b>No campaign manager</b><small>Hire one in Campaign HQ. They grow the longer you work together.</small></div><button class="btn primary" data-flow-hub="campaign">Hire</button></div>`;
+  if(!mg&&!inOffice())return'';const s=mg?null:staffOf('cos');const l=tLvl(r.xp),nx=tNext(r.xp);const mor=mg?r.mor:clamp(50+staffOpinion(s)/2,0,100);
+  return`<div class="teamrow">${mg?mgrFace(m,56):portrait({...s,frame:'#8a96a3'},56)}<div class="teamwho"><b>${mg?m.name:s.name}</b><small>${mg?'Campaign manager · '+m.title:'Chief of staff'}</small>
+   <div class="tlv"><span class="tbadge l${l}">${TLN[l-1]}</span>${nx?`<div class="gbar sm"><i style="width:${Math.round((r.xp-TLV[l-1])/(nx-TLV[l-1])*100)}%"></i></div><small>${Math.round(r.xp)}/${nx} XP</small>`:'<small>Top level</small>'}</div>
+   <small>${teamPerk(who,l)}</small><small>Morale <b style="color:${mor>=60?'var(--good)':mor>=40?'var(--warn)':'var(--bad)'}">${Math.round(mor)}</b>${mor<40?' · they could be hired away':''}</small></div>
+   <button class="btn" data-teamcall="${who}" ${(T.call||{})[who]===nowM()?'disabled':''}>${(T.call||{})[who]===nowM()?'Talked this month':'Check in (free)'}</button></div>`}
+function openTeam(){closePanel();const T=teamInit();openModal('They get better the longer you work together and the more you take their advice','Your team',`${teamRow('cos')}${(S.camp&&(isCand()||monthsToElection()<=14))?teamRow('mgr'):''}
+  <p class="note">They earn experience every month, and more when you follow their advice ("This week", check-ins and reports). Ignore them and morale drops, and someone may try to hire them away. A free check-in once a month lifts morale.</p>`,true)}
+openTeam=navWrap('openTeam',openTeam);
+document.addEventListener('click',e=>{const b=e.target.closest('[data-teamcall]');if(!b||!S)return;e.preventDefault();e.stopImmediatePropagation();const T=teamInit(),w=b.dataset.teamcall;T.call=T.call||{};if(T.call[w]===nowM())return;T.call[w]=nowM();
+  if(w==='mgr')T.mgr.mor=Math.min(100,T.mgr.mor+10);else addMod(staffOf('cos'),'Checked in with me',4);teamXP(w,2);save();toast('A good talk. Morale is up.');NAV.busy=true;try{hideViews();openTeam()}finally{NAV.busy=false}},true);
+{const _eom3=endOfMonth;endOfMonth=function(...a){const r=_eom3.apply(this,a);try{teamMonth()}catch(e){console.warn(e)}return r}}
+{const _dt3=dayTick;dayTick=function(...a){const r=_dt3.apply(this,a);try{if(S&&S.started&&!modalOpen)teamDaily()}catch(e){console.warn(e)}return r}}
+// ---------- sound and celebration ----------
+Object.assign(SOUNDS,{
+ fanfare:t=>{[523,659,784,1047].forEach((f,i)=>tone(f,t+i*0.11,0.5,'triangle',0.17));tone(1047,t+0.5,0.8,'sine',0.12);tone(784,t+0.5,0.8,'sine',0.08)},
+ levelup:t=>{[659,880,1175].forEach((f,i)=>tone(f,t+i*0.07,0.3,'square',0.06));tone(1568,t+0.22,0.35,'sine',0.1)},
+ crisis:t=>{for(let i=0;i<3;i++){tone(880,t+i*0.32,0.16,'sawtooth',0.07);tone(660,t+i*0.32+0.16,0.16,'sawtooth',0.07)}},
+ cheer:t=>{noise(t,0.9,0.22,800,2600);tone(784,t,0.4,'triangle',0.06)},
+ boo:t=>{noise(t,0.8,0.25,500,200);tone(147,t,0.7,'sawtooth',0.05)}});
+const REDUCED=(()=>{try{return matchMedia('(prefers-reduced-motion: reduce)').matches}catch(e){return false}})();
+function confetti(n){if(REDUCED)return;n=n||90;const cv=document.createElement('canvas');cv.className='confetti';document.body.appendChild(cv);const W=cv.width=innerWidth,H=cv.height=innerHeight,c=cv.getContext('2d');
+  const cols=['#f2a93b','#5cc28d','#5aa7d8','#e8644f','#b98ee6','#e6c547'];const P=Array.from({length:n},()=>({x:W/2+(Math.random()-0.5)*W*0.3,y:H*0.35,vx:(Math.random()-0.5)*9,vy:-6-Math.random()*8,r:Math.random()*6,w:5+Math.random()*5,h:8+Math.random()*6,c:cols[Math.floor(Math.random()*cols.length)],s:(Math.random()-0.5)*0.3}));
+  const t0=performance.now();const step=t=>{const k=(t-t0)/1000;c.clearRect(0,0,W,H);P.forEach(p=>{p.vy+=0.28;p.vx*=0.99;p.x+=p.vx;p.y+=p.vy;p.r+=p.s;c.save();c.globalAlpha=Math.max(0,1-k/2.4);c.translate(p.x,p.y);c.rotate(p.r);c.fillStyle=p.c;c.fillRect(-p.w/2,-p.h/2,p.w,p.h);c.restore()});if(k<2.4)requestAnimationFrame(step);else cv.remove()};requestAnimationFrame(step)}
+function flashScreen(kind){if(REDUCED)return;const d=document.createElement('div');d.className='screenflash '+kind;document.body.appendChild(d);setTimeout(()=>d.remove(),1300)}
+function celebrate(big){try{sfx(big?'fanfare':'good')}catch(e){}confetti(big?160:70)}
+// react to the big moments as they appear on screen
+{const _om=openModal;openModal=function(sub,title,html,...r){const out=_om.call(this,sub,title,html,...r);try{const t=String(title||''),h=String(html||'');
+  if(/You won a second term|Mayor-elect|with a win/i.test(t))celebrate(true);
+  else if(/You lost the election/.test(t)){sfx('bad');flashScreen('bad')}
+  else if(/^You won the debate/.test(t))celebrate(false);else if(/^You lost the debate/.test(t))sfx('bad');
+  else if(/✓ IT WORKED/.test(h))celebrate(false);else if(/IT DIDN'T GO TO PLAN/.test(h))sfx('bad');
+  else if(/⚠ CRISIS/.test(h)){sfx('crisis');flashScreen('crisis')}
+  else if(/Your first 100 days/.test(t)&&/qrbig">3\/3/.test(h))celebrate(true)}catch(e){}return out}}
+{const _ts=toast;toast=function(msg,...r){const out=_ts.call(this,msg,...r);try{const m=String(msg||'');if(/^Skill up:/.test(m)){sfx('levelup');skillBadge(m.replace(/^Skill up:\s*/,''))}else if(/crowd loved it|turned a protest into a vigil|brought the room to its feet/i.test(m))sfx('cheer');else if(/boos|shouted you down/i.test(m))sfx('boo')}catch(e){}return out}}
+function skillBadge(text){if(REDUCED)return;const d=document.createElement('div');d.className='skillpop';d.innerHTML=`<b>▲ Skill up</b><span>${text}</span>`;document.body.appendChild(d);setTimeout(()=>d.remove(),2600)}
+// approval and support move with a little pulse
+{let last=null;const _rh=refreshHUD;refreshHUD=function(...a){const r=_rh.apply(this,a);try{const el=$('hApp');if(el&&S&&S.started){const v=Math.round(S.approval);if(last!=null&&v!==last){el.classList.remove('bumpup','bumpdn');void el.offsetWidth;el.classList.add(v>last?'bumpup':'bumpdn')}last=v}}catch(e){}return r}}
+// the People hub gets a "Your team" tile
+{const _om=openModal;openModal=function(...a){const r=_om.apply(this,a);try{const n=NAV.cur&&NAV.depth>0?NAV.cur.name:'';if(n==='flow_people'){const g=$('mBody').querySelector('.flow-grid');if(g&&!g.querySelector('[data-teamopen]')&&(inOffice()||curMgr()||isCand())){g.insertAdjacentHTML('afterbegin',`<button class="flow-tile" data-teamopen="1"><b>Your team</b><span>${inOffice()?'Chief of staff':''}${inOffice()&&curMgr()?' and ':''}${curMgr()?'campaign manager':''}${!inOffice()&&!curMgr()?'Hire a campaign manager':''}: levels and morale</span></button>`)}}}catch(e){}return r}}
+document.addEventListener('click',e=>{const b=e.target.closest('[data-teamopen]');if(!b||!S)return;e.preventDefault();e.stopImmediatePropagation();openTeam()},true);
 function openLedger(){const L=S.log||[];openPanel('Everything that has happened, newest first','Ledger',L.length?`<div class="logl">${L.map(x=>`<div><span>${x.d}</span><p style="margin:0">${x.t}</p></div>`).join('')}</div>`:'<p class="note">Nothing yet. Start the clock with Space or ▶.</p>','ledger')}
 function openPolicies(){const ks=Object.keys(POLICIES);
   openPanel('Ongoing programs you control','Your initiatives',`<p>Mid-year, these are paid from the reserve fund. In April they go into the budget you send the council.</p>

@@ -4,6 +4,13 @@ A city-management game set in Memphis, Tennessee. You play the mayor. You handle
 
 **Play it:** https://erndae.github.io/Bluff-city-mayor/ (once GitHub Pages is turned on, see below)
 
+## v26.36: A team that grows, a game that celebrates, and a phone pass
+
+- **Your team levels up.** Your chief of staff and campaign manager go from New to Seasoned, Veteran, Ace and Legend. They earn experience every month and more when you follow their advice. A higher-level manager makes their specialty work better; a higher-level chief of staff makes you learn faster, and at Ace gives you an extra action every month.
+- **Morale and poaching.** Ignore their advice and morale drops. A seasoned manager or chief of staff with low morale may get a job offer: match it, talk them into staying (Dealmaking odds), or let them go and start over. A free monthly check-in lifts morale. See it all in People → Your team.
+- **Sound and celebration.** Confetti and a fanfare when you win the election, a debate or a crisis; an alarm and red flash when a crisis hits; a skill-up badge with a chime; crowd cheers and boos at festivals; your approval number pulses green or red when it moves. Motion is skipped for players who turn on reduced motion.
+- **Phone pass.** Every screen was checked at 360 and 390 pixels wide. The budget table no longer hides its numbers off the side of the screen, and the laptop no longer scrolls sideways.
+
 ## v26.35: Your first 100 days, and crises that test you
 
 - **First 100 days.** When you take office, pick 3 of 8 goals: sit down with the council, a listening tour, clear the backlog, fix the streets, a safer spring, know your team, fight for Memphis (use clout), keep the books balanced. A tracker on your desk and in the City hub counts the days and your progress, and "This week" pushes the next goal (harder after day 70). Each kept goal raises approval and makes the news; each missed one costs you. Keep all three for a bonus with every group. A day-100 report sums it up.
