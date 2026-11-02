@@ -4,6 +4,12 @@ A city-management game set in Memphis, Tennessee. You play the mayor. You handle
 
 **Play it:** https://erndae.github.io/Bluff-city-mayor/ (once GitHub Pages is turned on, see below)
 
+## v26.40: Meetings are conversations, and the money is in plain sight
+
+- **Meetings.** Every phone meeting is two rounds. First, how you answer their opening: listen (Education), make a public promise (Star Power), offer a trade (Dealmaking), or show you know the issue (the skill that matches the topic). Then what you ask for, which depends on who it is: a council vote, pressure (Inside Game) or a joint press conference; budget savings or the inside story from a department head; a joint project or fairer sales tax with a suburban mayor; public backing or money from FedEx, the Chamber or the County; turnout from community groups. Every option shows its odds, and a safe "no ask" is always there. A summary shows what worked.
+- **What the property tax costs people.** The Budget office shows the yearly tax on a typical home in each district. Moving the tax slider shows the change per district, what renters pay per month, and what the city gains or loses (in officers or miles of paving).
+- **Where the money went.** A monthly report (Budget hub, and a notification at each month's end) shows money in by source, money out by department, programs, bonds and upkeep, your decisions that spent reserve money, and what changed in city services. Flip back through past months.
+
 ## v26.39: See the money and who it affects
 
 - Every decision card has a **"$ See the money and who it affects"** button. For each option it shows:

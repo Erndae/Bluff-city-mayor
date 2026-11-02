@@ -332,6 +332,8 @@ canvas.confetti{position:fixed;inset:0;z-index:100000;pointer-events:none}
 .pos{color:var(--good)}.neg{color:var(--bad)}
 .pglist{display:flex;flex-direction:column;gap:6px}.pgrow{display:grid;grid-template-columns:minmax(0,1.4fr) 1fr 44px;gap:8px;align-items:center;font-size:14px}.pgname small{display:block;color:var(--muted);font-size:11.5px}.pgbar{position:relative;height:8px;background:var(--line);border-radius:4px}.pgbar::after{content:'';position:absolute;left:50%;top:-2px;bottom:-2px;width:1px;background:var(--muted)}.pgbar i{position:absolute;top:0;bottom:0;border-radius:4px}.pgbar i.pos{background:var(--good)}.pgbar i.neg{background:var(--bad)}.pgrow>b{text-align:right}
 .needlist{border:1px solid var(--bad);border-radius:8px;padding:8px 10px;margin:6px 0 8px;background:rgba(232,100,79,.07)}.needlist>b{display:block;color:var(--bad);margin-bottom:6px}.needlist .choice small{color:var(--text)}
+.taxtbl{min-width:0!important}.taxtbl td small{display:block;color:var(--muted);font-size:11.5px;white-space:normal}.taxtbl td:first-child{text-align:left;white-space:normal}
+.mrows{display:flex;flex-direction:column;gap:5px}.mrow{display:grid;grid-template-columns:minmax(0,1.3fr) 1fr auto;gap:8px;align-items:center;font-size:13.5px}.mrow b{text-align:right;font-variant-numeric:tabular-nums}.mbar{display:block;height:7px;background:var(--line);border-radius:4px;overflow:hidden}.mbar i{display:block;height:100%}.mbar i.pos{background:var(--good)}.mbar i.neg{background:var(--amber)}
 .adgain{display:block;width:100%;text-align:center;font-size:11px;font-weight:600;color:var(--good);margin-top:1px}
 #start{overflow-x:hidden;overflow-y:auto;touch-action:pan-y}.startbox{min-width:0;max-width:min(600px,100%);box-sizing:border-box}.startbox *{min-width:0}.create select,.create input{max-width:100%;width:100%;box-sizing:border-box;text-overflow:ellipsis}.create .tpick,.create .tpick>*{max-width:100%;box-sizing:border-box}
 @media (max-width:640px){.startbox{margin-left:0}#start{padding-left:max(16px,env(safe-area-inset-left,0px))}}
@@ -684,7 +686,7 @@ details.analysis{margin-top:6px}details.analysis summary{cursor:pointer;color:va
     <button class="btn primary" data-act="pause" id="bPlay"><svg class="ico" viewBox="0 0 12 12" aria-hidden="true"><path d="M3.2 1.6v8.8l7.2-4.4z" fill="currentColor"/></svg> Resume <kbd>Space</kbd></button>
   </nav>
   <div class="status" id="status">Loading map…</div>
-  <div class="credit"><span class="ver" id="verTag">v26.39</span></div>
+  <div class="credit"><span class="ver" id="verTag">v26.40</span></div>
   <div class="tip" id="tip" hidden></div>
   <div class="toast" id="toast" role="status"></div>
   <section class="panel" id="panel" hidden aria-live="polite">
@@ -712,7 +714,7 @@ details.analysis{margin-top:6px}details.analysis summary{cursor:pointer;color:va
         <button class="btn" data-music-open>Music &amp; volume</button>
       </div>
       <div id="slotList" hidden></div>
-      <p class="note startv">Version <b class="ver" id="verStart">v26.39</b></p>
+      <p class="note startv">Version <b class="ver" id="verStart">v26.40</b></p>
     </div>
     <div class="startbox create" id="create" hidden>
       <h2>Create your mayor</h2>
@@ -1521,7 +1523,7 @@ function enact(s,p){DIVS.forEach(d=>{s.enacted[d.id]=p.divs[d.id];s.ratio[d.id]=
 // Voter groups. Each has a share of residents, turnout, home districts, concerns and an approval of you.
 // Citywide approval is the turnout-weighted average of the groups; each council district's approval comes from the groups that live there.
 // Shares, district mix and turnout are modeled, loosely grounded in Memphis demographics; they are not survey data.
-const VERSION='v26.39';
+const VERSION='v26.40';
 const GROUPS=[
  {id:'working',sh:'Working families',n:'Working families',ic:'⚒︎',c:'#f2a93b',share:24,turn:.5,start:56,w:{jobs:1,safety:.8,transit:.5},
   d:'Hourly workers in logistics, warehouses, health care and service jobs. The biggest bloc in the city.',dm:{1:1.1,2:.8,3:1.3,4:1.2,5:.6,6:1.2,7:1.1}},
@@ -6216,6 +6218,84 @@ function addNumBtns(root){if(!root||!S||!S.events)return;root.querySelectorAll('
 {const _om=openModal;openModal=function(...a){const r=_om.apply(this,a);try{addNumBtns($('mBody'))}catch(e){}return r}}
 {const _rd=renderDesk;renderDesk=function(...a){const r=_rd.apply(this,a);try{addNumBtns($('desk'))}catch(e){}return r}}
 document.addEventListener('click',e=>{const b=e.target.closest('[data-evnums]');if(!b||!S)return;e.preventDefault();e.stopImmediatePropagation();const ev=EVN[+b.dataset.evnums]||S.events[+b.dataset.evnums];if(ev)openNumbers(ev)},true);
+// ======================= v26.40: MEETINGS ARE CONVERSATIONS, AND THE MONEY IS IN PLAIN SIGHT =======================
+// ---------- meetings: two rounds, each answer tied to a skill ----------
+const ISSUE_SK={safety:'safe',oversight:'safe',fiscal:'stew',fairtax:'stew',jobs:'stew',labor:'stew',education:'learn',transit:'learn',streets:'learn',blight:'learn'};
+function dlgTargets(){const k=DLG.kind,id=DLG.id;try{if(k==='council')return[S.council[+id]];if(k==='staff')return[staffOf(id)];if(k==='nb')return[S.nb[id]]}catch(e){}return[]}
+function dlgRound1(){const T=DLG.T,iss=T.issue&&PRIO_LABEL[T.issue]?PRIO_LABEL[T.issue].toLowerCase():'what you\'re dealing with',sk=ISSUE_SK[T.issue]||'learn';
+  return[{id:'listen',sk:'learn',b:0.6,t:'“Walk me through what you\'re seeing on the ground.”',ok:[4,'Finally, someone who asks before they talk.'],no:[1,'They answered, but you seemed distracted.']},
+   {id:'promise',sk:'cha',b:0.5,t:`“${T.issue?`I'm going to make ${iss} a priority, and I'll say it in public.`:'You have my full support, and I\'ll say so publicly.'}”`,ok:[7,'That\'s what I needed to hear. I\'ll hold you to it.'],no:[2,'Everybody says that. Show me.']},
+   {id:'trade',sk:'dip',b:0.5,t:'“Here\'s what I can offer, and here\'s what I need from you.”',ok:[6,'Now we\'re talking. That\'s a fair trade.'],no:[-1,'That\'s not a trade, that\'s a shakedown.']},
+   {id:'expert',sk,b:0.5,t:`“${T.issue?`Let me show you the numbers on ${iss}. I've done my homework.`:'Let me show you I know exactly what you\'re up against.'}”`,ok:[6,'Huh. You know this better than I expected.'],no:[0,'You lost me in the details.']}]}
+function dlgRound2(){const k=DLG.kind,id=DLG.id,cand=isCand();
+  if(k==='council')return[{id:'vote',sk:'dip',b:0.42,t:'Ask for their vote the next time it counts',ok:'They owe you a favor on a future vote.',no:'They won\'t commit, and they\'re a little annoyed you asked.',okFx:()=>{const m=S.council[+id];m.favors=(m.favors||0)+1;dlgApply(2,'Agreed to back the mayor')},noFx:()=>dlgApply(-3,'Mayor pushed too hard')},
+   {id:'lean',sk:'intr',b:0.4,t:'Remind them what you can do for their district, and what you can\'t',ok:'Message received. They owe you a favor.',no:'They took it as a threat. Opinion −6.',okFx:()=>{const m=S.council[+id];m.favors=(m.favors||0)+1},noFx:()=>dlgApply(-6,'Mayor threatened me')},
+   {id:'stand',sk:'cha',b:0.55,t:'Ask them to stand with you at a press conference',ok:`Their district saw you two together. District ${homeOf(S.council[+id])} support +2.`,no:'They begged off. No harm done.',okFx:()=>{bumpPlace('dist:'+homeOf(S.council[+id]),2);dlgApply(2,'Stood together in public')},noFx:()=>{}},
+   {id:'none',safe:1,t:'No ask today. Just build the relationship.',ok:'They appreciated a meeting with no strings. Opinion +2.',okFx:()=>dlgApply(2,'A meeting with no strings')}];
+  if(k==='staff')return[{id:'save',sk:'stew',b:0.45,t:'Ask them to find savings in their budget',ok:`They found ${fmtM(0.4)} in waste. It goes back to the reserve.`,no:'They pushed back hard. Opinion −3.',okFx:()=>{S.reserve+=0.4},noFx:()=>dlgApply(-3,'Asked me to cut my own budget')},
+   {id:'inside',sk:'intr',b:0.5,t:'Ask for the real story in their department',ok:'You learned who\'s doing the work and who isn\'t. Inside Game grows.',no:'They gave you the official version.',okFx:()=>gainXP('intr',10),noFx:()=>{}},
+   {id:'rally',sk:'cha',b:0.55,t:'Offer to rally their team in person',ok:'Their staff loved it. Opinion +5.',no:'It felt forced. The staff noticed.',okFx:()=>dlgApply(5,'Rallied my team'),noFx:()=>dlgApply(-1,'Awkward visit')},
+   {id:'none',safe:1,t:'No ask today. Just check in.',ok:'They appreciated the support. Opinion +2.',okFx:()=>dlgApply(2,'Checked in')}];
+  if(k==='nb')return[{id:'road',sk:'dip',b:0.45,t:'Propose a joint road and jobs project',ok:'They agreed to work on it together. Relations +8.',no:'They want more from Memphis first.',okFx:()=>dlgApply(8,'Agreed to a joint project'),noFx:()=>{}},
+   {id:'tax',sk:'stew',b:0.45,t:'Talk about sharing sales tax fairly',ok:`A handshake deal: about ${fmtM(0.3)} a year more for Memphis.`,no:'They bristled at talking money. Relations −4.',okFx:()=>{S.revBoost=(S.revBoost||0)+0.3},noFx:()=>dlgApply(-4,'Memphis came after our money')},
+   {id:'none',safe:1,t:'Just keep the peace.',ok:'A friendly visit. Relations +2.',okFx:()=>dlgApply(2,'Friendly visit')}];
+  if(k==='vip'){const money=['county','chamber','fedex'].includes(id);return[{id:'back',sk:'dip',b:0.45,t:'Ask them to back your plan in public',ok:'They put out a statement supporting you.',no:'They\'re staying neutral for now.',okFx:()=>dlgApply(6,'Backed the mayor publicly'),noFx:()=>{}},
+   money?{id:'money',sk:'stew',b:0.4,t:cand?'Ask them to support your campaign':'Ask them to put money behind it',ok:cand?`Their network raised ${fmtK(15)} for your campaign.`:`They pledged ${fmtM(1)} toward the city's effort.`,no:'They want to see results first.',okFx:()=>{if(cand&&S.camp){S.camp.cash+=15;S.camp.raised+=15}else S.reserve+=1},noFx:()=>{}}:{id:'turnout',sk:'cha',b:0.5,t:'Ask them to bring their people out',ok:'Their members will show up for you.',no:'They\'ll think about it.',okFx:()=>dlgApply(8,'Their leader asked them to back you'),noFx:()=>{}},
+   {id:'none',safe:1,t:'No ask today. Just listen.',ok:'They left feeling heard.',okFx:()=>dlgApply(2,'Listened')}]}
+  return[{id:'turnout',sk:'cha',b:0.5,t:cand?'Ask them to turn out for you on Election Day':'Ask them to tell their neighbors what you\'re doing',ok:'The room was on its feet.',no:'Polite applause. Not much more.',okFx:()=>dlgApply(6,'Fired up the room'),noFx:()=>{}},
+   {id:'endorse',sk:'dip',b:0.45,t:'Ask their leaders to vouch for you',ok:'Their leaders promised to talk you up.',no:'They want to see more first.',okFx:()=>{dlgApply(5,'Leaders vouched for you');if(cand)recUp(0.02)},noFx:()=>{}},
+   {id:'none',safe:1,t:'No ask today. Just hear them out.',ok:'They appreciated being heard.',okFx:()=>dlgApply(2,'Heard us out')}]}
+function dlgApply2(v,why){const k=DLG.kind,id=DLG.id;if(k==='group'&&isCand()){try{candBump(id,v*0.5,why)}catch(e){}return}dlgApply(v,why)}
+function dlgOptHTML(o,i,tg){return`<button class="choice" data-dlg2="${i}"><b>${o.t}</b><small>${o.safe?'Safe · always works':oddsTag(o.sk,o.b,tg)}</small></button>`}
+dlgStart=function(kind,id,W,who,res){const T=dlgTopic(kind,id);DLG={kind,id,W,who,res,T,r:1,log:[]};dlgShow()};
+function dlgShow(){const tg=dlgTargets();const opts=DLG.r===1?dlgRound1():dlgRound2();DLG.opts=opts;const last=DLG.log[DLG.log.length-1];
+  const say=DLG.r===1?DLG.T.open:(last?last.reply:'');
+  openModal(`${dateStr()} · ${DLG.W.label} · ${DLG.r} of 2`,`Meeting with ${DLG.who.n}`,`<div class="meetscene">${dlgFace()}<div class="dlgbub them"><b>${DLG.who.n}</b><p>“${say}”</p></div></div>
+   <p class="note" style="margin:8px 0 4px">${DLG.r===1?'How do you answer? Each approach leans on a different skill.':'Now, what do you ask for?'}</p>
+   <div class="choices dlgpick">${opts.map((o,i)=>dlgOptHTML(o,i,tg)).join('')}</div>`,false)}
+document.addEventListener('click',e=>{const b=e.target.closest('[data-dlg2]');if(!b||!S||!DLG)return;e.preventDefault();e.stopImmediatePropagation();const o=DLG.opts[+b.dataset.dlg2];const tg=dlgTargets();
+  const ok=o.safe?true:persuade(o.sk,o.b,tg,6);
+  if(DLG.r===1){const[v,reply]=ok?o.ok:o.no;dlgApply2(v,ok?'Good first impression':'Shaky first impression');DLG.log.push({o,ok,reply,res:v>0?`Opinion +${v}`:v<0?`Opinion ${v}`:'No change'});try{sfx(ok?'good':'bad')}catch(err){}DLG.r=2;dlgShow();return}
+  try{ok?(o.okFx&&o.okFx()):(o.noFx&&o.noFx())}catch(err){}DLG.log.push({o,ok,reply:'',res:ok?o.ok:o.no});try{sfx(ok?'good':'bad')}catch(err){}save();refreshHUD();
+  const wins=DLG.log.filter(x=>x.ok&&!x.o.safe).length;if(wins===2)try{celebrate(false)}catch(err){}const name=DLG.who.n;
+  openModal(`${dateStr()} · ${DLG.W.label}`,`Meeting with ${name}`,`<div class="meetscene">${dlgFace()}</div><div class="glist" style="margin-top:10px">${DLG.log.map(x=>`<div class="gitem${x.ok?' done':''}"><span class="gck">${x.ok?'✓':'✕'}</span><div><b>${x.o.t.replace(/[“”]/g,'')}</b><small>${x.o.safe?'Safe choice':skillName(x.o.sk)} · ${x.res}</small></div></div>`).join('')}</div>
+   <p class="note">${DLG.res?DLG.res.replace(/^You met [^.]*\.\s*/,''):''} Every skill you used earned experience.</p>
+   <div class="row"><button class="btn primary" data-act="close">Back to work</button><button class="btn" data-meetphone="1">Set up another meeting</button></div>`,false);DLG=null},true);
+// ---------- what the property tax costs people ----------
+const DIST_HOME={1:110000,2:195000,3:120000,4:150000,5:290000,6:85000,7:140000};
+const DIST_AREA={1:'Raleigh, Frayser',2:'Berclair, East Memphis',3:'Whitehaven',4:'Hickory Hill',5:'Midtown, East Memphis',6:'South Memphis',7:'North Memphis, Downtown'};
+function homeTax(value,rate){return value*0.25/100*rate}
+function taxPeopleHTML(rate,base){const d=rate-base,chg=Math.abs(d)>=0.005;
+  const rows=[1,2,3,4,5,6,7].map(k=>{const v=DIST_HOME[k],t=homeTax(v,rate),dt=homeTax(v,rate)-homeTax(v,base);return`<tr><td>District ${k}<small>${DIST_AREA[k]}</small></td><td>$${Math.round(v/1000)}K</td><td>$${Math.round(t).toLocaleString()}</td>${chg?`<td class="${dt>0?'neg':'pos'}">${dt>0?'+':'−'}$${Math.round(Math.abs(dt))}</td>`:''}</tr>`}).join('');
+  const rent=100000*0.25/100*d*0.7/12,cityM=d*150;
+  return`<div class="facts" id="taxPeople"><h4>What the property tax costs people</h4><p class="note">Memphis homes are taxed on 25% of their value. At <b>$${rate.toFixed(2)}</b> per $100 of that, here's a typical home in each district${chg?`, and the change from today's $${base.toFixed(2)}`:''}.</p>
+   <div class="tablewrap"><table class="taxtbl"><thead><tr><th>District</th><th>Typical home</th><th>Tax a year</th>${chg?'<th>Change</th>':''}</tr></thead><tbody>${rows}</tbody></table></div>
+   ${chg?`<ul class="numlist"><li>Renters: landlords pass most of it on, about <b class="${rent>0?'neg':'pos'}">${rent>0?'+':'−'}$${Math.abs(rent).toFixed(2)} a month</b> on a typical rental.</li><li>The city: <b class="${cityM>0?'pos':'neg'}">${cityM>0?'+':'−'}${fmtM(Math.abs(cityM))} a year</b> in revenue. That's about ${Math.round(Math.abs(cityM)/0.09)} police officers, or ${Math.round(Math.abs(cityM))} miles of repaving.</li><li>Who notices: homeowners and seniors feel it first, then business owners. Renters feel it more slowly.</li></ul>`:'<p class="note">Every 10¢ on the rate is about $15M a year for the city, or about $28 a year on a $110K home.</p>'}</div>`}
+{const _om=openModal;openModal=function(sub,title,html,...r){const out=_om.call(this,sub,title,html,...r);try{if(title==='Budget office'&&inOffice()){const b=$('mBody');if(b&&!b.querySelector('#taxPeople')){const rate=S.draft&&S.draft.tax?S.draft.tax:S.taxRate;const anchor=b.querySelector('.summary')||b.lastElementChild;anchor.insertAdjacentHTML('afterend',taxPeopleHTML(rate,S.taxRate))}}}catch(e){console.warn(e)}return out}}
+{const _ub=updateBudgetView;updateBudgetView=function(...a){const r=_ub.apply(this,a);try{const el=$('taxPeople');if(el&&S.draft)el.outerHTML=taxPeopleHTML(S.draft.tax,S.taxRate)}catch(e){}return r}}
+// ---------- where every dollar went, month by month ----------
+const REV_SHARE=[['Property tax',0.40],['Local sales tax',0.22],['State shared taxes',0.12],['MLGW payment in lieu of taxes',0.12],['Fees, fines and permits',0.08],['Everything else',0.06]];
+{const _eom4=endOfMonth;endOfMonth=function(...a){const y=S.y,mo=S.m,r0=S.mlReserve0!=null?S.mlReserve0:S.reserve,met0=S.mlMet0||{...S.met};const r=_eom4.apply(this,a);
+  try{if(S&&S.started&&inOffice()){const hist=((S.life&&S.life.history)||[]).filter(h=>h.m===y*12+mo);const dec=[];hist.forEach(h=>{const c=(h.changes||[]).find(c=>c.name==='City reserves');if(c&&Math.abs(c.delta)>=0.01)dec.push({t:String(h.title).replace(/ · .*$/,''),d:c.delta})});
+    S.moneyLog=S.moneyLog||[];S.moneyLog.push({y,m:mo,r0,r1:S.reserve,rev:annualRevenue(S)/12,div:DIVS.map(d=>[d.name,(S.enacted[d.id]||0)/12]),prog:policyCost(S)/12,bond:bondService(S)/12,maint:maintCost(S)/12,raise:(S.raiseCost||0)/12,dec,met0,met1:{...S.met}});
+    if(S.moneyLog.length>24)S.moneyLog.shift();S.mlReserve0=S.reserve;S.mlMet0={...S.met};
+    try{notify('info',`Where the money went in ${MONTHS_L[mo-1]}`,`Reserve ${S.reserve>=r0?'up':'down'} ${fmtM(Math.abs(S.reserve-r0))}. Tap for every dollar.`,()=>openMoneyMonth(),{ttl:8,silent:true})}catch(e){}}}catch(e){console.warn('money',e)}return r}}
+function openMoneyMonth(i){closePanel();const L=S.moneyLog||[];if(!L.length){openModal('Money','Where the money went','<p>The first monthly report arrives at the end of this month.</p>',true);return}i=i==null?L.length-1:i;const M=L[i];
+  const dTotal=M.dec.reduce((a,x)=>a+x.d,0),spendOps=M.div.reduce((a,x)=>a+x[1],0)+M.prog+M.bond+M.maint+M.raise,net=M.r1-M.r0;
+  const bar=(v,max,cls)=>`<span class="mbar"><i class="${cls}" style="width:${Math.min(100,v/max*100)}%"></i></span>`;const mx=Math.max(...M.div.map(x=>x[1]),M.prog,M.bond,M.maint,1);
+  const metRows=Object.keys(MET_NAME).map(k=>{const a=M.met0[k],b=M.met1[k];if(a==null||b==null||Math.abs(b-a)<0.05)return'';const[n,low]=MET_NAME[k];const good=low?b<a:b>a;return`<li>${n}: <b class="${good?'pos':'neg'}">${b>a?'+':'−'}${Math.abs(b-a).toFixed(1)}</b> <small>(${Math.round(a)} → ${Math.round(b)})</small></li>`}).join('');
+  openModal(`${MONTHS_L[M.m-1]} ${M.y} · every number is per month`,'Where the money went',`
+   <div class="qrhead"><div><small>Reserve</small><b class="qrbig">${fmtM(M.r1)}</b><b class="${net>=0?'pos':'neg'}">${net>=0?'+':'−'}${fmtM(Math.abs(net))}</b> <small>this month</small></div></div>
+   <div class="facts"><h4>Money in · ${fmtM(M.rev)}</h4><div class="mrows">${REV_SHARE.map(([n,s])=>`<div class="mrow"><span>${n}</span>${bar(M.rev*s,M.rev*0.4,'pos')}<b>${fmtM(M.rev*s)}</b></div>`).join('')}</div><p class="note">Shares are approximate, based on the city's general fund.</p></div>
+   <div class="facts"><h4>Money out for city services · ${fmtM(spendOps)}</h4><div class="mrows">${M.div.slice().sort((a,b)=>b[1]-a[1]).map(([n,v])=>`<div class="mrow"><span>${n}</span>${bar(v,mx,'neg')}<b>${fmtM(v)}</b></div>`).join('')}
+     ${M.prog?`<div class="mrow"><span>Your programs</span>${bar(M.prog,mx,'neg')}<b>${fmtM(M.prog)}</b></div>`:''}${M.raise?`<div class="mrow"><span>Employee raises</span>${bar(M.raise,mx,'neg')}<b>${fmtM(M.raise)}</b></div>`:''}${M.bond?`<div class="mrow"><span>Bond payments on projects</span>${bar(M.bond,mx,'neg')}<b>${fmtM(M.bond)}</b></div>`:''}${M.maint?`<div class="mrow"><span>Upkeep on finished projects</span>${bar(M.maint,mx,'neg')}<b>${fmtM(M.maint)}</b></div>`:''}</div></div>
+   <div class="facts"><h4>Your decisions this month · ${dTotal>=0?'+':'−'}${fmtM(Math.abs(dTotal))}</h4>${M.dec.length?`<ul class="numlist">${M.dec.map(x=>`<li>${x.t}: <b class="${x.d>=0?'pos':'neg'}">${x.d>=0?'+':'−'}${fmtM(Math.abs(x.d))}</b></li>`).join('')}</ul>`:'<p class="note">None of your decisions spent reserve money this month.</p>'}</div>
+   <div class="facts"><h4>What Memphians got this month</h4>${metRows?`<ul class="numlist">${metRows}</ul>`:'<p class="note">City services held steady.</p>'}</div>
+   <div class="row">${i>0?`<button class="btn" data-mlog="${i-1}">← ${MONTHS[L[i-1].m-1]}</button>`:''}${i<L.length-1?`<button class="btn" data-mlog="${i+1}">${MONTHS[L[i+1].m-1]} →</button>`:''}<button class="btn primary" data-act="close">Close</button></div>`,true)}
+openMoneyMonth=navWrap('openMoneyMonth',openMoneyMonth);
+document.addEventListener('click',e=>{const b=e.target.closest('[data-mlog]');if(!b||!S)return;e.preventDefault();e.stopImmediatePropagation();NAV.busy=true;try{hideViews();openMoneyMonth(+b.dataset.mlog)}finally{NAV.busy=false}},true);
+{const _om=openModal;openModal=function(...a){const r=_om.apply(this,a);try{const n=NAV.cur&&NAV.depth>0?NAV.cur.name:'';if(n==='flow_budget'&&inOffice()){const g=$('mBody').querySelector('.flow-grid');if(g&&!g.querySelector('[data-moneyopen]'))g.insertAdjacentHTML('afterbegin',`<button class="flow-tile" data-moneyopen="1"><b>Where the money went</b><span>Every dollar in and out, month by month</span></button>`)}}catch(e){}return r}}
+document.addEventListener('click',e=>{const b=e.target.closest('[data-moneyopen]');if(!b||!S)return;e.preventDefault();e.stopImmediatePropagation();openMoneyMonth()},true);
 function openLedger(){const L=S.log||[];openPanel('Everything that has happened, newest first','Ledger',L.length?`<div class="logl">${L.map(x=>`<div><span>${x.d}</span><p style="margin:0">${x.t}</p></div>`).join('')}</div>`:'<p class="note">Nothing yet. Start the clock with Space or ▶.</p>','ledger')}
 function openPolicies(){const ks=Object.keys(POLICIES);
   openPanel('Ongoing programs you control','Your initiatives',`<p>Mid-year, these are paid from the reserve fund. In April they go into the budget you send the council.</p>
