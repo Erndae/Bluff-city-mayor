@@ -2666,9 +2666,9 @@ function endorsementFor(g){const E=ENDORSERS.find(x=>x.g===g.id);return E?S.camp
 // Offices work where the race is close: a district where you're far ahead or far behind gets little from one.
 function districtCloseness(d){return clamp(1-Math.abs(dApp(d)-50)/14,0.15,1)}
 function officeReach(g){const offs=Object.keys(S.camp.offices||{}).map(Number);if(!offs.length)return 0;let a=0,t=0;for(let d=1;d<=7;d++){const c=dComp(d)[g.id];t+=c;if(offs.includes(d))a+=c*districtCloseness(d)}return a/t}
-const CHALLENGER_EDGE=4; // voters give a fresh face the benefit of the doubt; a sitting mayor runs on the record
+const CHALLENGER_EDGE=-1; // voters give a fresh face the benefit of the doubt; a sitting mayor runs on the record
 function groupSupport(g,o){o=o||{};const G=S.groups[g.id],R=S.rival||{champs:[]},rc=R.camp||{};const champ=R.champs.includes(g.id);const SUCC=S.term>=2&&!isCand();
-  let b=(SUCC?20+G.app*0.66+(S.succ?S.succ.bonus:-4):G.app)+(S.mayor&&!SUCC?(mskill('cha')-8)*0.4:0)-(champ?(isCand()?3:6):0)-(isCand()||SUCC?0:CHALLENGER_EDGE);
+  let b=(SUCC?20+G.app*0.66+(S.succ?S.succ.bonus:-4):G.app)+(S.mayor&&!SUCC?(mskill('cha')-8)*0.4:0)-(champ?(isCand()?3:4):0)-(isCand()||SUCC?0:CHALLENGER_EDGE);
   if(!o.noAds)b+=(S.camp.boost[g.id]||0);
   if(!o.noRecord)b+=recordSwing();
   if(!o.noDebate)b+=S.camp.debate||0;
@@ -5807,7 +5807,7 @@ const RSTYLE={brawler:{n:'Brawler',d:'Hits back hard and fast. Expect attack ads
 function rivalStyle(){const R=S.rival;if(!R)return null;if(!R.style){const h=[...R.name].reduce((a,c)=>a+c.charCodeAt(0),0);R.style=['brawler','wonk','showman'][h%3]}return RSTYLE[R.style]}
 function rxOn(){return!!(S&&S.started&&S.rival&&S.rival.camp&&S.camp&&S.phase!=='ai'&&(isCand()||monthsToElection()<=10)&&!S.camp.voted)}
 function rxReady(k,mo){S.rx=S.rx||{};const t=S.rx[k];return t==null||nowM()-t>=mo}
-function rivalHit(groups,amt){const rc=S.rival.camp;rc.adBy=rc.adBy||{};const before=headToHead();groups.forEach(g=>rc.adBy[g]=Math.min(5,(rc.adBy[g]||0)+amt));return(before-headToHead())*100}
+function rivalHit(groups,amt){amt*=0.6;const rc=S.rival.camp;rc.adBy=rc.adBy||{};const before=headToHead();groups.forEach(g=>rc.adBy[g]=Math.min(5,(rc.adBy[g]||0)+amt));return(before-headToHead())*100}
 function rivalReact(k,head,body,groups,amt){const R=S.rival,st=rivalStyle();S.rx[k]=nowM();const cost=rivalHit(groups,amt*st.k);S.rxOpen={k,head,groups,amt:amt*st.k,day:dayN()};clog(`${R.name}: ${head}`);logIt(`${R.name}: ${head}`);
   try{newsAdd(-0.5,`${R.name}: ${head}`)}catch(e){}
   try{notify('event',`${R.name.split(' ').pop()} hits back: ${head}`,`${body} You lost about ${Math.max(0.1,cost).toFixed(1)} points. Tap to answer.`,()=>openRivalAnswer(),{ttl:16})}catch(e){}}
@@ -5819,11 +5819,11 @@ function rivalDaily(){if(!rxOn())return;S.rx=S.rx||{};const R=S.rival,st=rivalSt
   // a debate you won
   const won=[1,2].find(n=>{const D=(S.camp.debates||{})[n];return D&&D.done&&D.you>D.them&&!D.rx});if(won){S.camp.debates[won].rx=1;const spin=R.style==='showman'?'a rally the next morning, twice the size of the debate crowd':'a press conference saying the moderators went easy on you';S.camp.debate=(S.camp.debate||0)-Math.min(0.6,Math.abs((S.camp.debates[won].bonus||0))*0.35);rivalReact('debate',spin,`${last} is trying to erase your debate win.`,R.champs||[],0.5);return}
   // a group you're winning fast
-  const T=S.trend||[];if(T.length>=2&&rxReady('surge',2)){const a=T[T.length-1],b=T[T.length-2];if(a.g&&b.g){const best=GROUPS.map(g=>({g,d:(a.g[g.id]||0)-(b.g[g.id]||0)})).sort((x,y)=>y.d-x.d)[0];if(best&&best.d>=2.5&&(R.style==='wonk'||Math.random()<0.4)){rivalReact('surge',`a pitch to ${best.g.n.toLowerCase()}`,`${last} noticed ${best.g.n.toLowerCase()} warming to you and is courting them hard.`,[best.g.id],1.6);return}}}
+  const T=S.trend||[];if(T.length>=2&&mo<=8&&rxReady('surge',3)){const a=T[T.length-1],b=T[T.length-2];if(a.g&&b.g){const best=GROUPS.map(g=>({g,d:(a.g[g.id]||0)-(b.g[g.id]||0)})).sort((x,y)=>y.d-x.d)[0];if(best&&best.d>=2.5&&(R.style==='wonk'||Math.random()<0.4)){rivalReact('surge',`a pitch to ${best.g.n.toLowerCase()}`,`${last} noticed ${best.g.n.toLowerCase()} warming to you and is courting them hard.`,[best.g.id],1.6);return}}}
   // you went negative
   const atk=(S.camp.attacks||[]).filter(t=>nowM()-t<=1).length;if(atk&&rxReady('neg',2)){if(R.style==='brawler')rivalReact('neg','an attack ad of their own',`${last} answered your attack ad with one of their own.`,GROUPS.map(g=>g.id),0.7);else{S.rx.neg=nowM();popHit(-0.4,'Opponent called out your negative ads');try{notify('event',`${last} calls you out`,`${last} says Memphis deserves better than attack ads. Some voters agree.`,null,{ttl:10})}catch(e){}}return}
   // an endorsement you won
-  const e=Object.entries(S.camp.endorse||{}).find(([k,v])=>v==='you'&&!(S.rxEnd||{})[k]);if(e){S.rxEnd=S.rxEnd||{};S.rxEnd[e[0]]=1;const other=GROUPS.filter(g=>!(R.champs||[]).includes(g.id)).sort((a,b)=>b.share-a.share)[0];rivalReact('endorse',`a counter-endorsement push with ${other.n.toLowerCase()}`,`After your endorsement, ${last} went looking for one of their own.`,[other.id],1.2);return}}
+  const e=rxReady('endorse',2)&&Object.entries(S.camp.endorse||{}).find(([k,v])=>v==='you'&&!(S.rxEnd||{})[k]);if(e){S.rxEnd=S.rxEnd||{};S.rxEnd[e[0]]=1;const used=S.rxEndG||[];const other=GROUPS.filter(g=>!(R.champs||[]).includes(g.id)&&!used.includes(g.id)).sort((a,b)=>b.share-a.share)[0]||GROUPS[0];S.rxEndG=[...used,other.id];rivalReact('endorse',`a counter-endorsement push with ${other.n.toLowerCase()}`,`After your endorsement, ${last} went looking for one of their own.`,[other.id],1.2);return}}
 function openRivalAnswer(){const X=S.rxOpen;if(!X){toast('That story has already moved on.');return}const R=S.rival;closePanel();
   openModal(`${R.name} · ${rivalStyle().n}`,'How do you answer?',`<p><b>${R.name}</b> went after you with ${X.head}.</p><div class="choices">
    <button class="choice" data-rxa="press"><b>Hit back at a press conference</b><small>${oddsTag('cha',0.42,[R])} · works: undo most of the damage · fails: the story grows</small></button>
@@ -5848,7 +5848,7 @@ function actionsPerMonth(){return 4+actionBonus()}
   const mult=1+Math.max(0,mskill('learn')-8)*0.04;const r=_gx.call(this,k,a*mult);
   try{const b1=actionBonus();if(b1>b0){S.slots+=b1-b0;refreshHUD();notify('good',`You now get ${4+b1} actions a month`,`Your Inside Game reached ${mskill('intr')}. You know how City Hall really works, so you get more done. The extra action is yours this month too.`,null,{ttl:12})}}catch(e){}return r}}
 // Star Power: name recognition grows faster
-{const _ru=recUp;recUp=function(v){return _ru.call(this,v>0?v*clamp(1+(mskill('cha')-8)*0.04,0.75,1.5):v)}}
+{const _ru=recUp;recUp=function(v){return _ru.call(this,v>0?v*clamp(1+Math.max(0,mskill('cha')-8)*0.04,1,1.5):v)}}
 // a new game starts with the right number of actions
 document.addEventListener('click',e=>{if(!e.target.closest('#cGo'))return;setTimeout(()=>{try{if(S&&S.started&&$('start').hidden){S.slots=actionsPerMonth();refreshHUD();save()}}catch(err){}},350)},true);
 // character creation shows what your skills buy

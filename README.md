@@ -10,6 +10,8 @@ A city-management game set in Memphis, Tennessee. You play the mayor. You handle
 - **What the property tax costs people.** The Budget office shows the yearly tax on a typical home in each district. Moving the tax slider shows the change per district, what renters pay per month, and what the city gains or loses (in officers or miles of paving).
 - **Where the money went.** A monthly report (Budget hub, and a notification at each month's end) shows money in by source, money out by department, programs, bonds and upkeep, your decisions that spent reserve money, and what changed in city services. Flip back through past months.
 
+- **Full-term playtest fixes.** A sitting mayor at 53–55% approval was losing re-election by double digits, so incumbents now get a small edge instead of a penalty (and the rival's core groups count a little less against you). The opponent's comebacks are 40% softer, the "courting a group" comeback only starts in the final eight months, and the counter-endorsement comeback no longer repeats on the same group. A low Star Power no longer slows name recognition (a high one still speeds it up). The bar charts in the money report now show.
+
 ## v26.39: See the money and who it affects
 
 - Every decision card has a **"$ See the money and who it affects"** button. For each option it shows:
