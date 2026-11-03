@@ -4,6 +4,10 @@ A city-management game set in Memphis, Tennessee. You play the mayor. You handle
 
 **Play it:** https://erndae.github.io/Bluff-city-mayor/ (once GitHub Pages is turned on, see below)
 
+## v26.48: Every pop-up opens into details
+
+- Tapping any notification at the bottom of the screen now opens something. Action results ("Met a community group · Approval +0.3") open the full receipt of what changed. Everything else opens a detail view with the full message, "Go deeper" links to the people, groups, districts, skills, money or campaign it mentions, and your 15 most recent notifications so you can catch ones you missed.
+
 ## v26.47: Go to a place without hunting on the map
 
 - A **map-pin button** next to the phone (and a "Go to a place" tile in the City hub) opens **Go to**: one tap to your home, your office, City Hall, Campaign HQ, or wherever you are now; a "Where you're needed" list of places with decisions waiting; every landmark; police, fire, hospitals and schools; all seven council districts with your approval in each; and Memphis neighborhoods. A search box filters the list. The camera flies there and the place opens.

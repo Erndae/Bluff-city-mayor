@@ -342,6 +342,7 @@ canvas.confetti{position:fixed;inset:0;z-index:100000;pointer-events:none}
 .hud-top .stat small.hvote,.hvote{display:inline-block;margin-left:6px;font-size:12.5px;font-weight:700;border:1px solid currentColor;border-radius:6px;padding:1px 6px;cursor:pointer;white-space:nowrap}.hud-top .stat small.hvote[hidden],.hvote[hidden]{display:none}
 .placeq{width:100%;box-sizing:border-box;padding:10px 12px;border-radius:8px;border:1px solid var(--line);background:var(--panel2,#0f1a24);color:var(--text);font-size:16px;margin-bottom:10px}
 .placegrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px;margin-bottom:6px}.placebtn{display:flex;gap:10px;align-items:center;text-align:left;border:1px solid var(--line);border-radius:10px;background:rgba(255,255,255,.03);color:var(--text);padding:10px;cursor:pointer;font:inherit;min-width:0}.placebtn:hover{border-color:var(--amber)}.placebtn b{display:block;font-size:14px;line-height:1.2}.placebtn small{display:block;color:var(--muted);font-size:12px;line-height:1.25;margin-top:2px}.plic{flex:none;width:30px;height:30px;border-radius:8px;display:grid;place-items:center;background:rgba(242,169,59,.15);color:var(--amber);font-weight:800}.placebtn[data-need]{border-color:var(--bad)}.placebtn[data-need] .plic{background:rgba(232,100,79,.2);color:var(--bad)}.plh{margin:12px 0 6px;font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.notelog{display:flex;flex-direction:column;gap:2px;max-height:260px;overflow:auto}.nlrow{display:flex;gap:10px;text-align:left;background:none;border:0;border-bottom:1px solid var(--line);color:var(--text);padding:7px 2px;font:inherit;font-size:13.5px;cursor:pointer}.nlrow small{flex:none;width:76px;color:var(--muted)}
 .adgain{display:block;width:100%;text-align:center;font-size:11px;font-weight:600;color:var(--good);margin-top:1px}
 #start{overflow-x:hidden;overflow-y:auto;touch-action:pan-y}.startbox{min-width:0;max-width:min(600px,100%);box-sizing:border-box}.startbox *{min-width:0}.create select,.create input{max-width:100%;width:100%;box-sizing:border-box;text-overflow:ellipsis}.create .tpick,.create .tpick>*{max-width:100%;box-sizing:border-box}
 @media (max-width:640px){.startbox{margin-left:0}#start{padding-left:max(16px,env(safe-area-inset-left,0px))}}
@@ -694,7 +695,7 @@ details.analysis{margin-top:6px}details.analysis summary{cursor:pointer;color:va
     <button class="btn primary" data-act="pause" id="bPlay"><svg class="ico" viewBox="0 0 12 12" aria-hidden="true"><path d="M3.2 1.6v8.8l7.2-4.4z" fill="currentColor"/></svg> Resume <kbd>Space</kbd></button>
   </nav>
   <div class="status" id="status">Loading map…</div>
-  <div class="credit"><span class="ver" id="verTag">v26.47</span></div>
+  <div class="credit"><span class="ver" id="verTag">v26.48</span></div>
   <div class="tip" id="tip" hidden></div>
   <div class="toast" id="toast" role="status"></div>
   <section class="panel" id="panel" hidden aria-live="polite">
@@ -722,7 +723,7 @@ details.analysis{margin-top:6px}details.analysis summary{cursor:pointer;color:va
         <button class="btn" data-music-open>Music &amp; volume</button>
       </div>
       <div id="slotList" hidden></div>
-      <p class="note startv">Version <b class="ver" id="verStart">v26.47</b></p>
+      <p class="note startv">Version <b class="ver" id="verStart">v26.48</b></p>
     </div>
     <div class="startbox create" id="create" hidden>
       <h2>Create your mayor</h2>
@@ -1531,7 +1532,7 @@ function enact(s,p){DIVS.forEach(d=>{s.enacted[d.id]=p.divs[d.id];s.ratio[d.id]=
 // Voter groups. Each has a share of residents, turnout, home districts, concerns and an approval of you.
 // Citywide approval is the turnout-weighted average of the groups; each council district's approval comes from the groups that live there.
 // Shares, district mix and turnout are modeled, loosely grounded in Memphis demographics; they are not survey data.
-const VERSION='v26.47';
+const VERSION='v26.48';
 const GROUPS=[
  {id:'working',sh:'Working families',n:'Working families',ic:'⚒︎',c:'#f2a93b',share:24,turn:.5,start:56,w:{jobs:1,safety:.8,transit:.5},
   d:'Hourly workers in logistics, warehouses, health care and service jobs. The biggest bloc in the city.',dm:{1:1.1,2:.8,3:1.3,4:1.2,5:.6,6:1.2,7:1.1}},
@@ -6534,6 +6535,29 @@ document.addEventListener('click',e=>{const b=e.target.closest('#bPlaces');if(!b
 // and a "Go to" tile in the City hub
 {const _om=openModal;openModal=function(...a){const r=_om.apply(this,a);try{const n=NAV.cur&&NAV.depth>0?NAV.cur.name:'';if(n==='flow_city'){const g=$('mBody').querySelector('.flow-grid');if(g&&!g.querySelector('[data-placesopen]'))g.insertAdjacentHTML('afterbegin','<button class="flow-tile" data-placesopen="1"><b>Go to a place</b><span>Home, City Hall, landmarks, districts and neighborhoods</span></button>')}}catch(e){}return r}}
 document.addEventListener('click',e=>{const b=e.target.closest('[data-placesopen]');if(!b||!S)return;e.preventDefault();e.stopImmediatePropagation();S.placeQ='';openPlaces()},true);
+// ---------- every pop-up opens into details ----------
+function noteStrip(t){return String(t||'').replace(/<[^>]+>/g,'')}
+function noteRelated(txt){const R=[];const t=String(txt);
+  S.council.forEach((m,i)=>{if(t.includes(m.name)||t.includes(m.name.split(' ').pop()+' '))R.push([`${m.name}'s page`,`openCharacter(${i})`])});
+  GROUPS.forEach(g=>{if(t.toLowerCase().includes(g.n.toLowerCase())||t.includes(g.sh))R.push([`${g.n}: what they want`,`openGroup('${g.id}')`])});
+  (t.match(/District (\d)/g)||[]).forEach(x=>{const d=+x.slice(-1);R.push([`District ${d}`,`openDistrict(${d},false)`])});
+  if(SKILLS.some(k=>t.includes(k.n)))R.push(['Your skills','openMayor()']);
+  if(/reserve|\$[\d.]+M/.test(t)&&inOffice())R.push(['Where the money went','openMoneyMonth()']);
+  if(/campaign|\bads?\b|poll|donor|fundrais|vote/i.test(t)&&S.camp)R.push(['Campaign HQ','openHQ()']);
+  if(/action/i.test(t))R.push(['What you can do now','openBank()']);
+  const seen=new Set();return R.filter(([n])=>!seen.has(n)&&seen.add(n)).slice(0,5)}
+function openNoteDetail(e){closePanel();const L=(S.noteLog||[]).slice().reverse();const rel=noteRelated(e.t+' '+e.x);
+  openModal(`${e.d}${e.place?' · '+e.place:''}`,noteStrip(e.t).replace(/[.·]\s*$/,''),`${e.x?`<p style="font-size:16px">${e.x}</p>`:''}
+   ${e.detail?`<div class="facts">${e.detail}</div>`:''}
+   ${rel.length?`<div class="facts"><h4>Go deeper</h4><div class="choices">${rel.map(([n,f])=>`<button class="choice" data-notego="${f.replace(/"/g,'&quot;')}"><b>${n}</b></button>`).join('')}</div></div>`:''}
+   <div class="facts"><h4>Recent notifications</h4><div class="notelog">${L.slice(0,15).map((x,i)=>`<button class="nlrow" data-notelog="${(S.noteLog.length-1-i)}"><small>${x.d}</small><span>${noteStrip(x.t)}</span></button>`).join('')||'<p class="note">Nothing yet.</p>'}</div></div>
+   <div class="row"><button class="btn primary" data-act="close">Close</button><button class="btn" data-act="ledger">Full ledger</button></div>`,true)}
+openNoteDetail=navWrap('openNoteDetail',openNoteDetail);
+const NOTE_GO={openCharacter,openGroup,openDistrict,openMayor,openMoneyMonth,openHQ,openBank};
+document.addEventListener('click',e=>{const b=e.target.closest('[data-notego]');if(!b||!S)return;e.preventDefault();e.stopImmediatePropagation();const m=b.dataset.notego.match(/^(\w+)\((.*)\)$/);if(!m||!NOTE_GO[m[1]])return;let args=[];try{args=JSON.parse('['+m[2].replace(/'/g,'"')+']')}catch(err){}hideViews();try{(window[m[1]]||NOTE_GO[m[1]])(...args)}catch(err){console.warn(err)}},true);
+document.addEventListener('click',e=>{const b=e.target.closest('[data-notelog]');if(!b||!S)return;e.preventDefault();e.stopImmediatePropagation();const x=(S.noteLog||[])[+b.dataset.notelog];if(!x)return;NAV.busy=true;try{hideViews();openNoteDetail(x)}finally{NAV.busy=false}},true);
+{const _nt=notify;notify=function(kind,title,text,act,opts){try{if(S&&S.started){S.noteLog=S.noteLog||[];const e={k:kind,t:noteStrip(title),x:noteStrip(text),d:dateStr()};if(window.__noteDetail){e.detail=window.__noteDetail;window.__noteDetail=null}
+  S.noteLog.push(e);if(S.noteLog.length>40)S.noteLog.splice(0,S.noteLog.length-40);if(!act){const pre=window.__noteAct;window.__noteAct=null;act=pre||(()=>openNoteDetail(e))}}}catch(err){}return _nt.call(this,kind,title,text,act,opts)}}
 function openLedger(){const L=S.log||[];openPanel('Everything that has happened, newest first','Ledger',L.length?`<div class="logl">${L.map(x=>`<div><span>${x.d}</span><p style="margin:0">${x.t}</p></div>`).join('')}</div>`:'<p class="note">Nothing yet. Start the clock with Space or ▶.</p>','ledger')}
 function openPolicies(){const ks=Object.keys(POLICIES);
   openPanel('Ongoing programs you control','Your initiatives',`<p>Mid-year, these are paid from the reserve fund. In April they go into the budget you send the council.</p>
@@ -7162,7 +7186,7 @@ window.claude?.hot?.ready?window.claude.hot.ready(start):start(window.claude?.ho
 </script>
 <script src="home-renderer.js?v=26.11"></script>
 <script src="home-interior.js?v=26.43"></script>
-<script src="city-life.js?v=26.31"></script>
+<script src="city-life.js?v=26.48"></script>
 <script src="city-flow.js?v=26.31"></script>
 <script src="music.js?v=26.43"></script>
 <script src="room-stories.js?v=26.45"></script>
