@@ -4,6 +4,22 @@ A city-management game set in Memphis, Tennessee. You play the mayor. You handle
 
 **Play it:** https://erndae.github.io/Bluff-city-mayor/ (once GitHub Pages is turned on, see below)
 
+## v26.52: The economy screen, an Actions button and smaller project markers
+
+- **The economy, in one place.** Open it from Take action or the Budget screen. It shows the jobs climate, revenue, tax rate, population and reserve, then every lever the mayor actually has, grouped by Wages, Taxes and tax breaks, Jobs and business, and Programs. Each one shows its cost and today's projected council vote, with a button to propose it.
+- **New wage and jobs ordinances:**
+  - A $17 wage floor for city contractors.
+  - $20 an hour for city workers.
+  - Hire Memphis local hiring.
+  - A small-business storefront grant fund.
+  - Opportunity-zone tax breaks.
+  - Tougher PILOT rules.
+- **Tennessee preemption.** State law preempts local rules on private employment, so Memphis can't set a citywide minimum wage. The screen says so. The city's own workers are exempt from that law. The contractor wage rule notes that the state could challenge it.
+- **An Actions button** in the bottom bar opens Take action from anywhere.
+- **Smaller project markers.** Construction projects show only the small progress circle with a percentage. The large "Crews at work" picture is gone from the map but still appears in the project's own panel.
+- **More pips fit.** The Actions meter shrinks its pips when you have more than 4 actions a month.
+- Merges Codex v26.51 (neighborhood letters and assistant briefings).
+
 ## v26.50: Fund police, fire, hospitals and schools as a group
 
 - Each list of police stations, fire stations, hospitals and schools now starts with **Fund them as a group**: every paid upgrade for that type (overtime patrols, station repairs, new fire equipment, smoke alarm drives, violence intervention teams, health fairs, job training, tutoring, safe routes, school repair money, summer jobs) can be done for **all of them** or only **the ones that need it** (low readiness, morale or partnership, or a reported problem). Each button shows the total cost and, for $1M or more, the likely council vote, asked once for the whole package. Places done recently are skipped, the reserve can't drop below $20M, and the district can still turn down school repair money (nothing is spent on those).

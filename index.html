@@ -346,6 +346,8 @@ canvas.confetti{position:fixed;inset:0;z-index:100000;pointer-events:none}
 @media (max-width:480px){.hud-top{column-gap:8px}.hud-top .hudphone,.hud-top .brand{margin-right:0!important}}
 .bellct{position:absolute;top:-6px;right:-6px;min-width:16px;height:16px;border-radius:8px;background:var(--bad);color:#fff;font:700 10px/16px var(--f-body);text-align:center;padding:0 3px}.bellct[hidden]{display:none}.notelog.big{max-height:none}.nlrow span{display:flex;flex-direction:column;gap:2px;min-width:0}.nlrow em{font-style:normal;color:var(--muted);font-size:12.5px}
 .bulkbox{border-color:var(--amber)}.bulkrow{border-top:1px solid var(--line);padding:9px 0}.bulkrow small{display:block;color:var(--muted);font-size:13px;margin:2px 0 6px}.bulkrow .row{gap:6px;flex-wrap:wrap}.bulkrow .btn{flex:1 1 140px}
+.econcard{border:1px solid var(--line);border-radius:10px;padding:10px 12px;margin-bottom:8px}.econcard p{margin:4px 0;font-size:14px}.econcard>small{display:block;color:var(--muted);font-size:12.5px}.econcard .row{align-items:center;gap:8px;margin-top:6px;flex-wrap:wrap}.econcard.passed{border-color:var(--good)}
+#hSlots.many .act-p i{width:12px;height:12px;margin-right:2px}#hSlots.many .act-r{display:none}
 .adgain{display:block;width:100%;text-align:center;font-size:11px;font-weight:600;color:var(--good);margin-top:1px}
 #start{overflow-x:hidden;overflow-y:auto;touch-action:pan-y}.startbox{min-width:0;max-width:min(600px,100%);box-sizing:border-box}.startbox *{min-width:0}.create select,.create input{max-width:100%;width:100%;box-sizing:border-box;text-overflow:ellipsis}.create .tpick,.create .tpick>*{max-width:100%;box-sizing:border-box}
 @media (max-width:640px){.startbox{margin-left:0}#start{padding-left:max(16px,env(safe-area-inset-left,0px))}}
@@ -698,7 +700,7 @@ details.analysis{margin-top:6px}details.analysis summary{cursor:pointer;color:va
     <button class="btn primary" data-act="pause" id="bPlay"><svg class="ico" viewBox="0 0 12 12" aria-hidden="true"><path d="M3.2 1.6v8.8l7.2-4.4z" fill="currentColor"/></svg> Resume <kbd>Space</kbd></button>
   </nav>
   <div class="status" id="status">Loading map…</div>
-  <div class="credit"><span class="ver" id="verTag">v26.51</span></div>
+  <div class="credit"><span class="ver" id="verTag">v26.52</span></div>
   <div class="tip" id="tip" hidden></div>
   <div class="toast" id="toast" role="status"></div>
   <section class="panel" id="panel" hidden aria-live="polite">
@@ -726,7 +728,7 @@ details.analysis{margin-top:6px}details.analysis summary{cursor:pointer;color:va
         <button class="btn" data-music-open>Music &amp; volume</button>
       </div>
       <div id="slotList" hidden></div>
-      <p class="note startv">Version <b class="ver" id="verStart">v26.51</b></p>
+      <p class="note startv">Version <b class="ver" id="verStart">v26.52</b></p>
     </div>
     <div class="startbox create" id="create" hidden>
       <h2>Create your mayor</h2>
@@ -1535,7 +1537,7 @@ function enact(s,p){DIVS.forEach(d=>{s.enacted[d.id]=p.divs[d.id];s.ratio[d.id]=
 // Voter groups. Each has a share of residents, turnout, home districts, concerns and an approval of you.
 // Citywide approval is the turnout-weighted average of the groups; each council district's approval comes from the groups that live there.
 // Shares, district mix and turnout are modeled, loosely grounded in Memphis demographics; they are not survey data.
-const VERSION='v26.51';
+const VERSION='v26.52';
 const GROUPS=[
  {id:'working',sh:'Working families',n:'Working families',ic:'⚒︎',c:'#f2a93b',share:24,turn:.5,start:56,w:{jobs:1,safety:.8,transit:.5},
   d:'Hourly workers in logistics, warehouses, health care and service jobs. The biggest bloc in the city.',dm:{1:1.1,2:.8,3:1.3,4:1.2,5:.6,6:1.2,7:1.1}},
@@ -2028,6 +2030,18 @@ function applyGroupReact(grp,label,scale){if(!grp||!S.groups)return;scale=scale|
 // ======================= MAYOR'S ACTIONS =======================
 // Things you can start yourself, any time, instead of waiting for problems to come to you.
 const PROPOSALS=[
+ {id:'minwage',title:'$17 minimum wage for city contractors',at:'cityhall',econ:'wages',lean:{labor:8,jobs:-2,fiscal:-5},grp:{working:5,labor:6,renters:3,faith:1,business:-5,owners:-1},fx:{mood:0.5},cost:1.2,
+  d:'Tennessee law bars cities from setting a citywide minimum wage or other job rules for private employers. This is the furthest Memphis can push: companies with a city contract must pay at least $17 an hour. Contract prices rise about $1.2M a year, and Nashville could challenge it under the state preemption law.'},
+ {id:'livingwage',title:'Raise every city worker to at least $20 an hour',at:'cityhall',econ:'wages',lean:{labor:9,fiscal:-6},grp:{labor:8,working:3,renters:1,owners:-2,business:-1},fx:{mood:0.4},cost:5,
+  d:'Lifts the pay floor for sanitation crews, parks staff, 911 call-takers and other city employees to $20. Helps hiring and keeps workers from leaving for the suburbs. About $5M a year.'},
+ {id:'hirelocal',title:'Hire Memphis: local hiring on city-funded projects',at:'cityhall',econ:'jobs',lean:{labor:5,jobs:3,fiscal:-1},grp:{working:4,labor:3,renters:2,business:-2},fx:{jobs:0.6},
+  d:'Contractors on city-funded projects must hire a share of their workers from Memphis, with priority for neighborhoods near the work.'},
+ {id:'smallbiz',title:'Small-business grant fund for neighborhood storefronts',at:'cityhall',econ:'jobs',lean:{jobs:6,fiscal:-3},grp:{business:5,working:2,young:2,owners:1},fx:{jobs:0.8},cost:1,
+  d:'Grants of up to $25,000 for storefront repairs, equipment and hiring in neighborhood business districts. About $1M a year.'},
+ {id:'oppzone',title:'Tax breaks for employers who open in low-income neighborhoods',at:'cityhall',econ:'jobs',lean:{jobs:7,fiscal:-3},grp:{business:4,working:3,renters:2,owners:-1},fx:{jobs:1,revenue:-2},
+  d:'Property tax breaks for companies that bring jobs to neighborhoods with high unemployment. Costs about $2M a year in revenue.'},
+ {id:'pilotrules',title:'Tighten tax breaks (PILOTs) for big companies',at:'cityhall',econ:'taxes',lean:{fiscal:4,labor:3,jobs:-4},grp:{working:3,renters:2,labor:2,business:-6},fx:{revenue:3,jobs:-0.6},
+  d:'New payment-in-lieu-of-taxes deals must pay living wages and hit hiring targets, or the break shrinks. Brings in about $3M a year, but some companies may look at the suburbs.'},
  {id:'dc_fast',title:'Fast-track permits for new data centers',at:'xai',lean:{jobs:10,fiscal:6,oversight:-6},
   grp:{business:8,labor:4,working:2,owners:1,renters:-6,faith:-4,young:-5,parents:-3},fx:{jobs:1.5,revenue:4},local:-8,
   d:'Speed up permits and utility hookups for data centers like xAI\'s Colossus. The Chamber and many officials back the tax revenue and construction jobs; neighbors in Southwest Memphis have protested the site\'s gas turbines and air quality.'},
@@ -2236,7 +2250,6 @@ function renderProjects(){if(!mapReady||!map)return;if(!map.getSource('projects'
   (S.projects||[]).filter(p=>p.stage!=='rejected').forEach(P=>{const T=PTYPES[P.type],el=document.createElement('button');const iss=S.events.filter(e=>e.kind==='projx'&&e.pid===P.id).length;
     el.className='projpin '+P.stage;el.title=P.name;el.setAttribute('aria-label',P.name);const pct=Math.round(P.progress*100),R=13,Cc=2*Math.PI*R;
     el.innerHTML=P.stage==='done'?`<span class="pi" style="background:var(--good)">✓</span><span class="pn">${T.ic} ${P.name}</span>`:`<svg width="34" height="34" viewBox="0 0 34 34"><circle cx="17" cy="17" r="15" fill="#0d1822" stroke="${T.c}" stroke-width="1.5"/><circle cx="17" cy="17" r="${R}" fill="none" stroke="rgba(255,255,255,.12)" stroke-width="3"/><circle cx="17" cy="17" r="${R}" fill="none" stroke="#f2a93b" stroke-width="3" stroke-dasharray="${(Cc*pct/100).toFixed(1)} ${Cc.toFixed(1)}" transform="rotate(-90 17 17)"/><text x="17" y="21.5" text-anchor="middle" font-size="13" fill="${T.c}">${T.ic}</text></svg>${iss?'<b class="pbad">!</b>':''}<span class="pn">${P.stage==='council'?'Awaiting council':P.stage==='design'?'Out to bid':pct+'%'} · ${P.name}</span>`;
-    el.innerHTML=(window.BCLife?.projectArt(P)||'')+el.innerHTML;
     el.addEventListener('click',ev=>{ev.stopPropagation();openProject(P.id)});projMarkers.push(new maplibregl.Marker({element:el,anchor:'center'}).setLngLat([P.site.lon,P.site.lat]).addTo(map))});
   const show=S.layers.bld!==false;projMarkers.forEach(m=>m.getElement().style.display=show?'':'none')}
 function projStageLabel(P){if(P.paused)return'Paused · '+Math.round(P.progress*100)+'% built';return P.stage==='council'?`Awaiting council vote (~${daysLeftWord(P.due)})`:P.stage==='design'?'Out to bid':P.stage==='build'?`Under construction · ${Math.round(P.progress*100)}%`:P.stage==='done'?'Finished':'Rejected by the council'}
@@ -6600,6 +6613,31 @@ document.addEventListener('click',e=>{const b=e.target.closest('[data-bulk]');if
 {const _om=openModal;openModal=function(...a){const r=_om.apply(this,a);try{const n=NAV.cur&&NAV.depth>0?NAV.cur.name:'';if(n==='openCivicList'){const b=$('mBody');const t=(NAV.cur.a&&NAV.cur.a[0])||'police';if(b&&!b.querySelector('#bulkfund')){const sel=b.querySelector('.lsel');(sel||b.firstElementChild).insertAdjacentHTML('afterend',bulkHTML(t))}}
   if(n==='openActions'&&inOffice()){const b=$('mBody');const h=[...b.querySelectorAll('.facts h4')].find(x=>/Police, fire, hospitals and schools/.test(x.textContent));if(h&&!b.querySelector('[data-bulkgo]'))h.parentElement.insertAdjacentHTML('beforeend',`<p class="note" style="margin:8px 0 4px">Or fund them as a group:</p><div class="row">${Object.keys(CIV).map(k=>`<button class="btn" data-bulkgo="${k}">Fund ${CIV_PLURAL[k]}</button>`).join('')}</div>`)}}catch(e){console.warn(e)}return r}}
 document.addEventListener('click',e=>{const b=e.target.closest('[data-bulkgo]');if(!b||!S)return;e.preventDefault();e.stopImmediatePropagation();goSection(()=>openCivicList(b.dataset.bulkgo),'Fund ')},true);
+// ---------- the city's economy in one place ----------
+function econCard(p){const passed=S.laws&&S.laws[p.id],pend=S.pendingOrd&&S.pendingOrd.id===p.id,cd=cdLeft('ord_'+p.id,6);let yes=0;try{yes=propRows(p).filter(r=>r.yes).length}catch(e){}
+  const sup=GROUPS.filter(g=>(p.grp[g.id]||0)>=2).map(g=>g.sh).join(', '),opp=GROUPS.filter(g=>(p.grp[g.id]||0)<=-2).map(g=>g.sh).join(', ');
+  const money=[p.cost?`−${fmtM(p.cost)} a year`:'',(p.fx||{}).revenue?`${p.fx.revenue>0?'+':'−'}${fmtM(Math.abs(p.fx.revenue))} a year in revenue`:'',p.tax?`Tax rate ${p.tax>0?'+':'−'}${Math.abs(p.tax*100).toFixed(0)}¢`:'',(p.fx||{}).jobs?`Jobs climate ${p.fx.jobs>0?'▲':'▼'}`:''].filter(Boolean).join(' · ');
+  return`<div class="econcard${passed?' passed':''}"><b>${passed?'✓ ':''}${p.title}</b><p>${p.d||''}</p><small>${money?money+' · ':''}For: ${sup||'nobody much'} · Against: ${opp||'nobody much'}</small>
+   ${passed?'<small class="pos">It\'s law.</small>':`<div class="row"><button class="btn primary" data-act="propose" data-id="${p.id}" ${pend||cd||(S.pendingOrd&&!pend)?'disabled':''}>${pend?'Before the council now':cd?`Failed · again in ${cd} mo`:S.pendingOrd?'One ordinance at a time':'Propose it'}</button><small class="note">${pend?'':`Today about ${yes} of 13 would vote yes (7 needed)`}</small></div>`}</div>`}
+function openEconomy(){if(!inOffice()){toast('Only the mayor can change city law. Win first.');return}closePanel();const P=k=>PROPOSALS.filter(p=>p.econ===k||(k==='taxes'&&p.id==='taxcut')||(k==='jobs'&&p.id==='dc_fast'));
+  const rev=annualRevenue(S),pr=(typeof popRate==='function'?popRate():0);
+  openModal(`Jobs climate ${Math.round(S.met.jobs)} · revenue ${fmtM(rev)} a year`,'The economy',`<div class="facts"><div class="opl"><div><span>Jobs climate</span><b>${Math.round(S.met.jobs)} / 100</b></div><div><span>City revenue</span><b>${fmtM(rev)} a year</b></div><div><span>Property tax rate</span><b>$${S.taxRate.toFixed(2)} per $100</b></div><div><span>Population</span><b>${(S.popn||605200).toLocaleString()}</b></div><div><span>Reserve</span><b>${fmtM(S.reserve)}</b></div></div>
+   <p class="note">The mayor can't set prices or private wages, and Tennessee law takes over the whole field of private job rules, so cities can't set a citywide minimum wage. That law exempts the city's own workers. What you can change: the property tax (in the April budget), what the city pays its own workers and contractors, tax breaks, local hiring and programs that train and hire Memphians. Ordinances need 7 council votes, one at a time.</p></div>
+   <h4 class="plh">Wages</h4>${P('wages').map(econCard).join('')}
+   <h4 class="plh">Taxes and tax breaks</h4><div class="econcard"><b>Change the property tax rate</b><p>Set in your budget each April. The Budget office shows what each district's typical homeowner and renters would pay.</p><div class="row"><button class="btn" data-act="budget">Open the Budget office</button><small class="note">${S.m===4?'Budget season is now.':'Next chance: April.'}</small></div></div>${P('taxes').map(econCard).join('')}
+   <h4 class="plh">Jobs and business</h4>${P('jobs').map(econCard).join('')}
+   <h4 class="plh">Programs you can turn on</h4><div class="econcard"><p>Summer youth jobs, MATA service and other ongoing programs cost money every year but don't need a council vote.</p><div class="row"><button class="btn" data-act="policies">City programs</button></div></div>`,true)}
+openEconomy=navWrap('openEconomy',openEconomy);
+document.addEventListener('click',e=>{const b=e.target.closest('[data-econ]');if(!b||!S)return;e.preventDefault();e.stopImmediatePropagation();if(modalOpen){onClose=null;closeModal()}openEconomy()},true);
+{const _om=openModal;openModal=function(...a){const r=_om.apply(this,a);try{const n=NAV.cur&&NAV.depth>0?NAV.cur.name:'';const b=$('mBody');if(!b||!inOffice())return r;
+  if(n==='flow_budget'){const g=b.querySelector('.flow-grid');if(g&&!g.querySelector('[data-econ]'))g.insertAdjacentHTML('afterbegin','<button class="flow-tile" data-econ="1"><b>The economy</b><span>Wages, taxes, tax breaks and jobs</span></button>')}
+  if(n==='openActions'&&!b.querySelector('[data-econ]')){const h=[...b.querySelectorAll('.facts h4')].find(x=>/Propose an ordinance/.test(x.textContent));if(h)h.insertAdjacentHTML('afterend','<div class="row" style="margin:4px 0 8px"><button class="btn primary" data-econ="1">The economy: wages, taxes and jobs</button></div>')}}catch(e){}return r}}
+// ---------- an Actions button in the bottom bar ----------
+function ensureActsBtn(){const bar=document.querySelector('nav.actions');if(bar&&!bar.querySelector('[data-actsgo]')){const play=$('bPlay');const btn=document.createElement('button');btn.className='btn';btn.dataset.actsgo='1';btn.textContent='Actions';if(play&&play.parentNode===bar)bar.insertBefore(btn,play);else bar.appendChild(btn)}}
+{const _rh=refreshHUD;refreshHUD=function(...a){const r=_rh.apply(this,a);try{ensureActsBtn()}catch(e){}return r}}setTimeout(()=>{try{ensureActsBtn()}catch(e){}},0);
+document.addEventListener('click',e=>{const b=e.target.closest('[data-actsgo]');if(!b||!S||!S.started)return;e.preventDefault();e.stopImmediatePropagation();if(modalOpen){onClose=null;closeModal()}closePanel();openActions()},true);
+// the actions meter fits even with 6 or 7 actions
+{const _rb=renderBank;renderBank=function(...a){const r=_rb.apply(this,a);try{const el=$('hSlots');if(el)el.classList.toggle('many',el.querySelectorAll('.act-p i').length>4)}catch(e){}return r}}
 function openLedger(){const L=S.log||[];openPanel('Everything that has happened, newest first','Ledger',L.length?`<div class="logl">${L.map(x=>`<div><span>${x.d}</span><p style="margin:0">${x.t}</p></div>`).join('')}</div>`:'<p class="note">Nothing yet. Start the clock with Space or ▶.</p>','ledger')}
 function openPolicies(){const ks=Object.keys(POLICIES);
   openPanel('Ongoing programs you control','Your initiatives',`<p>Mid-year, these are paid from the reserve fund. In April they go into the budget you send the council.</p>
