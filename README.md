@@ -4,6 +4,11 @@ A city-management game set in Memphis, Tennessee. You play the mayor. You handle
 
 **Play it:** https://erndae.github.io/Bluff-city-mayor/ (once GitHub Pages is turned on, see below)
 
+## v26.50: Fund police, fire, hospitals and schools as a group
+
+- Each list of police stations, fire stations, hospitals and schools now starts with **Fund them as a group**: every paid upgrade for that type (overtime patrols, station repairs, new fire equipment, smoke alarm drives, violence intervention teams, health fairs, job training, tutoring, safe routes, school repair money, summer jobs) can be done for **all of them** or only **the ones that need it** (low readiness, morale or partnership, or a reported problem). Each button shows the total cost and, for $1M or more, the likely council vote, asked once for the whole package. Places done recently are skipped, the reserve can't drop below $20M, and the district can still turn down school repair money (nothing is spent on those).
+- "Take action" has quick buttons: Fund police stations, Fund fire stations, Fund hospitals, Fund schools. Individual funding is still on each place's page.
+
 ## v26.49: Map buttons below the top bar, a notifications bell, and tap Actions to act
 
 - On phones, the zoom, whole-city and find-me buttons now sit just below the top bar instead of hiding behind it.

@@ -345,6 +345,7 @@ canvas.confetti{position:fixed;inset:0;z-index:100000;pointer-events:none}
 .notelog{display:flex;flex-direction:column;gap:2px;max-height:260px;overflow:auto}.nlrow{display:flex;gap:10px;text-align:left;background:none;border:0;border-bottom:1px solid var(--line);color:var(--text);padding:7px 2px;font:inherit;font-size:13.5px;cursor:pointer}.nlrow small{flex:none;width:76px;color:var(--muted)}
 @media (max-width:480px){.hud-top{column-gap:8px}.hud-top .hudphone,.hud-top .brand{margin-right:0!important}}
 .bellct{position:absolute;top:-6px;right:-6px;min-width:16px;height:16px;border-radius:8px;background:var(--bad);color:#fff;font:700 10px/16px var(--f-body);text-align:center;padding:0 3px}.bellct[hidden]{display:none}.notelog.big{max-height:none}.nlrow span{display:flex;flex-direction:column;gap:2px;min-width:0}.nlrow em{font-style:normal;color:var(--muted);font-size:12.5px}
+.bulkbox{border-color:var(--amber)}.bulkrow{border-top:1px solid var(--line);padding:9px 0}.bulkrow small{display:block;color:var(--muted);font-size:13px;margin:2px 0 6px}.bulkrow .row{gap:6px;flex-wrap:wrap}.bulkrow .btn{flex:1 1 140px}
 .adgain{display:block;width:100%;text-align:center;font-size:11px;font-weight:600;color:var(--good);margin-top:1px}
 #start{overflow-x:hidden;overflow-y:auto;touch-action:pan-y}.startbox{min-width:0;max-width:min(600px,100%);box-sizing:border-box}.startbox *{min-width:0}.create select,.create input{max-width:100%;width:100%;box-sizing:border-box;text-overflow:ellipsis}.create .tpick,.create .tpick>*{max-width:100%;box-sizing:border-box}
 @media (max-width:640px){.startbox{margin-left:0}#start{padding-left:max(16px,env(safe-area-inset-left,0px))}}
@@ -697,7 +698,7 @@ details.analysis{margin-top:6px}details.analysis summary{cursor:pointer;color:va
     <button class="btn primary" data-act="pause" id="bPlay"><svg class="ico" viewBox="0 0 12 12" aria-hidden="true"><path d="M3.2 1.6v8.8l7.2-4.4z" fill="currentColor"/></svg> Resume <kbd>Space</kbd></button>
   </nav>
   <div class="status" id="status">Loading map…</div>
-  <div class="credit"><span class="ver" id="verTag">v26.49</span></div>
+  <div class="credit"><span class="ver" id="verTag">v26.50</span></div>
   <div class="tip" id="tip" hidden></div>
   <div class="toast" id="toast" role="status"></div>
   <section class="panel" id="panel" hidden aria-live="polite">
@@ -725,7 +726,7 @@ details.analysis{margin-top:6px}details.analysis summary{cursor:pointer;color:va
         <button class="btn" data-music-open>Music &amp; volume</button>
       </div>
       <div id="slotList" hidden></div>
-      <p class="note startv">Version <b class="ver" id="verStart">v26.49</b></p>
+      <p class="note startv">Version <b class="ver" id="verStart">v26.50</b></p>
     </div>
     <div class="startbox create" id="create" hidden>
       <h2>Create your mayor</h2>
@@ -1534,7 +1535,7 @@ function enact(s,p){DIVS.forEach(d=>{s.enacted[d.id]=p.divs[d.id];s.ratio[d.id]=
 // Voter groups. Each has a share of residents, turnout, home districts, concerns and an approval of you.
 // Citywide approval is the turnout-weighted average of the groups; each council district's approval comes from the groups that live there.
 // Shares, district mix and turnout are modeled, loosely grounded in Memphis demographics; they are not survey data.
-const VERSION='v26.49';
+const VERSION='v26.50';
 const GROUPS=[
  {id:'working',sh:'Working families',n:'Working families',ic:'⚒︎',c:'#f2a93b',share:24,turn:.5,start:56,w:{jobs:1,safety:.8,transit:.5},
   d:'Hourly workers in logistics, warehouses, health care and service jobs. The biggest bloc in the city.',dm:{1:1.1,2:.8,3:1.3,4:1.2,5:.6,6:1.2,7:1.1}},
@@ -6573,6 +6574,32 @@ function renderBell(){const b=$('bNotes');if(!b||!S)return;const n=Math.max(0,(S
 document.addEventListener('click',e=>{const b=e.target.closest('#bNotes');if(!b||!S||!S.started)return;e.preventDefault();e.stopImmediatePropagation();if(modalOpen){onClose=null;closeModal()}openNoteLog()},true);
 {const _nt2=notify;notify=function(...a){const r=_nt2.apply(this,a);try{renderBell()}catch(e){}return r}}
 {const _rh=refreshHUD;refreshHUD=function(...a){const r=_rh.apply(this,a);try{if(S&&S.noteSeen==null)S.noteSeen=(S.noteLog||[]).length;renderBell()}catch(e){}return r}}
+// ---------- fund a whole group of stations, hospitals or schools at once ----------
+const CIV_PLURAL={police:'police stations',fire:'fire stations',hospital:'hospitals',school:'schools'};
+function bulkList(type,aid,scope){const T=CIV[type];return T.list.filter(p=>{const a=civActs(p).find(x=>x.id===aid);if(!a)return false;const c=civState(p.id);if(civCd(p.id,aid,a.cd))return false;if(scope==='need')return c.out||c.lvl<55;return true})}
+function bulkActs(type){const seen={};CIV[type].list.forEach(p=>civActs(p).forEach(a=>{if(a.cost&&!a.slot&&!seen[a.id])seen[a.id]=a}));return Object.values(seen)}
+function bulkHTML(type){if(!inOffice())return'';const acts=bulkActs(type);if(!acts.length)return'';
+  return`<div class="facts bulkbox" id="bulkfund"><h4>Fund ${CIV_PLURAL[type]} as a group</h4><p class="note">Do it for every one at once, or only for the ones that need it most (low ${civLevelName(type).toLowerCase()} or a problem reported). Spending $1M or more needs 7 council votes, asked once for the whole package.</p>
+   ${acts.map(a=>{const all=bulkList(type,a.id,'all'),need=bulkList(type,a.id,'need');const cAll=all.length*a.cost,cNeed=need.length*a.cost;
+    return`<div class="bulkrow"><div><b>${a.n}</b><small>${a.d} ${fmtM(a.cost)} each.</small></div><div class="row">
+     <button class="btn" data-bulk="${type}:${a.id}:need" ${need.length&&S.reserve-cNeed>=20?'':'disabled'}>${need.length?`The ${need.length} that need it · ${fmtM(cNeed)}`:'None need it now'}</button>
+     <button class="btn primary" data-bulk="${type}:${a.id}:all" ${all.length&&S.reserve-cAll>=20?'':'disabled'}>${all.length?`All ${all.length} · ${fmtM(cAll)}`:'All done recently'}</button></div>
+     ${all.length&&S.reserve-cAll<20?'<small class="note">That would take the reserve below $20M.</small>':''}${cAll>=APPROP_MIN&&all.length?`<small class="note">For all ${all.length}: ${apropHint(cAll,{lean:type==='police'||type==='fire'?{safety:1}:type==='school'?{education:1}:{},key:'civbulk:'+type+':'+a.id})}</small>`:''}</div>`}).join('')}</div>`}
+function doBulk(type,aid,scope){const L=bulkList(type,aid,scope);if(!L.length)return;const a=civActs(L[0]).find(x=>x.id===aid),total=L.length*a.cost;if(S.reserve-total<20){toast('That would take the reserve below $20M.');return}
+  const lean=type==='police'||type==='fire'?{safety:1}:type==='school'?{education:1}:{};
+  if(total>=APPROP_MIN&&!approp(total,`"${a.n}" at ${L.length} ${CIV_PLURAL[type]}`,{lean,key:'civbulk:'+type+':'+aid})){save();refreshHUD();openCivicList(type);return}
+  const before=window.BCLife?BCLife.snapshot():null;const msgs=[];let spent=0;const r0=S.reserve;
+  L.forEach(p=>{const c=civState(p.id),d=districtAt(p.lon,p.lat);if(S.reserve-a.cost<20)return;if(type==='hospital')try{civFixHospital(p.id)}catch(e){}S.reserve-=a.cost;spent+=a.cost;c.acts[aid]=nowM();try{msgs.push(a.fx(p,c,d))}catch(e){}});
+  spent=r0-S.reserve;S._civRefund=0;S._civDeclined=0;const declined=msgs.filter(m=>/turned down/.test(m)).length;try{const ch=type==='police'?'police':type==='fire'?'fire':null;if(ch)addMod(staffOf(ch),`You funded all our ${CIV_PLURAL[type]}`,6)}catch(e){}
+  if(type==='school')try{addGroupMod(S.groups.parents,'City invested across the schools',1.5)}catch(e){}
+  S.approval=cityApproval(S);logIt(`${a.n} at ${msgs.length} ${CIV_PLURAL[type]}: ${fmtM(spent)}.`);try{newsAdd(0.6,`Mayor funds ${a.n.toLowerCase()} at ${msgs.length} ${CIV_PLURAL[type]}`)}catch(e){}save();refreshHUD();
+  const avg=Math.round(civAvg(type));
+  if(before&&window.BCLife)try{BCLife.record(before,`${a.n} · ${msgs.length} ${CIV_PLURAL[type]}`,`${fmtM(spent)} across ${msgs.length-declined} ${CIV_PLURAL[type]}${declined?` (the district turned down ${declined}, so that money wasn't spent)`:''}. Average ${civLevelName(type).toLowerCase()} is now ${avg}.`,'civic-bulk',msgs.slice(0,4))}catch(e){}
+  NAV.busy=true;try{hideViews();openCivicList(type)}finally{NAV.busy=false}}
+document.addEventListener('click',e=>{const b=e.target.closest('[data-bulk]');if(!b||!S||b.disabled)return;e.preventDefault();e.stopImmediatePropagation();const[t,aid,sc]=b.dataset.bulk.split(':');doBulk(t,aid,sc)},true);
+{const _om=openModal;openModal=function(...a){const r=_om.apply(this,a);try{const n=NAV.cur&&NAV.depth>0?NAV.cur.name:'';if(n==='openCivicList'){const b=$('mBody');const t=(NAV.cur.a&&NAV.cur.a[0])||'police';if(b&&!b.querySelector('#bulkfund')){const sel=b.querySelector('.lsel');(sel||b.firstElementChild).insertAdjacentHTML('afterend',bulkHTML(t))}}
+  if(n==='openActions'&&inOffice()){const b=$('mBody');const h=[...b.querySelectorAll('.facts h4')].find(x=>/Police, fire, hospitals and schools/.test(x.textContent));if(h&&!b.querySelector('[data-bulkgo]'))h.parentElement.insertAdjacentHTML('beforeend',`<p class="note" style="margin:8px 0 4px">Or fund them as a group:</p><div class="row">${Object.keys(CIV).map(k=>`<button class="btn" data-bulkgo="${k}">Fund ${CIV_PLURAL[k]}</button>`).join('')}</div>`)}}catch(e){console.warn(e)}return r}}
+document.addEventListener('click',e=>{const b=e.target.closest('[data-bulkgo]');if(!b||!S)return;e.preventDefault();e.stopImmediatePropagation();goSection(()=>openCivicList(b.dataset.bulkgo),'Fund ')},true);
 function openLedger(){const L=S.log||[];openPanel('Everything that has happened, newest first','Ledger',L.length?`<div class="logl">${L.map(x=>`<div><span>${x.d}</span><p style="margin:0">${x.t}</p></div>`).join('')}</div>`:'<p class="note">Nothing yet. Start the clock with Space or ▶.</p>','ledger')}
 function openPolicies(){const ks=Object.keys(POLICIES);
   openPanel('Ongoing programs you control','Your initiatives',`<p>Mid-year, these are paid from the reserve fund. In April they go into the budget you send the council.</p>
