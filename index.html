@@ -332,7 +332,7 @@ canvas.confetti{position:fixed;inset:0;z-index:100000;pointer-events:none}
 .pos{color:var(--good)}.neg{color:var(--bad)}
 .pglist{display:flex;flex-direction:column;gap:6px}.pgrow{display:grid;grid-template-columns:minmax(0,1.4fr) 1fr 44px;gap:8px;align-items:center;font-size:14px}.pgname small{display:block;color:var(--muted);font-size:11.5px}.pgbar{position:relative;height:8px;background:var(--line);border-radius:4px}.pgbar::after{content:'';position:absolute;left:50%;top:-2px;bottom:-2px;width:1px;background:var(--muted)}.pgbar i{position:absolute;top:0;bottom:0;border-radius:4px}.pgbar i.pos{background:var(--good)}.pgbar i.neg{background:var(--bad)}.pgrow>b{text-align:right}
 .needlist{border:1px solid var(--bad);border-radius:8px;padding:8px 10px;margin:6px 0 8px;background:rgba(232,100,79,.07)}.needlist>b{display:block;color:var(--bad);margin-bottom:6px}.needlist .choice small{color:var(--text)}
-.taxtbl{min-width:0!important}.taxtbl td small{display:block;color:var(--muted);font-size:11.5px;white-space:normal}.taxtbl td:first-child{text-align:left;white-space:normal}
+.taxtbl{min-width:0!important;font-size:12.5px}.taxtbl th,.taxtbl td{padding:6px 6px}.taxtbl th{letter-spacing:.04em}.taxtbl td small{display:block;color:var(--muted);font-size:11.5px;white-space:normal}.taxtbl td:first-child{text-align:left;white-space:normal}
 .mrows{display:flex;flex-direction:column;gap:5px}.mrow{display:grid;grid-template-columns:minmax(0,1.3fr) 1fr auto;gap:8px;align-items:center;font-size:13.5px}.mrow b{text-align:right;font-variant-numeric:tabular-nums}.mbar{display:block;height:7px;background:var(--line);border-radius:4px;overflow:hidden}.mbar i{display:block;height:100%}.mbar i.pos{background:var(--good)}.mbar i.neg{background:var(--amber)}
 .lghero{display:flex;gap:14px;align-items:center;margin-bottom:8px}.lghero small{display:block;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;font-size:12px}.lghero b{display:block;font-size:22px}.lghero span{color:var(--amber);font-weight:700}
 .lgquote{font-size:17px;font-style:italic;border-left:3px solid var(--amber);padding-left:12px;margin:6px 0 12px}
@@ -4588,7 +4588,7 @@ function nextSteps(){const out=[];if(!S||!S.started||S.over)return out;const add
     if(S.slots>0)add(40,`${S.slots} action${S.slots===1?'':'s'} left this month`,'Meet a community group or knock doors (Actions).',()=>openActions());
     add(10,'Press ▶ and let time pass','The campaign moves day by day; the desk will flag what needs you.',()=>setPaused(false));
   }else if(inOffice()){
-    S.events.filter(e=>e.kind!=='budget'&&e.id!=='briefing'&&evLeftM(e)<=1).slice(0,2).forEach(e=>{let t='a decision';try{t=evTitle(e)}catch(err){}add(100,'Decide before it expires: '+t,'Ignoring it costs you.',()=>{try{if(inOffice()&&(e.kind==='char'||e.kind==='request'||e.kind==='memo'||evAt(e)==='cityhall')){enterOffice();setTimeout(openAudience,400)}else openPlace(evAt(e))}catch(err){openDesk()}})});
+    S.events.filter(e=>e.kind!=='budget'&&e.id!=='briefing'&&evLeftM(e)<=1).slice(0,2).forEach(e=>{let t='a decision';try{t=evTitle(e)}catch(err){}add(100,'Decide before it expires: '+t,'Ignoring it costs you.',()=>{try{if(inOffice()&&((e.kind==='char'&&e.type!=='fest')||e.kind==='request'||e.kind==='memo'||evAt(e)==='cityhall')){enterOffice();setTimeout(openAudience,400)}else openPlace(evAt(e))}catch(err){openDesk()}})});
     if(S.events.some(e=>e.id==='briefing'))add(98,'Read your chief of staff\'s briefing',inOffice()?'She\'s waiting in your office.':'At City Hall.',()=>{if(inOffice()&&typeof enterOffice==='function'){enterOffice();setTimeout(openAudience,400)}else openPlace('cityhall')});
     if(!S.promises)add(99,'Make your three promises','They become your record on Election Day.',()=>openPromises());
     if(S.stage==='draft')add(S.day>=15?102:99,'Write and send your budget','The council votes in June. 7 votes to pass.',()=>openBudget());
@@ -6172,7 +6172,7 @@ document.addEventListener('click',e=>{const b=e.target.closest('[data-ftalk]');i
    <p class="note">Every approach you used also earned experience in that skill.</p><div class="row"><button class="btn primary" data-act="close">Back to work</button></div>`,true);FT=null},true);
 // the event card: going is free now
 {const T=CHAR_TYPES.fest;T.choices=[
-  {l:()=>'Go and mingle',s:ev=>`Free · a short conversation; your skills decide how well it goes · ${festNames(festFor(ev))}`,do:ev=>{const F=festFor(ev);try{goTo(LM[F.at].lon,LM[F.at].lat,F.n,2)}catch(e){}setTimeout(()=>{try{closePanel();festTalk(F)}catch(e){console.warn(e)}},250);return`You headed to the ${F.n}.`}},
+  {l:()=>'Go and mingle',s:ev=>`Free · a short conversation; your skills decide how well it goes · ${festNames(festFor(ev))}`,do:ev=>{const F=festFor(ev);window.__bcQuiet=true;try{goTo(LM[F.at].lon,LM[F.at].lat,F.n,2)}catch(e){}setTimeout(()=>{try{closePanel();festTalk(F)}catch(e){console.warn(e)}},250);return`You headed to the ${F.n}.`}},
   T.choices.find(c=>/extra police/.test(c.l())),T.choices.find(c=>/campaign booth/.test(c.l())),T.choices.find(c=>/^Skip/.test(c.l()))].filter(Boolean)}
 // ======================= v26.39: SEE THE MONEY AND WHO IT AFFECTS =======================
 // Every decision card gets a "See the numbers" view. For each option it shows where the money comes from and goes,
@@ -6307,7 +6307,7 @@ const HOOD_STORIES=[
  {sid:'bh',hood:'Binghampton',n:'Rising rents in Binghampton'},
  {sid:'sm',hood:'South Memphis',n:'The old school in South Memphis'}];
 const HOOD_D={om:4,fr:1,wh:3,bh:5,sm:6};
-function hoodDistrict(sid){const H=HOOD_STORIES.find(x=>x.sid===sid);try{const h=HOODS.find(x=>x[0]===H.hood);if(h){const d=districtAt(h[2],h[1]);if(d)return d}}catch(e){}return HOOD_D[sid]}
+function storyDistrict(sid){const H=HOOD_STORIES.find(x=>x.sid===sid);try{const h=HOODS.find(x=>x[0]===H.hood);if(h){const d=districtAt(h[2],h[1]);if(d)return d}}catch(e){}return HOOD_D[sid]}
 HOOD_STORIES.forEach(h=>{STORY_NAMES[h.sid]=h.n;STORY_FIRST[h.sid]=h.sid+'1'});
 const atHood=c=>'dist:'+(c&&c.d||4);
 EVENTS.push(
@@ -6364,7 +6364,7 @@ EVENTS.push(
    {label:'Tear it down',cost:0.4,fx:{blight:-0.5},grp:{faith:-2,owners:1},end:{t:'Tore down the old South Memphis school',camp:{d:-0.5,t:'Your opponent says you bulldozed a neighborhood landmark.'}}}]});
 function hoodMonth(){if(!inOffice()||S.over)return;S.stories=S.stories||{};const active=HOOD_STORIES.some(h=>S.stories[h.sid]&&!S.stories[h.sid].ended);if(active)return;
   if(S.hoodLast&&nowM()-S.hoodLast<3)return;const left=HOOD_STORIES.filter(h=>!S.stories[h.sid]);if(!left.length)return;if(Math.random()>0.6)return;
-  const h=left[Math.floor(Math.random()*left.length)];S.hoodLast=nowM();startStory(h.sid,{d:hoodDistrict(h.sid),hood:h.hood});logIt(`A story is starting in ${h.hood}.`)}
+  const h=left[Math.floor(Math.random()*left.length)];S.hoodLast=nowM();startStory(h.sid,{d:storyDistrict(h.sid),hood:h.hood});logIt(`A story is starting in ${h.hood}.`)}
 // ---------- the second term ----------
 STORY_NAMES.ch='Changing the city charter';STORY_FIRST.ch='ch1';STORY_STAFF.ch='cos';
 EVENTS.push(
