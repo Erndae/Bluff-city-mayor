@@ -334,6 +334,8 @@ canvas.confetti{position:fixed;inset:0;z-index:100000;pointer-events:none}
 .needlist{border:1px solid var(--bad);border-radius:8px;padding:8px 10px;margin:6px 0 8px;background:rgba(232,100,79,.07)}.needlist>b{display:block;color:var(--bad);margin-bottom:6px}.needlist .choice small{color:var(--text)}
 .taxtbl{min-width:0!important}.taxtbl td small{display:block;color:var(--muted);font-size:11.5px;white-space:normal}.taxtbl td:first-child{text-align:left;white-space:normal}
 .mrows{display:flex;flex-direction:column;gap:5px}.mrow{display:grid;grid-template-columns:minmax(0,1.3fr) 1fr auto;gap:8px;align-items:center;font-size:13.5px}.mrow b{text-align:right;font-variant-numeric:tabular-nums}.mbar{display:block;height:7px;background:var(--line);border-radius:4px;overflow:hidden}.mbar i{display:block;height:100%}.mbar i.pos{background:var(--good)}.mbar i.neg{background:var(--amber)}
+.lghero{display:flex;gap:14px;align-items:center;margin-bottom:8px}.lghero small{display:block;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;font-size:12px}.lghero b{display:block;font-size:22px}.lghero span{color:var(--amber);font-weight:700}
+.lgquote{font-size:17px;font-style:italic;border-left:3px solid var(--amber);padding-left:12px;margin:6px 0 12px}
 .adgain{display:block;width:100%;text-align:center;font-size:11px;font-weight:600;color:var(--good);margin-top:1px}
 #start{overflow-x:hidden;overflow-y:auto;touch-action:pan-y}.startbox{min-width:0;max-width:min(600px,100%);box-sizing:border-box}.startbox *{min-width:0}.create select,.create input{max-width:100%;width:100%;box-sizing:border-box;text-overflow:ellipsis}.create .tpick,.create .tpick>*{max-width:100%;box-sizing:border-box}
 @media (max-width:640px){.startbox{margin-left:0}#start{padding-left:max(16px,env(safe-area-inset-left,0px))}}
@@ -686,7 +688,7 @@ details.analysis{margin-top:6px}details.analysis summary{cursor:pointer;color:va
     <button class="btn primary" data-act="pause" id="bPlay"><svg class="ico" viewBox="0 0 12 12" aria-hidden="true"><path d="M3.2 1.6v8.8l7.2-4.4z" fill="currentColor"/></svg> Resume <kbd>Space</kbd></button>
   </nav>
   <div class="status" id="status">Loading map…</div>
-  <div class="credit"><span class="ver" id="verTag">v26.40</span></div>
+  <div class="credit"><span class="ver" id="verTag">v26.41</span></div>
   <div class="tip" id="tip" hidden></div>
   <div class="toast" id="toast" role="status"></div>
   <section class="panel" id="panel" hidden aria-live="polite">
@@ -714,7 +716,7 @@ details.analysis{margin-top:6px}details.analysis summary{cursor:pointer;color:va
         <button class="btn" data-music-open>Music &amp; volume</button>
       </div>
       <div id="slotList" hidden></div>
-      <p class="note startv">Version <b class="ver" id="verStart">v26.40</b></p>
+      <p class="note startv">Version <b class="ver" id="verStart">v26.41</b></p>
     </div>
     <div class="startbox create" id="create" hidden>
       <h2>Create your mayor</h2>
@@ -1523,7 +1525,7 @@ function enact(s,p){DIVS.forEach(d=>{s.enacted[d.id]=p.divs[d.id];s.ratio[d.id]=
 // Voter groups. Each has a share of residents, turnout, home districts, concerns and an approval of you.
 // Citywide approval is the turnout-weighted average of the groups; each council district's approval comes from the groups that live there.
 // Shares, district mix and turnout are modeled, loosely grounded in Memphis demographics; they are not survey data.
-const VERSION='v26.40';
+const VERSION='v26.41';
 const GROUPS=[
  {id:'working',sh:'Working families',n:'Working families',ic:'⚒︎',c:'#f2a93b',share:24,turn:.5,start:56,w:{jobs:1,safety:.8,transit:.5},
   d:'Hourly workers in logistics, warehouses, health care and service jobs. The biggest bloc in the city.',dm:{1:1.1,2:.8,3:1.3,4:1.2,5:.6,6:1.2,7:1.1}},
@@ -6296,6 +6298,145 @@ openMoneyMonth=navWrap('openMoneyMonth',openMoneyMonth);
 document.addEventListener('click',e=>{const b=e.target.closest('[data-mlog]');if(!b||!S)return;e.preventDefault();e.stopImmediatePropagation();NAV.busy=true;try{hideViews();openMoneyMonth(+b.dataset.mlog)}finally{NAV.busy=false}},true);
 {const _om=openModal;openModal=function(...a){const r=_om.apply(this,a);try{const n=NAV.cur&&NAV.depth>0?NAV.cur.name:'';if(n==='flow_budget'&&inOffice()){const g=$('mBody').querySelector('.flow-grid');if(g&&!g.querySelector('[data-moneyopen]'))g.insertAdjacentHTML('afterbegin',`<button class="flow-tile" data-moneyopen="1"><b>Where the money went</b><span>Every dollar in and out, month by month</span></button>`)}}catch(e){}return r}}
 document.addEventListener('click',e=>{const b=e.target.closest('[data-moneyopen]');if(!b||!S)return;e.preventDefault();e.stopImmediatePropagation();openMoneyMonth()},true);
+// ======================= v26.41: NEIGHBORHOOD STORIES, A SECOND TERM, AND YOUR LEGACY =======================
+// ---------- neighborhood stories ----------
+const HOOD_STORIES=[
+ {sid:'om',hood:'Orange Mound',n:'Orange Mound\'s grocery store'},
+ {sid:'fr',hood:'Frayser',n:'The Frayser youth league'},
+ {sid:'wh',hood:'Whitehaven',n:'Elvis Presley Boulevard'},
+ {sid:'bh',hood:'Binghampton',n:'Rising rents in Binghampton'},
+ {sid:'sm',hood:'South Memphis',n:'The old school in South Memphis'}];
+const HOOD_D={om:4,fr:1,wh:3,bh:5,sm:6};
+function hoodDistrict(sid){const H=HOOD_STORIES.find(x=>x.sid===sid);try{const h=HOODS.find(x=>x[0]===H.hood);if(h){const d=districtAt(h[2],h[1]);if(d)return d}}catch(e){}return HOOD_D[sid]}
+HOOD_STORIES.forEach(h=>{STORY_NAMES[h.sid]=h.n;STORY_FIRST[h.sid]=h.sid+'1'});
+const atHood=c=>'dist:'+(c&&c.d||4);
+EVENTS.push(
+ {id:'om1',story:'om',scripted:true,title:'Orange Mound is losing its only grocery store',atFn:atHood,tags:['jobs'],
+  body:()=>`The only full-service grocery in Orange Mound says it will close in 60 days. For thousands of families, the next-closest store is two bus transfers away. Church leaders have already called a community meeting.`,
+  choices:[{label:'Offer the chain a $1.5M incentive to stay',cost:1.5,grp:{working:3,renters:3,faith:1,owners:-1},flag:'keep',next:'om2',delay:3},
+   {label:'Back a co-op grocery owned by residents',cost:0.6,grp:{renters:2,faith:3,young:2,business:-1},flag:'coop',next:'om2',delay:3},
+   {label:'Run free MATA shuttles to stores in other neighborhoods',cost:0.3,fx:{transit:0.5},grp:{renters:2,working:1,owners:-1},flag:'shuttle',next:'om2',delay:2}],
+  ignore:{flag:'none',next:'om2',delay:2}},
+ {id:'om2',story:'om',scripted:true,title:'What happens to the Orange Mound store?',atFn:atHood,tags:['jobs'],
+  body:s=>{const f=(s.stories.om||{}).flags||{};return f.keep?'The chain took your money, then said the store still loses money and wants another $1 million to stay past next year.':f.coop?'Two hundred families have signed up as co-op owners. They need a building and a startup loan to open the doors.':f.shuttle?'The shuttles are full every Saturday, but residents say a bus to a grocery store isn\'t the same as having one.':'The store closed. Orange Mound is now a food desert, and the church meeting has turned into a protest at City Hall.'},
+  choices:[{label:'Put city land and a $2M loan behind a new store',cost:2,grp:{working:3,renters:3,owners:1,faith:2},end:{t:'Brought a grocery store back to Orange Mound',camp:{d:1.5,t:'Your ads show the ribbon-cutting in Orange Mound.'}}},
+   {label:'Give the co-op a storefront in a city building',cost:0.4,grp:{faith:2,renters:2,young:2},end:{t:'Orange Mound got a resident-owned grocery',camp:{d:1,t:'Co-op members cut an ad for you.'}}},
+   {label:'Let the market sort it out',grp:{renters:-3,working:-2,faith:-2,business:1},end:{t:'Orange Mound lost its grocery store',camp:{d:-1,t:'Your opponent films in the empty grocery parking lot.'}}}]},
+ {id:'fr1',story:'fr',scripted:true,title:'The Frayser youth league has nowhere to play',atFn:atHood,tags:['education','safety'],
+  body:()=>`Two hundred kids in the Frayser youth football league practice on a vacant lot covered in broken glass. A coach posted a video of kids running drills around a burned-out car, and it has been shared thousands of times.`,
+  choices:[{label:'Build a lighted field at a city park',cost:1.2,grp:{parents:4,faith:2,owners:1},flag:'build',next:'fr2',delay:4},
+   {label:'Partner with a church that has land',cost:0.3,grp:{faith:3,parents:2},flag:'church',next:'fr2',delay:3},
+   {label:'Send crews to clean up the lot for now',cost:0.1,fx:{blight:-0.2},grp:{parents:1},flag:'lot',next:'fr2',delay:3}]},
+ {id:'fr2',story:'fr',scripted:true,title:'The Frayser Falcons made the city championship',atFn:atHood,tags:['education'],
+  body:s=>{const f=(s.stories.fr||{}).flags||{};return`${f.build?'On their new field, the':f.church?'Practicing on the church lot, the':'Still practicing on a cleaned-up vacant lot, the'} Frayser Falcons went undefeated and made the city championship. The coaches say the season kept kids off the street, and they want it to last all year.`},
+  choices:[{label:'Fund a year-round sports and mentoring program',cost:0.8,grp:{parents:3,faith:2,renters:2},fx:{crime:-0.2},end:{t:'Built a year-round youth program in Frayser',camp:{d:1.5,t:'The Falcons\' coach is in your ad.'}}},
+   {label:'Pay for buses and uniforms for the championship',cost:0.05,grp:{parents:2},end:{t:'Sent the Frayser Falcons to the championship',camp:{d:0.5,t:'You were on the sideline at the championship.'}}},
+   {label:'Leave it to the boosters',grp:{parents:-2,faith:-1},end:{t:'Left the Frayser league to fend for itself',camp:{d:-0.5,t:'Your opponent visits the Falcons\' old lot.'}}}]},
+ {id:'wh1',story:'wh',scripted:true,title:'Fixing Elvis Presley Boulevard',atFn:atHood,tags:['jobs','streets'],
+  body:()=>`Graceland draws a million visitors a year, but the rest of Elvis Presley Boulevard has empty storefronts, missing sidewalks and some of the most dangerous crosswalks in the city. Whitehaven business owners want a plan.`,
+  choices:[{label:'Fund a full streetscape: trees, lights, wide sidewalks',cost:2.5,fx:{streets:0.8},grp:{business:3,owners:3},flag:'streetscape',next:'wh2',delay:4},
+   {label:'Give small businesses storefront grants',cost:0.8,grp:{business:4,working:1},flag:'grants',next:'wh2',delay:3},
+   {label:'Focus on safety: crosswalks and signals first',cost:0.6,fx:{crime:-0.2},grp:{parents:3,owners:2},flag:'safety',next:'wh2',delay:3}]},
+ {id:'wh2',story:'wh',scripted:true,title:'Elvis Presley Boulevard needs an anchor',atFn:atHood,tags:['jobs'],
+  body:s=>{const f=(s.stories.wh||{}).flags||{};return`${f.streetscape?'The new streetscape looks great, but construction drove two shops out of business.':f.grants?'Eleven storefronts have new signs and paint, and foot traffic is up.':'The new crosswalks are working: no pedestrian deaths this year.'} A clinic operator and a hotel group are both looking at the boulevard, if the city helps.`},
+  choices:[{label:'Help a medical clinic open on the boulevard',cost:1,grp:{owners:3,working:2,faith:1},end:{t:'Brought a clinic to Elvis Presley Boulevard',camp:{d:1.5,t:'Whitehaven seniors talk about their new clinic in your ad.'}}},
+   {label:'Give a Whitehaven development group the lead',cost:0.3,grp:{owners:2,faith:2,business:1},end:{t:'Gave Whitehaven a say over its boulevard',camp:{d:1,t:'Whitehaven leaders endorse your approach.'}}},
+   {label:'Declare victory and move on',grp:{business:-2,owners:-1},end:{t:'Left Elvis Presley Boulevard half-finished',camp:{d:-0.5,t:'Your opponent walks the empty storefronts on camera.'}}}]},
+ {id:'bh1',story:'bh',scripted:true,title:'Rents are climbing in Binghampton',atFn:atHood,tags:['blight','jobs'],
+  body:()=>`Investors are buying homes near the Hampline bike trail and raising rents by a third. Longtime Binghampton families, many of them refugees and retirees, are getting notices to move out.`,
+  choices:[{label:'Fund free lawyers for tenants facing eviction',cost:0.7,grp:{renters:5,young:2,faith:1,owners:-1},flag:'legal',next:'bh2',delay:3},
+   {label:'Give tax breaks to builders who keep rents affordable',fx:{revenue:-0.4},grp:{renters:3,business:2},flag:'pilot',next:'bh2',delay:3},
+   {label:'Let the market work. New housing will follow.',grp:{business:3,owners:2,renters:-4},flag:'market',next:'bh2',delay:2}]},
+ {id:'bh2',story:'bh',scripted:true,title:'An 81-year-old is being evicted after 40 years',atFn:atHood,tags:['blight'],
+  body:s=>{const f=(s.stories.bh||{}).flags||{};return`Ms. Lottie Jenkins has lived in the same Binghampton house for 40 years. Her new landlord wants her out by the end of the month, and her granddaughter's video about it is everywhere. ${f.legal?'A city-funded lawyer has taken her case, but she could still lose.':f.pilot?'Your affordable-housing deal doesn\'t cover older houses like hers.':f.market?'Reporters keep asking you about your "let the market work" comment.':''}`},
+  choices:[{label:'Help her, and start a fund for seniors facing eviction',cost:0.5,grp:{owners:3,faith:3,renters:2},end:{t:'Kept Binghampton seniors in their homes',camp:{d:1.5,t:'Ms. Lottie appears in your ad.'}}},
+   {label:'Call the landlord yourself and broker a deal',grp:{faith:2,owners:1,renters:1},end:{t:'Talked a landlord out of an eviction',camp:{d:0.5,t:'You made the call nobody else would.'}}},
+   {label:'Say the city can\'t step into private leases',grp:{renters:-3,faith:-2,business:1},end:{t:'Stayed out of the Binghampton evictions',camp:{d:-1.5,t:'Your opponent stands on Ms. Lottie\'s porch in an ad.'}}}]},
+ {id:'sm1',story:'sm',scripted:true,title:'The old school in South Memphis',atFn:atHood,tags:['education','blight'],
+  body:()=>`A school building closed a decade ago is falling apart in South Memphis. Neighbors want it reused. A developer has offered to buy it for apartments.`,
+  choices:[{label:'Sell it to the developer for apartments',fx:{revenue:0.3},grp:{business:3,renters:-1,parents:-1},flag:'sell',next:'sm2',delay:3},
+   {label:'Turn it into a community center',cost:3,grp:{parents:3,faith:3,renters:2},flag:'center',next:'sm2',delay:4},
+   {label:'Board it up for now',cost:0.1,fx:{blight:0.3},grp:{owners:-1},flag:'board',next:'sm2',delay:3}]},
+ {id:'sm2',story:'sm',scripted:true,title:'What becomes of the old school?',atFn:atHood,tags:['education'],
+  body:s=>{const f=(s.stories.sm||{}).flags||{};return f.sell?'The developer now wants a 15-year tax break, and neighbors say the rents will be too high for them.':f.center?'The building is renovated, but nobody has been chosen to run it, and the doors are still locked.':'Squatters started a fire in the boarded-up building. Nobody was hurt, but the neighbors are furious.'},
+  choices:[{label:'Partner with a nonprofit to run it for the neighborhood',cost:0.5,grp:{parents:3,faith:2,renters:2},end:{t:'Gave South Memphis a community center',camp:{d:1.5,t:'Kids at the new center are in your ad.'}}},
+   {label:'Mixed-use deal: apartments plus a public library branch',cost:0.6,grp:{business:2,parents:2,renters:1},end:{t:'Turned the old school into homes and a library',camp:{d:1,t:'Your ad shows the new library branch.'}}},
+   {label:'Tear it down',cost:0.4,fx:{blight:-0.5},grp:{faith:-2,owners:1},end:{t:'Tore down the old South Memphis school',camp:{d:-0.5,t:'Your opponent says you bulldozed a neighborhood landmark.'}}}]});
+function hoodMonth(){if(!inOffice()||S.over)return;S.stories=S.stories||{};const active=HOOD_STORIES.some(h=>S.stories[h.sid]&&!S.stories[h.sid].ended);if(active)return;
+  if(S.hoodLast&&nowM()-S.hoodLast<3)return;const left=HOOD_STORIES.filter(h=>!S.stories[h.sid]);if(!left.length)return;if(Math.random()>0.6)return;
+  const h=left[Math.floor(Math.random()*left.length)];S.hoodLast=nowM();startStory(h.sid,{d:hoodDistrict(h.sid),hood:h.hood});logIt(`A story is starting in ${h.hood}.`)}
+// ---------- the second term ----------
+STORY_NAMES.ch='Changing the city charter';STORY_FIRST.ch='ch1';STORY_STAFF.ch='cos';
+EVENTS.push(
+ {id:'ch1',story:'ch',scripted:true,title:'A second-term idea: change the city charter',at:'cityhall',tags:['oversight'],
+  body:()=>`You won a second term, and the charter limits you to two. Your chief of staff says this is the moment for something bigger than a budget: put a charter amendment in front of voters. It would be your mark on how Memphis is run long after you leave.`,
+  choices:[{label:'Give the mayor line-item budget power',flag:'power',next:'ch2',delay:3,grp:{business:1,labor:-1}},
+   {label:'Create an independent police oversight board',flag:'oversight',next:'ch2',delay:3,grp:{young:2,renters:2,labor:-2}},
+   {label:'Reopen talks on merging city and county government',flag:'metro',next:'ch2',delay:3,grp:{business:2,owners:-1}},
+   {label:'Leave the charter alone',end:{t:'Left the city charter alone',camp:{d:0}}}]},
+ {id:'ch2',story:'ch',scripted:true,title:'Getting the charter amendment on the ballot',at:'cityhall',tags:['oversight'],
+  body:s=>{const f=(s.stories.ch||{}).flags||{};return`${f.power?'Line-item budget power':f.oversight?'An independent police oversight board':'City-county consolidation'} needs either seven council votes or 40,000 signatures to get on the ballot. ${f.metro?'Memphis and Shelby County voters have turned consolidation down before.':''}`},
+  choices:[{label:'Trade a district project for council votes',cost:2,flag:'deal',next:'ch3',delay:3,grp:{owners:-1}},
+   {label:'Go over their heads with a petition drive',cost:0.5,flag:'petition',next:'ch3',delay:4,grp:{young:2,renters:1}},
+   {label:'Drop it',end:{t:'Dropped the charter amendment',camp:{d:-0.5,t:'Your opponents say you gave up.'}}}]},
+ {id:'ch3',story:'ch',scripted:true,title:'Referendum day',at:'cityhall',tags:['oversight'],
+  body:s=>`It's on the ballot. The polls are close. How hard do you push in the last weeks? Your approval, your Star Power and how you got it on the ballot will decide it.`,
+  choices:[{label:'Campaign for it across the city',cost:0.5,flag:'push',end:{t:'Took a charter amendment to the voters',camp:{d:0}}},
+   {label:'Let the voters decide on their own',end:{t:'Took a charter amendment to the voters',camp:{d:0}}}]});
+function charterOdds(){const f=(S.stories.ch||{}).flags||{};let p=0.35+(S.approval-50)*0.02+(mskill('cha')-8)*0.02+(f.petition?0.06:0)+(f.push?0.1:0)-(f.metro?0.12:0);return clamp(p,0.08,0.85)}
+{const _sc=storyChoice;storyChoice=function(def,c,ev){const r=_sc.apply(this,arguments);try{if(def.id==='ch3'){const f=S.stories.ch.flags;const won=Math.random()<charterOdds();S.charter={kind:f.power?'power':f.oversight?'oversight':'metro',won,y:S.y};
+  const what=f.power?'line-item budget power':f.oversight?'an independent police oversight board':'city-county consolidation';
+  if(won){if(f.oversight)applyGroupReact({young:4,renters:3,faith:2,labor:-3},'Police oversight board passed');if(f.metro){applyFx(S,{revenue:2,county:10});applyGroupReact({business:3,owners:-2},'City and county merged')}if(f.power)applyGroupReact({business:2},'Mayor got budget power');
+    addRecord({t:`Voters approved ${what}`,camp:{d:2,t:'You changed how Memphis is run.'},kind:'charter'});try{celebrate(true)}catch(e){}try{newsAdd(1.5,`Voters approve ${what}`)}catch(e){}notify('good','The charter amendment passed',`Memphis voters approved ${what}.${f.power?' You get 1 extra action a month.':''}`,null,{ttl:14})}
+  else{popHit(-1.5,'Charter amendment failed');addRecord({t:`Voters rejected ${what}`,camp:{d:-1,t:'Your big idea went down at the polls.'},kind:'charter'});try{newsAdd(-1.2,`Voters reject the mayor's charter amendment`)}catch(e){}notify('event','The charter amendment failed',`Memphis voters turned down ${what}.`,null,{ttl:14})}}}catch(e){console.warn(e)}return r}}
+{const _ab2=actionBonus;actionBonus=function(){return _ab2()+(S&&S.charter&&S.charter.won&&S.charter.kind==='power'?1:0)}}
+// lame-duck pressure late in the second term
+CHAR_TYPES.lameduck={w:0,title:()=>'The race to replace you has started',gen:()=>null,who:()=>[['staff','cos']],
+  body:()=>`Council members are already raising money to run for your job, and they've started voting with an eye on the next mayor instead of you. Your chief of staff says you need to show them you still run City Hall.`,
+  choices:[{l:()=>'Remind them you still sign the checks',s:()=>`${oddsTag('intr',0.45)} · works: they fall back in line · fails: they dig in (council −4 each)`,do:()=>{const ok=persuade('intr',0.45,[],8);if(ok){S.lameDuck='held';return'They got the message. You still run this building.'}S.council.forEach(m=>addMod(m,'Lame-duck mayor pushed us around',-4));return'They called your bluff. The council is drifting away.'}},
+   {l:()=>'Bring the would-be successors into your agenda',s:()=>`${oddsTag('dip',0.5)} · works: council +3 each · fails: no change`,do:()=>{const ok=persuade('dip',0.5,[],8);if(ok){S.lameDuck='held';S.council.forEach(m=>addMod(m,'Mayor shared the credit',3));return'You gave them a piece of your agenda to run on. They\'re helping again.'}return'They took the meetings but kept their distance.'}},
+   {l:()=>'Go over their heads to the public',s:()=>`${oddsTag('cha',0.45)} · works: approval up, they follow · fails: approval down`,do:()=>{const ok=persuade('cha',0.45,[],8);if(ok){popHit(1,'Took the case to the public');S.lameDuck='held';return'Your town hall tour reminded everyone who Memphis elected.'}popHit(-1,'Looked like a lame duck');return'It looked like a lame duck lashing out.'}}],
+  ignore:()=>{S.council.forEach(m=>addMod(m,'The mayor is on the way out',-3))}};
+function termTwoMonth(){if(!inOffice()||S.term<2||S.over)return;const into=nowM()-(S.termStart||nowM());
+  if(!S.t2init){S.t2init=1;S.h100=null;S.h100Pick=1;logIt('Your second term begins.')}
+  if(into>=3&&!(S.stories||{}).ch)startStory('ch');
+  if(into>=24&&!S.lameDuck){S.lameDuck='open';queueChar({type:'lameduck',at:'cityhall'})}
+  if(S.lameDuck==='open'&&into>=26)S.council.forEach(m=>addMod(m,'Positioning for the next mayor',-1))}
+{const _eom5=endOfMonth;endOfMonth=function(...a){const r=_eom5.apply(this,a);try{if(S&&S.started&&S.phase!=='ai'){hoodMonth();termTwoMonth()}}catch(e){console.warn(e)}return r}}
+// the 100-day picker knows which term it is
+{const _hp=h100PickHTML;h100PickHTML=function(){let h=_hp();if(S.term>=2)h=h.replace('Every new mayor gets 100 days to show Memphis what kind of mayor they\'ll be.','A second term starts the clock again. Voters want to know what the next four years are for.');return h}}
+// ---------- your legacy ----------
+{const _rs=reignStart;reignStart=function(...a){const r=_rs.apply(this,a);try{S.reignG={};GROUPS.forEach(g=>S.reignG[g.id]=S.groups[g.id].app);S.reignM=nowM();S.reignPop=S.popn}catch(e){}return r}}
+function legacyTraits(){const c0=(S.reign&&S.reign.from)||S.city0||legacySnap(),c1=legacySnap();const rec=S.record||[];
+  const crises=rec.filter(r=>r.kind==='crisis'),crisisOK=crises.filter(r=>/^Led Memphis/.test(r.t)).length,stories=rec.filter(r=>r.kind==='story'),goodStories=stories.filter(r=>(r.camp&&r.camp.d||0)>0).length;
+  const kept=(S.reign&&S.reign.kept)||0,broken=(S.reign&&S.reign.broken)||0,proj=(S.projects||[]).filter(p=>p.stage==='done').length,favors=S.council.reduce((a,m)=>a+(m.favors||0),0),fav=favorable(S);
+  const T=[{id:'builder',n:'The Builder',d:'You left Memphis with things it didn\'t have before: finished projects people can see and use.',s:proj*2+goodStories*0.5},
+   {id:'dealmaker',n:'The Dealmaker',d:'You knew how to count to seven. The council worked with you, and favors flowed both ways.',s:fav*0.35+favors*0.6},
+   {id:'guardian',n:'The Guardian',d:'Memphis got safer on your watch.',s:Math.max(0,c0.crime-c1.crime)*0.9},
+   {id:'steward',n:'The Steward',d:'You kept the city\'s books healthy and didn\'t pass a mess to the next mayor.',s:Math.max(0,(c1.reserve-c0.reserve))*0.25+(c1.tax<=c0.tax&&c1.reserve>=c0.reserve-1?1.5:0)},
+   {id:'crisis',n:'The Steady Hand',d:'When the storms came, literal and otherwise, you showed up and led.',s:crisisOK*2.2},
+   {id:'neighbor',n:'The Neighborhood Mayor',d:'You knew Orange Mound from Frayser and showed up for both.',s:goodStories*1.4+((S.free||{}).calls!=null?0:0)},
+   {id:'promise',n:'The Promise Keeper',d:'You said what you\'d do, and you did it.',s:kept*1.6-broken*1.2},
+   {id:'people',n:'The People\'s Mayor',d:'Memphis liked you, and you left office with the city behind you.',s:Math.max(0,(c1.approval-50))*0.3}];
+  T.sort((a,b)=>b.s-a.s);return{T,c0,c1,kept,broken,proj,crises:crises.length,crisisOK,stories}}
+function openLegacyEnd(final){closePanel();const L=legacyTraits(),top=L.T[0].s>=2?L.T[0]:{n:'The Caretaker',d:'You kept the lights on and the city running. Steady, if not spectacular.'},second=L.T[1].s>=2&&L.T[0].s>=2?L.T[1]:null;
+  const g0=S.reignG||((S.trend||[])[0]||{}).g||{};const gd=GROUPS.map(g=>({g,d:S.groups[g.id].app-(g0[g.id]??S.groups[g.id].app)})).sort((a,b)=>b.d-a.d);
+  const allies=S.council.slice().sort((a,b)=>b.opinion-a.opinion).slice(0,2),foes=S.council.slice().sort((a,b)=>a.opinion-b.opinion).slice(0,2);const M=S.mayor,years=Math.max(1,Math.round((nowM()-(S.reignM||S.termStart||nowM()))/12));
+  const endings=(S.record||[]).filter(r=>['story','crisis','h100','charter'].includes(r.kind)).slice(0,10);
+  openModal(final?'Your time in office is over':'If your time in office ended today',top.n,`<div class="lghero">${portrait(M,96)}<div><small>Mayor of Memphis${S.term>=2?' · two terms':''}</small><b>${M.name}</b><span>${top.n}${second?` · and ${second.n.replace(/^The /,'').toLowerCase()}`:''}</span></div></div>
+   <p class="lgquote">${top.d}${second?' '+second.d:''}</p>
+   <div class="facts"><h4>How Memphis changed</h4><div class="opl">${legacyRow('Violent crime index',L.c0.crime,L.c1.crime,v=>Math.round(v),true)}${legacyRow('Street condition',L.c0.streets,L.c1.streets,v=>Math.round(v))}${legacyRow('Blight',L.c0.blight,L.c1.blight,v=>Math.round(v),true)}${legacyRow('Jobs climate',L.c0.jobs,L.c1.jobs,v=>Math.round(v))}${legacyRow('Reading proficiency',L.c0.reading,L.c1.reading,v=>v.toFixed(1)+'%')}${legacyRow('Reserve',L.c0.reserve,L.c1.reserve,v=>fmtM(v))}${legacyRow('Property tax rate',L.c0.tax,L.c1.tax,v=>'$'+v.toFixed(2),true)}${legacyRow('Approval',L.c0.approval,L.c1.approval,v=>Math.round(v)+'%')}${S.reignPop?legacyRow('Population',S.reignPop,S.popn,v=>Math.round(v).toLocaleString()):''}</div></div>
+   <div class="facts"><h4>Promises and big moments</h4><p>${L.kept} promise${L.kept===1?'':'s'} kept, ${L.broken} broken · ${L.proj} project${L.proj===1?'':'s'} finished · ${L.crises?`${L.crisisOK} of ${L.crises} crises handled well`:'no crises'}</p>${endings.length?`<ul class="numlist">${endings.map(r=>`<li class="${(r.camp&&r.camp.d||0)>0?'pos':(r.camp&&r.camp.d||0)<0?'neg':''}">${r.t}</li>`).join('')}</ul>`:''}</div>
+   <div class="facts"><h4>Who you helped, and who you lost</h4><div class="qrgrid"><div><small>Warmed to you most</small>${gd.slice(0,2).map(x=>`<p><span>${x.g.ic} ${x.g.n}</span><b class="${x.d>=0?'pos':'neg'}">${x.d>=0?'+':'−'}${Math.abs(x.d).toFixed(0)}</b></p>`).join('')}</div><div><small>Cooled on you most</small>${gd.slice(-2).reverse().map(x=>`<p><span>${x.g.ic} ${x.g.n}</span><b class="${x.d>=0?'pos':'neg'}">${x.d>=0?'+':'−'}${Math.abs(x.d).toFixed(0)}</b></p>`).join('')}</div></div>
+     <div class="qrgrid"><div><small>Closest allies</small>${allies.map(m=>`<p><span>${m.name}</span><b class="pos">${fmtOp(m.opinion)}</b></p>`).join('')}</div><div><small>Toughest critics</small>${foes.map(m=>`<p><span>${m.name}</span><b class="neg">${fmtOp(m.opinion)}</b></p>`).join('')}</div></div></div>
+   <div class="facts"><h4>How the other titles scored</h4><div class="mrows">${L.T.map(t=>`<div class="mrow"><span>${t.n}</span><span class="mbar"><i class="pos" style="width:${Math.min(100,Math.max(0,t.s)/Math.max(1,L.T[0].s)*100)}%"></i></span><b>${Math.max(0,t.s).toFixed(1)}</b></div>`).join('')}</div></div>
+   <div class="row">${final?'<button class="btn" data-act="legacy">The Mayors of Memphis</button><button class="btn primary" data-act="newgame">Play again</button>':'<button class="btn primary" data-act="close">Back to work</button>'}</div>`,true);if(final)try{celebrate(true)}catch(e){}}
+openLegacyEnd=navWrap('openLegacyEnd',openLegacyEnd);
+// the end of your time in office shows it
+{const _om=openModal;openModal=function(sub,title,html,...r){let h=html;try{if(typeof h==='string'&&/You lost the election|Term-limited, with a win|will be the next mayor|won the open seat/.test(String(title||''))&&!isCand()&&S.mayor&&S.reign&&!S.reign.ai)h=h.replace(/(<div class="row">)/,'$1<button class="btn primary" data-legend="1">See your legacy</button>')}catch(e){}return _om.call(this,sub,title,h,...r)}}
+document.addEventListener('click',e=>{const b=e.target.closest('[data-legend]');if(!b||!S)return;e.preventDefault();e.stopImmediatePropagation();onClose=null;closeModal();openLegacyEnd(true)},true);
+{const _om=openModal;openModal=function(...a){const r=_om.apply(this,a);try{const n=NAV.cur&&NAV.depth>0?NAV.cur.name:'';if(n==='flow_people'&&inOffice()){const g=$('mBody').querySelector('.flow-grid');if(g&&!g.querySelector('[data-legacyopen]'))g.insertAdjacentHTML('beforeend',`<button class="flow-tile" data-legacyopen="1"><b>Your legacy so far</b><span>What kind of mayor you've been</span></button>`)}}catch(e){}return r}}
+document.addEventListener('click',e=>{const b=e.target.closest('[data-legacyopen]');if(!b||!S)return;e.preventDefault();e.stopImmediatePropagation();openLegacyEnd(false)},true);
 function openLedger(){const L=S.log||[];openPanel('Everything that has happened, newest first','Ledger',L.length?`<div class="logl">${L.map(x=>`<div><span>${x.d}</span><p style="margin:0">${x.t}</p></div>`).join('')}</div>`:'<p class="note">Nothing yet. Start the clock with Space or ▶.</p>','ledger')}
 function openPolicies(){const ks=Object.keys(POLICIES);
   openPanel('Ongoing programs you control','Your initiatives',`<p>Mid-year, these are paid from the reserve fund. In April they go into the budget you send the council.</p>

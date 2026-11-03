@@ -4,6 +4,12 @@ A city-management game set in Memphis, Tennessee. You play the mayor. You handle
 
 **Play it:** https://erndae.github.io/Bluff-city-mayor/ (once GitHub Pages is turned on, see below)
 
+## v26.41: Neighborhood stories, a second term, and your legacy
+
+- **Neighborhood stories.** Five two-part storylines show up over your term, presented by that district's council member: Orange Mound losing its only grocery store, the Frayser youth league with nowhere to play, fixing Elvis Presley Boulevard in Whitehaven, rising rents and an 81-year-old facing eviction in Binghampton, and a closed school in South Memphis. Your first choice shapes the second chapter, and the ending goes on your record for the next campaign.
+- **A second term.** Winning re-election brings a new 100-day agenda, a charter-amendment storyline (line-item budget power, an independent police oversight board, or city-county consolidation) that ends in a referendum decided by your approval and Star Power, and, two years in, lame-duck pressure as council members start running to replace you. Passing budget power gives you an extra action every month.
+- **Your legacy.** When your time in office ends, "See your legacy" names what kind of mayor you were (the Builder, the Dealmaker, the Guardian, the Steward, the Steady Hand, the Neighborhood Mayor, the Promise Keeper or the People's Mayor) and shows how Memphis changed, your promises and big moments, which groups you won and lost, your closest allies and toughest critics, and how every title scored. People → "Your legacy so far" shows it any time.
+
 ## v26.40: Meetings are conversations, and the money is in plain sight
 
 - **Meetings.** Every phone meeting is two rounds. First, how you answer their opening: listen (Education), make a public promise (Star Power), offer a trade (Dealmaking), or show you know the issue (the skill that matches the topic). Then what you ask for, which depends on who it is: a council vote, pressure (Inside Game) or a joint press conference; budget savings or the inside story from a department head; a joint project or fairer sales tax with a suburban mayor; public backing or money from FedEx, the Chamber or the County; turnout from community groups. Every option shows its odds, and a safe "no ask" is always there. A summary shows what worked.
