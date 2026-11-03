@@ -4,6 +4,13 @@ A city-management game set in Memphis, Tennessee. You play the mayor. You handle
 
 **Play it:** https://erndae.github.io/Bluff-city-mayor/ (once GitHub Pages is turned on, see below)
 
+## v26.43: Office visitors, wall pictures, and a rotating soundtrack
+
+- Office visitors now have rounded faces, eyes, brows, noses, glasses, varied hair, lapels and hands. Their colors and accessories follow their character appearance.
+- Framed skyline, garden, and community pictures decorate the office, reception, living room, bedroom, and kitchen without changing saved furniture layouts.
+- Three new original instrumental tracks bring the soundtrack to eight songs. Scene playlists shuffle through their songs before repeating, with a Next song button. Victory still plays once, and hidden tabs pause music.
+- Validation: room/collision and depth-rendering checks, rendered visual previews, and soundtrack lifecycle tests.
+
 ## v26.42: Approval isn't the vote
 
 - In the year before your re-election, a **vote** badge replaces clout next to Approval, showing your share against your opponent if the election were today. Tap it for **Approval vs. the vote**: your chief of staff walks from approval to the vote, worst drag first (your record, opponent's ads, who shows up to vote, organizers, offices, endorsements, your opponent's base), with what to do about each. It notes that Memphis elects its mayor by plurality, with no runoff.

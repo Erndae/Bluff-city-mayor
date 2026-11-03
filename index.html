@@ -1526,7 +1526,7 @@ function enact(s,p){DIVS.forEach(d=>{s.enacted[d.id]=p.divs[d.id];s.ratio[d.id]=
 // Voter groups. Each has a share of residents, turnout, home districts, concerns and an approval of you.
 // Citywide approval is the turnout-weighted average of the groups; each council district's approval comes from the groups that live there.
 // Shares, district mix and turnout are modeled, loosely grounded in Memphis demographics; they are not survey data.
-const VERSION='v26.42';
+const VERSION='v26.43';
 const GROUPS=[
  {id:'working',sh:'Working families',n:'Working families',ic:'⚒︎',c:'#f2a93b',share:24,turn:.5,start:56,w:{jobs:1,safety:.8,transit:.5},
   d:'Hourly workers in logistics, warehouses, health care and service jobs. The biggest bloc in the city.',dm:{1:1.1,2:.8,3:1.3,4:1.2,5:.6,6:1.2,7:1.1}},
@@ -5558,7 +5558,14 @@ function visitorOf(ev){let who=null,role='';try{
   else{const P=presenterFor(ev,evDef(ev));if(P.kind==='staff'){who=staffOf(P.id);role=STAFFMAP[P.id].role}else if(P.kind==='nb'){who=S.nb[P.id];role='Mayor of '+NEIGHBORS[P.id].city}else{who=S.council[P.id];role='Council Member'}}}catch(e){}
   return{ev,who,role,title:(()=>{try{return evTitle(ev)}catch(e){return'A request'}})()}}
 function officeVisitors(){if(!S||!inOffice())return[];return(S.events||[]).filter(e=>e.kind==='char'||e.kind==='request'||e.kind==='memo'||(e.kind!=='budget'&&evAt(e)==='cityhall')).map(visitorOf).filter(v=>v.who)}
-function visitorLook(v){const w=v.who||{};const h=(w.name||'x').length;return{suit:['#2b3a55','#3a3048','#22382e','#4a2530','#2b2f36'][h%5],skin:VSKINS[w.ptSkin!=null?w.ptSkin:(h*3)%8],hair:w.g==='f'?'#3d281a':'#17110d'}}
+function visitorLook(v){const w=v.who||{},name=w.name||'Visitor',L=w.look;
+  const r=k=>hash(name.length*31+k,name.charCodeAt(0)*7+(name.charCodeAt(1)||0));
+  const gray=w.ptHair!=null?w.ptHair===5:(w.age>=58&&r(2)<.7);
+  return {suit:L?SUITC[L.suitC||0]:['#1f2c45','#2b2f36','#4a2530','#22382e','#3a3048'][Math.floor(r(5)*5)],
+    skin:VSKINS[w.ptSkin??Math.floor(r(1)*8)],hair:HAIRC[w.ptHair]||(gray?(r(3)<.5?'#b9b4ab':'#8e8a84'):HAIRC[Math.floor(r(4)*5)]),
+    glasses:L?L.glasses!=='none':(w.ptGlasses??r(6)<.4),beard:L?L.beard!=='none':!!w.ptBeard,
+    longHair:L?['long','bob','locs','braids','pony'].includes(L.hair):w.g==='f',bald:L?.hair==='bald',
+    style:w.ptStyle??Math.floor(r(7)*3),accent:L?ACCC[L.accC||0]:'#bf8c55'};}
 function openAudience(){const V=officeVisitors();DEV.kind='aud';DEV.app=false;document.body.classList.add('dev-on','dev-aud');try{keysDown.clear()}catch(e){}
   if(!V.length){openModal('Office hours','Nobody is waiting',`<p>Your calendar is clear. Your chief of staff will send people up as they ask to see you.</p><div class="row"><button class="btn primary" data-act="close">Back to the office</button><button class="btn" data-meetphone="1">Call someone in</button></div>`,false);return}
   openModal(`Office hours · ${V.length} waiting`,'Your visitors',`<p class="note" style="margin-top:0">People who asked to see you are waiting in your office. Receiving someone doesn't use an action; some of their requests do.</p>
@@ -7088,9 +7095,9 @@ window.claude?.hot?.snapshot?.(()=>({S}));
 window.claude?.hot?.ready?window.claude.hot.ready(start):start(window.claude?.hot?.data??{});
 </script>
 <script src="home-renderer.js?v=26.11"></script>
-<script src="home-interior.js?v=26.27"></script>
+<script src="home-interior.js?v=26.43"></script>
 <script src="city-life.js?v=26.31"></script>
 <script src="city-flow.js?v=26.31"></script>
-<script src="music.js?v=25"></script>
+<script src="music.js?v=26.43"></script>
 </body>
 </html>

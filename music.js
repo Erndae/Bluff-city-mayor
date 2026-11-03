@@ -6,8 +6,29 @@
     council: ['02-behind-the-chamber-doors.mp3', 'Behind the Chamber Doors'],
     campaign: ['03-on-every-block.mp3', 'On Every Block'],
     election: ['04-the-last-precinct.mp3', 'The Last Precinct'],
-    victory: ['05-a-mandate-for-memphis.mp3', 'A Mandate for Memphis']
+    victory: ['05-a-mandate-for-memphis.mp3', 'A Mandate for Memphis'],
+    riverfront: ['06-riverfront-sunday.mp3', 'Riverfront Sunday'],
+    crosstown: ['07-crosstown-after-hours.mp3', 'Crosstown After Hours'],
+    porch: ['08-front-porch-promise.mp3', 'Front Porch Promise']
   };
+  const playlists = {
+    main: ['main','riverfront','crosstown','porch'],
+    council: ['council','porch','riverfront','crosstown'],
+    campaign: ['campaign','crosstown','riverfront','porch'],
+    election: ['election','crosstown','council'], victory: ['victory']
+  };
+  const bags = {}, lastSongs = {};
+  let song = '', loadingTarget = '';
+  function nextSong(route) {
+    if (!bags[route]?.length) {
+      bags[route] = [...playlists[route]];
+      for (let i=bags[route].length-1;i>0;i--) {const j=Math.floor(Math.random()*(i+1));[bags[route][i],bags[route][j]]=[bags[route][j],bags[route][i]];}
+    }
+    let index = bags[route].findIndex(id=>id!==song && id!==lastSongs[route]);
+    if(index<0)index=bags[route].findIndex(id=>id!==song);
+    if(index<0)index=0;
+    return lastSongs[route] = bags[route].splice(index,1)[0];
+  }
   const key = 'bluffcity-music-v1';
   let prefs = { enabled: true, volume: 0.22 };
   try {
@@ -31,7 +52,8 @@
     <label for="musicVolume">Volume <output id="musicVolumeValue"></output></label>
     <input id="musicVolume" type="range" min="0" max="100" step="1">
     <p id="musicNow" role="status" aria-live="polite"></p>
-    <p class="note">Music follows the city, council, campaign and debates. A victory theme plays once when you win. Playback pauses while this tab is hidden.</p>`;
+    <button class="btn" id="musicNext" type="button">Next song</button>
+    <p class="note">Eight original tracks. Songs shuffle through each scene's playlist before repeating. A victory theme plays once when you win. Playback pauses while this tab is hidden.</p>`;
   document.body.append(dialog);
   const enabledInput = dialog.querySelector('#musicEnabled');
   const volumeInput = dialog.querySelector('#musicVolume');
@@ -42,10 +64,12 @@
     dialog.querySelector('#musicVolumeValue').textContent = `${Math.round(prefs.volume * 100)}%`;
     dialog.querySelector('#musicNow').textContent = !prefs.enabled ? 'Music is off.' : failure ||
       (!unlocked ? 'Music starts after your first interaction.' : document.hidden ? 'Paused while the tab is hidden.' :
-        current ? `Now playing: ${tracks[current][1]}` : 'Ready to play.');
+        song ? `Now playing: ${tracks[song][1]}` : 'Ready to play.');
+    dialog.querySelector('#musicNext').disabled = !prefs.enabled || current === 'victory';
   }
   function stop() {
     revision++;
+    loadingTarget = '';
     clearTimeout(fadeTimer);
     for (const c of channels) c.audio.pause();
   }
@@ -79,15 +103,17 @@
     try { return window.bluffMusicContext?.() || { track: 'main' }; }
     catch (_) { return { track: 'main' }; }
   }
-  async function update() {
+  async function update(advance = false) {
     if (!unlocked || !prefs.enabled || document.hidden) { stop(); render(); return; }
     const route = context();
-    let target = tracks[route.track] ? route.track : 'main';
+    let target = playlists[route.track] ? route.track : 'main';
     if (target === 'victory') {
       victoryId = route.event || 'victory';
       if (finishedVictory === victoryId) target = 'main';
     }
-    if (target === current && active >= 0) {
+    if (loadingTarget === target) return;
+    if (!advance && target === current && active >= 0) {
+      if (loadingTarget) { revision++; loadingTarget = ''; channels[1-active].audio.pause(); }
       const c = channels[active];
       if (c.audio.paused && !failure) {
         const token = ++revision;
@@ -98,17 +124,19 @@
       render(); return;
     }
     const token = ++revision, old = active, next = active === 0 ? 1 : 0;
+    loadingTarget = target;
+    const selected = nextSong(target);
     clearTimeout(fadeTimer);
     const c = channels[next];
     c.token = token;
     c.audio.pause();
-    c.audio.src = `assets/music/${tracks[target][0]}?v=17-full`;
-    c.audio.loop = target !== 'victory';
+    c.audio.src = `assets/music/${tracks[selected][0]}?v=26.43`;
+    c.audio.loop = false;
     gain(c, 0);
     try {
       await c.audio.play();
       if (token !== revision) { if (c.token === token) c.audio.pause(); return; }
-      active = next; current = target; failure = '';
+      active = next; current = target; song = selected; failure = ''; loadingTarget = '';
       gain(c, 1, 2);
       if (old >= 0) {
         const previous = channels[old]; gain(previous, 0, 2);
@@ -116,6 +144,7 @@
       }
     } catch (_) {
       if (token !== revision) return;
+      loadingTarget = '';
       c.audio.pause();
       failure = 'Music could not play. Tap Play soundtrack off and on to retry; the game can continue.';
     }
@@ -123,7 +152,9 @@
   }
   channels.forEach((c, i) => {
     c.audio.addEventListener('ended', () => {
-      if (i === active && current === 'victory') { finishedVictory = victoryId; update(); }
+      if (i !== active) return;
+      if (current === 'victory') { finishedVictory = victoryId; update(); }
+      else update(true);
     });
     c.audio.addEventListener('error', () => {
       if (i === active) { failure = 'Music unavailable. The game can continue; toggle music to retry.'; render(); }
@@ -142,6 +173,7 @@
     save(); unlock();
   });
   volumeInput.addEventListener('input', () => { prefs.volume = +volumeInput.value / 100; volume(); save(); render(); });
+  dialog.querySelector('#musicNext').addEventListener('click', () => { if(current !== 'victory')update(true); });
   document.addEventListener('pointerdown', e => { if (e.isTrusted && !unlocked) unlock(); }, { passive: true });
   document.addEventListener('keydown', e => {
     if (dialog.open) { e.stopImmediatePropagation(); return; }

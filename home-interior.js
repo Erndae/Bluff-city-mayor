@@ -84,7 +84,7 @@
     for(let i=0;i<n;i++){if(walkable(h,p.x+dx/n,p.z))p.x+=dx/n;if(walkable(h,p.x,p.z+dz/n))p.z+=dz/n;}return p;
   }
   function shade(c,f){const n=parseInt(c.slice(1),16);return `rgb(${[n>>16,(n>>8)&255,n&255].map(x=>Math.round(clamp(x*f,0,255))).join(',')})`;}
-  function geometry(h,itemsOnly=false){
+  function geometry(h,itemsOnly=false,visitors){
     const faces=[];
     function poly(points,c){faces.push({points,c});}
     function box(x,y,z,w,ht,d,c,r=0){
@@ -92,7 +92,7 @@
       for(const [dx,dy,dz] of [[-1,0,-1],[1,0,-1],[1,0,1],[-1,0,1],[-1,1,-1],[1,1,-1],[1,1,1],[-1,1,1]])p.push([x+dx*w/2*co+dz*d/2*si,y+dy*ht,z-dx*w/2*si+dz*d/2*co]);
       [[0,1,2,3,.6],[0,4,5,1,.82],[1,5,6,2,.9],[2,6,7,3,.96],[3,7,4,0,.87],[4,7,6,5,1.07]].forEach(a=>poly(a.slice(0,4).map(i=>p[i]),shade(c,a[4])));
     }
-    if(!itemsOnly&&MODE==='office'){officeShell(poly,box,h);}
+    if(!itemsOnly&&MODE==='office'){officeShell(poly,box,h,visitors);}
     else if(!itemsOnly){
     const wall=WALLS[h.wall].color,floor=FLOORS[h.floor].color;
     // Continuous surfaces close the room; decorative boards sit above the base.
@@ -118,10 +118,11 @@
     box(2.65,.99,9.5,.65,.015,.5,'#80999b');box(2.65,1,9.74,.05,.25,.05,'#afbec0');box(2.65,1.22,9.65,.05,.04,.2,'#afbec0');
     box(4.4,.99,9.5,.7,.025,.65,'#414c4c');for(const x of [4.2,4.6])for(const z of [9.32,9.68])box(x,1.02,z,.2,.01,.2,'#8b9894');
     }
+    if(!itemsOnly)wallGallery(poly,box);
     h.items.filter(i=>!i.stored).forEach(item=>furniture(item,box));
     return faces;
   }
-  function officeShell(poly,box,h){const wall=WALLS[h.wall].color;
+  function officeShell(poly,box,h,visitors){const wall=WALLS[h.wall].color;
     poly([[0,-.015,0],[12,-.015,0],[12,-.015,10],[0,-.015,10]],'#4a3b30');poly([[0,3.1,0],[0,3.1,10],[12,3.1,10],[12,3.1,0]],'#ece7dc');
     for(let x=0;x<12;x+=1)for(let z=0;z<10;z+=1)poly([[x,0,z],[x+.99,0,z],[x+.99,0,z+.99],[x,0,z+.99]],shade(x<8?'#5e3b3b':'#7a8a8f',1+((x+z)%2?.03:-.03)));
     for(const b of STRUCTURE){const along=b.w>b.d,length=along?b.w:b.d,n=Math.ceil(length/.7);for(let i=0;i<n;i++){const x=along?b.x-b.w/2+(i+.5)*length/n:b.x,z=along?b.z:b.z-b.d/2+(i+.5)*length/n;
@@ -138,10 +139,71 @@
     box(10,0,2.6,2.2,1,.5,'#6b4a33');box(10,1,2.6,2.3,.06,.6,'#d8c9a8');box(10,1.07,2.4,.5,.12,.04,'#c9a15a');
     for(let k=0;k<4;k++)box(11.88,.6+k*.42,7,.02,.3,2.4,['#efe8d8','#d8e0e4','#efe8d8','#d8e0e4'][k]);
     // people waiting to see you stand in the office
-    const V=(adapter&&adapter.visitors)?adapter.visitors():[];const spots=[[2.4,5.7],[3.6,5.5],[4.8,5.7],[9.4,5.6],[10.4,4.6],[9.6,7.2]];
-    V.slice(0,6).forEach((v,k)=>{const [x,z]=spots[k];const suit=v.suit||'#2b3a55',skin=v.skin||'#8d5524';
-      box(x-.1,0,z,.14,.85,.16,'#2a2a2a');box(x+.1,0,z,.14,.85,.16,'#2a2a2a');box(x,.85,z,.5,.65,.26,suit);box(x,1.5,z,.12,.08,.12,skin);box(x,1.58,z,.26,.3,.26,skin);box(x,1.86,z,.27,.06,.27,v.hair||'#2c1d13');
-      box(x-.31,.95,z,.1,.55,.14,suit);box(x+.31,.95,z,.1,.55,.14,suit);});
+    const V=visitors||((adapter&&adapter.visitors)?adapter.visitors():[]);const spots=[[2.4,5.7],[3.6,5.5],[4.8,5.7],[9.4,5.6],[10.4,4.6],[9.6,7.2]];
+    V.slice(0,6).forEach((v,k)=>visitorFigure(poly,box,v,...spots[k],k));
+  }
+  // Low-poly curved surfaces keep faces readable in both depth-tested renderers.
+  function ellipsoid(poly,x,y,z,rx,ry,rz,color){
+    const point=(a,b)=>[x+Math.cos(a)*Math.sin(b)*rx,y+Math.cos(b)*ry,z+Math.sin(a)*Math.sin(b)*rz];
+    for(let j=0;j<8;j++)for(let i=0;i<12;i++){
+      const a=i*Math.PI/6,b=j*Math.PI/8;
+      poly([point(a,b),point(a+Math.PI/6,b),point(a+Math.PI/6,b+Math.PI/8),point(a,b+Math.PI/8)],shade(color,.87+.13*Math.cos(a+.7)*Math.sin(b)));
+    }
+  }
+  function visitorFigure(poly,box,v,x,z,k=0){
+    const skin=v.skin||'#8d5524',suit=v.suit||'#2b3a55',hair=v.hair||'#2c1d13';
+    const round=(dx,y,dz,rx,ry,rz,c)=>ellipsoid(poly,x+dx,y,z+dz,rx,ry,rz,c);
+    for(const dx of [-.115,.115]){box(x+dx,.08,z,.17,.76,.2,'#303b49');round(dx,.075,-.07,.12,.075,.21,'#292b32');}
+    round(0,1.13,0,.29,.4,.18,suit);
+    box(x,1.19,z-.172,.14,.3,.025,'#f3e9d8');
+    poly([[x-.23,1.45,z-.15],[x-.08,1.48,z-.2],[x-.025,1.17,z-.2]],shade(suit,1.3));
+    poly([[x+.23,1.45,z-.15],[x+.08,1.48,z-.2],[x+.025,1.17,z-.2]],shade(suit,1.3));
+    box(x,1.2,z-.2,.045,.23,.025,v.accent||'#bf8c55');
+    for(const dx of [-.32,.32]){round(dx,1.17,.015,.095,.28,.105,suit);round(dx,.9,-.015,.07,.105,.065,skin);}
+    box(x,1.45,z,.12,.14,.12,skin);
+    round(0,1.77,0,.21,.25,.18,skin);
+    for(const dx of [-.205,.205])round(dx,1.76,0,.035,.065,.045,skin);
+    if(v.longHair){round(0,1.77,.095,.235,.28,.14,hair);for(const dx of [-.18,.18])round(dx,1.7,.025,.065,.22,.12,hair);}
+    if(!v.bald)round(0,1.96,.015,.21,.085,.18,hair);
+    if(!v.bald&&(v.style??k)%3!==1)round(-.1,1.93,-.11,.12,.075,.09,hair);
+    for(const dx of [-.078,.078]){
+      round(dx,1.8,-.162,.048,.031,.018,'#fff5e7');round(dx,1.8,-.181,.019,.023,.009,'#34302c');
+      box(x+dx-.004,1.851,z-.179,.079,.018,.015,hair);
+      if(v.glasses){box(x+dx,1.765,z-.201,.115,.012,.016,'#3b4149');box(x+dx,1.834,z-.201,.115,.012,.016,'#3b4149');for(const side of [-.055,.055])box(x+dx+side,1.765,z-.201,.012,.081,.016,'#3b4149');}
+    }
+    if(v.glasses)box(x,1.805,z-.207,.05,.012,.014,'#3b4149');
+    round(0,1.745,-.184,.032,.049,.045,skin);
+    round(0,1.672,-.159,.066,.018,.018,'#955c50');
+    if(v.beard)round(0,1.6,-.06,.15,.055,.12,hair);
+    box(x-.14,1.32,z-.18,.065,.022,.017,'#ead4a0');
+  }
+  function wallGallery(poly,box){
+    // Frames are fixed wall decor, independent of saved furniture layouts.
+    const frame=(x,z,w,h,rot,kind)=>{
+      const co=Math.cos(rot),si=Math.sin(rot),base=1.38;
+      const point=(u,v,d)=>[x+u*co+d*si,base+v,z-u*si+d*co];
+      const panel=(u,v,pw,ph,d,c)=>poly([point(u-pw/2,v,d),point(u+pw/2,v,d),point(u+pw/2,v+ph,d),point(u-pw/2,v+ph,d)],c);
+      box(x,base-.07,z,w+.14,h+.14,.055,'#765039',rot);
+      panel(0,0,w,h,.032,'#f1e6cc');panel(0,.07,w-.14,h-.14,.034,'#a9c5c2');
+      if(kind===0){ // River, skyline and a warm evening sky.
+        panel(0,.07,w-.14,h*.22,.036,'#5f929f');
+        for(let j=0;j<7;j++)panel(-w*.37+j*w*.12,h*.29,w*.085,h*(.17+(j*3%5)*.045),.038,['#496677','#71877c','#b38968'][j%3]);
+        panel(w*.27,h*.66,w*.12,h*.13,.039,'#e8b567');
+      }else if(kind===1){ // Neighborhood garden print.
+        panel(0,.07,w-.14,h*.23,.036,'#819875');
+        for(let j=0;j<5;j++){const u=(j-2)*w*.15;panel(u,h*.2,.02,h*.43,.038,'#4a7057');panel(u-.035,h*(.35+(j%2)*.15),w*.13,h*.12,.039,['#d78d6d','#edc17b','#ba7880'][j%3]);}
+      }else{ // Framed community photograph, with people in front of a park.
+        panel(0,.07,w-.14,h*.22,.036,'#708b75');
+        for(let j=0;j<4;j++){const u=(j-1.5)*w*.18;panel(u,h*.2,w*.13,h*.28,.038,['#526d89','#b67b57','#728a69','#936f86'][j]);panel(u,h*.49,w*.09,h*.13,.039,['#ac7958','#d8ac82','#81563d','#bd8a65'][j]);}
+      }
+    };
+    if(MODE==='office'){
+      frame(.15,5.4,1.5,.95,Math.PI/2,0);frame(7.86,7.8,1.25,.9,-Math.PI/2,2);
+      frame(10.4,9.85,1.5,.95,Math.PI,1);frame(4.4,.15,1.6,1.05,0,0);
+    }else{
+      frame(.15,4.95,1.15,.8,Math.PI/2,2);frame(5.5,.15,1.3,.9,0,0);
+      frame(9.8,9.85,1.4,.85,Math.PI,1);frame(.15,7.2,.9,.7,Math.PI/2,1);
+    }
   }
   function furniture(i,box,tint){
     const b=ITEMS[i.type],r=i.r*Math.PI/2,co=Math.cos(r),si=Math.sin(r),c=tint||b.color;
@@ -189,7 +251,7 @@
     }
   }
   function clipNear(points){const out=[];for(let i=0;i<points.length;i++){const a=points[i],b=points[(i+1)%points.length],ina=a[2]>=.08,inb=b[2]>=.08;if(ina)out.push(a);if(ina!==inb){const t=(.08-a[2])/(b[2]-a[2]);out.push([a[0]+(b[0]-a[0])*t,a[1]+(b[1]-a[1])*t,.08]);}}return out;}
-  const api={CATALOG,WALLS,FLOORS,initial,ensure,canPlace,transact,walkable,move,geometry,clipNear};
+  const api={CATALOG,WALLS,FLOORS,initial,ensure,canPlace,transact,walkable,move,geometry,clipNear,setMode,officeInitial};
   if(typeof module!=='undefined'&&module.exports){module.exports=api;return;}
   let host,canvas,renderer,adapter,s,h,p,scene=[],active=false,raf,last=0,dirty=true,keys=new Set(),stick={x:0,y:0},look=null,selection=null,tab='shop',noticeTimer,previousFocus;
   const $=id=>host.querySelector('#'+id);

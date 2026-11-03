@@ -42,7 +42,31 @@
       "duration_seconds": 146.73,
       "task_id": "7b2d86c5-c2b7-4fc9-9e94-aa4881de42b0",
       "seamless_loop_verified": false
+    },
+    {
+      "title": "Riverfront Sunday",
+      "file": "06-riverfront-sunday.mp3",
+      "duration_seconds": 174.55,
+      "task_id": "9da80ecd-fcc8-4a05-ab83-b243187b5757",
+      "context": "Rotating city, council and campaign playlists",
+      "seamless_loop_verified": false
+    },
+    {
+      "title": "Crosstown After Hours",
+      "file": "07-crosstown-after-hours.mp3",
+      "duration_seconds": 176.48,
+      "task_id": "5335ee94-1fa9-48fb-b19b-c003c49fa2f7",
+      "context": "Rotating city, council and campaign playlists",
+      "seamless_loop_verified": false
+    },
+    {
+      "title": "Front Porch Promise",
+      "file": "08-front-porch-promise.mp3",
+      "duration_seconds": 174.89,
+      "task_id": "6a408101-5fa2-494d-8da8-03be57087c71",
+      "context": "Rotating city, council and campaign playlists",
+      "seamless_loop_verified": false
     }
   ],
-  "version": "v17"
+  "version": "v26.43"
 }
