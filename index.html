@@ -689,7 +689,7 @@ details.analysis{margin-top:6px}details.analysis summary{cursor:pointer;color:va
     <button class="btn primary" data-act="pause" id="bPlay"><svg class="ico" viewBox="0 0 12 12" aria-hidden="true"><path d="M3.2 1.6v8.8l7.2-4.4z" fill="currentColor"/></svg> Resume <kbd>Space</kbd></button>
   </nav>
   <div class="status" id="status">Loading map…</div>
-  <div class="credit"><span class="ver" id="verTag">v26.42</span></div>
+  <div class="credit"><span class="ver" id="verTag">v26.44</span></div>
   <div class="tip" id="tip" hidden></div>
   <div class="toast" id="toast" role="status"></div>
   <section class="panel" id="panel" hidden aria-live="polite">
@@ -717,7 +717,7 @@ details.analysis{margin-top:6px}details.analysis summary{cursor:pointer;color:va
         <button class="btn" data-music-open>Music &amp; volume</button>
       </div>
       <div id="slotList" hidden></div>
-      <p class="note startv">Version <b class="ver" id="verStart">v26.42</b></p>
+      <p class="note startv">Version <b class="ver" id="verStart">v26.44</b></p>
     </div>
     <div class="startbox create" id="create" hidden>
       <h2>Create your mayor</h2>
@@ -1526,7 +1526,7 @@ function enact(s,p){DIVS.forEach(d=>{s.enacted[d.id]=p.divs[d.id];s.ratio[d.id]=
 // Voter groups. Each has a share of residents, turnout, home districts, concerns and an approval of you.
 // Citywide approval is the turnout-weighted average of the groups; each council district's approval comes from the groups that live there.
 // Shares, district mix and turnout are modeled, loosely grounded in Memphis demographics; they are not survey data.
-const VERSION='v26.43';
+const VERSION='v26.44';
 const GROUPS=[
  {id:'working',sh:'Working families',n:'Working families',ic:'⚒︎',c:'#f2a93b',share:24,turn:.5,start:56,w:{jobs:1,safety:.8,transit:.5},
   d:'Hourly workers in logistics, warehouses, health care and service jobs. The biggest bloc in the city.',dm:{1:1.1,2:.8,3:1.3,4:1.2,5:.6,6:1.2,7:1.1}},
@@ -5530,7 +5530,23 @@ function dlgTopic(kind,id){try{if(kind==='council'){const m=S.council[+id],p=m.p
   if(kind==='nb'){const n=S.nb[id];return{issue:'jobs',open:`Glad you made the drive out to ${n.city}. Our residents work in Memphis and shop in Memphis. We want a partner on roads and jobs, not a rival.`}}
   if(kind==='vip'){const v=VMAP[id];const L={county:['education','The county pays for most of the schools. If the city wants a say, I need to know you\'ll share the load.'],supt:['education','Our kids are behind in reading. I can\'t fix it with school hours alone.'],chamber:['jobs','Our members want to grow here. Tell me how City Hall will make that easier.'],fedex:['jobs','We hire thousands of Memphians. We want a workforce that\'s ready, and streets our trucks can use.'],pastors:['safety','Our congregations are burying too many young people. What are you going to do about it?'],union:['labor','My members keep this city clean in the heat and the cold. They want respect, and a raise.']}[id]||['jobs','What can we do together?'];return{issue:L[0],open:L[1]}}
   if(kind==='group'){const g=GMAP[id],p=Object.entries(g.w).sort((a,b)=>b[1]-a[1])[0][0];return{issue:p,open:`We've got a room full of people who care about ${PRIO_LABEL[p]?PRIO_LABEL[p].toLowerCase():p}. They want to hear it from you directly.`}}}catch(e){}return{issue:null,open:'Thanks for making the time.'}}
-function dlgFace(){return DLG?`<div class="meetfaces">${portrait(S.mayor,64)}<span class="meetdots">• • •</span>${DLG.who.face}</div>`:''}
+function dlgEsc(v){return String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function dlgPerson(){const d=DLG;if(!d)return null;
+  if(d.kind==='council')return S.council[+d.id];if(d.kind==='staff')return staffOf(d.id);if(d.kind==='nb')return S.nb[d.id];if(d.kind==='vip')return VMAP[d.id];
+  return{name:d.who.n,g:'f',age:48,ptSkin:Math.floor(hash(String(d.id).length,17)*8),ptStyle:2,frame:GMAP[d.id]?.c||'#c9a15a'};}
+function dlgFace(){if(!DLG)return'';const d=DLG,p=dlgPerson(),last=d.log?.at(-1);
+  const mood=!last?'Ready to talk':last.o.safe?'At ease':last.ok?'Warming to you':'Needs convincing';
+  const cafe=d.kind==='council',community=d.kind==='group'||d.id==='pastors'||d.id==='union';
+  const role=d.kind==='council'?p.seat:d.kind==='staff'?STAFFMAP[d.id].role:d.kind==='nb'?'Mayor of '+p.city:d.kind==='vip'?p.role:'Community representative';
+  return meetingScene({...p,opinion:last?(last.ok?25:-20):p.opinion},d.who.n,role,cafe?'cafe':community?'community':'office',mood);}
+function meetingScene(p,name,role,kind,mood){const cafe=kind==='cafe',community=kind==='community',setting=cafe?'Neighborhood coffee shop':community?'Community meeting room':'City offices';
+  return `<div class="meeting-stage ${cafe?'meeting-cafe':community?'meeting-community':'meeting-office'}">
+    <div class="meeting-room" aria-hidden="true"><div class="meeting-window"><i></i><i></i><i></i><i></i><i></i></div><div class="meeting-picture"><span></span></div><div class="meeting-plant"></div></div>
+    <div class="meeting-setting">${setting}</div><div class="meeting-actor">${portrait(p,180)}</div>
+    <div class="meeting-table"><span class="meeting-folder"></span><span class="meeting-cup"></span></div>
+    <div class="meeting-id"><b>${dlgEsc(name)}</b><small>${dlgEsc(role)}</small></div>
+    <div class="meeting-mood" role="status">${mood}</div></div>`;}
+
 function dlgStart(kind,id,W,who,res){const T=dlgTopic(kind,id);DLG={kind,id,W,who,res,T};const iss=T.issue&&PRIO_LABEL[T.issue]?PRIO_LABEL[T.issue].toLowerCase():'this';const cand=isCand();
   openModal(`${dateStr()} · ${W.label}`,`Meeting with ${who.n}`,`<div class="meetscene">${dlgFace()}<div class="dlgbub them"><b>${who.n}</b><p>“${T.open}”</p></div></div>
    <div class="choices dlgpick"><button class="choice" data-dlg="listen"><b>“Tell me more. I'm listening.”</b><small>Safe. They feel heard.</small></button>
@@ -5573,7 +5589,7 @@ function openAudience(){const V=officeVisitors();DEV.kind='aud';DEV.app=false;do
    <div class="row"><button class="btn" data-act="close">Close the door</button></div>`,true)}
 let AUD_V=[];
 document.addEventListener('click',e=>{const b=e.target.closest('[data-audrecv]');if(!b||!S)return;e.preventDefault();e.stopImmediatePropagation();const v=officeVisitors()[+b.dataset.audrecv];if(!v)return;DEV.app=true;onClose=null;closeModal();
-  setTimeout(()=>{try{const i=S.events.indexOf(v.ev);openPanel(`Office hours · ${v.role}`,`Audience with ${v.who.name}`,eventCard(v.ev,i),'aud')}catch(err){console.warn(err)}devFrame(true)},30)},true);
+  setTimeout(()=>{try{const i=S.events.indexOf(v.ev);openPanel(`Office hours · ${v.role}`,`Audience with ${v.who.name}`,meetingScene(v.who,v.who.name,v.role,'office','Ready to talk')+eventCard(v.ev,i),'aud')}catch(err){console.warn(err)}devFrame(true)},30)},true);
 // once you decide, the visitor leaves and the next one is up
 document.addEventListener('click',e=>{const b=e.target.closest('[data-ev]');if(!b||panelFor!=='aud')return;setTimeout(()=>{if(panelFor==='aud'&&!$('panel').hidden)closePanel()},50)});
 // after a visitor's business is done, the list comes back; the 3D office updates who's still standing there
@@ -6258,19 +6274,26 @@ function dlgRound2(){const k=DLG.kind,id=DLG.id,cand=isCand();
 function dlgApply2(v,why){const k=DLG.kind,id=DLG.id;if(k==='group'&&isCand()){try{candBump(id,v*0.5,why)}catch(e){}return}dlgApply(v,why)}
 function dlgOptHTML(o,i,tg){return`<button class="choice" data-dlg2="${i}"><b>${o.t}</b><small>${o.safe?'Safe · always works':oddsTag(o.sk,o.b,tg)}</small></button>`}
 dlgStart=function(kind,id,W,who,res){const T=dlgTopic(kind,id);DLG={kind,id,W,who,res,T,r:1,log:[]};dlgShow()};
-function dlgShow(){const tg=dlgTargets();const opts=DLG.r===1?dlgRound1():dlgRound2();DLG.opts=opts;const last=DLG.log[DLG.log.length-1];
-  const say=DLG.r===1?DLG.T.open:(last?last.reply:'');
-  openModal(`${dateStr()} · ${DLG.W.label} · ${DLG.r} of 2`,`Meeting with ${DLG.who.n}`,`<div class="meetscene">${dlgFace()}<div class="dlgbub them"><b>${DLG.who.n}</b><p>“${say}”</p></div></div>
-   <p class="note" style="margin:8px 0 4px">${DLG.r===1?'How do you answer? Each approach leans on a different skill.':'Now, what do you ask for?'}</p>
-   <div class="choices dlgpick">${opts.map((o,i)=>dlgOptHTML(o,i,tg)).join('')}</div>`,false)}
-document.addEventListener('click',e=>{const b=e.target.closest('[data-dlg2]');if(!b||!S||!DLG)return;e.preventDefault();e.stopImmediatePropagation();const o=DLG.opts[+b.dataset.dlg2];const tg=dlgTargets();
-  const ok=o.safe?true:persuade(o.sk,o.b,tg,6);
-  if(DLG.r===1){const[v,reply]=ok?o.ok:o.no;dlgApply2(v,ok?'Good first impression':'Shaky first impression');DLG.log.push({o,ok,reply,res:v>0?`Opinion +${v}`:v<0?`Opinion ${v}`:'No change'});try{sfx(ok?'good':'bad')}catch(err){}DLG.r=2;dlgShow();return}
-  try{ok?(o.okFx&&o.okFx()):(o.noFx&&o.noFx())}catch(err){}DLG.log.push({o,ok,reply:'',res:ok?o.ok:o.no});try{sfx(ok?'good':'bad')}catch(err){}save();refreshHUD();
-  const wins=DLG.log.filter(x=>x.ok&&!x.o.safe).length;if(wins===2)try{celebrate(false)}catch(err){}const name=DLG.who.n;
-  openModal(`${dateStr()} · ${DLG.W.label}`,`Meeting with ${name}`,`<div class="meetscene">${dlgFace()}</div><div class="glist" style="margin-top:10px">${DLG.log.map(x=>`<div class="gitem${x.ok?' done':''}"><span class="gck">${x.ok?'✓':'✕'}</span><div><b>${x.o.t.replace(/[“”]/g,'')}</b><small>${x.o.safe?'Safe choice':skillName(x.o.sk)} · ${x.res}</small></div></div>`).join('')}</div>
-   <p class="note">${DLG.res?DLG.res.replace(/^You met [^.]*\.\s*/,''):''} Every skill you used earned experience.</p>
-   <div class="row"><button class="btn primary" data-act="close">Back to work</button><button class="btn" data-meetphone="1">Set up another meeting</button></div>`,false);DLG=null},true);
+function dlgRound3(){const original=DLG.failed;
+  return[{id:'clarify',sk:'dip',b:0.32,t:'“Let me explain how this helps both of us.”',ok:original.ok,no:'They still declined. The original setback stands.',okFx:()=>original.okFx?.(),noFx:()=>{}},
+   {id:'repair',safe:1,t:'“I hear you. Let’s leave the request for another day.”',ok:'You respected their answer. Relationship +2; the request stays declined.',okFx:()=>dlgApply2(2,'Respected my answer')}];}
+function dlgShow(){if(!DLG)return;const tg=dlgTargets(),recovery=DLG.r===3;
+  const opts=DLG.r===1?dlgRound1():recovery?dlgRound3():dlgRound2();DLG.opts=opts;const last=DLG.log.at(-1);
+  const say=DLG.r===1?DLG.T.open:recovery?'I’m not ready to agree to that. Help me understand why I should.':last.reply;
+  openModal(`${dateStr()} · ${DLG.W.label}`,`Meeting with ${DLG.who.n}`,`<div class="meetscene">${dlgFace()}<div class="meeting-progress"><span class="${DLG.r===1?'active':''}">1 · Hear them out</span><span class="${DLG.r===2?'active':''}">2 · Make your ask</span>${recovery?'<span class="active">3 · Work it out</span>':''}</div><div class="dlgbub them"><b>${dlgEsc(DLG.who.n)}</b><p>“${dlgEsc(say)}”</p></div></div>
+   <p class="note">${recovery?'One chance to explain, or respect their answer. No extra action.':DLG.r===1?'How do you answer? Pick the approach that fits your skills.':'What do you want to accomplish together?'}</p>
+   <div class="choices dlgpick">${opts.map((o,i)=>dlgOptHTML(o,i,tg)).join('')}</div>`,false,()=>{DLG=null});MODAL_BROWSE=false;}
+function dlgFinish(){if(!DLG)return;save();refreshHUD();const d=DLG;
+  if(d.log.filter(x=>x.ok&&!x.o.safe).length>=2)try{celebrate(false)}catch(err){}
+  openModal(`${dateStr()} · ${d.W.label}`,`Meeting with ${d.who.n}`,`<div class="meetscene">${dlgFace()}</div><h3 class="meeting-result-title">How the meeting went</h3><div class="glist">${d.log.map(x=>`<div class="gitem${x.ok?' done':''}"><span class="gck">${x.ok?'✓':'✕'}</span><div><b>${dlgEsc(x.o.t.replace(/[“”]/g,''))}</b><small>${x.o.safe?'Safe choice':skillName(x.o.sk)} · ${dlgEsc(x.res)}</small></div></div>`).join('')}</div>
+   <p class="note">${dlgEsc(d.res?d.res.replace(/^You met [^.]*\.\s*/,''):'')} ${d.log.some(x=>!x.o.safe)?'Skills used earned experience.':''}</p>
+   <div class="row"><button class="btn primary" data-act="close">Back to work</button><button class="btn" data-meetphone="1">Set up another meeting</button></div>`,false);MODAL_BROWSE=false;DLG=null;}
+function dlgChoose(i){if(!DLG||!Number.isInteger(i)||!DLG.opts[i])return;const d=DLG,o=d.opts[i];
+  const ok=o.safe?true:persuade(o.sk,o.b,dlgTargets(),6);
+  if(d.r===1){const[v,reply]=ok?o.ok:o.no;dlgApply2(v,ok?'Good first impression':'Shaky first impression');d.log.push({o,ok,reply,res:v>0?`Relationship +${v}`:v<0?`Relationship ${v}`:'No change'});save();try{sfx(ok?'good':'bad')}catch(err){}d.r=2;dlgShow();return}
+  ok?o.okFx?.():o.noFx?.();d.log.push({o,ok,reply:'',res:ok?o.ok:o.no});save();refreshHUD();try{sfx(ok?'good':'bad')}catch(err){}
+  if(d.r===2&&!ok&&!o.safe){d.failed=o;d.r=3;dlgShow();return}dlgFinish();}
+document.addEventListener('click',e=>{const b=e.target.closest('[data-dlg2]');if(!b||!S||!DLG)return;e.preventDefault();e.stopImmediatePropagation();dlgChoose(Number(b.dataset.dlg2))},true);
 // ---------- what the property tax costs people ----------
 const DIST_HOME={1:110000,2:195000,3:120000,4:150000,5:290000,6:85000,7:140000};
 const DIST_AREA={1:'Raleigh, Frayser',2:'Berclair, East Memphis',3:'Whitehaven',4:'Hickory Hill',5:'Midtown, East Memphis',6:'South Memphis',7:'North Memphis, Downtown'};

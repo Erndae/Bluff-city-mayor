@@ -4,6 +4,14 @@ A city-management game set in Memphis, Tennessee. You play the mayor. You handle
 
 **Play it:** https://erndae.github.io/Bluff-city-mayor/ (once GitHub Pages is turned on, see below)
 
+## v26.44: Face-to-face meetings and a chance to work it out
+
+- Phone meetings now show the actual character at a furnished coffee shop, community room, or office, with larger faces, a location label, their role, and a reaction after each answer. Office audiences use the same furnished presentation.
+- A declined request opens one final choice: explain the mutual benefit with Dealmaking, or safely respect their answer and repair the relationship. Recovery uses no extra action and can only award the original request once. A second refusal ends the conversation.
+- Round labels and a final result card explain each choice and consequence. Meeting decisions hold the clock, and first-round relationship changes save immediately.
+- Existing saves, meeting action costs, and contact cooldowns are preserved.
+- Validation: five contact types, ordinary success, no-ask choices, safe repair, successful and unsuccessful recovery, duplicate-reward protection, and inline-script syntax.
+
 ## v26.43: Office visitors, wall pictures, and a rotating soundtrack
 
 - Office visitors now have rounded faces, eyes, brows, noses, glasses, varied hair, lapels and hands. Their colors and accessories follow their character appearance.
