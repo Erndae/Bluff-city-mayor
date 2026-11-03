@@ -12,6 +12,9 @@
 <meta name="theme-color" content="#0d1822">
 <link rel="stylesheet" href="music.css?v=25">
 <link rel="stylesheet" href="home-interior.css?v=26.27">
+<link rel="stylesheet" href="meetings.css?v=26.44">
+<link rel="stylesheet" href="room-stories.css?v=26.45">
+<link rel="stylesheet" href="room-actions.css?v=26.46">
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -337,6 +340,8 @@ canvas.confetti{position:fixed;inset:0;z-index:100000;pointer-events:none}
 .lghero{display:flex;gap:14px;align-items:center;margin-bottom:8px}.lghero small{display:block;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;font-size:12px}.lghero b{display:block;font-size:22px}.lghero span{color:var(--amber);font-weight:700}
 .lgquote{font-size:17px;font-style:italic;border-left:3px solid var(--amber);padding-left:12px;margin:6px 0 12px}
 .hud-top .stat small.hvote,.hvote{display:inline-block;margin-left:6px;font-size:12.5px;font-weight:700;border:1px solid currentColor;border-radius:6px;padding:1px 6px;cursor:pointer;white-space:nowrap}.hud-top .stat small.hvote[hidden],.hvote[hidden]{display:none}
+.placeq{width:100%;box-sizing:border-box;padding:10px 12px;border-radius:8px;border:1px solid var(--line);background:var(--panel2,#0f1a24);color:var(--text);font-size:16px;margin-bottom:10px}
+.placegrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px;margin-bottom:6px}.placebtn{display:flex;gap:10px;align-items:center;text-align:left;border:1px solid var(--line);border-radius:10px;background:rgba(255,255,255,.03);color:var(--text);padding:10px;cursor:pointer;font:inherit;min-width:0}.placebtn:hover{border-color:var(--amber)}.placebtn b{display:block;font-size:14px;line-height:1.2}.placebtn small{display:block;color:var(--muted);font-size:12px;line-height:1.25;margin-top:2px}.plic{flex:none;width:30px;height:30px;border-radius:8px;display:grid;place-items:center;background:rgba(242,169,59,.15);color:var(--amber);font-weight:800}.placebtn[data-need]{border-color:var(--bad)}.placebtn[data-need] .plic{background:rgba(232,100,79,.2);color:var(--bad)}.plh{margin:12px 0 6px;font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
 .adgain{display:block;width:100%;text-align:center;font-size:11px;font-weight:600;color:var(--good);margin-top:1px}
 #start{overflow-x:hidden;overflow-y:auto;touch-action:pan-y}.startbox{min-width:0;max-width:min(600px,100%);box-sizing:border-box}.startbox *{min-width:0}.create select,.create input{max-width:100%;width:100%;box-sizing:border-box;text-overflow:ellipsis}.create .tpick,.create .tpick>*{max-width:100%;box-sizing:border-box}
 @media (max-width:640px){.startbox{margin-left:0}#start{padding-left:max(16px,env(safe-area-inset-left,0px))}}
@@ -689,7 +694,7 @@ details.analysis{margin-top:6px}details.analysis summary{cursor:pointer;color:va
     <button class="btn primary" data-act="pause" id="bPlay"><svg class="ico" viewBox="0 0 12 12" aria-hidden="true"><path d="M3.2 1.6v8.8l7.2-4.4z" fill="currentColor"/></svg> Resume <kbd>Space</kbd></button>
   </nav>
   <div class="status" id="status">Loading map…</div>
-  <div class="credit"><span class="ver" id="verTag">v26.46</span></div>
+  <div class="credit"><span class="ver" id="verTag">v26.47</span></div>
   <div class="tip" id="tip" hidden></div>
   <div class="toast" id="toast" role="status"></div>
   <section class="panel" id="panel" hidden aria-live="polite">
@@ -717,7 +722,7 @@ details.analysis{margin-top:6px}details.analysis summary{cursor:pointer;color:va
         <button class="btn" data-music-open>Music &amp; volume</button>
       </div>
       <div id="slotList" hidden></div>
-      <p class="note startv">Version <b class="ver" id="verStart">v26.46</b></p>
+      <p class="note startv">Version <b class="ver" id="verStart">v26.47</b></p>
     </div>
     <div class="startbox create" id="create" hidden>
       <h2>Create your mayor</h2>
@@ -1526,7 +1531,7 @@ function enact(s,p){DIVS.forEach(d=>{s.enacted[d.id]=p.divs[d.id];s.ratio[d.id]=
 // Voter groups. Each has a share of residents, turnout, home districts, concerns and an approval of you.
 // Citywide approval is the turnout-weighted average of the groups; each council district's approval comes from the groups that live there.
 // Shares, district mix and turnout are modeled, loosely grounded in Memphis demographics; they are not survey data.
-const VERSION='v26.46';
+const VERSION='v26.47';
 const GROUPS=[
  {id:'working',sh:'Working families',n:'Working families',ic:'⚒︎',c:'#f2a93b',share:24,turn:.5,start:56,w:{jobs:1,safety:.8,transit:.5},
   d:'Hourly workers in logistics, warehouses, health care and service jobs. The biggest bloc in the city.',dm:{1:1.1,2:.8,3:1.3,4:1.2,5:.6,6:1.2,7:1.1}},
@@ -6491,6 +6496,44 @@ document.addEventListener('click',e=>{const b=e.target.closest('#hVote');if(!b||
 function voteGapNudge(){if(!voteSeason()||S.day!==2)return;S.vgN=S.vgN||{};if(S.vgN[nowM()])return;S.vgN[nowM()]=1;const D=voteGapData(),gap=D.vote-D.appr;if(gap>-3)return;const A=advisor(),worst=D.rows[0];
   try{notify('people',`${A?A.name+': ':''}approval isn't votes`,`You're at ${Math.round(D.appr)}% approval but ${Math.round(D.vote)}% of the vote. Biggest drag: ${worst?worst.k.toLowerCase():'the campaign'}. Tap for the full picture.`,()=>openVoteGap(),{ttl:14})}catch(e){}}
 {const _dt4=dayTick;dayTick=function(...a){const r=_dt4.apply(this,a);try{voteGapNudge()}catch(e){}return r}}
+// ---------- go anywhere without hunting on the map ----------
+function placesBtn(id,ic,t,sub,attrs){return`<button class="placebtn" ${attrs}><span class="plic">${ic}</span><span><b>${t}</b>${sub?`<small>${sub}</small>`:''}</span></button>`}
+function openPlaces(){closePanel();const q=(S.placeQ||'').toLowerCase();const hit=t=>!q||t.toLowerCase().includes(q);
+  const need={};(S.events||[]).forEach(e=>{if(e.kind==='budget'||e.id==='briefing')return;let at;try{at=evAt(e)}catch(err){return}if(!at)return;need[at]=(need[at]||0)+1});
+  const needRows=Object.entries(need).map(([at,n])=>{let p;try{p=placeOf(at)}catch(e){p=null}return p&&p.name?{at,n,name:p.name}:null}).filter(Boolean).filter(x=>hit(x.name));
+  const quick=[placesBtn('home','⌂','Your home',S.home?'Go inside, read, watch TV, use your laptop':'','data-goto="home"'),
+    inOffice()?placesBtn('office','✦','Your office','7th floor of City Hall'+(typeof officeVisitors==='function'&&officeVisitors().length?` · ${officeVisitors().length} waiting`:''),'data-goto="office"'):'',
+    placesBtn('cityhall','▣','City Hall','The council chamber and what\'s on the agenda','data-goto="place:cityhall"'),
+    S.camp&&(isCand()||monthsToElection()<=12)?placesBtn('hq','✪','Campaign HQ','Money, ads, polls and your field team','data-goto="hq"'):'',
+    S.mayorAt?placesBtn('me','◉','Where you are now',S.mayorAt.label||'','data-goto="me"'):''].join('');
+  const lm=LMKS.filter(l=>l.id!=='cityhall'&&hit(l.name+' '+(l.short||''))).map(l=>placesBtn(l.id,'◆',l.short||l.name,l.addr||'',`data-goto="place:${l.id}"`)).join('');
+  const civ=Object.entries(CIV).map(([k,T])=>placesBtn(k,T.ic,T.n.replace(/^(.)/,c=>c.toUpperCase())+'s',`${T.list.length} on the map`,`data-goto="civ:${k}"`)).join('');
+  const dists=[1,2,3,4,5,6,7].filter(d=>hit('District '+d)).map(d=>placesBtn('d'+d,String(d),'District '+d,(typeof DIST_AREA!=='undefined'?DIST_AREA[d]:'')+(S.groups?` · ${Math.round(dApp(d))}% approval`:''),`data-goto="dist:${d}"`)).join('');
+  const hoods=HOODS.filter(h=>hit(h[0])).map(h=>placesBtn(h[0],'⌖',h[0],'',`data-goto="hood:${h[0]}"`)).join('');
+  openModal('Tap a place to go there','Go to',`<input class="placeq" id="placeQ" type="search" placeholder="Search places" value="${(S.placeQ||'').replace(/"/g,'&quot;')}" autocomplete="off">
+   ${q?'':`<div class="placegrid">${quick}</div>`}
+   ${needRows.length?`<h4 class="plh">Where you're needed</h4><div class="placegrid">${needRows.map(x=>placesBtn(x.at,'!',x.name,`${x.n} decision${x.n===1?'':'s'} waiting`,`data-goto="place:${x.at}" data-need="1"`)).join('')}</div>`:''}
+   ${lm?`<h4 class="plh">Landmarks</h4><div class="placegrid">${lm}</div>`:''}
+   ${q?'':`<h4 class="plh">Police, fire, hospitals and schools</h4><div class="placegrid">${civ}</div>`}
+   ${dists?`<h4 class="plh">Council districts</h4><div class="placegrid">${dists}</div>`:''}
+   ${hoods?`<h4 class="plh">Neighborhoods</h4><div class="placegrid">${hoods}</div>`:''}`,true);
+  const inp=$('placeQ');if(inp&&q){inp.focus();inp.setSelectionRange(inp.value.length,inp.value.length)}}
+openPlaces=navWrap('openPlaces',openPlaces);
+document.addEventListener('input',e=>{if(e.target.id!=='placeQ'||!S)return;S.placeQ=e.target.value;NAV.busy=true;try{hideViews();openPlaces()}finally{NAV.busy=false}});
+document.addEventListener('click',e=>{const b=e.target.closest('[data-goto]');if(!b||!S)return;e.preventDefault();e.stopImmediatePropagation();const g=b.dataset.goto;S.placeQ='';
+  const fly=(lon,lat,z)=>{try{camFly({center:[lon,lat],zoom:z||15.2})}catch(err){}};
+  hideViews();navReset();
+  if(g==='home'){enterHome();return}if(g==='office'){enterOffice();return}if(g==='hq'){openHQ();return}if(g==='me'){findMayor();return}
+  if(g.startsWith('place:')){const at=g.slice(6);try{const p=placeOf(at);if(p&&p.lon)fly(p.lon,p.lat)}catch(err){}openPlace(at);return}
+  if(g.startsWith('civ:')){openCivicList(g.slice(4));return}
+  if(g.startsWith('dist:')){const d=+g.slice(5);try{const c=districtCenter(d);if(c)fly(c[0],c[1],13)}catch(err){}openDistrict(d,false);return}
+  if(g.startsWith('hood:')){const h=HOODS.find(x=>x[0]===g.slice(5));if(h){fly(h[2],h[1],15);const d=districtAt(h[2],h[1]);toast(`${h[0]}${d?` · District ${d}`:''}`);if(d)setTimeout(()=>openDistrict(d,false),900)}return}},true);
+// a map-pin button next to the phone
+{const ph=$('bPhone');if(ph&&!$('bPlaces')){ph.insertAdjacentHTML('afterend','<button class="hudphone" id="bPlaces" aria-label="Go to a place" title="Go to a place"><svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M8 15s5-4.6 5-8.6A5 5 0 0 0 3 6.4C3 10.4 8 15 8 15z" fill="none" stroke="currentColor" stroke-width="1.6"/><circle cx="8" cy="6.4" r="1.8" fill="currentColor"/></svg></button>')}}
+document.addEventListener('click',e=>{const b=e.target.closest('#bPlaces');if(!b||!S||!S.started)return;e.preventDefault();e.stopImmediatePropagation();if(modalOpen){onClose=null;closeModal()}S.placeQ='';openPlaces()},true);
+// and a "Go to" tile in the City hub
+{const _om=openModal;openModal=function(...a){const r=_om.apply(this,a);try{const n=NAV.cur&&NAV.depth>0?NAV.cur.name:'';if(n==='flow_city'){const g=$('mBody').querySelector('.flow-grid');if(g&&!g.querySelector('[data-placesopen]'))g.insertAdjacentHTML('afterbegin','<button class="flow-tile" data-placesopen="1"><b>Go to a place</b><span>Home, City Hall, landmarks, districts and neighborhoods</span></button>')}}catch(e){}return r}}
+document.addEventListener('click',e=>{const b=e.target.closest('[data-placesopen]');if(!b||!S)return;e.preventDefault();e.stopImmediatePropagation();S.placeQ='';openPlaces()},true);
 function openLedger(){const L=S.log||[];openPanel('Everything that has happened, newest first','Ledger',L.length?`<div class="logl">${L.map(x=>`<div><span>${x.d}</span><p style="margin:0">${x.t}</p></div>`).join('')}</div>`:'<p class="note">Nothing yet. Start the clock with Space or ▶.</p>','ledger')}
 function openPolicies(){const ks=Object.keys(POLICIES);
   openPanel('Ongoing programs you control','Your initiatives',`<p>Mid-year, these are paid from the reserve fund. In April they go into the budget you send the council.</p>

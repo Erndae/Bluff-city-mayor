@@ -4,6 +4,11 @@ A city-management game set in Memphis, Tennessee. You play the mayor. You handle
 
 **Play it:** https://erndae.github.io/Bluff-city-mayor/ (once GitHub Pages is turned on, see below)
 
+## v26.47: Go to a place without hunting on the map
+
+- A **map-pin button** next to the phone (and a "Go to a place" tile in the City hub) opens **Go to**: one tap to your home, your office, City Hall, Campaign HQ, or wherever you are now; a "Where you're needed" list of places with decisions waiting; every landmark; police, fire, hospitals and schools; all seven council districts with your approval in each; and Memphis neighborhoods. A search box filters the list. The camera flies there and the place opens.
+- The meeting, room-story and room-action stylesheets added in v26.44–26.46 are now linked from the page, so the meeting rooms, project boards and correspondence are styled.
+
 ## v26.44: Face-to-face meetings and a chance to work it out
 
 - Phone meetings now show the actual character at a furnished coffee shop, community room, or office, with larger faces, a location label, their role, and a reaction after each answer. Office audiences use the same furnished presentation.
