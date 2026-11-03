@@ -336,6 +336,7 @@ canvas.confetti{position:fixed;inset:0;z-index:100000;pointer-events:none}
 .mrows{display:flex;flex-direction:column;gap:5px}.mrow{display:grid;grid-template-columns:minmax(0,1.3fr) 1fr auto;gap:8px;align-items:center;font-size:13.5px}.mrow b{text-align:right;font-variant-numeric:tabular-nums}.mbar{display:block;height:7px;background:var(--line);border-radius:4px;overflow:hidden}.mbar i{display:block;height:100%}.mbar i.pos{background:var(--good)}.mbar i.neg{background:var(--amber)}
 .lghero{display:flex;gap:14px;align-items:center;margin-bottom:8px}.lghero small{display:block;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;font-size:12px}.lghero b{display:block;font-size:22px}.lghero span{color:var(--amber);font-weight:700}
 .lgquote{font-size:17px;font-style:italic;border-left:3px solid var(--amber);padding-left:12px;margin:6px 0 12px}
+.hud-top .stat small.hvote,.hvote{display:inline-block;margin-left:6px;font-size:12.5px;font-weight:700;border:1px solid currentColor;border-radius:6px;padding:1px 6px;cursor:pointer;white-space:nowrap}.hud-top .stat small.hvote[hidden],.hvote[hidden]{display:none}
 .adgain{display:block;width:100%;text-align:center;font-size:11px;font-weight:600;color:var(--good);margin-top:1px}
 #start{overflow-x:hidden;overflow-y:auto;touch-action:pan-y}.startbox{min-width:0;max-width:min(600px,100%);box-sizing:border-box}.startbox *{min-width:0}.create select,.create input{max-width:100%;width:100%;box-sizing:border-box;text-overflow:ellipsis}.create .tpick,.create .tpick>*{max-width:100%;box-sizing:border-box}
 @media (max-width:640px){.startbox{margin-left:0}#start{padding-left:max(16px,env(safe-area-inset-left,0px))}}
@@ -688,7 +689,7 @@ details.analysis{margin-top:6px}details.analysis summary{cursor:pointer;color:va
     <button class="btn primary" data-act="pause" id="bPlay"><svg class="ico" viewBox="0 0 12 12" aria-hidden="true"><path d="M3.2 1.6v8.8l7.2-4.4z" fill="currentColor"/></svg> Resume <kbd>Space</kbd></button>
   </nav>
   <div class="status" id="status">Loading map…</div>
-  <div class="credit"><span class="ver" id="verTag">v26.41</span></div>
+  <div class="credit"><span class="ver" id="verTag">v26.42</span></div>
   <div class="tip" id="tip" hidden></div>
   <div class="toast" id="toast" role="status"></div>
   <section class="panel" id="panel" hidden aria-live="polite">
@@ -716,7 +717,7 @@ details.analysis{margin-top:6px}details.analysis summary{cursor:pointer;color:va
         <button class="btn" data-music-open>Music &amp; volume</button>
       </div>
       <div id="slotList" hidden></div>
-      <p class="note startv">Version <b class="ver" id="verStart">v26.41</b></p>
+      <p class="note startv">Version <b class="ver" id="verStart">v26.42</b></p>
     </div>
     <div class="startbox create" id="create" hidden>
       <h2>Create your mayor</h2>
@@ -1525,7 +1526,7 @@ function enact(s,p){DIVS.forEach(d=>{s.enacted[d.id]=p.divs[d.id];s.ratio[d.id]=
 // Voter groups. Each has a share of residents, turnout, home districts, concerns and an approval of you.
 // Citywide approval is the turnout-weighted average of the groups; each council district's approval comes from the groups that live there.
 // Shares, district mix and turnout are modeled, loosely grounded in Memphis demographics; they are not survey data.
-const VERSION='v26.41';
+const VERSION='v26.42';
 const GROUPS=[
  {id:'working',sh:'Working families',n:'Working families',ic:'⚒︎',c:'#f2a93b',share:24,turn:.5,start:56,w:{jobs:1,safety:.8,transit:.5},
   d:'Hourly workers in logistics, warehouses, health care and service jobs. The biggest bloc in the city.',dm:{1:1.1,2:.8,3:1.3,4:1.2,5:.6,6:1.2,7:1.1}},
@@ -6437,6 +6438,29 @@ openLegacyEnd=navWrap('openLegacyEnd',openLegacyEnd);
 document.addEventListener('click',e=>{const b=e.target.closest('[data-legend]');if(!b||!S)return;e.preventDefault();e.stopImmediatePropagation();onClose=null;closeModal();openLegacyEnd(true)},true);
 {const _om=openModal;openModal=function(...a){const r=_om.apply(this,a);try{const n=NAV.cur&&NAV.depth>0?NAV.cur.name:'';if(n==='flow_people'&&inOffice()){const g=$('mBody').querySelector('.flow-grid');if(g&&!g.querySelector('[data-legacyopen]'))g.insertAdjacentHTML('beforeend',`<button class="flow-tile" data-legacyopen="1"><b>Your legacy so far</b><span>What kind of mayor you've been</span></button>`)}}catch(e){}return r}}
 document.addEventListener('click',e=>{const b=e.target.closest('[data-legacyopen]');if(!b||!S)return;e.preventDefault();e.stopImmediatePropagation();openLegacyEnd(false)},true);
+// ---------- approval is not the vote: show both, and explain the gap ----------
+// Your record still counts, but less for a sitting mayor: approval already reflects most of what you've done.
+{const _rs=recordSwing;recordSwing=function(){const r=_rs();return(S&&!isCand())?r*0.6:r}}
+function voteSeason(){return!!(S&&S.started&&inOffice()&&S.camp&&S.rival&&monthsToElection()<=12&&!S.camp.voted)}
+const GAP_TIP={'Your ads':'Run ads in the last three months; they fade about a quarter each month.','Your attack ads (damage to your opponent)':'Attack ads work, but too many turn voters off.','Field organizers':'Organizers turn supporters into voters, especially renters and young people.','Field offices':'Offices help most in close districts.','Endorsements':'Ask groups for endorsements before July.','Debates':'Practice before the September debates.','Your record (promises, deals, stories, projects)':'Keep promises and finish stories well. Old news fades over about a year.','Opponent\'s ads':'Answer attacks with a "Defend" ad.','Opponent\'s organizers':'Match them with your own organizers.','Opponent\'s field offices':'Open offices where the race is close.'};
+function voteGapData(){const B=voteBreakdown(),vote=B.full*100,appr=S.approval,turn=(B.full-B.resident)*100;const sum=B.rows.reduce((a,r)=>a+r.v,0);const rest=vote-appr-turn-sum;
+  const rows=[...B.rows.map(r=>({k:r.k,v:r.v,tip:GAP_TIP[r.k]||''})),{k:'Who shows up to vote',v:turn,tip:turn<0?'Your strongest groups vote less often. Organizers and offices help.':'Your supporters are the reliable voters.'},{k:'Your opponent\'s base and the other candidates',v:rest,tip:'Groups that back your opponent, and votes that go to the minor candidates.'}].filter(r=>Math.abs(r.v)>=0.1).sort((a,b)=>a.v-b.v);
+  return{appr,vote,rows}}
+function openVoteGap(){if(!voteSeason())return;closePanel();const D=voteGapData(),A=advisor(),gap=D.vote-D.appr;
+  openModal(`${Math.round(daysToElection())} days to Election Day`,'Approval vs. the vote',`<div class="qrgrid"><div><small>Approval</small><p><b class="qrbig">${Math.round(D.appr)}%</b></p></div><div><small>Your share of the vote today</small><p><b class="qrbig ${D.vote>=50?'pos':'neg'}">${Math.round(D.vote)}%</b></p></div></div>
+   ${A?`<div class="qradv">${A.face}<div><small>${A.name} · your ${A.role}</small><p>“${gap<=-2?`You're at ${Math.round(D.appr)}% approval but only ${Math.round(D.vote)}% of the vote. Liking the job you do isn't the same as voting for you. Here's what's pulling us down, worst first.`:gap>=2?`We're running ahead of your approval. The campaign is working. Here's what's helping and what's still hurting.`:'Your vote is tracking your approval. Here\'s what\'s moving it.'}”</p></div></div>`:''}
+   <div class="facts"><h4>From approval to the vote</h4><div class="glist">${D.rows.map(r=>`<div class="gitem"><span class="gck" style="background:${r.v>=0?'var(--good)':'var(--bad)'};border-color:transparent;color:#0d1822">${r.v>=0?'+':'−'}</span><div><b>${r.k} <span class="${r.v>=0?'pos':'neg'}">${r.v>=0?'+':'−'}${Math.abs(r.v).toFixed(1)}</span></b><small>${r.tip}</small></div></div>`).join('')}</div>
+   <p class="note">Memphis elects its mayor by plurality: the most votes wins, no runoff. The vote figure is your share against your main opponent if the election were today.</p></div>
+   <div class="row"><button class="btn primary" data-flow-hub="campaign">Campaign HQ</button><button class="btn" data-act="close">Close</button></div>`,true)}
+openVoteGap=navWrap('openVoteGap',openVoteGap);
+function renderMayorVote(){let el=$('hVote');const st=$('hApp')&&$('hApp').closest('.stat');if(!st)return;if(!el){el=document.createElement('small');el.id='hVote';el.className='hvote';el.title='Your share of the vote against your opponent if the election were today. Tap to see why it differs from approval.';const host=$('hClout');(host?host.parentNode:st).appendChild(el)}
+  const ck=$('hClout');if(!voteSeason()){el.hidden=true;if(ck)ck.style.display='';return}if(ck)ck.style.display='none';const h=Math.round(headToHead()*100);el.hidden=false;el.textContent=`vote ${h}–${100-h}`;el.style.color=h>=50?'var(--good)':h>=45?'var(--warn)':'var(--bad)'}
+{const _rh=refreshHUD;refreshHUD=function(...a){const r=_rh.apply(this,a);try{renderMayorVote()}catch(e){}return r}}
+document.addEventListener('click',e=>{const b=e.target.closest('#hVote');if(!b||!S)return;e.preventDefault();e.stopImmediatePropagation();openVoteGap()},true);
+// the chief of staff flags a big gap once a month in an election year
+function voteGapNudge(){if(!voteSeason()||S.day!==2)return;S.vgN=S.vgN||{};if(S.vgN[nowM()])return;S.vgN[nowM()]=1;const D=voteGapData(),gap=D.vote-D.appr;if(gap>-3)return;const A=advisor(),worst=D.rows[0];
+  try{notify('people',`${A?A.name+': ':''}approval isn't votes`,`You're at ${Math.round(D.appr)}% approval but ${Math.round(D.vote)}% of the vote. Biggest drag: ${worst?worst.k.toLowerCase():'the campaign'}. Tap for the full picture.`,()=>openVoteGap(),{ttl:14})}catch(e){}}
+{const _dt4=dayTick;dayTick=function(...a){const r=_dt4.apply(this,a);try{voteGapNudge()}catch(e){}return r}}
 function openLedger(){const L=S.log||[];openPanel('Everything that has happened, newest first','Ledger',L.length?`<div class="logl">${L.map(x=>`<div><span>${x.d}</span><p style="margin:0">${x.t}</p></div>`).join('')}</div>`:'<p class="note">Nothing yet. Start the clock with Space or ▶.</p>','ledger')}
 function openPolicies(){const ks=Object.keys(POLICIES);
   openPanel('Ongoing programs you control','Your initiatives',`<p>Mid-year, these are paid from the reserve fund. In April they go into the budget you send the council.</p>

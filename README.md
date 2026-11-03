@@ -4,6 +4,12 @@ A city-management game set in Memphis, Tennessee. You play the mayor. You handle
 
 **Play it:** https://erndae.github.io/Bluff-city-mayor/ (once GitHub Pages is turned on, see below)
 
+## v26.42: Approval isn't the vote
+
+- In the year before your re-election, a **vote** badge replaces clout next to Approval, showing your share against your opponent if the election were today. Tap it for **Approval vs. the vote**: your chief of staff walks from approval to the vote, worst drag first (your record, opponent's ads, who shows up to vote, organizers, offices, endorsements, your opponent's base), with what to do about each. It notes that Memphis elects its mayor by plurality, with no runoff.
+- If your vote trails approval by 3 points or more, your chief of staff flags it once a month.
+- Your record now counts 40% less for a sitting mayor, since approval already reflects most of it. Candidates' records count fully.
+
 ## v26.41: Neighborhood stories, a second term, and your legacy
 
 - **Neighborhood stories.** Five two-part storylines show up over your term, presented by that district's council member: Orange Mound losing its only grocery store, the Frayser youth league with nowhere to play, fixing Elvis Presley Boulevard in Whitehaven, rising rents and an 81-year-old facing eviction in Binghampton, and a closed school in South Memphis. Your first choice shapes the second chapter, and the ending goes on your record for the next campaign.
