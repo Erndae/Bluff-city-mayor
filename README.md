@@ -4,6 +4,13 @@ A city-management game set in Memphis, Tennessee. You play the mayor. You handle
 
 **Play it:** https://erndae.github.io/Bluff-city-mayor/ (once GitHub Pages is turned on, see below)
 
+## v26.49: Map buttons below the top bar, a notifications bell, and tap Actions to act
+
+- On phones, the zoom, whole-city and find-me buttons now sit just below the top bar instead of hiding behind it.
+- A **bell** next to the map pin shows how many notifications you haven't seen and opens the full list of recent notifications; tap any one for details.
+- Tapping the **Actions** meter at the top opens the Take action screen (the Campaign trail for candidates).
+- The top row stays on one line on narrow phones.
+
 ## v26.48: Every pop-up opens into details
 
 - Tapping any notification at the bottom of the screen now opens something. Action results ("Met a community group · Approval +0.3") open the full receipt of what changed. Everything else opens a detail view with the full message, "Go deeper" links to the people, groups, districts, skills, money or campaign it mentions, and your 15 most recent notifications so you can catch ones you missed.

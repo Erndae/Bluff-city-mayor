@@ -343,6 +343,8 @@ canvas.confetti{position:fixed;inset:0;z-index:100000;pointer-events:none}
 .placeq{width:100%;box-sizing:border-box;padding:10px 12px;border-radius:8px;border:1px solid var(--line);background:var(--panel2,#0f1a24);color:var(--text);font-size:16px;margin-bottom:10px}
 .placegrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px;margin-bottom:6px}.placebtn{display:flex;gap:10px;align-items:center;text-align:left;border:1px solid var(--line);border-radius:10px;background:rgba(255,255,255,.03);color:var(--text);padding:10px;cursor:pointer;font:inherit;min-width:0}.placebtn:hover{border-color:var(--amber)}.placebtn b{display:block;font-size:14px;line-height:1.2}.placebtn small{display:block;color:var(--muted);font-size:12px;line-height:1.25;margin-top:2px}.plic{flex:none;width:30px;height:30px;border-radius:8px;display:grid;place-items:center;background:rgba(242,169,59,.15);color:var(--amber);font-weight:800}.placebtn[data-need]{border-color:var(--bad)}.placebtn[data-need] .plic{background:rgba(232,100,79,.2);color:var(--bad)}.plh{margin:12px 0 6px;font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
 .notelog{display:flex;flex-direction:column;gap:2px;max-height:260px;overflow:auto}.nlrow{display:flex;gap:10px;text-align:left;background:none;border:0;border-bottom:1px solid var(--line);color:var(--text);padding:7px 2px;font:inherit;font-size:13.5px;cursor:pointer}.nlrow small{flex:none;width:76px;color:var(--muted)}
+@media (max-width:480px){.hud-top{column-gap:8px}.hud-top .hudphone,.hud-top .brand{margin-right:0!important}}
+.bellct{position:absolute;top:-6px;right:-6px;min-width:16px;height:16px;border-radius:8px;background:var(--bad);color:#fff;font:700 10px/16px var(--f-body);text-align:center;padding:0 3px}.bellct[hidden]{display:none}.notelog.big{max-height:none}.nlrow span{display:flex;flex-direction:column;gap:2px;min-width:0}.nlrow em{font-style:normal;color:var(--muted);font-size:12.5px}
 .adgain{display:block;width:100%;text-align:center;font-size:11px;font-weight:600;color:var(--good);margin-top:1px}
 #start{overflow-x:hidden;overflow-y:auto;touch-action:pan-y}.startbox{min-width:0;max-width:min(600px,100%);box-sizing:border-box}.startbox *{min-width:0}.create select,.create input{max-width:100%;width:100%;box-sizing:border-box;text-overflow:ellipsis}.create .tpick,.create .tpick>*{max-width:100%;box-sizing:border-box}
 @media (max-width:640px){.startbox{margin-left:0}#start{padding-left:max(16px,env(safe-area-inset-left,0px))}}
@@ -695,7 +697,7 @@ details.analysis{margin-top:6px}details.analysis summary{cursor:pointer;color:va
     <button class="btn primary" data-act="pause" id="bPlay"><svg class="ico" viewBox="0 0 12 12" aria-hidden="true"><path d="M3.2 1.6v8.8l7.2-4.4z" fill="currentColor"/></svg> Resume <kbd>Space</kbd></button>
   </nav>
   <div class="status" id="status">Loading map…</div>
-  <div class="credit"><span class="ver" id="verTag">v26.48</span></div>
+  <div class="credit"><span class="ver" id="verTag">v26.49</span></div>
   <div class="tip" id="tip" hidden></div>
   <div class="toast" id="toast" role="status"></div>
   <section class="panel" id="panel" hidden aria-live="polite">
@@ -723,7 +725,7 @@ details.analysis{margin-top:6px}details.analysis summary{cursor:pointer;color:va
         <button class="btn" data-music-open>Music &amp; volume</button>
       </div>
       <div id="slotList" hidden></div>
-      <p class="note startv">Version <b class="ver" id="verStart">v26.48</b></p>
+      <p class="note startv">Version <b class="ver" id="verStart">v26.49</b></p>
     </div>
     <div class="startbox create" id="create" hidden>
       <h2>Create your mayor</h2>
@@ -1532,7 +1534,7 @@ function enact(s,p){DIVS.forEach(d=>{s.enacted[d.id]=p.divs[d.id];s.ratio[d.id]=
 // Voter groups. Each has a share of residents, turnout, home districts, concerns and an approval of you.
 // Citywide approval is the turnout-weighted average of the groups; each council district's approval comes from the groups that live there.
 // Shares, district mix and turnout are modeled, loosely grounded in Memphis demographics; they are not survey data.
-const VERSION='v26.48';
+const VERSION='v26.49';
 const GROUPS=[
  {id:'working',sh:'Working families',n:'Working families',ic:'⚒︎',c:'#f2a93b',share:24,turn:.5,start:56,w:{jobs:1,safety:.8,transit:.5},
   d:'Hourly workers in logistics, warehouses, health care and service jobs. The biggest bloc in the city.',dm:{1:1.1,2:.8,3:1.3,4:1.2,5:.6,6:1.2,7:1.1}},
@@ -4856,7 +4858,7 @@ function openBank(){closePanel();const n=S.slots,rows=bankRows();BANK_GO=rows.ma
    <div class="facts"><div class="bankbig"><span class="pips big">${Array.from({length:Math.max(actionsPerMonth(),n)},(_,i)=>`<i class="${i<n?'on':''}"></i>`).join('')}</span><div><b>${n} ${slotWord(n)} left this month</b><small>You get 3 every month. One unused carries over to the next month.</small></div></div></div>
    <div class="dlist">${rows.map((r,i)=>`<button class="drow bankrow" data-bank="${i}"><span><b>${r.name}</b><small class="note">${r.note}</small></span><b style="color:${r.ready?'var(--good)':'var(--muted)'}">${r.when}</b></button>`).join('')}</div>`,true)}
 openBank=navWrap('openBank',openBank);
-document.addEventListener('click',e=>{const b=e.target.closest('[data-bank],#hSlots');if(!b||!S)return;e.preventDefault();e.stopImmediatePropagation();if(b.id==='hSlots'){openBank();return}const f=BANK_GO[+b.dataset.bank];if(modalOpen){onClose=null;closeModal()}try{f&&f()}catch(err){}},true);
+document.addEventListener('click',e=>{const b=e.target.closest('[data-bank],#hSlots');if(!b||!S)return;e.preventDefault();e.stopImmediatePropagation();if(b.id==='hSlots'){if(modalOpen){onClose=null;closeModal()}closePanel();openActions();return}const f=BANK_GO[+b.dataset.bank];if(modalOpen){onClose=null;closeModal()}try{f&&f()}catch(err){}},true);
 {const _uc=updateClock;updateClock=function(){_uc();try{renderBank()}catch(e){}}}
 {const _rh=refreshHUD;refreshHUD=function(...a){const r=_rh.apply(this,a);try{const h=document.querySelector('#deskTitle');if(h&&S)h.firstChild.textContent=deskName()+' '}catch(e){}return r}}
 // ======================= THE CAMPAIGN MANAGER STEPS IN =======================
@@ -6558,6 +6560,19 @@ document.addEventListener('click',e=>{const b=e.target.closest('[data-notego]');
 document.addEventListener('click',e=>{const b=e.target.closest('[data-notelog]');if(!b||!S)return;e.preventDefault();e.stopImmediatePropagation();const x=(S.noteLog||[])[+b.dataset.notelog];if(!x)return;NAV.busy=true;try{hideViews();openNoteDetail(x)}finally{NAV.busy=false}},true);
 {const _nt=notify;notify=function(kind,title,text,act,opts){try{if(S&&S.started){S.noteLog=S.noteLog||[];const e={k:kind,t:noteStrip(title),x:noteStrip(text),d:dateStr()};if(window.__noteDetail){e.detail=window.__noteDetail;window.__noteDetail=null}
   S.noteLog.push(e);if(S.noteLog.length>40)S.noteLog.splice(0,S.noteLog.length-40);if(!act){const pre=window.__noteAct;window.__noteAct=null;act=pre||(()=>openNoteDetail(e))}}}catch(err){}return _nt.call(this,kind,title,text,act,opts)}}
+// ---------- map buttons sit below the top bar on phones ----------
+function placeZoomCtl(){const z=document.querySelector('.zoomctl'),h=document.querySelector('.hud-top');if(!z||!h)return;if(innerWidth<=860){const b=h.getBoundingClientRect().bottom;if(b>0){const t=Math.round(b+8);if(z._t!==t){z.style.top=t+'px';z._t=t}}}else if(z._t){z.style.top='';z._t=0}}
+{const _rh=refreshHUD;refreshHUD=function(...a){const r=_rh.apply(this,a);try{placeZoomCtl()}catch(e){}return r}}
+addEventListener('resize',()=>{try{placeZoomCtl()}catch(e){}});setInterval(()=>{try{placeZoomCtl()}catch(e){}},1500);
+// ---------- a bell for recent notifications ----------
+function openNoteLog(){closePanel();S.noteSeen=(S.noteLog||[]).length;renderBell();const L=(S.noteLog||[]).map((x,i)=>({x,i})).reverse();
+  openModal(`${L.length} recent · tap one for details`,'Notifications',L.length?`<div class="notelog big">${L.map(({x,i})=>`<button class="nlrow" data-notelog="${i}"><small>${x.d}</small><span><b>${noteStrip(x.t)}</b>${x.x?`<em>${noteStrip(x.x).slice(0,140)}</em>`:''}</span></button>`).join('')}</div>`:'<p class="note">Nothing yet. Notifications from your staff, the news and your decisions collect here.</p>',true)}
+openNoteLog=navWrap('openNoteLog',openNoteLog);
+function renderBell(){const b=$('bNotes');if(!b||!S)return;const n=Math.max(0,(S.noteLog||[]).length-(S.noteSeen||0));const d=b.querySelector('.bellct');if(d){d.textContent=n>9?'9+':String(n);d.hidden=!n}}
+{const pl=$('bPlaces')||$('bPhone');if(pl&&!$('bNotes'))pl.insertAdjacentHTML('afterend','<button class="hudphone" id="bNotes" aria-label="Recent notifications" title="Recent notifications" style="position:relative"><svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M8 1.8a4 4 0 0 0-4 4v2.6L2.6 11h10.8L12 8.4V5.8a4 4 0 0 0-4-4z" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/><path d="M6.4 12.6a1.7 1.7 0 0 0 3.2 0" fill="none" stroke="currentColor" stroke-width="1.5"/></svg><span class="bellct" hidden>0</span></button>')}
+document.addEventListener('click',e=>{const b=e.target.closest('#bNotes');if(!b||!S||!S.started)return;e.preventDefault();e.stopImmediatePropagation();if(modalOpen){onClose=null;closeModal()}openNoteLog()},true);
+{const _nt2=notify;notify=function(...a){const r=_nt2.apply(this,a);try{renderBell()}catch(e){}return r}}
+{const _rh=refreshHUD;refreshHUD=function(...a){const r=_rh.apply(this,a);try{if(S&&S.noteSeen==null)S.noteSeen=(S.noteLog||[]).length;renderBell()}catch(e){}return r}}
 function openLedger(){const L=S.log||[];openPanel('Everything that has happened, newest first','Ledger',L.length?`<div class="logl">${L.map(x=>`<div><span>${x.d}</span><p style="margin:0">${x.t}</p></div>`).join('')}</div>`:'<p class="note">Nothing yet. Start the clock with Space or ▶.</p>','ledger')}
 function openPolicies(){const ks=Object.keys(POLICIES);
   openPanel('Ongoing programs you control','Your initiatives',`<p>Mid-year, these are paid from the reserve fund. In April they go into the budget you send the council.</p>
