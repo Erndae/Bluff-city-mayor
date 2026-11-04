@@ -4,6 +4,15 @@ A city-management game set in Memphis, Tennessee. You play the mayor. You handle
 
 **Play it:** https://erndae.github.io/Bluff-city-mayor/ (once GitHub Pages is turned on, see below)
 
+## v26.53: Campaign playtest fixes
+
+- Door knocking completes and saves even when district map geometry is unavailable. Normal action costs and cooldowns remain in place.
+- Boosted voter turnout is capped at 100%, including district office bonuses, in the vote calculation and results.
+- The desk countdown and visible manager briefing update daily. Polls more than one month old are replaced in advice by a clearly labeled current estimate.
+- Debate feedback describes answer fit and delivery timing separately; scores are unchanged.
+- MapLibre 4.7.1 and its CSS are bundled locally, with timed CDN fallbacks. Missing engines, unavailable WebGL, and stalled or failed map data now show a dismissible error and a Retry map button that saves before reloading.
+- Existing saves remain compatible. Checks: `node tools/check-campaign-fixes.cjs`, flow, meetings, room actions, and office life. Browser QA confirmed door knocking completes without WebGL and the desk and top bar both show 206 days on March 15. This test browser has WebGL disabled, so 3D map rendering could not be verified here.
+
 ## v26.52: The economy screen, an Actions button and smaller project markers
 
 - **The economy, in one place.** Open it from Take action or the Budget screen. It shows the jobs climate, revenue, tax rate, population and reserve, then every lever the mayor actually has, grouped by Wages, Taxes and tax breaks, Jobs and business, and Programs. Each one shows its cost and today's projected council vote, with a button to propose it.

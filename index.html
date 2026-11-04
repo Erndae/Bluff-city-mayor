@@ -9,6 +9,7 @@
 <link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <link rel="manifest" href="manifest.json">
+<link rel="stylesheet" href="assets/vendor/maplibre-gl-4.7.1/maplibre-gl.css">
 <meta name="theme-color" content="#0d1822">
 <link rel="stylesheet" href="music.css?v=25">
 <link rel="stylesheet" href="home-interior.css?v=26.27">
@@ -701,7 +702,7 @@ details.analysis{margin-top:6px}details.analysis summary{cursor:pointer;color:va
     <button class="btn primary" data-act="pause" id="bPlay"><svg class="ico" viewBox="0 0 12 12" aria-hidden="true"><path d="M3.2 1.6v8.8l7.2-4.4z" fill="currentColor"/></svg> Resume <kbd>Space</kbd></button>
   </nav>
   <div class="status" id="status">Loading map…</div>
-  <div class="credit"><span class="ver" id="verTag">v26.52</span></div>
+  <div class="credit"><span class="ver" id="verTag">v26.53</span></div>
   <div class="tip" id="tip" hidden></div>
   <div class="toast" id="toast" role="status"></div>
   <section class="panel" id="panel" hidden aria-live="polite">
@@ -729,7 +730,7 @@ details.analysis{margin-top:6px}details.analysis summary{cursor:pointer;color:va
         <button class="btn" data-music-open>Music &amp; volume</button>
       </div>
       <div id="slotList" hidden></div>
-      <p class="note startv">Version <b class="ver" id="verStart">v26.52</b></p>
+      <p class="note startv">Version <b class="ver" id="verStart">v26.53</b></p>
     </div>
     <div class="startbox create" id="create" hidden>
       <h2>Create your mayor</h2>
@@ -760,9 +761,11 @@ details.analysis{margin-top:6px}details.analysis summary{cursor:pointer;color:va
 </div>
 
 <script>
-// Load MapLibre from jsDelivr, fall back to unpkg.
-(function(){const urls=['https://cdn.jsdelivr.net/npm/maplibre-gl@4.7.1/dist/maplibre-gl.js','https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js'];let k=0;
-  function next(){if(k>=urls.length){window.__mlFail=true;window.dispatchEvent(new Event('mlready'));return}const s=document.createElement('script');s.src=urls[k++];s.onload=()=>window.dispatchEvent(new Event('mlready'));s.onerror=next;document.head.appendChild(s)}next()})();
+// Serve the pinned engine with the game; bounded CDN fallbacks handle a missing local file.
+(function(){const urls=['assets/vendor/maplibre-gl-4.7.1/maplibre-gl.js','https://cdn.jsdelivr.net/npm/maplibre-gl@4.7.1/dist/maplibre-gl.js','https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js'];let k=0,done=false;
+  function next(){if(done)return;if(k>=urls.length){window.__mlFail=true;window.dispatchEvent(new Event('mlready'));return}const s=document.createElement('script');s.src=urls[k++];let settled=false;const timer=setTimeout(fail,8000);
+    function fail(){if(settled||done)return;settled=true;clearTimeout(timer);s.remove();next()}
+    s.onload=()=>{if(done)return;settled=true;clearTimeout(timer);if(!window.maplibregl){next();return}done=true;window.__mlFail=false;window.dispatchEvent(new Event('mlready'))};s.onerror=fail;document.head.appendChild(s)}next()})();
 </script>
 <script src="city-buildings.js?v=26.6"></script>
 <script src="city-houses.js?v=26.6"></script>
@@ -1538,7 +1541,7 @@ function enact(s,p){DIVS.forEach(d=>{s.enacted[d.id]=p.divs[d.id];s.ratio[d.id]=
 // Voter groups. Each has a share of residents, turnout, home districts, concerns and an approval of you.
 // Citywide approval is the turnout-weighted average of the groups; each council district's approval comes from the groups that live there.
 // Shares, district mix and turnout are modeled, loosely grounded in Memphis demographics; they are not survey data.
-const VERSION='v26.52';
+const VERSION='v26.53';
 const GROUPS=[
  {id:'working',sh:'Working families',n:'Working families',ic:'⚒︎',c:'#f2a93b',share:24,turn:.5,start:56,w:{jobs:1,safety:.8,transit:.5},
   d:'Hourly workers in logistics, warehouses, health care and service jobs. The biggest bloc in the city.',dm:{1:1.1,2:.8,3:1.3,4:1.2,5:.6,6:1.2,7:1.1}},
@@ -2707,9 +2710,9 @@ function groupSupport(g,o){o=o||{};const G=S.groups[g.id],R=S.rival||{champs:[]}
 function groupTurnout(g,sup,o){o=o||{};const rc=(S.rival&&S.rival.camp)||{};let t=tEff(g,S.groups[g.id].app);
   if(sup>=0.5){if(!o.noOrg)t*=1+Math.min(10,S.camp.organizers)*0.03*mgrMul('turnout')*(1.25-g.turn);if(!o.noOff)t*=1+0.08*officeReach(g)}
   else{if(!o.noRivalOrg)t*=1+Math.min(10,rc.organizers||0)*0.03*(1.25-g.turn);if(!o.noRivalOff)t*=1+0.08*rivalOfficeReach(g)}
-  const e=endorsementFor(g);if(!o.noEndorse){if(e==='you'&&sup>=0.5)t*=1.1;if(e==='rival'&&sup<0.5)t*=1.1}return t}
+  const e=endorsementFor(g);if(!o.noEndorse){if(e==='you'&&sup>=0.5)t*=1.1;if(e==='rival'&&sup<0.5)t*=1.1}return clamp(t,0,1)}
 function headToHead(dist,o){let a=0,w=0;const mix=dist?dComp(dist):null;GROUPS.forEach(g=>{const sup=groupSupport(g,o);let t=groupTurnout(g,sup,o);const sh=mix?mix[g.id]*100:g.share;
-  if(dist&&S.camp.offices[dist]&&sup>=0.5&&!(o&&o.noOff))t*=1.06;a+=sh*t*sup;w+=sh*t});const p=a/w+(dist?(DLEAN[dist]+(S.pop.d[dist]||0))/100:0);return clamp(p,0.05,0.95)}
+  if(dist&&S.camp.offices[dist]&&sup>=0.5&&!(o&&o.noOff))t*=1.06;t=clamp(t,0,1);a+=sh*t*sup;w+=sh*t});const p=a/w+(dist?(DLEAN[dist]+(S.pop.d[dist]||0))/100:0);return clamp(p,0.05,0.95)}
 // What each piece added to your two-way share, in points.
 function voteBreakdown(){const full=headToHead();const d=k=>(full-headToHead(null,{[k]:true}))*100;
   const C=S.camp,sb=C.spentBy||{};
@@ -3920,7 +3923,7 @@ function openCandActions(){closePanel();S.acts=S.acts||{};const slots=S.slots;
    <div class="facts"><h4>Your platform</h4>${S.promises?`<ul>${S.promises.map(st=>`<li><b>${PMAP[st.id].n}</b> · ${PMAP[st.id].d}</li>`).join('')}</ul><p class="note">If you win, these become your promises as mayor.</p>`:`<div class="row"><button class="btn primary" data-act="promises">Choose your platform</button></div>`}</div>
    <div class="row"><button class="btn primary" data-act="hq">Campaign HQ</button></div>`,true)}
 openCandActions=navWrap('openCandActions',openCandActions);
-function candDoors(d){if(cdLeft('kd'+d,2)||S.slots<=0)return;S.slots--;markAct('kd'+d);const mix=dComp(d);GROUPS.forEach(g=>candBump(g.id,clamp(mix[g.id]/(g.share/100),0.3,2)*1.4,`Knocked doors in District ${d}`));recUp(0.025);gainXP('cha',4);goTo(...districtCenter(d),`Doors, District ${d}`,2);
+function candDoors(d){if(cdLeft('kd'+d,2)||S.slots<=0)return;S.slots--;markAct('kd'+d);const mix=dComp(d);GROUPS.forEach(g=>candBump(g.id,clamp(mix[g.id]/(g.share/100),0.3,2)*1.4,`Knocked doors in District ${d}`));recUp(0.025);gainXP('cha',4);{const c=districtCenter(d);if(c)goTo(c[0],c[1],`Doors, District ${d}`,2);}
   S.approval=cityApproval(S);save();refreshHUD();toast(`You spent the day knocking doors in District ${d}.`);openCandActions()}
 function candMeet(gid){if(cdLeft('cg'+gid,3)||S.slots<=0)return;S.slots--;markAct('cg'+gid);candBump(gid,3+Math.max(0,mskill('dip')-6)*0.3,'Met with their leaders');recUp(0.015);gainXP('dip',5);S.approval=cityApproval(S);save();refreshHUD();toast(`You met with ${GMAP[gid].n.toLowerCase()} leaders.`);openCandActions()}
 function candSpeak(p){if(cdLeft('cspeak',1))return;markAct('cspeak');GROUPS.forEach(g=>{if(g.w[p])candBump(g.id,g.w[p]*(1.6+Math.max(0,mskill('cha')-6)*0.2),`Spoke out on ${PRIO_LABEL[p].toLowerCase()}`)});recUp(0.03);gainXP('cha',4);S.approval=cityApproval(S);save();refreshHUD();toast(`You spoke out on ${PRIO_LABEL[p].toLowerCase()}.`);openCandActions()}
@@ -4828,7 +4831,7 @@ function dbtDeliver(){const D=DBT,q=D.qs[D.round];cancelAnimationFrame(dbtRAF);c
   else if(D.pick==='story')fit=1.5;else fit=D.pick===q.good?3:D.pick===q.bad?-1:1;
   const mine=Math.max(0,Math.round(fit+deliv+(mskill('cha')-8)*0.1+rnd(-0.6,0.6)));const theirs=Math.max(0,Math.round(2.6+rnd(-1,1.6)+(q.good==='attack'&&D.pick==='attack'?-0.8:0)));
   D.you+=mine;D.them+=theirs;D.room+=(mine-theirs)*1.2;const R=S.rival||{name:'Your opponent'};
-  D.last=`${['Your answer fell flat.','You got your point across.','A strong answer.','That one brought the room to its feet.'][deliv]} ${fit>=3?'It fit the question perfectly.':fit<=-1?'But it was the wrong move for that question.':''} You +${mine}, ${R.name.split(' ').pop()} +${theirs}.`;
+  D.last=`Answer: ${fit>=3?'a perfect fit for the question.':fit<=-1?'a poor fit for the question.':'relevant to the question.'} Delivery: ${['you missed the timing zone.','near the timing zone.','inside the timing zone.','right in the center.'][deliv]} You +${mine}, ${R.name.split(' ').pop()} +${theirs}.`;
   try{sfx(mine>=theirs?'good':'bad')}catch(e){}D.round++;if(D.round>=4){dbtFinish();return}D.step='pick';dbtRender()}
 function dbtFinish(){const D=DBT;if(D.practice){S.camp.prep=Math.min(3,(S.camp.prep||0)+1);gainXP('cha',6);save();openModal('Practice debate','Practice is over',`${dbtStage()}<p>${D.you>D.them?'You won the practice round.':'Your team says you\'re getting there.'} Your practice level is now ${S.camp.prep} of 3: the green zone on the delivery meter is wider in the real debates.</p><div class="row"><button class="btn primary" data-act="hq">Back to Campaign HQ</button></div>`,true);DBT=null;return}
   const n=D.n;const res=S.camp.debates[n]={done:true,you:D.you,them:D.them};const m=D.you-D.them;const bonus=clamp(m*0.18,-1.5,1.8);S.camp.debate=(S.camp.debate||0)+bonus;res.bonus=bonus;
@@ -4882,8 +4885,8 @@ document.addEventListener('click',e=>{const b=e.target.closest('[data-bank],#hSl
 // when the opponent attacks, when your numbers slip, and before the debates. Tap their face any time to ask.
 function campPhase(){const mo=monthsToElection();return mo>8?{id:'early',n:'Early race',d:'Get known and build a war chest.'}:mo>4?{id:'mid',n:'Middle of the race',d:'Win over groups and lock in endorsements.'}:mo>1?{id:'late',n:'Final stretch',d:'Ads, field offices and the debates.'}:{id:'gotv',n:'Get out the vote',d:'Make sure your supporters show up.'}}
 function campStanding(){const C=S.camp||{};const lp=(C.polls||[]).slice(-1)[0];const sup=Math.round(S.approval);
-  if(lp){const them=Math.round(100-lp.you-lp.und);return{you:lp.you,them,und:lp.und,lead:lp.you-them,src:`your last poll (${lp.when})`}}
-  return{you:sup,them:null,lead:isCand()?sup-50:sup-50,src:'our own read (no poll yet)'}}
+  if(lp&&nowM()-lp.m<=1){const them=Math.round(100-lp.you-lp.und);return{you:lp.you,them,und:lp.und,lead:lp.you-them,src:`your last poll (${lp.when})`}}
+  const you=Math.round(headToHead()*100),them=100-you;return{you,them,lead:you-them,src:lp?`our current estimate; the poll from ${lp.when} is out of date`:'our current estimate (no poll yet)'}}
 function weakGroup(){return GROUPS.slice().filter(g=>S.groups[g.id]).sort((a,b)=>b.share*(55-S.groups[b.id].app)-a.share*(55-S.groups[a.id].app))[0]}
 function topIssue(g){return Object.entries(g.w).sort((a,b)=>b[1]-a[1])[0][0]}
 function campStrategy(){const m=curMgr();if(!m||!S.camp)return null;const C=S.camp,ph=campPhase(),st=campStanding(),mo=monthsToElection(),cand=isCand();const moves=[];
@@ -6680,9 +6683,12 @@ function fcLine(feats,props){return{type:'FeatureCollection',features:feats.map(
 const FCC={'Interstate':'I','Freeway/Expressway':'I','Principal Arterial':'P','Minor Arterial':'M','Major Collector':'C','Minor Collector':'C'};
 const LAND='#9ebc94',CITY='#cad6ab';
 function styleBase(){return{version:8,sources:{},layers:[{id:'bg',type:'background',paint:{'background-color':LAND}}]}}
+let mapLoadTimer;
+function mapLoadFailed(message){clearTimeout(mapLoadTimer);setStatus(message);let el=$('mapRecovery');if(!el){el=document.createElement('div');el.id='mapRecovery';el.className='facts';el.setAttribute('role','alert');el.style.cssText='position:absolute;z-index:5;bottom:85px;right:12px;max-width:min(340px,calc(100vw - 48px));background:var(--panel);padding:14px';$('app').appendChild(el)}el.replaceChildren();const text=document.createElement('p');text.textContent=message;const button=document.createElement('button');button.className='btn';button.textContent='Retry map';button.onclick=()=>{if(S?.started)save();location.reload()};const dismiss=document.createElement('button');dismiss.className='btn';dismiss.textContent='Dismiss';dismiss.setAttribute('aria-label','Dismiss map message');dismiss.onclick=()=>{el.hidden=true};el.append(text,button,dismiss);el.hidden=false;splashDone()}
 function initMap(){splashSet(18,'Opening the map of Memphis…');
-  if(window.__mlFail||!window.maplibregl){setStatus('The map engine could not load. Check your connection and reload.');return}
-  registerProtocol();
+  if(window.__mlFail||!window.maplibregl){mapLoadFailed('The map engine could not load. You can keep using campaign menus or retry the map.');return}
+  try{registerProtocol();
+  mapLoadTimer=setTimeout(()=>{if(!mapReady)mapLoadFailed('The map is taking too long to load. Check your connection and retry. Your game is saved.')},30000);
   const wide=window.innerWidth>860&&!$('start').hidden;
   map=new maplibregl.Map({container:'map',style:styleBase(),center:wide?[-90.085,35.13]:HOME_VIEW.center,zoom:wide?10.45:HOME_VIEW.zoom,pitch:0,bearing:0,maxPitch:60,minZoom:9.2,maxZoom:18.5,
     maxBounds:[[-90.45,34.85],[-89.45,35.45]],attributionControl:false,dragRotate:false,pitchWithRotate:false,touchPitch:false,keyboard:false,fadeDuration:0});
@@ -6692,6 +6698,7 @@ function initMap(){splashSet(18,'Opening the map of Memphis…');
   map.on('load',loadBase);
   map.on('zoom',zoomClasses);
   window.addEventListener('resize',()=>map&&map.resize());
+  }catch(e){console.error(e);mapLoadFailed('The map could not start. Check that your browser supports WebGL, then retry.')}
 }
 async function getJSON(u){const r=await fetch(u);if(!r.ok)throw new Error(u+' '+r.status);return r.json()}
 // Map sources are served through a custom "bcm://" protocol: each layer is decoded only when the map
@@ -6776,10 +6783,10 @@ async function loadBase(){
     add({id:'precinct-line',type:'line',source:'precincts',layout:{visibility:'none'},paint:{'line-color':'#cfd8e3','line-width':1.8}});
     map.setLight({anchor:'viewport',color:'#fff0ce',intensity:.48,position:[1.4,200,40]});
     addLabels();
-    mapReady=true;applyLayers();refreshHUD();zoomClasses();
+    mapReady=true;clearTimeout(mapLoadTimer);if($('mapRecovery'))$('mapRecovery').hidden=true;applyLayers();refreshHUD();zoomClasses();
     setupMapInteractions();map.on('moveend',()=>{try{renderCivic()}catch(e){}declutterSoon()});
     loadBuildings();
-  }catch(e){console.error(e);setStatus('The map data could not load. Reload to try again.')}
+  }catch(e){console.error(e);mapLoadFailed('The map data could not load. Your game is saved; retry the map when your connection is ready.')}
 }
 async function loadBuildings(){
   try{setStatus('Loading downtown and commercial buildings…');
@@ -7184,6 +7191,9 @@ document.addEventListener('click',e=>{const b=e.target.closest('[data-slotload],
 function refreshStartButtons(){const n=latestSlot(),m=n?slotMeta()[n]:null;const b=$('bLoad');if(!b)return;b.hidden=!m;if(m)b.textContent=`Continue: ${m.name}, ${m.date}`}
 
 
+// Daily campaign information follows the same date as the top bar.
+{const tick=dayTick;dayTick=function(...a){const r=tick.apply(this,a);if(S&&S.started){renderDesk();renderNextChip();const el=$('mgrpop');if(el&&!el.hidden){const P=campStrategy();if(P){el.querySelector('.mp-phase').textContent=`${P.ph.n} · ${Math.max(0,Math.round(daysToElection()))} days to Election Day`;el.querySelector('.mp-say').textContent=`“${P.read} ${P.style}${P.ph.d}”`;}}}return r}}
+
 // ======================= BOOT =======================
 function beginTerm(cr,quiet){S=newState();const c=cr||newCR();S.mayor={...c,look:{...(c.look||defaultLook(c.g))},name:(c.name||'Mayor').trim(),skills:{...c.skills},traits:[...c.traits],xp:{},trained:-99,frame:'#f2a93b'};$('start').classList.remove('creating');$('app').classList.remove('pre');assignHomes();initGroups(S);recomputeAll(S);S.started=true;try{S.city0=legacySnap();reignStart(S.mayor,false)}catch(e){}spawn(S,EVENTS[0],{expires:99});queueNewBusiness(null);pickRival();campInit(S);homeInit(S);S.mf={r0:S.reserve};save();$('start').hidden=true;prevMet=null;applyLayers();refreshHUD();
   S.phase='mayor';camFly({center:[LM.cityhall.lon,LM.cityhall.lat],zoom:quiet?13:15.6,speed:0.9});if(quiet)return;setTimeout(()=>tutStart('mayor',()=>{if(!S.promises)openPromises();setTimeout(()=>{if(!modalOpen)openPlace('cityhall')},1700)}),700);
@@ -7243,7 +7253,7 @@ function start(data){
   refreshHUD();
   $('bNew').onclick=()=>{pendingSlot=null;startNew(false)};$('bRun').onclick=()=>{pendingSlot=null;startNew(true)};
   $('bLoad').onclick=()=>{const s=load();if(s)enterLoaded(s)};
-  if(window.maplibregl)initMap();else window.addEventListener('mlready',initMap,{once:true});
+  if(window.maplibregl||window.__mlFail)initMap();else window.addEventListener('mlready',initMap,{once:true});
 }
 // Soundtrack routing reads UI state only; it never modifies game state or saves.
 window.bluffMusicContext = () => {
