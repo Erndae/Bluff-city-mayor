@@ -4,6 +4,15 @@ A city-management game set in Memphis, Tennessee. You play the mayor. You handle
 
 **Play it:** https://erndae.github.io/Bluff-city-mayor/ (once GitHub Pages is turned on, see below)
 
+## v26.54: District voices and campaign commitments
+
+- All seven districts have a fictional resident, a distinct outlook, and two rotating concerns tied to existing measurable promise goals.
+- Candidate door knocking opens a short conversation. Listen without adding a promise, commit to a goal, or promise both local priorities. One completed conversation uses the existing action and cooldown; returning without an answer is free.
+- Districts remember the date and answer across saves. Campaign HQ → Voters → District personalities and commitments shows the journal; the campaign trail, district panel, and promises screen also link to it.
+- New goals beyond the original three create a 0.6-point campaign-record penalty each and give the rival an overpromising attack. Reaffirming an existing goal adds neither a duplicate obligation nor another penalty.
+- On winning and taking office, local commitments join the normal promise system without duplicate goals or extra promise-signing rewards. Existing deadlines and kept/broken promise consequences apply, and the district journal reflects their status. A fresh campaign resets local campaign memory.
+- Checks: `node tools/check-campaign-districts.cjs` plus campaign fixes, flow, meetings, room actions, and office life. Browser QA covered two district voices, a new-goal penalty, an aligned goal without a penalty, and persisted journal entries after reload. Existing saves remain compatible; normal action costs and district cooldowns are preserved.
+
 ## v26.53: Campaign playtest fixes
 
 - Door knocking completes and saves even when district map geometry is unavailable. Normal action costs and cooldowns remain in place.
