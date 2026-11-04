@@ -4,6 +4,15 @@ A city-management game set in Memphis, Tennessee. You play the mayor. You handle
 
 **Play it:** https://erndae.github.io/Bluff-city-mayor/ (once GitHub Pages is turned on, see below)
 
+## v26.55: A campaign manager who reads the race and the budget
+
+- Manager priorities, periodic tips and routine campaign desk suggestions share one availability-aware plan. It targets the closest available two-way district race and labels long shots honestly instead of automatically recommending the weakest district.
+- Recommendations check actions, cooldowns, payroll, campaign cash, ad effectiveness, available endorsements and debate timing. Added offices and organizers must be affordable through Election Day; polls and ads leave the next monthly payroll available.
+- The manager counts distinct platform and district goals, warns about overpromising, and links to the saved commitment journal.
+- Campaign HQ → Overview → Review campaign strategy (also in manager pop-ups) shows district estimates, affordable moves, observed immediate vote changes around recent visits/ads/endorsement requests, and the vote model's current contributions. Estimates are labeled and overlapping contributions are not presented as additive.
+- District conversations now record their completed action in decision history. Stale recommendations re-check availability when selected. Existing saves, spending rules and election mechanics are unchanged.
+- Validation: advisor targeting, scarce cash/actions, payroll reserves, recurring costs, cooldowns, timing, promises, live debates and script linkage; existing campaign, district, flow, meeting and office checks. Browser QA verified a recommendation opens the selected district conversation and its completed visit appears as one recorded action with a measured vote change.
+
 ## v26.54: District voices and campaign commitments
 
 - All seven districts have a fictional resident, a distinct outlook, and two rotating concerns tied to existing measurable promise goals.

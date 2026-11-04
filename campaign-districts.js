@@ -29,7 +29,7 @@
  candDoors=function(d){if(isCand())return open(d);return doors.apply(this,arguments);};
  function answer(kind,token){if(!['listen','pledge','both'].includes(kind)||!isCand())return false;const n=state(),pending=n.pending;if(!pending||pending.token!==Number(token)||S!==owner)return false;
   const d=pending.d;if(!profiles[d]||S.slots<=0||cdLeft('kd'+d,2)){n.pending=null;save();dialog.close();toast('The visit is no longer available. No action was used.');return false;}
-  const x=encounter(d),ids=kind==='listen'?[]:kind==='both'?x.p.goals:[x.id],old=targets(n),newIds=ids.filter(id=>!old.has(id));
+  const before=window.BCLife?.snapshot();const x=encounter(d),ids=kind==='listen'?[]:kind==='both'?x.p.goals:[x.id],old=targets(n),newIds=ids.filter(id=>!old.has(id));
   // Clear the saved transaction before calling normal outreach: duplicate or stale clicks cannot award it twice.
   n.pending=null;save();doors(d);
   const baseline=old.size;let overload=0;
@@ -42,7 +42,7 @@
   if(ids.length)consequence='They wrote down your measurable goal and will expect delivery if you win.';
   if(overload){const penalty=overload*0.6;addRecord({t:`Promised more than three goals after a District ${d} visit`,kind:'campaign-commitment',bad:groups,camp:{d:-penalty,t:`Your opponent points to ${targets(n).size} distinct campaign goals and asks how you can deliver them all.`}});consequence+=` Your broader agenda gives your opponent an attack (campaign record −${penalty.toFixed(1)} points).`;}
   const entry={date:dateStr(),m:nowM(),answer:kind==='listen'?'You listened without adding a promise':kind==='both'?'You promised both priorities':`You committed to ${PMAP[x.id].n}`,ids:[...ids]};(n.visits[d]||(n.visits[d]=[])).push(entry);n.visits[d]=n.visits[d].slice(-12);
-  S.approval=cityApproval(S);logIt(`District ${d}: ${entry.answer}.`);save();refreshHUD();
+  S.approval=cityApproval(S);logIt(`District ${d}: ${entry.answer}.`);save();refreshHUD();if(before){window.__bcQuiet=true;BCLife.record(before,`District visit · ${d}`,entry.answer,'campaign',ids.length?['If elected, district commitments become measurable promises.']:[]);}
   show(`<header class="row"><h2 style="flex:1">They will remember</h2><button class="btn" data-dc-close>Return</button></header><h3>District ${d} · ${esc(x.p.n)}</h3><p>${esc(entry.answer)}.</p><p>${esc(consequence)}</p><p class="note">1 action used · district visits available again in two months. Extra group support modifier: +${bonus.toFixed(1)}; favorable opinion adjusts gradually.</p><button class="btn" data-dc-journal>Review commitments</button>`);return true;
  }
  function journal(){const n=state();show(`<header class="row"><h2 style="flex:1">Your district commitments</h2><button class="btn" data-dc-close>Return</button></header><p class="note">District voices and priorities are modeled for this game. Candidate commitments become measurable promises if you win, including goals outside your original three planks. Repeating a goal adds no new obligation.</p>${Object.entries(profiles).map(([d,p])=>{const v=n.visits[d]||[],pledges=n.pledges.filter(x=>x.d===Number(d));return`<section class="facts"><h3>District ${d} · ${esc(p.n)}</h3><p>${esc(p.tone)}</p><p class="note">${esc(memory(v.at(-1)))}</p>${pledges.map(x=>`<p><b>${esc(PMAP[x.id].n)}</b> · ${esc(x.status==='campaign'?'If elected':x.status)}<br><small>${esc(PMAP[x.id].d)}</small></p>`).join('')||'<p>No on-record promises here yet.</p>'}</section>`;}).join('')}`);}
