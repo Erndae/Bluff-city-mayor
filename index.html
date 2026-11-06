@@ -356,6 +356,7 @@ nav.actions [data-actsgo]{min-height:44px;padding:9px 17px;border-color:rgba(242
 .plotcard.secret{border-color:rgba(242,169,59,.5);background:rgba(242,169,59,.05)}.plotcard.secret .pl-h b{font-size:15px}.plotcard.secret .pl-d{color:var(--amber)}.choice.dirtyc{border-color:rgba(232,93,74,.35)}
 .famlist{display:flex;flex-direction:column;gap:8px;margin:8px 0}.famcard{display:flex;gap:12px;align-items:center;border:1px solid var(--line,#2c3e4c);border-radius:12px;padding:10px}.famcard b{display:block}.famcard small{color:var(--muted,#9aa7b2)}.famcard .note{margin:4px 0 0}.fam-pic{flex:none;width:56px;height:56px;border-radius:50%;overflow:hidden;display:grid;place-items:center}.fam-pic svg,.fam-pic img{width:56px;height:56px}.homebar{margin:12px 0}.hb-h{display:flex;justify-content:space-between}.hb-h b.pos{color:var(--good)}.hb-h b.neg{color:var(--bad)}.homebar .facbar{height:8px}.famset{margin:12px 0}.famset summary{cursor:pointer;color:var(--amber)}.famset .row{flex-wrap:wrap}
 .psk{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:4px;margin:8px 0}.psk span{border:1px solid var(--line,#2c3e4c);border-radius:8px;padding:4px 6px;display:flex;justify-content:space-between;align-items:baseline;gap:4px}.psk span small{color:var(--muted,#9aa7b2);font-size:11px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.psk span.best{border-color:var(--amber)}@media(max-width:480px){.psk{grid-template-columns:repeat(2,minmax(0,1fr))}}.psk span.best b{color:var(--amber)}
+.txtin{flex:1;min-width:0;background:var(--panel2,#0f1c26);border:1px solid var(--line,#2c3e4c);border-radius:10px;color:inherit;padding:10px 12px;font:inherit}.choice.on{border-color:var(--amber)}
 .adgain{display:block;width:100%;text-align:center;font-size:11px;font-weight:600;color:var(--good);margin-top:1px}
 #start{overflow-x:hidden;overflow-y:auto;touch-action:pan-y}.startbox{min-width:0;max-width:min(600px,100%);box-sizing:border-box}.startbox *{min-width:0}.create select,.create input{max-width:100%;width:100%;box-sizing:border-box;text-overflow:ellipsis}.create .tpick,.create .tpick>*{max-width:100%;box-sizing:border-box}
 @media (max-width:640px){.startbox{margin-left:0}#start{padding-left:max(16px,env(safe-area-inset-left,0px))}}
@@ -708,7 +709,7 @@ details.analysis{margin-top:6px}details.analysis summary{cursor:pointer;color:va
     <button class="btn primary" data-act="pause" id="bPlay"><svg class="ico" viewBox="0 0 12 12" aria-hidden="true"><path d="M3.2 1.6v8.8l7.2-4.4z" fill="currentColor"/></svg> Resume <kbd>Space</kbd></button>
   </nav>
   <div class="status" id="status">Loading map…</div>
-  <div class="credit"><span class="ver" id="verTag">v26.62</span></div>
+  <div class="credit"><span class="ver" id="verTag">v26.63</span></div>
   <div class="tip" id="tip" hidden></div>
   <div class="toast" id="toast" role="status"></div>
   <section class="panel" id="panel" hidden aria-live="polite">
@@ -736,7 +737,7 @@ details.analysis{margin-top:6px}details.analysis summary{cursor:pointer;color:va
         <button class="btn" data-music-open>Music &amp; volume</button>
       </div>
       <div id="slotList" hidden></div>
-      <p class="note startv">Version <b class="ver" id="verStart">v26.62</b></p>
+      <p class="note startv">Version <b class="ver" id="verStart">v26.63</b></p>
     </div>
     <div class="startbox create" id="create" hidden>
       <h2>Create your mayor</h2>
@@ -1547,7 +1548,7 @@ function enact(s,p){DIVS.forEach(d=>{s.enacted[d.id]=p.divs[d.id];s.ratio[d.id]=
 // Voter groups. Each has a share of residents, turnout, home districts, concerns and an approval of you.
 // Citywide approval is the turnout-weighted average of the groups; each council district's approval comes from the groups that live there.
 // Shares, district mix and turnout are modeled, loosely grounded in Memphis demographics; they are not survey data.
-const VERSION='v26.62';
+const VERSION='v26.63';
 const GROUPS=[
  {id:'working',sh:'Working families',n:'Working families',ic:'⚒︎',c:'#f2a93b',share:24,turn:.5,start:56,w:{jobs:1,safety:.8,transit:.5},
   d:'Hourly workers in logistics, warehouses, health care and service jobs. The biggest bloc in the city.',dm:{1:1.1,2:.8,3:1.3,4:1.2,5:.6,6:1.2,7:1.1}},
@@ -7561,6 +7562,102 @@ document.addEventListener('click',e=>{const b=e.target.closest('[data-date],[dat
 {const _ns=nextSteps;nextSteps=function(...a){const r=_ns.apply(this,a);try{if(S&&S.famAsk&&Array.isArray(r))r.push({pri:55,t:'Choose your family: married, or single and looking',h:'Start with a spouse and kids, or find a partner yourself',go:()=>openFamily()})}catch(e){}return r}}
 {const _of=openFamily;openFamily=function(...a){if(S)S.famAsk=false;return _of.apply(this,a)};VIEWS.openFamily=openFamily}
 {const _fg=famGen;famGen=function(...a){const F=_fg.apply(this,a);try{if(F.spouse){F.spouse.sk=personSkills(F.spouse.job);F.spouse.trait=pk2(Object.keys(PTRAITS))}}catch(e){}return F}}
+// ======================= v26.63: SCHOOLING, CUSTOM NAMES, AND PLAYING AS YOUR HEIR =======================
+// Children grow skills through school, activities and your attention. You name them whatever you like.
+// You age every January, and death becomes possible as you get older. When your story ends (death, a lost
+// election, removal from office), a child who's old enough can take up the family name and run for mayor.
+const SCHOOLS={
+ k12:{mscs:{n:'Neighborhood MSCS school',d:'Free · steady progress',c:0,mul:1,f:null},
+  optional:{n:'MSCS optional school (magnet)',d:'Free · strong academics · needs Education 5+ to get in',c:0,mul:1.3,f:'learn',need:k=>kidSk(k,'learn')>=5},
+  charter:{n:'Charter school',d:'Free · focus on discipline and leadership',c:0,mul:1.15,f:'dip'},
+  private:{n:'Private school in East Memphis',d:'$1,500 a month · small classes, connections',c:1500,mul:1.5,f:'intr'},
+  home:{n:'Homeschool',d:'Free · works best when home life is strong',c:0,mul:0.8,f:'learn',home:true}},
+ college:{none:{n:'Go straight to work',d:'Free · earns money, builds Money Smarts',c:0,mul:0.7,f:'stew',earn:900},
+  uofm:{n:'University of Memphis',d:'$800 a month · solid all-around',c:800,mul:1.3,f:null},
+  lemoyne:{n:'LeMoyne-Owen College',d:'$900 a month · historic HBCU, strong community ties',c:900,mul:1.3,f:'dip'},
+  rhodes:{n:'Rhodes College',d:'$4,000 a month · elite, small, demanding',c:4000,mul:1.7,f:'learn'},
+  away:{n:'A big out-of-state university',d:'$2,500 a month · new networks, far from home',c:2500,mul:1.5,f:'cha'}}};
+const ACTIVITIES={none:{n:'Nothing extra',sk:[]},debate:{n:'Debate team',sk:['cha','dip']},council:{n:'Student government',sk:['intr','cha']},robotics:{n:'Robotics club',sk:['learn','stew']},
+ sports:{n:'Sports (basketball at the Y)',sk:['safe','cha']},youth:{n:'Church youth group',sk:['safe','dip']},job:{n:'A part-time job',sk:['stew'],min:15,earn:300}};
+function kidStage(k){return k.age<5?'home':k.age<18?'k12':k.age<22?'college':'adult'}
+function stageName(k){const a=k.age;return a<5?'too young for school':a<11?'elementary school':a<14?'middle school':a<18?'high school':a<22?'college age':'grown'}
+function kidInit(k){if(!k.sk){const base=Math.max(0,(k.age-3)*0.45);k.sk={};SKS.forEach(s=>k.sk[s]=Math.round((base*(0.6+Math.random()*0.8))*10)/10)}if(!k.school)k.school=k.age>=18&&k.age<22?'uofm':'mscs';if(!k.act)k.act='none';return k}
+function kidSk(k,s){return Math.floor((kidInit(k).sk[s])||0)}
+function kidSchool(k){const st=kidStage(k);if(st==='k12')return SCHOOLS.k12[k.school]||SCHOOLS.k12.mscs;if(st==='college')return SCHOOLS.college[k.school]||SCHOOLS.college.none;return null}
+function kidGrow(k,months){kidInit(k);const S0=kidSchool(k),st=kidStage(k);if(st==='home'||st==='adult'){if(st==='adult')return;SKS.forEach(s=>k.sk[s]=Math.min(18,k.sk[s]+0.02*months));return}
+  const F=famInit();let mul=S0.mul;if(S0.home)mul*=0.6+F.home/100*0.8;const att=0.75+F.home/100*0.5;const g=0.05*mul*att*months;
+  SKS.forEach(s=>{let w=1;if(S0.f===s)w+=1.2;const A=ACTIVITIES[k.act];if(A&&A.sk.includes(s))w+=0.9;k.sk[s]=Math.min(18,k.sk[s]+g*w*(0.8+Math.random()*0.4))})}
+function schoolMonth(){const F=S.fam;if(!F||!F.kids.length)return;let cost=0,earn=0;F.kids.forEach(k=>{kidInit(k);const S0=kidSchool(k);if(S0){cost+=S0.c||0;earn+=S0.earn||0}const A=ACTIVITIES[k.act];if(A&&A.earn&&k.age>=(A.min||0)&&kidStage(k)!=='adult')earn+=A.earn;kidGrow(k,1);
+  if(k.age===18&&S.m===8&&kidStage(k)==='college'&&!k.collegeAsk){k.collegeAsk=true;k.school='uofm';notify('event',`${k.name.split(' ')[0]} is ready for college`,'Choose where they go, or let them go to work.',()=>openKid(F.kids.indexOf(k)),{ttl:20})}});
+  if(cost||earn){S.purse.cash+=earn-cost;F.schoolCost=cost;F.kidEarn=earn}}
+// ---------- aging, and mortality ----------
+function deathChance(a){return a<55?0.002:a<65?0.008:a<72?0.025:a<80?0.06:0.14}
+function ageMonth(){if(S.m!==1||!S.mayor)return;S.mayor.age=(S.mayor.age||45)+1;if(S.fam&&S.fam.spouse&&!S.fam.spouse.gone)S.fam.spouse.age++;
+  if(Math.random()<deathChance(S.mayor.age))setTimeout(()=>{try{dieNow()}catch(e){console.warn(e)}},500)}
+function dieNow(){if(S.over)return;S.over=true;S.died=true;const M=S.mayor;try{newsAdd(0,`${isCand()?'Candidate':'Mayor'} ${M.name} dies at ${M.age}`)}catch(e){}famLog(`${M.name} died at ${M.age}`);save();
+  openModal('Memphis mourns',`${M.name}, ${M.age}`,`<p>${M.name} died suddenly this week at ${M.age}. ${isCand()?'The campaign is over.':'Flags at City Hall are at half-staff, and the council chair is serving as interim mayor.'}</p>${heirHTML()}
+   <div class="facts"><div class="choices"><button class="choice" data-act="legacy"><b>See the Mayors of Memphis</b><small>How your time will be remembered</small></button><button class="choice" data-act="newgame"><b>Start over</b><small>A brand-new game</small></button></div></div>`,true)}
+// ---------- the heir ----------
+const HEIR_MIN=21,HEIR_SKIP_MAX=12;
+function heirs(){const F=S&&S.fam;if(!F)return[];return F.kids.map((k,i)=>({k,i})).filter(x=>heirYear(x.k)-S.y<=HEIR_SKIP_MAX+3).sort((a,b)=>b.k.age-a.k.age)}
+function heirYear(k){let y=elYear();if(y<S.y||(y===S.y&&S.m>=3))y+=4;while(k.age+(y-S.y)<HEIR_MIN)y+=4;return y}
+function heirHTML(){const H=heirs();if(!H.length)return(S.fam&&S.fam.kids.length)?`<p class="note">Your children are too young to carry on the family name yet.</p>`:'';
+  return`<div class="facts"><h4>Carry on the family name</h4><div class="choices">${H.map(({k,i})=>{const y=heirYear(k),age=k.age+(y-S.y);const best=SKS.slice().sort((a,b)=>kidSk(k,b)-kidSk(k,a))[0];return`<button class="choice" data-heir="${i}"><b>Play as ${k.name}</b><small>Runs for mayor in ${y} at age ${age} · best skill ${skillName(best)} ${kidSk(k,best)} · inherits part of your savings and the family name</small></button>`}).join('')}</div></div>`}
+function occFor(best){return{learn:'teacher',safe:'firefighter',cha:'pastor',stew:'owner',dip:'nonprofit',intr:'tech'}[best]||'nonprofit'}
+function heirRun(i){const F=S.fam,k=F&&F.kids[i];if(!k)return;const parent={name:S.mayor.name,g:S.mayor.g,age:S.mayor.age},died=!!S.died;const inherit=Math.max(0,Math.round((S.purse.cash||0)*0.6));const siblings=F.kids.filter(x=>x!==k).map(x=>({...x}));
+  const y=heirYear(k),yrs=y-S.y;
+  // the city moves on until the heir's election year
+  const w=S._winner||(()=>{const c=S.council.slice().sort((a,b)=>b.opinion-a.opinion)[0];return{name:c.name,g:c.g,age:c.age,k:S.council.indexOf(c)}})();
+  try{if(S.phase!=='cand')histAdd(S.mayor,died?'died in office':S.removed?'removed from office':'left office')}catch(e){}
+  S.phase='ai';S.over=false;S.died=false;S.removed=false;S.exposed=null;S.trial=null;S.secrets=[];S.plots=[];S.dossier=[];S.net={};S.danaCall=null;
+  try{toJan()}catch(e){}if(w&&w.k!=null&&w.k>=0)try{newCouncilFace(w.k)}catch(e){}try{reignStart(w,true)}catch(e){}let g=0;while(!(S.y===y&&S.m===3)&&g++<12*(HEIR_SKIP_MAX+5))aiMonth();
+  const a0=k.age;for(let m=0;m<yrs*12;m+=6){k.age=a0+Math.floor(m/12);if(k.age<22)kidGrow(k,6)}k.age=a0+yrs;siblings.forEach(x=>x.age+=yrs);
+  S.elY=y;S.incumb={name:w.name,g:w.g||'m',age:(w.age||55)+yrs,frame:'#8a96a3'};
+  const sk={};SKS.forEach(s=>sk[s]=clamp(Math.round(kidSk(k,s)),2,14));const best=SKS.slice().sort((a,b)=>sk[b]-sk[a])[0];
+  const CR0={...newCR(),name:k.name,g:k.g,age:k.age,look:defaultLook(k.g),skills:sk,focus:best,traits:[],occ:occFor(best),run:true,keep:true};
+  onClose=null;try{closeModal()}catch(e){}closePanel();beginCampaign(CR0,true);
+  S.purse.cash+=inherit;S.cand.rec=Math.max(S.cand.rec,0.34);GROUPS.forEach(g=>groupLift(g.id,1.2,`The ${surname()} family name`));
+  S.fam={kind:'single',home:65,log:[{t:`Your ${parent.g==='f'?'mother':'father'}, ${parent.name}, ${died?`died at ${parent.age}`:'stepped away from public life'}. You inherited $${inherit.toLocaleString()}.`,d:dateStr()}],kids:[],cd:{},set:true,of:k.name,parent:parent.name,siblings:siblings.map(x=>x.name)};S.famAsk=false;
+  save();refreshHUD();notify('event',`${k.name} is running for mayor`,`${yrs} years have passed. ${k.name} carries the family name into the ${y} race.`,()=>openFamily(),{ttl:20})}
+{const _al=afterLossChoices;afterLossChoices=function(w){const h=_al.apply(this,arguments);try{const x=heirHTML();if(x)return h.replace('<div class="facts"><h4>What now?</h4>',x+'<div class="facts"><h4>What now?</h4>')}catch(e){}return h}}
+// removal from office (v26.59 trial) and other end screens get the heir option too
+{const _om=openModal;openModal=function(t,h,body,nav){try{if(S&&S.removed&&h==='Guilty'&&typeof body==='string'&&!body.includes('data-heir'))body=body.replace('<div class="facts"><h4>What now?</h4>',heirHTML()+'<div class="facts"><h4>What now?</h4>')}catch(e){}return _om.apply(this,arguments)}}
+document.addEventListener('click',e=>{const b=e.target.closest('[data-heir]');if(!b||!S)return;e.preventDefault();e.stopImmediatePropagation();heirRun(+b.dataset.heir)},true);
+{const _fm=famMonth;famMonth=function(...a){const r=_fm.apply(this,a);try{if(S&&S.started&&!S.over&&S.phase!=='ai'){schoolMonth();ageMonth()}}catch(e){console.warn('school',e)}return r}}
+// ---------- naming: any name you like ----------
+function nameBabyCustom(){const v=(($('babyName')||{}).value||'').trim().replace(/[<>"]/g,'');if(v.length<1)return;nameBaby(v)}
+{const _nb=nameBaby;nameBaby=function(n){const F=famInit();const r=_nb.apply(this,arguments);try{const k=F.kids[F.kids.length-1];if(k){k.name=`${n} ${surname()}`;kidInit(k);SKS.forEach(s=>k.sk[s]=Math.round(Math.random()*10)/10)}}catch(e){}return r}}
+function renameKid(i){const F=famInit(),k=F.kids[i];const v=(($('kidName')||{}).value||'').trim().replace(/[<>"]/g,'');if(!k||v.length<1)return;k.name=v.includes(' ')?v:`${v} ${k.name.split(' ').slice(1).join(' ')||surname()}`;save();KID_MSG=`Renamed: ${k.name}.`;openKid(i)}
+// ---------- the child's screen ----------
+let KID_MSG=null;
+function openKid(i){const F=famInit(),k=F.kids[i];if(!k)return;kidInit(k);const last=KID_MSG;KID_MSG=null;const st=kidStage(k),first=k.name.split(' ')[0];
+  const sk={};SKS.forEach(s=>sk[s]=kidSk(k,s));const best=SKS.slice().sort((a,b)=>sk[b]-sk[a])[0];
+  const opts=st==='k12'||st==='college'?Object.entries(SCHOOLS[st]).map(([id,X])=>{const can=!X.need||X.need(k);return`<button class="choice${k.school===id?' on':''}" data-kschool="${i}|${id}" ${can?'':'disabled'}><b>${k.school===id?'✓ ':''}${X.n}</b><small>${can?X.d:X.d+' (not yet)'}${X.f?` · builds ${skillName(X.f)}`:''}</small></button>`}).join(''):'';
+  const acts=k.age>=8&&st!=='adult'?Object.entries(ACTIVITIES).filter(([id,A])=>!A.min||k.age>=A.min).map(([id,A])=>`<button class="btn${k.act===id?' primary':''}" data-kact="${i}|${id}">${A.n}${A.sk.length?`<small> · ${A.sk.map(skillName).join(', ')}</small>`:''}</button>`).join(''):'';
+  const hw=nowM()-(k.hw||-99)>=1&&st!=='adult'&&k.age>=5;
+  openModal(`${k.g==='f'?'Your daughter':'Your son'} · ${k.age} · ${stageName(k)}`,k.name,`${last?`<p class="scnreply">${last}</p>`:''}
+   <div class="famcard"><div class="fam-pic">${(()=>{try{return portrait(k,56)}catch(e){return''}})()}</div><div><b>${k.name}</b><small>${k.age} · ${stageName(k)}${kidSchool(k)?` · ${kidSchool(k).n}`:''}</small></div></div>
+   <div class="row"><input id="kidName" class="txtin" maxlength="40" placeholder="Rename ${first}" value=""><button class="btn" data-krename="${i}">Rename</button></div>
+   <h4 class="plh">${first}'s skills</h4>${skillRow(sk,best)}<p class="note">Skills grow every month: faster at a better school, with an activity, and when home life is strong. ${k.age>=HEIR_MIN?`<b>${first} is old enough to carry on the family name</b> if your story ends.`:`At ${HEIR_MIN}, ${first} can carry on the family name if your story ends.`}</p>
+   ${opts?`<h4 class="plh">${st==='college'?'After high school':'School'}</h4><div class="choices">${opts}</div>`:st==='home'?'<p class="note">Too young for school. Skills grow slowly at home.</p>':`<p class="note">${first} is grown${k.adultJob?`, working as ${k.adultJob}`:''}.</p>`}
+   ${acts?`<h4 class="plh">After school</h4><div class="row" style="flex-wrap:wrap">${acts}</div>`:''}
+   ${st!=='adult'&&k.age>=5?`<div class="row"><button class="btn" data-khw="${i}" ${hw?'':'disabled'}>Help with homework<small> · free · once a month · Education +, home life +4</small></button></div>`:''}
+   <div class="row"><button class="btn primary" data-famopen="1">Back to your family</button></div>`,true)}
+openKid=navWrap('openKid',openKid);
+document.addEventListener('click',e=>{const b=e.target.closest('[data-kschool],[data-kact],[data-khw],[data-krename],[data-kidopen],[data-babycustom]');if(!b||!S)return;e.preventDefault();e.stopImmediatePropagation();const F=famInit();
+  if(b.dataset.babycustom){nameBabyCustom();return}
+  if(b.dataset.kidopen){if(modalOpen){onClose=null;closeModal()}openKid(+b.dataset.kidopen);return}
+  if(b.dataset.krename){renameKid(+b.dataset.krename);return}
+  if(b.dataset.kschool){const[i,id]=b.dataset.kschool.split('|');const k=F.kids[+i];k.school=id;if(kidStage(k)==='college')k.collegePicked=true;save();KID_MSG=`${k.name.split(' ')[0]} is enrolled: ${kidSchool(k).n}.`;openKid(+i);return}
+  if(b.dataset.kact){const[i,id]=b.dataset.kact.split('|');const k=F.kids[+i];k.act=id;save();KID_MSG=`${k.name.split(' ')[0]}: ${ACTIVITIES[id].n}.`;openKid(+i);return}
+  if(b.dataset.khw){const i=+b.dataset.khw,k=F.kids[i];k.hw=nowM();kidInit(k).sk.learn=Math.min(18,k.sk.learn+0.4);homeAdd(4,`Homework with ${k.name.split(' ')[0]}`);save();KID_MSG='An hour at the kitchen table. Education +0.4, home life +4.';openKid(i);return}},true);
+// family screen: kid cards open their page; baby naming takes any name
+{const _of=openFamily;openFamily=function(...a){const r=_of.apply(this,a);try{const F=famInit(),b=$('mBody');if(!b)return r;
+  b.querySelectorAll('.famcard').forEach(c=>{const nm=(c.querySelector('b')||{}).textContent;const i=F.kids.findIndex(k=>k.name===nm);if(i>=0&&!c.querySelector('[data-kidopen]')){kidInit(F.kids[i]);const k=F.kids[i];const best=SKS.slice().sort((x,y)=>kidSk(k,y)-kidSk(k,x))[0];const d=c.querySelector('div:last-child');if(d)d.insertAdjacentHTML('beforeend',`<p class="note">Best skill: ${skillName(best)} ${kidSk(k,best)}${kidSchool(k)?` · ${kidSchool(k).n}`:''}</p><button class="btn" data-kidopen="${i}">School and skills</button>`)}});
+  if(F.namePick){const x=b.querySelector('[data-baby]');const box=x&&x.closest('.faccard');if(box&&!box.querySelector('#babyName')){box.insertAdjacentHTML('beforeend',`<p class="note">Or type any name you like:</p><div class="row"><input id="babyName" class="txtin" maxlength="30" placeholder="First name"><button class="btn primary" data-babycustom="1">Name the baby</button></div>`)}}
+  if(F.schoolCost||F.kidEarn){const hb=b.querySelector('.homebar');if(hb&&!b.querySelector('.schoolcost'))hb.insertAdjacentHTML('afterend',`<p class="note schoolcost">School costs: $${(F.schoolCost||0).toLocaleString()} a month${F.kidEarn?` · your kids earn $${F.kidEarn.toLocaleString()} a month`:''}.</p>`)}
+  if(F.parent){const t=b.querySelector('.scnreply');const h=`<p class="note">Your ${''}parent: ${F.parent}${F.siblings&&F.siblings.length?` · siblings: ${F.siblings.join(', ')}`:''}.</p>`;if(!b.querySelector('.parentline')){const d=document.createElement('div');d.className='parentline';d.innerHTML=h;b.prepend(d)}}}catch(e){console.warn(e)}return r};VIEWS.openFamily=openFamily}
+{const _ns=nextSteps;nextSteps=function(...a){const r=_ns.apply(this,a);try{const F=S&&S.fam;const k=F&&F.kids.find(k=>k.age===18&&k.collegeAsk&&!k.collegePicked);if(k&&Array.isArray(r))r.push({pri:50,t:`Choose ${k.name.split(' ')[0]}'s path after high school`,h:'College or work',go:()=>openKid(F.kids.indexOf(k))})}catch(e){}return r}}
 function openLedger(){const L=S.log||[];openPanel('Everything that has happened, newest first','Ledger',L.length?`<div class="logl">${L.map(x=>`<div><span>${x.d}</span><p style="margin:0">${x.t}</p></div>`).join('')}</div>`:'<p class="note">Nothing yet. Start the clock with Space or ▶.</p>','ledger')}
 function openPolicies(){const ks=Object.keys(POLICIES);
   openPanel('Ongoing programs you control','Your initiatives',`<p>Mid-year, these are paid from the reserve fund. In April they go into the budget you send the council.</p>

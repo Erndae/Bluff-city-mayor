@@ -56,6 +56,22 @@ How the reporters work:
 - **Children.** Try for a baby: about a 1 in 5 chance each month, a 9-month pregnancy, then you pick a name. Couples who can't conceive, or anyone, can adopt ($15K, about 6 months). A new baby boosts parents and churches, and costs you some sleep.
 - Spouses from older saves get skills automatically.
 
+## v26.63: Schooling, any name you like, and playing as your heir
+
+- **Every child has six skills that grow.** Open a child from People → Your family → "School and skills."
+  - **School:** a neighborhood MSCS school, an MSCS optional (magnet) school (needs Education 5), a charter school, a private school in East Memphis ($1,500 a month), or homeschool (better when home life is strong).
+  - **After high school:** the University of Memphis, LeMoyne-Owen College, Rhodes College ($4,000 a month), a big out-of-state university, or straight to work (they earn money).
+  - **After-school activities** focus their growth: debate, student government, robotics, sports, church youth group, or a part-time job (age 15+, earns money).
+  - **Help with homework:** free, once a month.
+  - Your home life speeds their growth or slows it.
+- **Any name you want.** Type a baby's name, or rename any child.
+- **You age, and you can die.** You age every January. The chance of dying is tiny under 55 and grows after 65.
+- **Carry on the family name.** When your story ends, any child who'll be 21 by an election within about 15 years can take over:
+  - Endings that qualify: death, a lost election, or removal from office.
+  - Time skips to their race.
+  - They run for mayor with the skills they built (capped at 14), 60% of your savings, extra name recognition, and a small boost with every group.
+  - Their family page remembers you and lists their siblings.
+
 ## v26.59: Dirty deals and secrets
 
 You can now break the law, and it can catch up with you.
