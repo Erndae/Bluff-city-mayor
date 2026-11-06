@@ -4,6 +4,21 @@ A city-management game set in Memphis, Tennessee. You play the mayor. You handle
 
 **Play it:** https://erndae.github.io/Bluff-city-mayor/ (once GitHub Pages is turned on, see below)
 
+## v26.73: Congress, expanded
+
+- **Committee assignments.** Choose Transportation and Infrastructure, Judiciary, Ways and Means, or Oversight. Each unlocks its own move: highway-bill earmarks for Memphis, criminal-justice reform, tax provisions for Memphis employers, or televised hearings.
+- **Your own bills.** Write up to two at a time: the Mississippi River Bridges Act, the Mid-South Transit Investment Act, the Second Chance Records Act, the Safe Water and Lead Pipes Act, or the Delta Jobs and Logistics Act.
+  - Each bill moves through committee, the House floor, the Senate and the President's desk.
+  - Whip votes and recruit cosponsors to build support.
+  - Being in the minority makes every step harder, and a bill with no support dies.
+  - A bill that becomes law sends real money and improvements to Memphis's city budget and city stats.
+- **Yearly floor votes** on national bills (infrastructure, defense, a crime bill, drug prices, the debt limit, corporate tax cuts). Each one trades party standing against approval back home.
+- **Majority control** flips 40% of the time at each election. Losing the majority costs you a committee chair.
+- **The leadership ladder:** committee chair (needs the majority, 4 years in the House and clout 35; doubles your committee moves), then party whip (clout 60 and party standing 60; influence +10 a year). Clout now grows with seniority.
+- **District casework** raises approval. Federal grants also send money straight to the city budget.
+- **A run for the U.S. Senate** opens at clout 45. It's a hard statewide campaign; win, and you serve six-year terms with your record intact.
+- Re-election is fairer to popular incumbents, approval drifts back toward 60 so it can't run away, and laws you wrote boost a comeback for mayor.
+
 ## v26.72: Real campaigns for County and Congress, and law school before the law firm
 
 - **Running for office takes a campaign.**
