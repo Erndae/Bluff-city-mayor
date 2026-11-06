@@ -364,6 +364,7 @@ nav.actions [data-actsgo]{min-height:44px;padding:9px 17px;border-color:rgba(242
 .qrgrid.agrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.qrgrid.agrid p{margin:2px 0 0}
 .billrow{border:1px solid var(--line,#2c3e4c);border-radius:10px;padding:10px;margin:8px 0}.billrow small{display:block;color:var(--muted,#9aa7b2);margin:2px 0 6px}.stagepips{display:flex;gap:4px;margin-top:6px}.stagepips i{flex:1;height:4px;border-radius:2px;background:rgba(255,255,255,.12)}.stagepips i.on{background:var(--good)}
 .partyrow{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin:10px 0 2px}.partyrow span{margin-right:4px}
+.tnmap{width:100%;max-width:420px;display:block;margin:8px 0 2px}.tnmap .tnst{fill:var(--panel2,rgba(127,127,127,.08));stroke:var(--line,rgba(127,127,127,.4));stroke-width:1}.tnmap .tnl{font-size:9px;fill:var(--ink2,currentColor);font-weight:600}.tnmap .tnmem{fill:var(--acc,#e8b04f)}.tnmap .tncity{fill:var(--ink2,#888)}.faccard.homes{border-left:3px solid var(--acc,#e8b04f)}
 .adgain{display:block;width:100%;text-align:center;font-size:11px;font-weight:600;color:var(--good);margin-top:1px}
 #start{overflow-x:hidden;overflow-y:auto;touch-action:pan-y}.startbox{min-width:0;max-width:min(600px,100%);box-sizing:border-box}.startbox *{min-width:0}.create select,.create input{max-width:100%;width:100%;box-sizing:border-box;text-overflow:ellipsis}.create .tpick,.create .tpick>*{max-width:100%;box-sizing:border-box}
 @media (max-width:640px){.startbox{margin-left:0}#start{padding-left:max(16px,env(safe-area-inset-left,0px))}}
@@ -716,7 +717,7 @@ details.analysis{margin-top:6px}details.analysis summary{cursor:pointer;color:va
     <button class="btn primary" data-act="pause" id="bPlay"><svg class="ico" viewBox="0 0 12 12" aria-hidden="true"><path d="M3.2 1.6v8.8l7.2-4.4z" fill="currentColor"/></svg> Resume <kbd>Space</kbd></button>
   </nav>
   <div class="status" id="status">Loading map…</div>
-  <div class="credit"><span class="ver" id="verTag">v26.74</span></div>
+  <div class="credit"><span class="ver" id="verTag">v26.75</span></div>
   <div class="tip" id="tip" hidden></div>
   <div class="toast" id="toast" role="status"></div>
   <section class="panel" id="panel" hidden aria-live="polite">
@@ -744,7 +745,7 @@ details.analysis{margin-top:6px}details.analysis summary{cursor:pointer;color:va
         <button class="btn" data-music-open>Music &amp; volume</button>
       </div>
       <div id="slotList" hidden></div>
-      <p class="note startv">Version <b class="ver" id="verStart">v26.74</b></p>
+      <p class="note startv">Version <b class="ver" id="verStart">v26.75</b></p>
     </div>
     <div class="startbox create" id="create" hidden>
       <h2>Create your mayor</h2>
@@ -1555,7 +1556,7 @@ function enact(s,p){DIVS.forEach(d=>{s.enacted[d.id]=p.divs[d.id];s.ratio[d.id]=
 // Voter groups. Each has a share of residents, turnout, home districts, concerns and an approval of you.
 // Citywide approval is the turnout-weighted average of the groups; each council district's approval comes from the groups that live there.
 // Shares, district mix and turnout are modeled, loosely grounded in Memphis demographics; they are not survey data.
-const VERSION='v26.74';
+const VERSION='v26.75';
 const GROUPS=[
  {id:'working',sh:'Working families',n:'Working families',ic:'⚒︎',c:'#f2a93b',share:24,turn:.5,start:56,w:{jobs:1,safety:.8,transit:.5},
   d:'Hourly workers in logistics, warehouses, health care and service jobs. The biggest bloc in the city.',dm:{1:1.1,2:.8,3:1.3,4:1.2,5:.6,6:1.2,7:1.1}},
@@ -8204,6 +8205,109 @@ document.addEventListener('click',e=>{const b=e.target.closest('[data-party]');i
   if(A.role==='congress'||A.role==='senate'){b.querySelectorAll('[data-cvote] small').forEach((s,i)=>{const c=A.cg;if(!c||!c.vote)return;const E=voteFx(c.vote,i===0);s.textContent=`${myParty()==='I'?'Caucus':'Party'} ${E.party>0?'+':''}${E.party} · approval back home ${E.app>0?'+':''}${E.app}${E.fed?` · $${E.fed}M for Memphis`:''}`});const vd=b.querySelector('.cgx .faccard .note');if(vd&&A.cg&&A.cg.vote){const V=A.cg.vote;vd.textContent=V.by==='both'?V.d:`${V.d} ${V.by===myParty()?'Your party\'s leadership is whipping yes.':myParty()==='I'?'You\'re free to vote either way.':'Your party\'s leadership opposes it.'}`}}}catch(e){console.warn('party',e)}return r}}
 // the party shows on your character page
 {const _om=openModal;openModal=function(...a){const r=_om.apply(this,a);try{const n=NAV.cur?NAV.cur.name:'';if(n==='openFamily'&&S&&S.mayor){const b=$('mBody');if(b&&!b.querySelector('.partyrow')){const x=document.createElement('div');x.innerHTML=partyRow();const first=b.querySelector('.famlist')||b.firstChild;b.insertBefore(x,first)}}}catch(e){}return r}}
+// ======================= v26.75: THE 2026 MAP, TWO HOMES, AND FLYING TO WASHINGTON =======================
+// Tennessee's 2026 congressional map splits Shelby County among the 5th, 8th and 9th districts, each running from
+// Memphis out into rural Tennessee. You pick which seat to run in. Win Congress or the Senate and you need two homes:
+// a place in Washington and your home in Tennessee. You fly between them. Votes, committee work and bills happen in
+// D.C.; town halls, casework and district tours happen back home. Where your family lives changes home life.
+const DIST={
+ '5':{ord:'5th',reach:'Runs from Middle Tennessee across to the state\'s northwest corner, then south along the Mississippi River into Memphis.',rural:'river towns up the Mississippi and the suburbs of Middle Tennessee',lean:{D:-0.12,R:0.14,I:-0.09},col:'#d08a3a'},
+ '8':{ord:'8th',reach:'Covers most of rural West Tennessee, and now takes in part of Shelby County and some Memphis voters.',rural:'farm towns and small cities across West Tennessee',lean:{D:-0.14,R:0.16,I:-0.09},col:'#4fa36a'},
+ '9':{ord:'9th',reach:'No longer a Memphis-centered seat. It now runs about 200 miles east from Memphis toward Nashville and no longer touches the river.',rural:'rural counties stretching east toward Nashville',lean:{D:-0.04,R:0.08,I:-0.08},col:'#7a6ad0'}};
+const OLD9={D:0.15,R:-0.15,I:-0.08};
+function curDist(){const A=S&&S.after;return(A&&A.dist)||null}
+function distLean(d){const A=S&&S.after;d=d||curDist()||'9';if(A&&A.oldMap)return d==='9'?OLD9:{D:DIST[d].lean.D-0.04,R:DIST[d].lean.R+0.04,I:DIST[d].lean.I};return DIST[d].lean}
+function distName(d){d=d||curDist();return d?`Tennessee's ${DIST[d].ord} District`:'Congress'}
+Object.defineProperty(ROLES.congress,'n',{configurable:true,get(){const d=curDist();return d?`U.S. Congress (${distName(d)})`:'U.S. Congress'}});
+ROLES.congress.d='The 2026 map splits Shelby County among three districts that each run out into rural Tennessee. Pick one and run.';
+Object.defineProperty(PARTY_MOD,'congress',{configurable:true,get(){return distLean()}});
+Object.defineProperty(PARTY_WHY,'congress',{configurable:true,get(){const A=S&&S.after;if(A&&A.oldMap&&curDist()==='9')return{D:'a court restored a Memphis-centered 9th District, which votes heavily Democratic',R:'a court restored a Memphis-centered 9th District, a long shot for a Republican',I:'no party machinery behind you'};return{D:'all three districts that touch Memphis now lean Republican, so you need crossover votes',R:'the new lines tilt each Memphis district toward Republicans',I:'no party machinery behind you'}}});
+// the map, drawn as a schematic
+function distMap(sel){const P={'5':'20,72 15,42 20,17 150,23','8':'22,72 72,50 118,38','9':'22,77 128,70 158,36'};const L={'5':[60,15],'8':[90,52],'9':[110,82]};
+  return`<svg class="tnmap" viewBox="0 0 330 96" role="img" aria-label="Schematic map of Tennessee's three districts that touch Memphis"><polygon points="16,12 300,8 314,24 294,38 282,58 272,80 18,82 10,62 14,38" class="tnst"/><circle cx="160" cy="34" r="3" class="tncity"/><text x="166" y="33" class="tnl">Nashville</text>
+  ${Object.keys(P).map(d=>`<polyline points="${P[d]}" fill="none" stroke="${DIST[d].col}" stroke-width="${sel===d?6:3}" stroke-linecap="round" stroke-linejoin="round" opacity="${!sel||sel===d?1:0.45}"/><text x="${L[d][0]}" y="${L[d][1]}" class="tnl" fill="${DIST[d].col}">${DIST[d].ord}</text>`).join('')}
+  <circle cx="20" cy="76" r="4.5" class="tnmem"/><text x="28" y="94" class="tnl">Memphis</text><text x="316" y="56" class="tnl" text-anchor="end">→ D.C.</text></svg><small class="note">Schematic, not to scale.</small>`}
+// picking Congress first asks which district
+{const _cr=chooseRole;chooseRole=function(k){const A=afterInit();if(k==='congress'&&!A.role&&!A.dist){A.pickDist=true;save();openAfter();return}return _cr.apply(this,arguments)}}
+function pickDistrict(d){const A=afterInit();if(!DIST[d])return;A.dist=d;A.pickDist=false;afterLog(`You chose to run in ${distName(d)}.`);chooseRole('congress')}
+// ---------- two homes ----------
+const DC_HOMES={
+ office:{n:'Sleep on a cot in your office',cost:0,d:'Free. Plenty of members do it. Long nights, more stress, and your family can\'t join you.',fam:false},
+ share:{n:'Share a Capitol Hill rowhouse with other members',cost:24000,d:'$24,000 a year. Cheap, and the late-night talk builds friendships across the aisle (clout +1 a year).',fam:false},
+ rent:{n:'Rent an apartment on Capitol Hill',cost:42000,d:'$42,000 a year. Room for your family if they come.',fam:true},
+ buy:{n:'Buy a townhouse in D.C.',cost:36000,down:170000,d:'$170,000 down, then $36,000 a year. Room for your family, and you get your equity back when you sell.',fam:true}};
+function resOf(){const A=S&&S.after;if(!A||(A.role!=='congress'&&A.role!=='senate'))return null;if(!A.res)A.res={dc:null,fam:null,where:'dc',roots:55,flights:0,dcM:0,homeM:0,office:false};return A.res}
+function famToMove(){const F=S&&S.fam;return!!(F&&((F.spouse&&!F.spouse.gone)||F.kids.some(k=>k.age<18&&!k.dead&&!k.gone)))}
+function homeLabel(){const A=S.after;return A&&A.role==='senate'?'Tennessee':'Memphis'}
+function chooseDC(k){const r=resOf(),H=DC_HOMES[k];if(!r||r.dc||!H)return;if(H.down){if(S.purse.cash<H.down)return;S.purse.cash-=H.down;r.own={paid:H.down,y:S.y}}r.dc=k;if(!famToMove())r.fam='none';r.where='dc';const m=`Your Washington home: ${H.n.toLowerCase()}. You keep your home in Memphis too.`;afterLog(m);save();AFTER_MSG=m;openAfter()}
+function chooseFamLoc(w){const r=resOf();if(!r||r.fam)return;r.fam=w;let m;if(w==='dc'){r.roots-=8;homeAdd(8,'The family moved to Washington with you');try{S.fam.kids.filter(k=>k.age<18).forEach(k=>k.mood=clamp((k.mood||70)-10,0,100))}catch(e){}m='Your family moved to Washington. The kids changed schools, and the house in Memphis is quiet. Back home, some people say you\'ve gone Washington.'}else{r.roots+=5;m='Your family is staying in Memphis. You\'ll fly home as often as you can.'}afterLog(m);save();AFTER_MSG=m;openAfter()}
+function sellDC(){const A=S&&S.after;if(!A||!A.res)return;const r=A.res;if(r.own){const back=Math.round(r.own.paid*(1+0.03*Math.max(0,S.y-r.own.y)));S.purse.cash+=back;afterLog(`You sold the D.C. townhouse and got back $${back.toLocaleString()}.`)}if(r.fam==='dc')afterLog('Your family moved back to Memphis.');A.res=null}
+// ---------- flying ----------
+const FLIGHTS=8;
+function flyTo(dest){const A=afterInit(),r=resOf();if(!r||!r.dc||r.where===dest||r.flights>=FLIGHTS)return;r.flights++;r.where=dest;const H=hInit();if(H)H.st=clamp(H.st+3,0,100);
+  let m=dest==='dc'?`You flew from Memphis to Washington. ${r.fam==='memphis'?'Your family saw you off at the airport.':''}`:`You flew home to ${homeLabel()}. ${r.fam==='memphis'?'Your family met you at the airport.':''}`;
+  if(Math.random()<0.12&&(A.ra||0)<ROLE_ACTS){A.ra=(A.ra||0)+1;m+=' Storms delayed the flight for hours, and you lost a day of work (one move).'}
+  if(dest==='home'&&r.fam==='memphis')homeAdd(3);afterLog(m.trim());save();AFTER_MSG=m.trim();openAfter()}
+// where each move happens
+const CG_LOC={grant:'dc',party:'dc',home:'dc',tv:'dc',approps:'dc',roads:'dc',reform:'dc',taxcred:'dc',hearing:'dc',bill:'dc',push:'dc',cosp:'dc',chair:'dc',whip:'dc',town:'home',case:'home',tour:'home',office:'home',senate:'any'};
+Object.assign(CG_ACTS,{
+ tour:{n:'Tour the far end of your district',sk:'cha',b:0.5,d:()=>{const A=S.after;return A&&A.role==='senate'?'Knoxville, Chattanooga, Nashville and the small towns between · works: roots +12, approval +3 · fails: roots +6':`Out to the ${DIST[curDist()||'9'].rural} · works: roots +12, approval +3 · fails: roots +6`},do:(c,A,ok)=>{const r=resOf();r.roots+=ok?12:6;if(ok)c.app+=3;return ok?'Diners, county fairs and church fellowship halls. People who\'d never met a Memphian in Congress shook your hand.':'Small crowds, but you showed up, and people noticed.'}},
+ office:{n:'Open a district office outside Memphis',need:()=>{const r=resOf();return r&&!r.office},d:'A permanent office in a rural county seat · roots +15, approval +2',do:(c,A)=>{const r=resOf();r.office=true;r.roots+=15;c.app+=2;return'Your new office on the courthouse square handles Social Security and VA cases for the whole region.'}}});
+// stat-based move descriptions work in the Senate too (they were only wired for the House)
+for(const k in CG_ACTS){const X=CG_ACTS[k];if(typeof X.d==='function'&&!X._d){X._d=X.d;X.d=()=>{const K=roleKit();return X._d(K&&K.st?K.st:(S.after&&S.after.cg)||{})}}}
+{const _ra=roleAct;roleAct=function(k){const A=afterInit(),r=resOf();if(r&&CG_ACTS[k]){const loc=CG_LOC[k]||'dc';if(!r.dc)return;if(loc!=='any'&&loc!==r.where)return}const before=A.ra||0;const out=_ra.apply(this,arguments);try{const r2=resOf();if(r2&&(A.ra||0)>before){const loc=CG_LOC[k]||'dc';if(loc==='home')r2.homeM++;else if(loc==='dc')r2.dcM++;r2.roots=clamp(r2.roots,0,100)}}catch(e){}return out}}
+// floor votes need you in Washington
+{const _cv=castVote;castVote=function(yes){const r=resOf();if(r&&r.where!=='dc')return;return _cv.apply(this,arguments)}}
+function skipVote(){const A=afterInit(),c=A.cg;if(!c||!c.vote)return;c.party-=4;c.app-=2;c.missed=(c.missed||0)+1;const m=`You stayed in ${homeLabel()} and missed the vote on ${c.vote.t.toLowerCase()}. Leadership noticed, and so will your next opponent.`;c.vote=null;roleClamp();afterLog(m);save();AFTER_MSG=m;openAfter()}
+// ---------- the year ----------
+{const _ay=afterYear;afterYear=function(...a){const A=afterInit();const role=A.role;const r=resOf();let tmp=0;
+  try{if(r&&r.dc){const c=A.cg,H=hInit();const fam=r.fam;
+    const cost=DC_HOMES[r.dc].cost;if(cost){S.purse.cash-=cost}
+    if(r.dc==='office'&&H)H.st=clamp(H.st+10,0,100);if(r.dc==='share'&&c)c.clout+=1;
+    r.roots+=-6+r.homeM*5-(fam==='dc'?6:0)+(r.office?3:0);
+    if(c){if(r.homeM===0){c.app-=3;afterLog('You barely came home this year. Voters noticed.')}if(r.dcM===0){c.clout-=3;c.party-=3;afterLog('You spent the year at home and missed a lot in Washington.')}}
+    if(fam==='memphis'){if(r.homeM===0)homeAdd(-15,'You were in Washington almost all year');else if(r.homeM===1)homeAdd(-6,'You were away most of the year');else homeAdd(4,'You made it home often');try{const sp=S.fam.spouse;if(sp&&!sp.gone&&r.homeM===0)sp.mood=clamp(sp.mood-10,0,100)}catch(e){}}
+    if(fam==='dc')homeAdd(5,'Your family is with you in Washington');
+    r.roots=clamp(r.roots,0,100);
+    // the election this year: the district's lean and your roots back home count
+    const p=myParty();const elec=(role==='congress'&&(A.yrs+1)%2===0)||(role==='senate'&&(A.yrs+1)%6===0);
+    if(elec&&c){const lean=role==='senate'?(p?PARTY_MOD.senate[p]:0):(p?distLean()[p]:0);tmp=lean*60+(r.roots-50)/4-(c.missed||0)*1.5;c.app+=tmp}
+    r.flights=0;r.dcM=0;r.homeM=0}}catch(e){console.warn('v75 pre',e)}
+  const out=_ay.apply(this,a);
+  try{if(tmp&&A.cg)A.cg.app=clamp(A.cg.app-tmp,0,100);if(A.cg)A.cg.missed=0;
+    // the court case over the map
+    if(!A.court&&A.dist&&(A.role==='congress'||(A.role==='campaign'&&A.camp&&A.camp.office==='congress'))&&Math.random()<0.15){A.court=true;if(Math.random()<0.5){afterLog('A federal court upheld the 2026 map. The districts stay as drawn.')}else{A.oldMap=true;afterLog(curDist()==='9'?'A federal court struck down the 2026 map and ordered a compact, Memphis-centered 9th District. Your seat just got much more Democratic.':`A federal court struck down the 2026 map and put most Memphis voters back in a compact 9th District. ${distName()} loses its Memphis neighborhoods.`)}}
+    if(A.res&&A.role!=='congress'&&A.role!=='senate'&&!(A.role==='campaign'&&A.camp&&A.camp.keepCg)){sellDC();save()}
+    save()}catch(e){console.warn('v75 post',e)}
+  return out}}
+// leaving public life keeps your equity
+{const _cb=comebackRun;comebackRun=function(...a){try{sellDC()}catch(e){}return _cb.apply(this,a)}}
+{const _ah=afterHeir;afterHeir=function(...a){try{sellDC()}catch(e){}return _ah.apply(this,a)}}
+// ---------- the screen ----------
+{const _oa=openAfter;openAfter=function(...a){const A=afterInit();try{if(A.res&&A.role!=='congress'&&A.role!=='senate'&&!(A.role==='campaign'&&A.camp&&A.camp.keepCg))sellDC()}catch(e){}const out=_oa.apply(this,a);try{const b=$('mBody');if(!b)return out;
+  // the district picker
+  if(!A.role&&A.pickDist&&!b.querySelector('.distpick')){const p=myParty();const h=`<div class="faccard distpick"><b>Which district will you run in?</b><p class="note">Tennessee's 2026 map splits Shelby County among the 5th, 8th and 9th districts. Each runs from part of Memphis out into rural areas, so Memphis voters are a minority in all three. Lawsuits from Rep. Steve Cohen, the Tennessee NAACP, the state Democratic Party and the ACLU challenge the map. In this game, the court can go either way.</p>${distMap(null)}<div class="choices">${Object.keys(DIST).map(d=>{const L=distLean(d);const was=A.dist;A.dist=d;let pct=0;try{pct=Math.round(ROLES.congress.run()*100)}catch(e){}A.dist=was;return`<button class="choice" data-dist="${d}"><b>${distName(d)}</b><small>${DIST[d].reach} · you'd start at about ${pct}%${p?` (as ${p==='I'?'an Independent':'a '+PARTY[p].n}: ${L[p]>0?'+':''}${Math.round(L[p]*100)} points from the district's lean)`:''}</small></button>`}).join('')}<button class="choice" data-distx="1"><b>Never mind</b><small>Pick a different path</small></button></div></div>`;const g=b.querySelector('.qrgrid');const x=document.createElement('div');x.innerHTML=h;if(g)g.after(x.firstChild);else b.prepend(x.firstChild)}
+  // the district label everywhere it was hard-coded
+  b.querySelectorAll('h4.plh').forEach(h=>{if(h.textContent==="Tennessee's 9th District"&&curDist())h.textContent=distName()+(A.oldMap&&curDist()==='9'?' (court-ordered map)':'')});
+  if(A.role==='campaign'&&A.camp&&A.camp.office==='congress'&&curDist()){const desk=b.querySelector('.roledesk');if(desk&&!desk.querySelector('.tnmap')){const st=desk.querySelector('.campstats');const x=document.createElement('div');x.innerHTML=`<p class="note">${DIST[curDist()].reach}</p>`+distMap(curDist());if(st)st.after(...x.childNodes)}}
+  const r=resOf();if(!r)return out;const desk=b.querySelector('.roledesk');if(!desk)return out;
+  let h='<div class="faccard homes">';
+  if(!r.dc){h+=`<b>Find a place in Washington</b><p class="note">You still live in Memphis, and you have to: members of Congress must live in the state they represent, and voters expect you home. But the ${A.role==='senate'?'Senate':'House'} meets in Washington most weeks, so you need a second place there.</p><div class="choices">${Object.entries(DC_HOMES).map(([k,H])=>{const can=!H.down||S.purse.cash>=H.down;return`<button class="choice" data-dch="${k}" ${can?'':'disabled'}><b>${H.n}</b><small>${H.d}${can?'':' · you don\'t have the down payment'}</small></button>`}).join('')}</div>`}
+  else if(!r.fam){const canDC=DC_HOMES[r.dc].fam;h+=`<b>Where does your family live?</b><p class="note">Members of Congress split their lives between two cities. Where your family lives decides how often you see them.</p><div class="choices"><button class="choice" data-famloc="memphis"><b>They stay in Memphis</b><small>Roots back home +5 · home life depends on how often you fly home</small></button><button class="choice" data-famloc="dc" ${canDC?'':'disabled'}><b>They move to Washington</b><small>${canDC?'Home life +8 now and steadier after · the kids change schools · roots back home −8, and less every year':'Your D.C. place has no room for a family'}</small></button></div>`}
+  else{const here=r.where==='dc';h+=`<b>${here?'You\'re in Washington, D.C.':`You're home in ${homeLabel()}`}</b>
+    <div class="qrgrid agrid"><div><small>Washington home</small><p><b>${DC_HOMES[r.dc].n.replace(/^(Sleep on a cot in|Share|Rent|Buy) /,'').replace(/^an? /,'')}</b></p></div><div><small>Home in Tennessee</small><p><b>Memphis</b></p></div><div><small>Family</small><p><b>${r.fam==='dc'?'In Washington':r.fam==='memphis'?'In Memphis':'Just you'}</b></p></div><div><small>Roots back home</small><p><b>${Math.round(r.roots)}</b></p></div><div><small>Flights this year</small><p><b>${r.flights} of ${FLIGHTS}</b></p></div><div><small>This year</small><p><b>${r.dcM} in D.C. · ${r.homeM} at home</b></p></div></div>
+    ${A.role==='congress'&&curDist()?distMap(curDist()):''}
+    <p class="note">Votes, committee work and your bills happen in Washington. Town halls, casework and district tours happen at home. Spend a whole year in one place and the other side suffers. ${r.fam==='memphis'?'Your family is in Memphis: fly home at least twice a year or home life slips.':''} Roots back home help you win re-election.</p>
+    <div class="choices">${here?`<button class="choice" data-fly="home" ${r.flights<FLIGHTS?'':'disabled'}><b>✈ Fly home to ${homeLabel()}</b><small>Stress +3${r.fam==='memphis'?' · see your family':''} · flights can be delayed</small></button>`:`<button class="choice" data-fly="dc" ${r.flights<FLIGHTS?'':'disabled'}><b>✈ Fly to Washington</b><small>Stress +3 · flights can be delayed</small></button>`}</div>`}
+  h+='</div>';const x=document.createElement('div');x.innerHTML=h;const anchor=desk.querySelector('.cgx')||desk.querySelector('h4.plh:not(:first-child)');if(anchor)anchor.before(x.firstChild);else desk.appendChild(x.firstChild);
+  const yr=b.querySelector('[data-ayear]');
+  if(!r.dc||!r.fam){desk.querySelectorAll('[data-ract],[data-cvote],[data-cmte],[data-bill]').forEach(x=>x.disabled=true);if(yr)yr.disabled=true;return out}
+  desk.querySelectorAll('[data-ract]').forEach(btn=>{const loc=CG_LOC[btn.dataset.ract]||'dc';if(loc==='any')return;const sm=btn.querySelector('small');if(loc!==r.where){btn.disabled=true;if(sm)sm.insertAdjacentHTML('afterbegin',`<b>${loc==='dc'?'In Washington':'At home'}: fly ${loc==='dc'?'to D.C.':'home'} first</b> · `)}else if(sm)sm.insertAdjacentHTML('afterbegin',`${loc==='dc'?'In Washington':'At home'} · `)});
+  const c=A.cg;if(c&&c.vote&&r.where!=='dc'){const vb=desk.querySelector('[data-cvote]');const card=vb&&vb.closest('.faccard');if(card){card.querySelectorAll('[data-cvote]').forEach(x=>x.disabled=true);card.querySelector('.choices').insertAdjacentHTML('beforeend',`<button class="choice" data-fly="dc" ${r.flights<FLIGHTS?'':'disabled'}><b>✈ Fly back to Washington for the vote</b><small>Stress +3 · then vote</small></button><button class="choice" data-skipvote="1"><b>Miss the vote</b><small>Party −4 · approval back home −2 · your opponent will count missed votes</small></button>`)}}
+  }catch(e){console.warn('v75 screen',e)}return out}}
+document.addEventListener('click',e=>{const b=e.target.closest('[data-dist],[data-distx],[data-dch],[data-famloc],[data-fly],[data-skipvote]');if(!b||!S||!S.after)return;e.preventDefault();e.stopImmediatePropagation();const d=b.dataset;
+  if(d.dist){pickDistrict(d.dist);return}if(d.distx){S.after.pickDist=false;save();openAfter();return}if(d.dch){chooseDC(d.dch);return}if(d.famloc){chooseFamLoc(d.famloc);return}if(d.fly){flyTo(d.fly);return}if(d.skipvote)skipVote()},true);
+
 function openLedger(){const L=S.log||[];openPanel('Everything that has happened, newest first','Ledger',L.length?`<div class="logl">${L.map(x=>`<div><span>${x.d}</span><p style="margin:0">${x.t}</p></div>`).join('')}</div>`:'<p class="note">Nothing yet. Start the clock with Space or ▶.</p>','ledger')}
 function openPolicies(){const ks=Object.keys(POLICIES);
   openPanel('Ongoing programs you control','Your initiatives',`<p>Mid-year, these are paid from the reserve fund. In April they go into the budget you send the council.</p>

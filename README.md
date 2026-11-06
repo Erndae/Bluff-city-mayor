@@ -4,6 +4,15 @@ A city-management game set in Memphis, Tennessee. You play the mayor. You handle
 
 **Play it:** https://erndae.github.io/Bluff-city-mayor/ (once GitHub Pages is turned on, see below)
 
+## v26.75: The 2026 map, two homes, and flying to Washington
+
+- **The new congressional map.** Tennessee's 2026 map splits Shelby County among the 5th, 8th and 9th districts, each running from part of Memphis into rural Tennessee. Choosing Congress now asks which district you'll run in, with a schematic map. Each district's partisan lean changes your odds (all three lean Republican under the new lines). A court ruling on the map can go either way during your career; if it's struck down, a compact Memphis-centered 9th District returns.
+- **Two homes.** Win Congress or the Senate and you pick a place in Washington: a cot in your office, a shared Capitol Hill rowhouse, a rented apartment, or a townhouse you buy (equity back when you sell). Your Memphis home stays. Housing costs come out of your savings every year.
+- **Where your family lives.** Your family can stay in Memphis (fly home at least twice a year or home life slips) or move to Washington (steadier home life, the kids change schools, weaker roots back home).
+- **Flying.** You're either in D.C. or home. Votes, committees and bills happen in Washington; town halls, casework, district tours and a rural district office happen at home. Up to 8 flights a year, with stress and the occasional storm delay. Floor votes need you in D.C.: fly back or miss the vote.
+- **Roots back home** rise with home visits and fall with time away. Roots, missed votes and the district's lean all count at re-election.
+- Fixed: Senate move descriptions that depend on your stats could crash the Senate desk.
+
 ## v26.74: Political parties
 
 - **Pick a party:** Democrat, Republican or Independent, on the character creation screen or later from your family page or next-chapter screen. Memphis mayor races stay nonpartisan, as in real life.
