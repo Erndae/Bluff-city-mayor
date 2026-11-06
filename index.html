@@ -363,6 +363,7 @@ nav.actions [data-actsgo]{min-height:44px;padding:9px 17px;border-color:rgba(242
 .tipcard{border:1px solid var(--amber);background:rgba(242,169,59,.08);border-radius:12px;padding:12px;margin:0 0 12px}.tipcard p{margin:6px 0 8px}
 .qrgrid.agrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.qrgrid.agrid p{margin:2px 0 0}
 .billrow{border:1px solid var(--line,#2c3e4c);border-radius:10px;padding:10px;margin:8px 0}.billrow small{display:block;color:var(--muted,#9aa7b2);margin:2px 0 6px}.stagepips{display:flex;gap:4px;margin-top:6px}.stagepips i{flex:1;height:4px;border-radius:2px;background:rgba(255,255,255,.12)}.stagepips i.on{background:var(--good)}
+.partyrow{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin:10px 0 2px}.partyrow span{margin-right:4px}
 .adgain{display:block;width:100%;text-align:center;font-size:11px;font-weight:600;color:var(--good);margin-top:1px}
 #start{overflow-x:hidden;overflow-y:auto;touch-action:pan-y}.startbox{min-width:0;max-width:min(600px,100%);box-sizing:border-box}.startbox *{min-width:0}.create select,.create input{max-width:100%;width:100%;box-sizing:border-box;text-overflow:ellipsis}.create .tpick,.create .tpick>*{max-width:100%;box-sizing:border-box}
 @media (max-width:640px){.startbox{margin-left:0}#start{padding-left:max(16px,env(safe-area-inset-left,0px))}}
@@ -715,7 +716,7 @@ details.analysis{margin-top:6px}details.analysis summary{cursor:pointer;color:va
     <button class="btn primary" data-act="pause" id="bPlay"><svg class="ico" viewBox="0 0 12 12" aria-hidden="true"><path d="M3.2 1.6v8.8l7.2-4.4z" fill="currentColor"/></svg> Resume <kbd>Space</kbd></button>
   </nav>
   <div class="status" id="status">Loading map…</div>
-  <div class="credit"><span class="ver" id="verTag">v26.73</span></div>
+  <div class="credit"><span class="ver" id="verTag">v26.74</span></div>
   <div class="tip" id="tip" hidden></div>
   <div class="toast" id="toast" role="status"></div>
   <section class="panel" id="panel" hidden aria-live="polite">
@@ -743,7 +744,7 @@ details.analysis{margin-top:6px}details.analysis summary{cursor:pointer;color:va
         <button class="btn" data-music-open>Music &amp; volume</button>
       </div>
       <div id="slotList" hidden></div>
-      <p class="note startv">Version <b class="ver" id="verStart">v26.73</b></p>
+      <p class="note startv">Version <b class="ver" id="verStart">v26.74</b></p>
     </div>
     <div class="startbox create" id="create" hidden>
       <h2>Create your mayor</h2>
@@ -1554,7 +1555,7 @@ function enact(s,p){DIVS.forEach(d=>{s.enacted[d.id]=p.divs[d.id];s.ratio[d.id]=
 // Voter groups. Each has a share of residents, turnout, home districts, concerns and an approval of you.
 // Citywide approval is the turnout-weighted average of the groups; each council district's approval comes from the groups that live there.
 // Shares, district mix and turnout are modeled, loosely grounded in Memphis demographics; they are not survey data.
-const VERSION='v26.73';
+const VERSION='v26.74';
 const GROUPS=[
  {id:'working',sh:'Working families',n:'Working families',ic:'⚒︎',c:'#f2a93b',share:24,turn:.5,start:56,w:{jobs:1,safety:.8,transit:.5},
   d:'Hourly workers in logistics, warehouses, health care and service jobs. The biggest bloc in the city.',dm:{1:1.1,2:.8,3:1.3,4:1.2,5:.6,6:1.2,7:1.1}},
@@ -8145,7 +8146,7 @@ function goSenate(){const A=afterInit(),c=A.cg;A.goSenate=false;const keep=JSON.
   if(A.role==='senate'&&!desk.querySelector('.rolestats'))h+=`<h4 class="plh">The U.S. Senate</h4><div class="qrgrid agrid rolestats"><div><small>Approval in Tennessee</small><p><b>${Math.round(c.app)}%</b></p></div><div><small>Federal money won</small><p><b>${fmtM(c.fed)}</b></p></div><div><small>Clout in Washington</small><p><b>${Math.round(c.clout)}</b></p></div><div><small>Next election</small><p><b>in ${6-(A.yrs%6)} yr</b></p></div></div>`;
   if(!c.committee){h+=`<div class="faccard"><b>Your committee assignment</b><p class="note">Pick the committee you'll serve on. It decides which special moves you get.</p><div class="choices">${Object.entries(COMMITTEES).map(([k,X])=>`<button class="choice" data-cmte="${k}"><b>${X.n}</b><small>${X.d}</small></button>`).join('')}</div></div>`}
   else h+=`<p class="note"><b>${COMMITTEES[c.committee].n} Committee</b>${c.chair?' · <b>chair</b>':''}${c.whip?' · <b>party whip</b>':''} · your party is in the <b>${c.maj?'majority':'minority'}</b>${c.maj?'':' (your bills need 10 more points of support at each step)'} · ${c.yrsOn||0} years served · ${c.passed||0} of your bills became law</p>`;
-  if(c.vote)h+=`<div class="faccard"><b>Floor vote: ${c.vote.t}</b><p class="note">${c.vote.d}</p><div class="choices"><button class="choice" data-cvote="1"><b>Vote yes</b><small>Party ${c.vote.yes.party>0?'+':''}${c.vote.yes.party} · approval back home ${c.vote.yes.app>0?'+':''}${c.vote.yes.app}${c.vote.yes.fed?` · $${c.vote.yes.fed}M for Memphis`:''}</small></button><button class="choice" data-cvote="0"><b>Vote no</b><small>Party ${c.vote.no.party>0?'+':''}${c.vote.no.party} · approval back home ${c.vote.no.app>0?'+':''}${c.vote.no.app}</small></button></div></div>`;
+  if(c.vote)h+=`<div class="faccard"><b>Floor vote: ${c.vote.t}</b><p class="note">${c.vote.d}</p><div class="choices"><button class="choice" data-cvote="1"><b>Vote yes</b><small></small></button><button class="choice" data-cvote="0"><b>Vote no</b><small></small></button></div></div>`;
   if(A.pickBill)h+=`<div class="faccard"><b>Write a bill</b><div class="choices">${Object.entries(BILLS).filter(([k])=>!c.bills.some(b=>b.id===k)).map(([k,B])=>`<button class="choice" data-bill="${k}"><b>${B.n}</b><small>${B.d}</small></button>`).join('')}</div></div>`;
   if(c.bills.length)h+=`<h4 class="plh">Your bills</h4>${c.bills.map(b=>{const B=BILLS[b.id];const need=b.stage<4?STAGE_NEED[b.stage]+(c.maj?0:10)-(c.chair?5:0):0;return`<div class="billrow"><b>${B.n}</b><small>${STAGES[b.stage]}${b.stage<4?` · support ${Math.round(b.sup)} of ${need} needed to move on`:' · signed into law'}</small>${b.stage<4?`<div class="facbar"><i></i><i class="${b.sup>=need?'pos':''}" style="left:0;width:${Math.min(100,b.sup)}%;${b.sup>=need?'':'background:var(--warn,#e8b04f)'}"></i></div>`:''}<div class="stagepips">${STAGES.map((s,i)=>`<i class="${i<=b.stage?'on':''}" title="${s}"></i>`).join('')}</div></div>`}).join('')}`;
   h+='</div>';const moves=desk.querySelector('h4.plh:last-of-type');const hs=[...desk.querySelectorAll('h4.plh')].find(x=>/This year's moves/.test(x.textContent));if(hs)hs.insertAdjacentHTML('beforebegin',h);else desk.insertAdjacentHTML('beforeend',h);
@@ -8154,6 +8155,55 @@ function goSenate(){const A=afterInit(),c=A.cg;A.goSenate=false;const keep=JSON.
 document.addEventListener('click',e=>{const b=e.target.closest('[data-cmte],[data-cvote],[data-bill]');if(!b||!S)return;e.preventDefault();e.stopImmediatePropagation();if(b.dataset.cmte){pickCommittee(b.dataset.cmte);return}if(b.dataset.cvote){castVote(b.dataset.cvote==='1');return}introBill(b.dataset.bill)},true);
 // the legacy and the comeback remember it
 {const _cb=comebackRun;comebackRun=function(...a){const A=S.after?JSON.parse(JSON.stringify(S.after)):null;const r=_cb.apply(this,a);try{if(A&&A.cg&&A.cg.passed&&S.cand){S.cand.rec=clamp(S.cand.rec+0.04*A.cg.passed,0,0.92);notify('good','Your record in Washington',`${A.cg.passed} bill${A.cg.passed===1?'':'s'} you wrote became law. Voters remember.`,null,{ttl:12})}}catch(e){}return r}}
+// ======================= v26.74: POLITICAL PARTIES =======================
+// Democrat, Republican or Independent. Memphis mayor races are nonpartisan, as in real life, so party matters
+// in partisan offices: Shelby County mayor, Congress and the U.S. Senate. The odds reflect real electoral lean:
+// Memphis's congressional district votes heavily Democratic; Tennessee votes Republican statewide; Shelby County
+// leans Democratic. In Congress, party decides your majority, your leadership path, and how floor votes land.
+const PARTY={D:{n:'Democrat',pl:'Democrats',c:'#4a7bd0'},R:{n:'Republican',pl:'Republicans',c:'#d04a4a'},I:{n:'Independent',pl:'independents',c:'#9a8f6a'}};
+function myParty(){return(S&&S.mayor&&S.mayor.party)||null}
+function partyName(p){return p&&PARTY[p]?PARTY[p].n:'No party yet'}
+// character creation: a party picker
+(function(){try{const L=document.getElementById('cOccL');if(L&&!document.getElementById('cParty')){L.insertAdjacentHTML('afterend',`<label for="cParty" id="cPartyL">Party<select id="cParty"><option value="">Choose later</option><option value="D">Democrat</option><option value="R">Republican</option><option value="I">Independent</option></select><small class="note" style="display:block;margin-top:4px">Memphis mayor races are nonpartisan. Party matters if you later run for County mayor, Congress or the Senate.</small></label>`);document.getElementById('cParty').addEventListener('change',e=>{if(typeof CR!=='undefined'&&CR)CR.party=e.target.value||undefined})}}catch(e){}})();
+// partisan offices: the odds follow each electorate's lean
+const PARTY_MOD={county:{D:0.08,R:-0.05,I:-0.06},congress:{D:0.15,R:-0.15,I:-0.08},senate:{D:-0.08,R:0.15,I:-0.12}};
+const PARTY_WHY={county:{D:'Shelby County leans Democratic',R:'Shelby County leans Democratic, an uphill race for a Republican',I:'no party machinery behind you'},congress:{D:'the district votes heavily Democratic, so the primary is the real race',R:'the district votes heavily Democratic, a long shot for a Republican',I:'no party machinery behind you'},senate:{D:'Tennessee votes Republican statewide, an uphill race for a Democrat',R:'Tennessee votes Republican statewide',I:'statewide independents rarely win'}};
+['county','congress','senate'].forEach(k=>{const R=ROLES[k];if(!R||!R.run)return;const _r=R.run;R.run=function(){const p=myParty();return clamp(_r()+(p?PARTY_MOD[k][p]:0),0.05,0.92)}});
+// Congress: majority belongs to your party; independents caucus but never lead
+{const _cx=cgX;cgX=function(){const c=_cx.apply(this,arguments);if(myParty()==='I'){c.maj=false;c.whip=false}return c}}
+CG_ACTS.whip.need=(c=>myParty()!=='I'&&!c.whip&&c.clout>=60&&c.party>=60);
+// floor votes, rewritten so both parties get the same kind of bills
+VOTES.length=0;VOTES.push(
+ {t:'A $1.2 trillion infrastructure bill',by:'both',fed:20,d:'Leaders in both parties support it. Memphis would get road money.'},
+ {t:'A defense budget with a big military pay raise',by:'both',d:'Broad support in both parties.'},
+ {t:'An emergency bill to avoid a debt default',by:'both',d:'Nobody likes it. Everybody knows it has to pass.'},
+ {t:'Prescription drug price negotiation',by:'D',d:'A Democratic priority.'},
+ {t:'An expanded child tax credit',by:'D',d:'A Democratic priority.'},
+ {t:'Clean energy tax credits',by:'D',d:'A Democratic priority.'},
+ {t:'A corporate tax rate cut',by:'R',d:'A Republican priority.'},
+ {t:'Border security and immigration enforcement funding',by:'R',d:'A Republican priority.'},
+ {t:'A crime bill with longer federal sentences',by:'R',d:'A Republican priority.'});
+function voteFx(V,yes){const p=myParty(),A=afterInit(),statewide=A.role==='senate';const lean=statewide?'R':'D';let party=0,app=0;
+  if(V.by==='both'){party=yes?4:-5;app=yes?1:0}else{const mine=p===V.by;if(p==='I'){party=0}else party=mine?(yes?6:-8):(yes?-6:3);app=(V.by===lean)?(yes?2:-2):(yes?-2:2)}return{party,app,fed:yes?V.fed||0:0}}
+castVote=function(yes){const A=afterInit(),c=A.cg;if(!c||!c.vote)return;const V=c.vote,E=voteFx(V,yes);c.party+=E.party;c.app+=E.app;if(E.fed){c.fed+=E.fed;cityFed({reserve:E.fed/10},V.t.toLowerCase())}const m=`You voted ${yes?'yes':'no'} on ${V.t.toLowerCase()}.`;c.vote=null;roleClamp();afterLog(m);save();AFTER_MSG=m;openAfter()};
+// the state legislature notices your party (it has a Republican supermajority)
+{const _fs=facStance;facStance=function(id){const L=_fs.apply(this,arguments);try{if(id==='state'&&inOffice()){const p=myParty();if(p==='R')L.push({t:'You\'re a Republican, like the legislature\'s supermajority',v:8});else if(p==='D')L.push({t:'You\'re a Democrat; the legislature has a Republican supermajority',v:-4})}}catch(e){}return L}}
+// heirs inherit the family party unless they choose otherwise
+{const _hr=heirRun;heirRun=function(i){const p=myParty();const r=_hr.apply(this,arguments);try{if(p&&S.mayor&&!S.mayor.party)S.mayor.party=p}catch(e){}return r}}
+// choosing or switching parties
+function setParty(p){if(!PARTY[p]||!S||!S.mayor)return;const old=myParty();if(old===p)return;S.mayor.party=p;const A=S.after;let m=`You're a ${PARTY[p].n}.`;
+  if(old){m=`You left the ${PARTY[old].pl} and became ${p==='I'?'an Independent':'a '+PARTY[p].n}. Voters noticed.`;if(A){A.inf=clamp(A.inf-10,0,100);if(A.cg){A.cg.party=30;A.cg.app-=8;A.cg.chair=false;A.cg.whip=false}}else try{popHit(-0.8,'Switched parties')}catch(e){}}
+  try{if(S.after)afterLog(m)}catch(e){}save();refreshHUD();toast(m);if(S.after){AFTER_MSG=m;openAfter()}else if(NAV.cur&&NAV.cur.name==='openFamily'){FAM_MSG=m;openFamily()}}
+function partyRow(){const p=myParty();return`<div class="partyrow"><span>Party: <b style="color:${p?PARTY[p].c:'inherit'}">${partyName(p)}</b></span>${['D','R','I'].filter(k=>k!==p).map(k=>`<button class="btn" data-party="${k}">${p?'Switch to ':''}${PARTY[k].n}</button>`).join('')}</div>${p?'<p class="note">Switching parties costs influence and resets your standing in Congress.</p>':'<p class="note">Pick a party before you run for County mayor, Congress or the Senate. Memphis mayor races are nonpartisan.</p>'}`}
+document.addEventListener('click',e=>{const b=e.target.closest('[data-party]');if(!b||!S)return;e.preventDefault();e.stopImmediatePropagation();setParty(b.dataset.party)},true);
+// the next-chapter screen: the party row, the party's effect on each race, and Congress labels
+{const _oa=openAfter;openAfter=function(...a){const r=_oa.apply(this,a);try{const A=afterInit(),b=$('mBody');if(!b||b.querySelector('.partyrow'))return r;const grid=b.querySelector('.qrgrid');const x=document.createElement('div');x.innerHTML=partyRow();if(grid)grid.after(...x.childNodes);
+  if(!A.role){const p=myParty();['county','congress','senate'].forEach(k=>{const btn=b.querySelector(`[data-role="${k}"]`);if(!btn)return;if(!p){btn.disabled=true;btn.querySelector('small').textContent='Choose a party first (above). '+btn.querySelector('small').textContent}else btn.querySelector('small').insertAdjacentHTML('beforeend',` <b>As ${p==='I'?'an Independent':'a '+PARTY[p].n}: ${PARTY_WHY[k][p]}.</b>`)})}
+  const st=b.querySelector('.rolestats');if(st&&(A.role==='congress'||A.role==='senate')){const p=myParty();st.querySelectorAll('small').forEach(s=>{if(s.textContent==='Party standing')s.textContent=p==='I'?'Standing with your caucus':`Standing with ${A.role==='senate'?'Senate':'House'} ${PARTY[p||'D'].pl}`})}
+  const note=b.querySelector('.cgx > .note');if(note&&myParty()==='I')note.insertAdjacentHTML('beforeend',' · As an Independent you caucus with a party but can\'t join leadership, and you never hold the majority.');
+  if(A.role==='congress'||A.role==='senate'){b.querySelectorAll('[data-cvote] small').forEach((s,i)=>{const c=A.cg;if(!c||!c.vote)return;const E=voteFx(c.vote,i===0);s.textContent=`${myParty()==='I'?'Caucus':'Party'} ${E.party>0?'+':''}${E.party} · approval back home ${E.app>0?'+':''}${E.app}${E.fed?` · $${E.fed}M for Memphis`:''}`});const vd=b.querySelector('.cgx .faccard .note');if(vd&&A.cg&&A.cg.vote){const V=A.cg.vote;vd.textContent=V.by==='both'?V.d:`${V.d} ${V.by===myParty()?'Your party\'s leadership is whipping yes.':myParty()==='I'?'You\'re free to vote either way.':'Your party\'s leadership opposes it.'}`}}}catch(e){console.warn('party',e)}return r}}
+// the party shows on your character page
+{const _om=openModal;openModal=function(...a){const r=_om.apply(this,a);try{const n=NAV.cur?NAV.cur.name:'';if(n==='openFamily'&&S&&S.mayor){const b=$('mBody');if(b&&!b.querySelector('.partyrow')){const x=document.createElement('div');x.innerHTML=partyRow();const first=b.querySelector('.famlist')||b.firstChild;b.insertBefore(x,first)}}}catch(e){}return r}}
 function openLedger(){const L=S.log||[];openPanel('Everything that has happened, newest first','Ledger',L.length?`<div class="logl">${L.map(x=>`<div><span>${x.d}</span><p style="margin:0">${x.t}</p></div>`).join('')}</div>`:'<p class="note">Nothing yet. Start the clock with Space or ▶.</p>','ledger')}
 function openPolicies(){const ks=Object.keys(POLICIES);
   openPanel('Ongoing programs you control','Your initiatives',`<p>Mid-year, these are paid from the reserve fund. In April they go into the budget you send the council.</p>

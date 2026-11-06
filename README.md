@@ -4,6 +4,24 @@ A city-management game set in Memphis, Tennessee. You play the mayor. You handle
 
 **Play it:** https://erndae.github.io/Bluff-city-mayor/ (once GitHub Pages is turned on, see below)
 
+## v26.74: Political parties
+
+- **Pick a party:** Democrat, Republican or Independent, on the character creation screen or later from your family page or next-chapter screen. Memphis mayor races stay nonpartisan, as in real life.
+- **Partisan offices follow each electorate's real lean:**
+  - Tennessee's 9th District (Memphis) votes heavily Democratic: Democrats +15, Republicans −15, Independents −8.
+  - Tennessee votes Republican statewide, which matters for the Senate: Republicans +15, Democrats −8, Independents −12.
+  - Shelby County leans Democratic: Democrats +8, Republicans −5, Independents −6.
+  - The race description explains why.
+- **In Congress:**
+  - Majority control means *your* party holds the House.
+  - Party standing is labeled with your caucus.
+  - Independents caucus with a party but never hold the majority or join leadership.
+- **Floor votes, rebuilt to be even-handed:** three bipartisan bills, three Democratic priorities and three Republican priorities.
+  - Voting with or against your party's leadership moves your standing.
+  - Approval back home follows the electorate: the district for the House, the state for the Senate.
+- **The state legislature** (a Republican supermajority) starts warmer toward a Republican mayor and cooler toward a Democrat.
+- **Heirs inherit the family party.** Switching parties costs influence, resets your standing in Congress, and dents your approval.
+
 ## v26.73: Congress, expanded
 
 - **Committee assignments.** Choose Transportation and Infrastructure, Judiciary, Ways and Means, or Oversight. Each unlocks its own move: highway-bill earmarks for Memphis, criminal-justice reform, tax provisions for Memphis employers, or televised hearings.
