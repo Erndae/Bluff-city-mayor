@@ -714,7 +714,7 @@ details.analysis{margin-top:6px}details.analysis summary{cursor:pointer;color:va
     <button class="btn primary" data-act="pause" id="bPlay"><svg class="ico" viewBox="0 0 12 12" aria-hidden="true"><path d="M3.2 1.6v8.8l7.2-4.4z" fill="currentColor"/></svg> Resume <kbd>Space</kbd></button>
   </nav>
   <div class="status" id="status">Loading map…</div>
-  <div class="credit"><span class="ver" id="verTag">v26.71</span></div>
+  <div class="credit"><span class="ver" id="verTag">v26.72</span></div>
   <div class="tip" id="tip" hidden></div>
   <div class="toast" id="toast" role="status"></div>
   <section class="panel" id="panel" hidden aria-live="polite">
@@ -742,7 +742,7 @@ details.analysis{margin-top:6px}details.analysis summary{cursor:pointer;color:va
         <button class="btn" data-music-open>Music &amp; volume</button>
       </div>
       <div id="slotList" hidden></div>
-      <p class="note startv">Version <b class="ver" id="verStart">v26.71</b></p>
+      <p class="note startv">Version <b class="ver" id="verStart">v26.72</b></p>
     </div>
     <div class="startbox create" id="create" hidden>
       <h2>Create your mayor</h2>
@@ -1553,7 +1553,7 @@ function enact(s,p){DIVS.forEach(d=>{s.enacted[d.id]=p.divs[d.id];s.ratio[d.id]=
 // Voter groups. Each has a share of residents, turnout, home districts, concerns and an approval of you.
 // Citywide approval is the turnout-weighted average of the groups; each council district's approval comes from the groups that live there.
 // Shares, district mix and turnout are modeled, loosely grounded in Memphis demographics; they are not survey data.
-const VERSION='v26.71';
+const VERSION='v26.72';
 const GROUPS=[
  {id:'working',sh:'Working families',n:'Working families',ic:'⚒︎',c:'#f2a93b',share:24,turn:.5,start:56,w:{jobs:1,safety:.8,transit:.5},
   d:'Hourly workers in logistics, warehouses, health care and service jobs. The biggest bloc in the city.',dm:{1:1.1,2:.8,3:1.3,4:1.2,5:.6,6:1.2,7:1.1}},
@@ -7964,7 +7964,7 @@ function roleClamp(){const A=S.after;if(A.co){const c=A.co;['app','jail','ph','s
   if(A.role==='uni'){const u=A.uni;u.end*=1.05;u.rep+=(u.mood-50)/20;A.inf=clamp(A.inf+(u.rep-50)/12,0,100);
     if(A.yrs%5===0){if(u.rep<35){afterLog(`The board did not renew your contract (reputation ${Math.round(u.rep)}).`);A.role=null;A.uni=null;A.tried={};AFTER_MSG='The board of trustees let you go. What\'s next?'}else afterLog(`The board renewed your contract for five more years (reputation ${Math.round(u.rep)}).`)}}
   // half the time, a role event replaces the general one
-  if(A.role&&Math.random()<0.6){const E=pk2(K.evs);A.rev={t:typeof E.t==='function'?E.t():E.t,i:K.evs.indexOf(E)};A.ev=null}
+  if(A.role&&K.evs&&K.evs.length&&Math.random()<0.6){const E=pk2(K.evs);A.rev={t:typeof E.t==='function'?E.t():E.t,i:K.evs.indexOf(E)};A.ev=null}
   roleClamp();save();if(!A.dead&&!A.prison)openAfter()}catch(e){console.warn('roleyear',e)}return r}}
 function roleEvent(i){const A=afterInit(),K=roleKit();if(!K||!A.rev)return;const E=K.evs[A.rev.i];const m=E.ch[i][1](K.st,A);roleClamp();A.inf=clamp(A.inf,0,100);A.rev=null;afterLog(m);save();AFTER_MSG=m;openAfter()}
 // the screen: a role desk above the year controls
@@ -8032,6 +8032,51 @@ const KM_EVENTS=[
   roleClamp();save();if(!A.dead&&!A.prison)openAfter()}catch(e){console.warn('role2',e)}return r}}
 // in a comeback, your record follows you
 {const _cb=comebackRun;comebackRun=function(...a){const A=S.after?JSON.parse(JSON.stringify(S.after)):null;const r=_cb.apply(this,a);try{if(A&&S.cand){if(A.cg&&A.cg.fed){S.cand.rec=clamp(S.cand.rec+0.1,0,0.9);GROUPS.forEach(g=>groupLift(g.id,Math.min(3,A.cg.fed/60),'The federal money you brought home'))}if(A.km&&A.km.allies){notify('good','Your council allies',`${A.km.allies} council member${A.km.allies===1?'':'s'} you helped elect owe you their seat.`,null,{ttl:12})}}}catch(e){}return r}}
+// ======================= v26.72: REAL CAMPAIGNS FOR COUNTY AND CONGRESS; LAW SCHOOL BEFORE THE LAW FIRM =======================
+// Shelby County mayor (elected 2026, 2030, 2034…) and Congress (every even year) are now campaigns that run until
+// Election Day, with three campaign moves a year that raise your odds. The law firm needs a license: attorneys
+// can join right away; everyone else can go to law school (3 years) and pass the bar first.
+function isLawyer(){const A=S.after||{};return!!(A.lawyer||mHas('attorney')||(S.cand&&S.cand.occ==='attorney')||(S.mayor&&S.mayor.occ==='attorney'))}
+function officeYear(k){let y=S.y+1;if(k==='county'){while((y-2026)%4!==0)y++}else{if(y%2)y++}return y}
+Object.assign(ROLES,{campaign:{as:'a candidate',n:'Candidate',inc:0,inf:2,d:''},lawschool:{as:'a law student at the University of Memphis',n:'Law student',inc:-28000,inf:0,d:''}});
+// picking County or Congress starts a campaign; picking the law firm needs a license
+{const _cr=chooseRole;chooseRole=function(k){const A=afterInit();if(A.role)return;
+  if(k==='county'||k==='congress'){const R=ROLES[k];A.role='campaign';A.camp={office:k,odds:R.run(),y:officeYear(k),moves:0};A.ra=0;const m=`You're running for ${R.n}. Election Day is in ${A.camp.y}. Starting odds: about ${Math.round(A.camp.odds*100)}%.`;afterLog(m);save();AFTER_MSG=m;openAfter();return}
+  if(k==='law'&&!isLawyer())return;
+  if(k==='lawschool'){if(isLawyer())return;A.role='lawschool';A.ls={yr:0,study:0,net:0};A.ra=0;const m='You enrolled at the Cecil C. Humphreys School of Law at the University of Memphis. Three years, then the bar exam.';afterLog(m);save();AFTER_MSG=m;openAfter();return}
+  return _cr.apply(this,arguments)}}
+const RUN_ACTS={
+ money:{n:'Raise money',sk:'stew',b:0.5,d:'Works: odds +6 · fails: +1',do:(c,A,ok)=>{c.odds+=ok?0.06:0.01;return ok?'A strong quarter. Your war chest scared off a rival.':'Donors were slow to write checks.'}},
+ doors:{n:'Knock doors and hold rallies',sk:'cha',b:0.5,d:'Works: odds +7 · fails: +2',do:(c,A,ok)=>{c.odds+=ok?0.07:0.02;return ok?'Big crowds, and people remembered your name.':'Thin crowds on a rainy Saturday.'}},
+ endorse:{n:'Line up endorsements',sk:'dip',b:0.5,d:'Works: odds +6 (more with strong power-player ties) · fails: +1',do:(c,A,ok)=>{let bonus=0;try{bonus=(facRel('afscme')+facRel('chamber'))/1000}catch(e){}c.odds+=ok?0.06+Math.max(0,bonus):0.01;return ok?'Unions, pastors and business leaders lined up behind you.':'Most groups are staying neutral for now.'}},
+ debate:{n:'Prepare for the debates',sk:'learn',b:0.5,d:'Works: odds +6 · fails: −2',do:(c,A,ok)=>{c.odds+=ok?0.06:-0.02;return ok?'You won the debate on the issues.':'You got tangled up on a policy question.'}},
+ attack:{n:'Run attack ads',sk:'intr',b:0.45,d:'$40,000 of your money · works: odds +9 · fails: it backfires (−4)',need:()=>S.purse.cash>=40000,do:(c,A,ok)=>{S.purse.cash-=40000;c.odds+=ok?0.09:-0.04;return ok?'The ads stuck. Your opponent spent the summer on defense.':'Voters thought the ads were cheap.'}}};
+const LS_ACTS={
+ study:{n:'Study hard',sk:'learn',b:0.55,d:'Works: bar-exam odds up · Education experience',do:(l,A,ok)=>{l.study+=ok?1:0.4;try{gainXP('learn',10)}catch(e){}return ok?'Top of your class in Constitutional Law.':'A rough semester. You passed, barely.'}},
+ clinic:{n:'Work in the law school\'s legal clinic',sk:'dip',b:0.55,d:'Helps tenants and families for free · influence +2, a little bar prep',do:(l,A,ok)=>{l.study+=0.4;A.inf+=ok?2:1;return'You helped a South Memphis family stop an illegal eviction.'}},
+ network:{n:'Network with law firms',sk:'cha',b:0.5,d:'Works: you\'ll start your career with 2 extra clients',do:(l,A,ok)=>{if(ok)l.net+=2;return ok?'Two firms already want you when you pass the bar.':'The recruiters were polite.'}},
+ job:{n:'Work part-time as a law clerk',d:'+$15,000 · a little bar prep',do:(l,A)=>{S.purse.cash+=15000;l.study+=0.3;return'Long nights at a downtown firm. The money helped.'}}};
+{const _rk=roleKit;roleKit=function(){const A=afterInit();if(A.role==='campaign')return{st:A.camp,acts:RUN_ACTS,evs:[]};if(A.role==='lawschool')return{st:A.ls,acts:LS_ACTS,evs:[]};return _rk.apply(this,arguments)}}
+// each year: campaigns move toward Election Day; law school moves toward the bar
+{const _ay=afterYear;afterYear=function(...a){const A=afterInit();const role=A.role;const yB=S.y;const r=_ay.apply(this,a);try{if(A.dead||A.prison)return r;
+  if(role==='campaign'&&A.camp){const c=A.camp;c.odds=clamp(c.odds,0.05,0.92);if(yB>=c.y){const R=ROLES[c.office];if(Math.random()<c.odds){A.role=c.office;A.camp=null;A.inf=clamp(A.inf+10,0,100);const m=`You won! You're ${R.n} (${Math.round(c.odds*100)}% going in).`;afterLog(m);AFTER_MSG=m;try{newsAdd(0,`${S.mayor.name} elected ${R.n}`)}catch(e){}try{celebrate(true)}catch(e){}}
+    else{A.role=null;A.camp=null;A.tried=A.tried||{};A.tried[c.office]=1;A.inf=clamp(A.inf-8,0,100);const m=`${R.lose} You had about a ${Math.round(c.odds*100)}% chance. What's next?`;afterLog(m);AFTER_MSG=m}A.rev=null}}
+  if(role==='lawschool'&&A.ls){const l=A.ls;l.yr++;if(l.yr>=3){const p=clamp(0.35+l.study*0.08+mskill('learn')/40,0.15,0.95);if(Math.random()<p){A.lawyer=true;A.role=null;A.netClients=l.net;A.ls=null;A.tried={};const m=`You passed the Tennessee bar exam. You're a lawyer now, and every law firm is open to you.`;afterLog(m);AFTER_MSG=m;try{celebrate(true)}catch(e){}}else{const m=`You failed the bar exam (about ${Math.round(p*100)}% odds). You can study and retake it next year.`;afterLog(m);AFTER_MSG=m}}}
+  save();if(!A.dead&&!A.prison)openAfter()}catch(e){console.warn('v72',e)}return r}}
+// new lawyers bring the clients they networked for
+{const _li=lwInit;lwInit=function(A){const had=!!A.lw;const r=_li.apply(this,arguments);if(!had&&A.netClients){r.clients+=A.netClients;A.netClients=0}return r}}
+// the screen: the role picker and the campaign or law school desk
+{const _oa=openAfter;openAfter=function(...a){const r=_oa.apply(this,a);try{const A=afterInit(),b=$('mBody');if(!b)return r;
+  b.querySelectorAll('[data-role="campaign"]').forEach(x=>x.remove());
+  if(!A.role){const law=b.querySelector('[data-role="law"]'),ls=b.querySelector('[data-role="lawschool"]');
+    if(isLawyer()){if(ls)ls.remove();if(law)law.querySelector('small').insertAdjacentHTML('afterbegin','You have a law license · ')}
+    else{if(law){law.disabled=true;law.querySelector('small').textContent='Requires a law license. You\'re not a lawyer, so go to law school first.'}if(ls)ls.querySelector('small').textContent='Three years at the University of Memphis law school ($28,000 a year), then the Tennessee bar exam. Pass it, and law firms open up.'}
+    ['county','congress'].forEach(k=>{const x=b.querySelector(`[data-role="${k}"]`);if(x&&!(A.tried&&A.tried[k])){const R=ROLES[k];x.querySelector('small').textContent=`${R.d} An election: the next one is in ${officeYear(k)}. You start at about ${Math.round(R.run()*100)}%, and three campaign moves a year raise your odds.`}})}
+  const desk=b.querySelector('.roledesk');
+  if(desk&&A.role==='campaign'&&A.camp&&!desk.querySelector('.campstats')){const c=A.camp,R=ROLES[c.office];desk.insertAdjacentHTML('afterbegin',`<h4 class="plh">Running for ${R.n}</h4><div class="qrgrid agrid campstats"><div><small>Your odds</small><p><b>${Math.round(clamp(c.odds,0.05,0.92)*100)}%</b></p></div><div><small>Election Day</small><p><b>${c.office==='county'?'August':'November'} ${c.y}</b></p></div></div><p class="note">${c.y-S.y<=1?'The election happens when you live the next year.':`${c.y-S.y} years of campaigning left.`} Each move below raises your odds.</p>`)}
+  if(desk&&A.role==='lawschool'&&A.ls&&!desk.querySelector('.lsstats')){const l=A.ls;const p=clamp(0.35+l.study*0.08+mskill('learn')/40,0.15,0.95);desk.insertAdjacentHTML('afterbegin',`<h4 class="plh">Law school</h4><div class="qrgrid agrid lsstats"><div><small>Year</small><p><b>${Math.min(3,l.yr+1)} of 3</b></p></div><div><small>Bar exam odds today</small><p><b>${Math.round(p*100)}%</b></p></div><div><small>Firms interested</small><p><b>${l.net}</b></p></div><div><small>Tuition</small><p><b>$28,000 a year</b></p></div></div>`)}
+  const yr=b.querySelector('[data-ayear] small');if(yr&&A.role==='campaign')yr.textContent=A.camp&&A.camp.y-S.y<=1?'Election Day comes this year':'Another year on the campaign trail';
+  if(yr&&A.role==='lawschool')yr.textContent=A.ls&&A.ls.yr>=2?'Your final year, then the bar exam':'−$28,000 tuition · another year of classes'}catch(e){console.warn(e)}return r}}
 function openLedger(){const L=S.log||[];openPanel('Everything that has happened, newest first','Ledger',L.length?`<div class="logl">${L.map(x=>`<div><span>${x.d}</span><p style="margin:0">${x.t}</p></div>`).join('')}</div>`:'<p class="note">Nothing yet. Start the clock with Space or ▶.</p>','ledger')}
 function openPolicies(){const ks=Object.keys(POLICIES);
   openPanel('Ongoing programs you control','Your initiatives',`<p>Mid-year, these are paid from the reserve fund. In April they go into the budget you send the council.</p>

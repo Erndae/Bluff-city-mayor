@@ -4,6 +4,19 @@ A city-management game set in Memphis, Tennessee. You play the mayor. You handle
 
 **Play it:** https://erndae.github.io/Bluff-city-mayor/ (once GitHub Pages is turned on, see below)
 
+## v26.72: Real campaigns for County and Congress, and law school before the law firm
+
+- **Running for office takes a campaign.**
+  - Shelby County mayor is elected in 2026, 2030 and 2034; Congress in every even year.
+  - Choosing either starts a campaign that lasts until the next Election Day.
+  - Each year brings three campaign moves: raise money, knock doors and hold rallies, line up endorsements (stronger with good union and Chamber ties), prepare for debates, or run attack ads ($40K).
+  - Your odds show on screen, and Election Day decides it.
+- **The law firm needs a law license.**
+  - Attorneys (by background trait or occupation) can join right away.
+  - Everyone else can go to law school at the University of Memphis: 3 years at $28K a year, with moves to study, work in the legal clinic, network with firms, or clerk part-time.
+  - Then you take the Tennessee bar exam. Study and Education raise the odds, and if you fail you can retake it.
+  - Firms you networked with become your first clients.
+
 ## v26.71: Congress, the law firm, and the kingmaker
 
 **Congress (TN-9)**
