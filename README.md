@@ -28,6 +28,24 @@ How the reporters work:
 - They call for comment every 2 to 4 months. When you have secrets, Corinne often asks about one of them.
 - In **People → The press corps** (or the back room) you can give an exclusive interview (a skill check), give them a tip (including your file on your opponent, with less chance of it being traced to you), or freeze them out.
 
+## v26.61: Your family
+
+- **A spouse and kids with their own lives.** Your spouse has a job (MSCS teacher, Regional One nurse, Cooper-Young bakery owner, FedEx manager, or Whitehaven pastor) and a feeling about politics: loves it, tolerates it, or hates it. Your kids age every January. Change who's at home under **People → Your family**.
+- **Home life.**
+  - Every action you take wears it down, campaign season wears it down faster, and a spouse who hates politics speeds it up.
+  - Family dinner (free) and outings (the Zoo, a Grizzlies game, Shelby Farms and more) bring it back.
+  - Below 25, you're exhausted and lose an action. Very low, and your spouse may leave.
+- **Family stories**, one every 3 to 6 months:
+  - Your teenager at a party the police broke up. Owning it, handling it at home, or getting MPD to scrub the report (a serious secret).
+  - Your spouse's employer and a city decision: recuse, rule on the merits, or quietly steer it (a secret).
+  - An ultimatum when home life is low.
+  - A kid's big night on the same night as a council vote.
+  - A threat against your family.
+  - Your spouse launching a cause of their own.
+- **On the campaign trail.** Your spouse's attitude toward politics decides how much they help, and what it costs at home.
+- **Your scandals hit home.** Home life drops, and a spouse can walk out.
+- **Fix:** candidates now get the visitor events meant for them (family stories, straw-donor offers, blackmail and reporters). An old filter had been silently dropping them.
+
 ## v26.59: Dirty deals and secrets
 
 You can now break the law, and it can catch up with you.
