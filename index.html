@@ -357,6 +357,7 @@ nav.actions [data-actsgo]{min-height:44px;padding:9px 17px;border-color:rgba(242
 .famlist{display:flex;flex-direction:column;gap:8px;margin:8px 0}.famcard{display:flex;gap:12px;align-items:center;border:1px solid var(--line,#2c3e4c);border-radius:12px;padding:10px}.famcard b{display:block}.famcard small{color:var(--muted,#9aa7b2)}.famcard .note{margin:4px 0 0}.fam-pic{flex:none;width:56px;height:56px;border-radius:50%;overflow:hidden;display:grid;place-items:center}.fam-pic svg,.fam-pic img{width:56px;height:56px}.homebar{margin:12px 0}.hb-h{display:flex;justify-content:space-between}.hb-h b.pos{color:var(--good)}.hb-h b.neg{color:var(--bad)}.homebar .facbar{height:8px}.famset{margin:12px 0}.famset summary{cursor:pointer;color:var(--amber)}.famset .row{flex-wrap:wrap}
 .psk{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:4px;margin:8px 0}.psk span{border:1px solid var(--line,#2c3e4c);border-radius:8px;padding:4px 6px;display:flex;justify-content:space-between;align-items:baseline;gap:4px}.psk span small{color:var(--muted,#9aa7b2);font-size:11px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.psk span.best{border-color:var(--amber)}@media(max-width:480px){.psk{grid-template-columns:repeat(2,minmax(0,1fr))}}.psk span.best b{color:var(--amber)}
 .txtin{flex:1;min-width:0;background:var(--panel2,#0f1c26);border:1px solid var(--line,#2c3e4c);border-radius:10px;color:inherit;padding:10px 12px;font:inherit}.choice.on{border-color:var(--amber)}
+.faccard.gen.cur{border-color:var(--amber)}.genline{text-align:center;color:var(--muted,#9aa7b2);line-height:1;margin:-4px 0}.faccard.gen h4 small{font-weight:400;color:var(--muted,#9aa7b2)}
 .adgain{display:block;width:100%;text-align:center;font-size:11px;font-weight:600;color:var(--good);margin-top:1px}
 #start{overflow-x:hidden;overflow-y:auto;touch-action:pan-y}.startbox{min-width:0;max-width:min(600px,100%);box-sizing:border-box}.startbox *{min-width:0}.create select,.create input{max-width:100%;width:100%;box-sizing:border-box;text-overflow:ellipsis}.create .tpick,.create .tpick>*{max-width:100%;box-sizing:border-box}
 @media (max-width:640px){.startbox{margin-left:0}#start{padding-left:max(16px,env(safe-area-inset-left,0px))}}
@@ -709,7 +710,7 @@ details.analysis{margin-top:6px}details.analysis summary{cursor:pointer;color:va
     <button class="btn primary" data-act="pause" id="bPlay"><svg class="ico" viewBox="0 0 12 12" aria-hidden="true"><path d="M3.2 1.6v8.8l7.2-4.4z" fill="currentColor"/></svg> Resume <kbd>Space</kbd></button>
   </nav>
   <div class="status" id="status">Loading map…</div>
-  <div class="credit"><span class="ver" id="verTag">v26.63</span></div>
+  <div class="credit"><span class="ver" id="verTag">v26.64</span></div>
   <div class="tip" id="tip" hidden></div>
   <div class="toast" id="toast" role="status"></div>
   <section class="panel" id="panel" hidden aria-live="polite">
@@ -737,7 +738,7 @@ details.analysis{margin-top:6px}details.analysis summary{cursor:pointer;color:va
         <button class="btn" data-music-open>Music &amp; volume</button>
       </div>
       <div id="slotList" hidden></div>
-      <p class="note startv">Version <b class="ver" id="verStart">v26.63</b></p>
+      <p class="note startv">Version <b class="ver" id="verStart">v26.64</b></p>
     </div>
     <div class="startbox create" id="create" hidden>
       <h2>Create your mayor</h2>
@@ -1548,7 +1549,7 @@ function enact(s,p){DIVS.forEach(d=>{s.enacted[d.id]=p.divs[d.id];s.ratio[d.id]=
 // Voter groups. Each has a share of residents, turnout, home districts, concerns and an approval of you.
 // Citywide approval is the turnout-weighted average of the groups; each council district's approval comes from the groups that live there.
 // Shares, district mix and turnout are modeled, loosely grounded in Memphis demographics; they are not survey data.
-const VERSION='v26.63';
+const VERSION='v26.64';
 const GROUPS=[
  {id:'working',sh:'Working families',n:'Working families',ic:'⚒︎',c:'#f2a93b',share:24,turn:.5,start:56,w:{jobs:1,safety:.8,transit:.5},
   d:'Hourly workers in logistics, warehouses, health care and service jobs. The biggest bloc in the city.',dm:{1:1.1,2:.8,3:1.3,4:1.2,5:.6,6:1.2,7:1.1}},
@@ -7444,11 +7445,11 @@ const FAM_STORIES={
    {l:'Support it, but keep it small',s:()=>'Home life +5 · no city money',do:()=>{homeAdd(5);return'A modest start, on their own terms.'}},
    {l:'Ask your spouse to stay out of the spotlight',s:()=>'Home life −10',do:()=>{homeAdd(-10,'You asked them to stay in the background');famInit().spouse.mood-=15;return'"Fine." It wasn\'t fine.'}}]}};
 function famSplit(){const F=famInit();if(!F.spouse||F.spouse.gone)return;F.spouse.gone=true;const n=F.spouse.name;famLog(`${n} moved out`);popHit(-0.8,'Your marriage ended');try{newsAdd(-1.2,`The ${isCand()?'candidate':'mayor'} and ${n} have separated`)}catch(e){}notify('bad',`${n.split(' ')[0]} moved out`,'Your marriage is over. The kids split their time between two homes, and reporters are asking questions.',()=>openFamily(),{ttl:20})}
-CHAR_TYPES.fam={w:0,gen:()=>null,title:ev=>{const X=FAM_STORIES[ev.f];return typeof X.t==='function'?X.t():X.t},who:ev=>[['fam',ev.id]],
+CHAR_TYPES.fam={w:0,gen:()=>null,title:ev=>{const X=FAM_STORIES[ev.f];try{return typeof X.t==='function'?X.t():X.t}catch(e){return'A family matter'}},who:ev=>[['fam',ev.id]],
   body:ev=>FAM_STORIES[ev.f].b(),
-  choices:[0,1,2].map(i=>({l:ev=>{const c=FAM_STORIES[ev.f].ch[i];return typeof c.l==='function'?c.l():c.l},s:ev=>FAM_STORIES[ev.f].ch[i].s(),need:ev=>{const c=FAM_STORIES[ev.f].ch[i];return!c.need||c.need()},do:ev=>{const r=FAM_STORIES[ev.f].ch[i].do();famLog(`${CHAR_TYPES.fam.title(ev)}: ${r}`);return r}})),
+  choices:[0,1,2].map(i=>({l:ev=>{const c=FAM_STORIES[ev.f].ch[i];return typeof c.l==='function'?c.l():c.l},s:ev=>FAM_STORIES[ev.f].ch[i].s(),need:ev=>{const c=FAM_STORIES[ev.f].ch[i];return!c.need||c.need()},do:ev=>{let t='A family matter';try{t=CHAR_TYPES.fam.title(ev)}catch(e){}const r=FAM_STORIES[ev.f].ch[i].do();famLog(`${t}: ${r}`);return r}})),
   ignore:ev=>{homeAdd(-6,'You never dealt with it')}};
-function famWhoOf(ev){const X=FAM_STORIES[ev.f];const w=X.who?X.who():['s'];const F=famInit();if(w[0]==='k'&&F.kids[w[1]])return{who:F.kids[w[1]],role:F.kids[w[1]].g==='f'?'Your daughter':'Your son'};if(F.spouse&&!F.spouse.gone)return{who:F.spouse,role:F.spouse.g==='f'?'Your wife':'Your husband'};if(F.kids[0])return{who:F.kids[0],role:'Your kid'};return{who:{name:'Your family',g:'f',age:40},role:'Your family'}}
+function famWhoOf(ev){const X=FAM_STORIES[ev.f];let w=['s'];try{w=X.who?X.who():['s']}catch(e){}const F=famInit();if(w[0]==='k'&&F.kids[w[1]])return{who:F.kids[w[1]],role:F.kids[w[1]].g==='f'?'Your daughter':'Your son'};if(F.spouse&&!F.spouse.gone)return{who:F.spouse,role:F.spouse.g==='f'?'Your wife':'Your husband'};if(F.kids[0])return{who:F.kids[0],role:'Your kid'};return{who:{name:'Your family',g:'f',age:40},role:'Your family'}}
 {const _cw=charWhoX;charWhoX=function(kind,id){if(kind==='fam'){const ev=(S.events||[]).find(e=>e.id===id)||(S.queue||[]).map(q=>q.ev).find(e=>e.id===id);if(ev){const W=famWhoOf(ev);return{who:W.who,role:W.role,attr:'data-famopen="1"',o:null}}}return _cw.apply(this,arguments)}}
 {const _vo=visitorOf;visitorOf=function(ev){if(ev&&ev.type==='fam'&&FAM_STORIES[ev.f]){const W=famWhoOf(ev);return{ev,who:W.who,role:W.role,title:CHAR_TYPES.fam.title(ev)}}return _vo.apply(this,arguments)}}
 // ---------- things you can do with your family ----------
@@ -7607,7 +7608,7 @@ function occFor(best){return{learn:'teacher',safe:'firefighter',cha:'pastor',ste
 function heirRun(i){const F=S.fam,k=F&&F.kids[i];if(!k)return;const parent={name:S.mayor.name,g:S.mayor.g,age:S.mayor.age},died=!!S.died;const inherit=Math.max(0,Math.round((S.purse.cash||0)*0.6));const siblings=F.kids.filter(x=>x!==k).map(x=>({...x}));
   const y=heirYear(k),yrs=y-S.y;
   // the city moves on until the heir's election year
-  const w=S._winner||(()=>{const c=S.council.slice().sort((a,b)=>b.opinion-a.opinion)[0];return{name:c.name,g:c.g,age:c.age,k:S.council.indexOf(c)}})();
+  const w=(S._winner&&S._winner.name!==k.name?S._winner:null)||(()=>{const c=S.council.filter(m=>!m.kin&&m.name!==k.name&&!(S.rival&&S.council[S.rival.k]===m&&false)).sort((a,b)=>b.opinion-a.opinion)[0];return{name:c.name,g:c.g,age:c.age,k:S.council.indexOf(c)}})();
   try{if(S.phase!=='cand')histAdd(S.mayor,died?'died in office':S.removed?'removed from office':'left office')}catch(e){}
   S.phase='ai';S.over=false;S.died=false;S.removed=false;S.exposed=null;S.trial=null;S.secrets=[];S.plots=[];S.dossier=[];S.net={};S.danaCall=null;
   try{toJan()}catch(e){}if(w&&w.k!=null&&w.k>=0)try{newCouncilFace(w.k)}catch(e){}try{reignStart(w,true)}catch(e){}let g=0;while(!(S.y===y&&S.m===3)&&g++<12*(HEIR_SKIP_MAX+5))aiMonth();
@@ -7618,7 +7619,7 @@ function heirRun(i){const F=S.fam,k=F&&F.kids[i];if(!k)return;const parent={name
   onClose=null;try{closeModal()}catch(e){}closePanel();beginCampaign(CR0,true);
   S.purse.cash+=inherit;S.cand.rec=Math.max(S.cand.rec,0.34);GROUPS.forEach(g=>groupLift(g.id,1.2,`The ${surname()} family name`));
   S.fam={kind:'single',home:65,log:[{t:`Your ${parent.g==='f'?'mother':'father'}, ${parent.name}, ${died?`died at ${parent.age}`:'stepped away from public life'}. You inherited $${inherit.toLocaleString()}.`,d:dateStr()}],kids:[],cd:{},set:true,of:k.name,parent:parent.name,siblings:siblings.map(x=>x.name)};S.famAsk=false;
-  save();refreshHUD();notify('event',`${k.name} is running for mayor`,`${yrs} years have passed. ${k.name} carries the family name into the ${y} race.`,()=>openFamily(),{ttl:20})}
+  save();refreshHUD();notify('event',`${k.name} is running for mayor`,`${yrs===1?'A year has':yrs+' years have'} passed. ${k.name} carries the family name into the ${y} race.`,()=>openFamily(),{ttl:20})}
 {const _al=afterLossChoices;afterLossChoices=function(w){const h=_al.apply(this,arguments);try{const x=heirHTML();if(x)return h.replace('<div class="facts"><h4>What now?</h4>',x+'<div class="facts"><h4>What now?</h4>')}catch(e){}return h}}
 // removal from office (v26.59 trial) and other end screens get the heir option too
 {const _om=openModal;openModal=function(t,h,body,nav){try{if(S&&S.removed&&h==='Guilty'&&typeof body==='string'&&!body.includes('data-heir'))body=body.replace('<div class="facts"><h4>What now?</h4>',heirHTML()+'<div class="facts"><h4>What now?</h4>')}catch(e){}return _om.apply(this,arguments)}}
@@ -7658,6 +7659,66 @@ document.addEventListener('click',e=>{const b=e.target.closest('[data-kschool],[
   if(F.schoolCost||F.kidEarn){const hb=b.querySelector('.homebar');if(hb&&!b.querySelector('.schoolcost'))hb.insertAdjacentHTML('afterend',`<p class="note schoolcost">School costs: $${(F.schoolCost||0).toLocaleString()} a month${F.kidEarn?` · your kids earn $${F.kidEarn.toLocaleString()} a month`:''}.</p>`)}
   if(F.parent){const t=b.querySelector('.scnreply');const h=`<p class="note">Your ${''}parent: ${F.parent}${F.siblings&&F.siblings.length?` · siblings: ${F.siblings.join(', ')}`:''}.</p>`;if(!b.querySelector('.parentline')){const d=document.createElement('div');d.className='parentline';d.innerHTML=h;b.prepend(d)}}}catch(e){console.warn(e)}return r};VIEWS.openFamily=openFamily}
 {const _ns=nextSteps;nextSteps=function(...a){const r=_ns.apply(this,a);try{const F=S&&S.fam;const k=F&&F.kids.find(k=>k.age===18&&k.collegeAsk&&!k.collegePicked);if(k&&Array.isArray(r))r.push({pri:50,t:`Choose ${k.name.split(' ')[0]}'s path after high school`,h:'College or work',go:()=>openKid(F.kids.indexOf(k))})}catch(e){}return r}}
+// ======================= v26.64a: A WINNABLE CHALLENGER RACE =======================
+// Voters who don't know you yet lean on how they feel about the mayor: an unpopular mayor leaves more of them open to you.
+// Voters who do know you judge you on your campaign, with a higher ceiling. In the last 3 months, coverage
+// makes the race and you far better known, so undecided voters break.
+function candBase(g){return clamp((100-S.inc[g.id])*0.75,18,55)}
+candKnown=function(g){const G=S.groups[g.id];const raw=G.mods.reduce((a,x)=>a+x.v,0),cap=28*Math.tanh(raw/28);
+  return clamp(50+(52-S.inc[g.id])*0.7+((OCCS[S.cand.occ].g||{})[g.id]||0)+cap,5,95)};
+candTarget=function(g){const r=S.cand.rec;return clamp(r*candKnown(g)+(1-r)*candBase(g),5,95)};
+{const _ce=candEndOfMonth;candEndOfMonth=function(...a){const r=_ce.apply(this,a);try{if(isCand()&&S.cand){const mo=monthsToElection();if(mo<=3&&mo>=0)recUp(0.035)}}catch(e){}return r}}
+// ======================= v26.64b: GROWN CHILDREN, AND THE FAMILY LEGACY =======================
+const CAREERS={learn:['a teacher','a professor at the University of Memphis'],stew:['a banker','a small-business owner'],cha:['a TV reporter','a musician'],dip:['an attorney','a community organizer'],intr:['a political consultant','a lobbyist in Nashville'],safe:['a police officer','a firefighter']};
+function bestSk(k){kidInit(k);return SKS.slice().sort((a,b)=>kidSk(k,b)-kidSk(k,a))[0]}
+function adults(){const F=famInit();return F.kids.map((k,i)=>({k,i})).filter(x=>x.k.age>=22)}
+function adultYear(){const F=S.fam;if(!F||S.m!==1)return;F.kids.forEach(k=>{if(k.age>=22&&!k.job){k.job=pk2(CAREERS[bestSk(k)]);famLog(`${k.name.split(' ')[0]} started work as ${k.job}`)}
+  if(k.spouse&&!k.kidsOf)k.kidsOf=[];if(k.spouse&&k.age<=44&&Math.random()<0.18){const g=Math.random()<.5?'f':'m';const gk={name:`${pk2(BABY[g])} ${k.name.split(' ').slice(-1)[0]}`,g,age:0};k.kidsOf.push(gk);famLog(`Your grandchild ${gk.name} was born`);homeAdd(6);notify('good','A grandchild!',`${k.name.split(' ')[0]} had a baby: ${gk.name}.`,()=>openFamily(),{ttl:16})}
+  (k.kidsOf||[]).forEach(g=>{if(g.age<40)g.age++})})}
+Object.assign(FAM_STORIES,{
+ kwed:{cd:14,when:()=>adults().some(x=>x.k.age>=24&&!x.k.spouse),t:()=>{const x=adults().find(x=>x.k.age>=24&&!x.k.spouse);return`${x.k.name.split(' ')[0]} is getting married`},
+  who:()=>['k',adults().find(x=>x.k.age>=24&&!x.k.spouse).i],
+  b:()=>{const x=adults().find(x=>x.k.age>=24&&!x.k.spouse);const g=x.k.g==='f'?'m':'f';x.k._fiance=x.k._fiance||`${pk2(FAM_FIRST[g])} ${pk2(NEWNAMES.l)}`;return`${x.k.name.split(' ')[0]} is engaged to ${x.k._fiance}. They want to know if you'll help with the wedding, and whether you'll actually be there.`},
+  ch:[{l:'Pay for a big wedding, and be there',s:()=>'−$25,000 · home life +15 · your child is grateful',need:()=>S.purse.cash>=25000,do:()=>{const x=adults().find(x=>x.k.age>=24&&!x.k.spouse);S.purse.cash-=25000;x.k.spouse=x.k._fiance;x.k.mood=clamp((x.k.mood||70)+20,0,100);homeAdd(15,`${x.k.name.split(' ')[0]}'s wedding`);try{newsAdd(0.5,`The ${isCand()?'candidate':'mayor'}'s ${x.k.g==='f'?'daughter':'son'} marries`)}catch(e){}return`A beautiful wedding. ${x.k.name.split(' ')[0]} and ${x.k.spouse} are married.`}},
+   {l:'Be there, but keep it small',s:()=>'−$5,000 · home life +8',need:()=>S.purse.cash>=5000,do:()=>{const x=adults().find(x=>x.k.age>=24&&!x.k.spouse);S.purse.cash-=5000;x.k.spouse=x.k._fiance;homeAdd(8);return`A small, happy wedding. ${x.k.name.split(' ')[0]} is married.`}},
+   {l:'You can\'t make it. City business',s:()=>'Home life −15 · your child won\'t forget it',do:()=>{const x=adults().find(x=>x.k.age>=24&&!x.k.spouse);x.k.spouse=x.k._fiance;x.k.mood=clamp((x.k.mood||70)-35,0,100);homeAdd(-15,'You missed the wedding');return'They got married without you. The photos have an empty chair.'}}]},
+ kcouncil:{cd:30,when:()=>inOffice()&&adults().some(x=>x.k.age>=25&&!x.k.council&&!x.k.runFor&&Math.max(kidSk(x.k,'cha'),kidSk(x.k,'dip'))>=7),t:()=>`${kcand().k.name.split(' ')[0]} wants to run for city council`,
+  who:()=>['k',kcand().i],b:()=>{const x=kcand();return`${x.k.name.split(' ')[0]}, ${x.k.age}, wants to run for an open council seat. ${x.k.g==='f'?'She':'He'} has Star Power ${kidSk(x.k,'cha')} and Dealmaking ${kidSk(x.k,'dip')}. A seat on the council would be a vote you could always count on, and reporters would call it a family business.`},
+  ch:[{l:'Back the campaign all the way',s:()=>'−$30,000 of your money · a much better chance · some voters cry nepotism',need:()=>S.purse.cash>=30000,do:()=>{const x=kcand();S.purse.cash-=30000;x.k.runFor={m:nowM()+6,backed:true};groupLift('young',-0.6,'Nepotism worries');return`${x.k.name.split(' ')[0]} is running, with your money and your network behind them. The vote is in about 6 months.`}},
+   {l:'Let them run on their own',s:()=>'No cost · a fair shot on their own skills',do:()=>{const x=kcand();x.k.runFor={m:nowM()+6,backed:false};x.k.mood=clamp((x.k.mood||70)+5,0,100);return`${x.k.name.split(' ')[0]} is running on their own name. The vote is in about 6 months.`}},
+   {l:'Talk them out of it',s:()=>'Your child is hurt (−20) · no nepotism story',do:()=>{const x=kcand();x.k.mood=clamp((x.k.mood||70)-20,0,100);x.k.council='declined';return'They agreed, but they\'re not happy about it.'}}]},
+ kscandal:{cd:24,when:()=>adults().length>0,t:()=>`${adults()[0].k.name.split(' ')[0]} is in the news, for the wrong reasons`,who:()=>['k',adults()[0].i],
+  b:()=>{const k=adults()[0].k;k._sc=k._sc||pk2(['was arrested for drunk driving on Poplar Avenue','got into a shouting match with a police officer, and it\'s on video',`works for a company that just won a city contract`,'posted something ugly online that\'s now everywhere']);return`${k.name} ${k._sc}. Reporters want to know what you'll say.`},
+  ch:[{l:'"I love my child, and they\'ll face the consequences"',s:()=>`${oddsTag('cha',0.5)} · works: respect (+1) · fails: it lingers (−0.5)`,do:()=>{const k=adults()[0].k;k._sc=null;if(persuade('cha',0.5,[],6)){groupLift('faith',1,'Stood by your child, and the rules');groupLift('parents',1,'Stood by your child, and the rules');return'People respected that.'}popHit(-0.4,'Your child\'s scandal');return'The story stuck around for a week.'}},
+   {l:'Distance yourself publicly',s:()=>'The story dies fast · your child is crushed (−30) · home life −10',do:()=>{const k=adults()[0].k;k._sc=null;k.mood=clamp((k.mood||70)-30,0,100);homeAdd(-10,'You distanced yourself from your child');return'It worked politically. At home, it didn\'t.'}},
+   {l:'Make it go away quietly',s:()=>'It disappears · <b>a serious secret</b>',do:()=>{const k=adults()[0].k;addSecret({t:`You made ${k.name}'s trouble go away by leaning on city officials`,sev:2,knows:[{name:'A city official you leaned on'}]});k._sc=null;homeAdd(5);return'It vanished. Someone owes you, and someone knows.'}}]},
+ kcritic:{cd:24,when:()=>adults().some(x=>(x.k.mood||70)<35),t:()=>{const x=adults().find(x=>(x.k.mood||70)<35);return`${x.k.name.split(' ')[0]} criticizes you in public`},who:()=>['k',adults().find(x=>(x.k.mood||70)<35).i],
+  b:()=>{const x=adults().find(x=>(x.k.mood||70)<35);return`In a podcast interview, ${x.k.name} said you "always put the city before your own family" and questioned some of your decisions. It's being shared everywhere.`},
+  ch:[{l:'Call them, and make it right',s:()=>`${oddsTag('dip',0.5)} · works: your child +30 and the story fades`,do:()=>{const x=adults().find(x=>(x.k.mood||70)<35);if(persuade('dip',0.5,[],6)){x.k.mood=clamp((x.k.mood||0)+30,0,100);homeAdd(10,'Made peace with your child');return'A long call. Tears. You\'re talking again.'}x.k.mood=clamp((x.k.mood||0)+8,0,100);return'They didn\'t pick up. You left a voicemail.'}},
+   {l:'Laugh it off in public',s:()=>`${oddsTag('cha',0.45)} · works: no harm · fails: −0.6`,do:()=>{if(persuade('cha',0.45,[],5))return'"Every parent has heard worse at Thanksgiving." The room laughed.';popHit(-0.6,'Your child\'s public criticism');return'It came off cold.'}},
+   {l:'Say nothing',s:()=>'Approval −0.4 · your child takes it as indifference (−10)',do:()=>{const x=adults().find(x=>(x.k.mood||70)<35);popHit(-0.3,'Your child\'s public criticism');x.k.mood=clamp((x.k.mood||0)-10,0,100);return'Silence. It said plenty.'}}]}});
+function kcand(){return adults().find(x=>x.k.age>=25&&!x.k.council&&!x.k.runFor&&Math.max(kidSk(x.k,'cha'),kidSk(x.k,'dip'))>=7)||adults()[0]}
+function councilRuns(){const F=S.fam;if(!F)return;F.kids.forEach(k=>{const R=k.runFor;if(!R||nowM()<R.m)return;k.runFor=null;const p=clamp(0.25+Math.max(kidSk(k,'cha'),kidSk(k,'dip'))/30+(R.backed?0.18:0)+((S.approval||50)-50)/200,0.1,0.85);
+  if(Math.random()<p){const opts=S.council.map((m,i)=>({m,i})).filter(x=>!(S.rival&&S.rival.k===x.i)&&!x.m.kin);const x=pk2(opts);const old=x.m.name;newCouncilFace(x.i);const m=S.council[x.i];m.name=k.name;m.g=k.g;m.age=k.age;m.kin=true;m.mods=[{t:'Your own child',v:35,perm:true}];k.council=m.seat||'the council';
+    famLog(`${k.name} won a seat on the city council`);notify('good',`${k.name.split(' ')[0]} won a council seat`,`${k.name} beat ${old} for ${m.seat||'a council seat'}. That's a vote you can count on.`,()=>openFamily(),{ttl:20});try{newsAdd(0.6,`${k.name} wins council seat; the mayor's ${k.g==='f'?'daughter':'son'} joins the council`)}catch(e){}try{celebrate(false)}catch(e){}}
+  else{k.mood=clamp((k.mood||70)-10,0,100);famLog(`${k.name} lost a council race`);notify('bad',`${k.name.split(' ')[0]} lost the council race`,`${k.name} came up short. ${R.backed?'Your money and name weren\'t enough.':'They ran on their own, and fell short.'}`,()=>openFamily(),{ttl:16})}})}
+{const _fm=famMonth;famMonth=function(...a){const r=_fm.apply(this,a);try{if(S&&S.started&&!S.over&&S.phase!=='ai'){adultYear();councilRuns()}}catch(e){console.warn('adult',e)}return r}}
+// kids in the family screen show what they do as adults
+{const _of=openFamily;openFamily=function(...a){const r=_of.apply(this,a);try{const F=famInit(),b=$('mBody');b.querySelectorAll('.famcard').forEach(c=>{const nm=(c.querySelector('b')||{}).textContent;const k=F.kids.find(k=>k.name===nm);if(!k||k.age<22||c.querySelector('.adultline'))return;const d=c.querySelector('div:last-child');
+   if(d)d.insertAdjacentHTML('beforeend',`<p class="note adultline">${[k.council&&k.council!=='declined'?`Council member, ${k.council}`:k.job?`Works as ${k.job}`:'',k.spouse?`married to ${k.spouse}`:'',(k.kidsOf||[]).length?`${k.kidsOf.length} kid${k.kidsOf.length===1?'':'s'}: ${k.kidsOf.map(g=>g.name.split(' ')[0]).join(', ')}`:'',k.runFor?'running for council':''].filter(Boolean).join(' · ')}${k.mood<35?' · <b class="neg">estranged</b>':''}</p>`)});
+   if(!b.querySelector('[data-legacyfam]')){const back=[...b.querySelectorAll('.row')].pop();if(back)back.insertAdjacentHTML('afterbegin','<button class="btn" data-legacyfam="1">Family legacy</button>')}}catch(e){console.warn(e)}return r};VIEWS.openFamily=openFamily}
+// ---------- the family legacy ----------
+function dynRecord(how){const F=S.fam||{};const M=S.mayor||{};return{name:M.name,g:M.g,age:M.age,role:S.phase==='cand'||isCand()?'Ran for mayor':`Mayor${S.term>=2?', two terms':''}`,end:how,years:S.reign?`${S.reign.fromY||''}`:'',spouse:F.spouse?(F.spouse.gone?F.spouse.name+' (divorced)':F.spouse.name):null,
+  kids:(F.kids||[]).map(k=>({name:k.name,g:k.g,age:k.age,job:k.job,council:k.council,spouse:k.spouse,kidsOf:(k.kidsOf||[]).map(g=>g.name),best:bestSk(k),bestV:kidSk(k,bestSk(k))})),scandals:(S.secrets||[]).filter(s=>s.out).length,dirty:S.dirty||0,clean:S.clean||0,y:S.y}}
+{const _hr=heirRun;heirRun=function(i){try{S.dynasty=S.dynasty||[];const how=S.died?`died at ${S.mayor.age}`:S.removed?'removed from office':'left public life';S.dynasty.push(dynRecord(how))}catch(e){console.warn(e)}const keep=S.dynasty;const r=_hr.apply(this,arguments);S.dynasty=keep;try{S.council.forEach((m,i)=>{if(m.name===S.mayor.name)newCouncilFace(i);else if(m.kin)m.kin=false})}catch(e){}return r};}
+function openLegacyFam(){const D=S.dynasty||[];const cur=dynRecord('today');const gens=[...D,{...cur,current:true}];const offices=gens.filter(g=>/^Mayor/.test(g.role)).length+gens.reduce((a,g)=>a+(g.kids||[]).filter(k=>k.council&&k.council!=='declined').length,0);
+  const kidRow=k=>`<li><b>${k.name}</b> · ${k.age}${k.council&&k.council!=='declined'?` · <b>council member</b>`:k.job?` · ${k.job}`:''}${k.spouse?` · married to ${k.spouse}`:''}${(k.kidsOf||[]).length?` · kids: ${k.kidsOf.map(n=>(typeof n==='string'?n:n.name).split(' ')[0]).join(', ')}`:''} <small>(best: ${skillName(k.best)} ${k.bestV})</small></li>`;
+  openModal(`Family legacy · ${gens.length} generation${gens.length===1?'':'s'}`,`The ${surname()} family`,`<div class="qrgrid"><div><small>Generations</small><p><b>${gens.length}</b></p></div><div><small>Offices held</small><p><b>${offices}</b></p></div><div><small>Scandals that came out</small><p><b>${gens.reduce((a,g)=>a+(g.scandals||0),0)}</b></p></div><div><small>Bribes reported to the FBI</small><p><b>${gens.reduce((a,g)=>a+(g.clean||0),0)}</b></p></div></div>
+   ${gens.map((g,n)=>`<div class="faccard gen${g.current?' cur':''}"><small>Generation ${n+1}${g.current?' · you':''}</small><h4 style="margin:4px 0">${g.name}${g.spouse?` <small>& ${g.spouse}</small>`:''}</h4><p class="note">${g.role}${g.current?` · ${g.age}`:` · ${g.end}`}${g.dirty?` · ${g.dirty} dirty deal${g.dirty===1?'':'s'}`:''}</p>${(g.kids||[]).length?`<ul class="numlist">${g.kids.map(kidRow).join('')}</ul>`:'<p class="note">No children.</p>'}</div>`).join('<div class="genline">│</div>')}
+   <div class="row"><button class="btn primary" data-famopen="1">Back to your family</button></div>`,true)}
+openLegacyFam=navWrap('openLegacyFam',openLegacyFam);
+document.addEventListener('click',e=>{const b=e.target.closest('[data-legacyfam]');if(!b||!S)return;e.preventDefault();e.stopImmediatePropagation();if(modalOpen){onClose=null;closeModal()}openLegacyFam()},true);
+{const _om=openModal;openModal=function(...a){const r=_om.apply(this,a);try{const n=NAV.cur?NAV.cur.name:'';if(n==='flow_people'){const g=$('mBody').querySelector('.flow-grid');if(g&&!g.querySelector('[data-legacyfam]'))g.insertAdjacentHTML('beforeend',`<button class="flow-tile" data-legacyfam="1"><b>Family legacy</b><span>${(S.dynasty||[]).length+1} generation${(S.dynasty||[]).length?'s':''} of the ${surname()} family</span></button>`)}}catch(e){}return r}}
 function openLedger(){const L=S.log||[];openPanel('Everything that has happened, newest first','Ledger',L.length?`<div class="logl">${L.map(x=>`<div><span>${x.d}</span><p style="margin:0">${x.t}</p></div>`).join('')}</div>`:'<p class="note">Nothing yet. Start the clock with Space or ▶.</p>','ledger')}
 function openPolicies(){const ks=Object.keys(POLICIES);
   openPanel('Ongoing programs you control','Your initiatives',`<p>Mid-year, these are paid from the reserve fund. In April they go into the budget you send the council.</p>

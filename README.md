@@ -72,6 +72,28 @@ How the reporters work:
   - They run for mayor with the skills they built (capped at 14), 60% of your savings, extra name recognition, and a small boost with every group.
   - Their family page remembers you and lists their siblings.
 
+## v26.64: A winnable challenger race, grown children, and the family legacy
+
+**A winnable challenger race.** Voters who don't know a challenger yet now lean on how they feel about the mayor instead of a flat 24%. Voters who do know you have a higher ceiling. In the last 3 months, coverage makes the race far better known and undecided voters break. In a test against a mayor with 50% approval, a mediocre bot campaign went from 21% to 42%. A strong campaign can win.
+
+**Grown children** (22 and older) have their own lives:
+- They start a career that matches their best skill.
+- They marry: pay for a big wedding, keep it small, or miss it.
+- Married children give you grandchildren.
+- They can run for city council. Back them with $30K, let them run on their own, or talk them out of it. If they win, they replace a member and start with a +35 opinion of you.
+- They can land in the news for the wrong reasons: stand by them, distance yourself, or make it go away (a secret).
+- If they're estranged, they may criticize you in public.
+
+**The family legacy** (People → Family legacy, or from your family page) shows every generation:
+- Each mayor or candidate and their spouse.
+- How their story ended.
+- Every child's career, council seat, marriage, grandchildren and best skill.
+- Totals: offices held, scandals and bribes reported.
+
+**Fixes:**
+- When an heir takes over, an heir who was on the council gives up the seat, and is never picked as the interim mayor they'd run against.
+- Family events no longer crash if their situation changes before you answer.
+
 ## v26.59: Dirty deals and secrets
 
 You can now break the law, and it can catch up with you.
