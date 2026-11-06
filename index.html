@@ -714,7 +714,7 @@ details.analysis{margin-top:6px}details.analysis summary{cursor:pointer;color:va
     <button class="btn primary" data-act="pause" id="bPlay"><svg class="ico" viewBox="0 0 12 12" aria-hidden="true"><path d="M3.2 1.6v8.8l7.2-4.4z" fill="currentColor"/></svg> Resume <kbd>Space</kbd></button>
   </nav>
   <div class="status" id="status">Loading map…</div>
-  <div class="credit"><span class="ver" id="verTag">v26.69</span></div>
+  <div class="credit"><span class="ver" id="verTag">v26.70</span></div>
   <div class="tip" id="tip" hidden></div>
   <div class="toast" id="toast" role="status"></div>
   <section class="panel" id="panel" hidden aria-live="polite">
@@ -742,7 +742,7 @@ details.analysis{margin-top:6px}details.analysis summary{cursor:pointer;color:va
         <button class="btn" data-music-open>Music &amp; volume</button>
       </div>
       <div id="slotList" hidden></div>
-      <p class="note startv">Version <b class="ver" id="verStart">v26.69</b></p>
+      <p class="note startv">Version <b class="ver" id="verStart">v26.70</b></p>
     </div>
     <div class="startbox create" id="create" hidden>
       <h2>Create your mayor</h2>
@@ -1553,7 +1553,7 @@ function enact(s,p){DIVS.forEach(d=>{s.enacted[d.id]=p.divs[d.id];s.ratio[d.id]=
 // Voter groups. Each has a share of residents, turnout, home districts, concerns and an approval of you.
 // Citywide approval is the turnout-weighted average of the groups; each council district's approval comes from the groups that live there.
 // Shares, district mix and turnout are modeled, loosely grounded in Memphis demographics; they are not survey data.
-const VERSION='v26.69';
+const VERSION='v26.70';
 const GROUPS=[
  {id:'working',sh:'Working families',n:'Working families',ic:'⚒︎',c:'#f2a93b',share:24,turn:.5,start:56,w:{jobs:1,safety:.8,transit:.5},
   d:'Hourly workers in logistics, warehouses, health care and service jobs. The biggest bloc in the city.',dm:{1:1.1,2:.8,3:1.3,4:1.2,5:.6,6:1.2,7:1.1}},
@@ -6675,7 +6675,7 @@ const FACS={
   d:'The voice of the city\'s big employers: FedEx, AutoZone, St. Jude, the hospitals and the logistics industry. It cares about taxes, permits and incentives.',
   hi:'Members send campaign money every month in the run-up to an election, and recruit employers to Memphis.',
   lo:'Members fund your opponent instead, and the business leaders\' endorsement goes the other way.'},
- county:{as:'Shelby County mayor',n:'Shelby County Commission',tn:'the Shelby County Commission',sh:'The County',ic:'▣',sk:'dip',grp:['parents'],
+ county:{n:'Shelby County Commission',tn:'the Shelby County Commission',sh:'The County',ic:'▣',sk:'dip',grp:['parents'],
   lead:{name:'Commissioner Andre Mitchell',g:'m',age:55,frame:'#7a6a9b'},role:'Chair, Shelby County Commission',
   d:'The County funds Memphis-Shelby County Schools, the jail and the Health Department. Memphis residents pay county taxes too, so the city and county have to split a lot of bills.',
   hi:'The County picks up a share of joint costs once a year, and school reading scores improve a little faster.',
@@ -7860,10 +7860,11 @@ function nextElYear(){let y=2027;while(y<S.y||(y===S.y&&S.m>=3))y+=4;return y}
 heirYear=function(k){let y=nextElYear();while(k.age+(y-S.y)<HEIR_MIN)y+=4;return y};
 const ROLES={
  county:{n:'Shelby County Mayor',d:'Run countywide. Win, and you run the County: the jail, the Health Department, school funding.',inc:130000,inf:9,run:()=>clamp(0.3+((S.after?S.after.app:50)-50)/150+((()=>{try{return facRel('county')}catch(e){return 0}})())/250+mskill('dip')/60,0.15,0.85),lose:'You lost the County mayor\'s race.'},
- congress:{as:'in Congress',n:'U.S. Congress (Tennessee\'s 9th District)',d:'Run for the House seat that covers Memphis. Win, and you\'re in Washington, with national influence.',inc:174000,inf:11,run:()=>clamp(0.22+((S.after?S.after.app:50)-50)/150+mskill('cha')/50,0.1,0.8),lose:'You lost the congressional primary.'},
- law:{as:'a law firm partner',n:'Partner at a downtown law firm',d:'Big money and a Rolodex. Some people will call you a lobbyist.',inc:420000,inf:4},
- uni:{as:'a university president',n:'President of a university',d:'Respected, steady and well paid. Good for your reputation.',inc:260000,inf:6},
- king:{as:'a kingmaker',n:'Kingmaker',d:'No title and no salary. You live on savings, take meetings and decide who gets your support.',inc:0,inf:8}};
+ congress:{n:'U.S. Congress (Tennessee\'s 9th District)',d:'Run for the House seat that covers Memphis. Win, and you\'re in Washington, with national influence.',inc:174000,inf:11,run:()=>clamp(0.22+((S.after?S.after.app:50)-50)/150+mskill('cha')/50,0.1,0.8),lose:'You lost the congressional primary.'},
+ law:{n:'Partner at a downtown law firm',d:'Big money and a Rolodex. Some people will call you a lobbyist.',inc:420000,inf:4},
+ uni:{n:'President of a university',d:'Respected, steady and well paid. Good for your reputation.',inc:260000,inf:6},
+ king:{n:'Kingmaker',d:'No title and no salary. You live on savings, take meetings and decide who gets your support.',inc:0,inf:8}};
+Object.assign(ROLES.county,{as:'Shelby County mayor'});Object.assign(ROLES.congress,{as:'in Congress'});Object.assign(ROLES.law,{as:'a law firm partner'});Object.assign(ROLES.uni,{as:'a university president',inf:3});Object.assign(ROLES.county,{inf:4});Object.assign(ROLES.king,{as:'a kingmaker'});
 function afterInit(){const a=S.after;if(a)return a;const inf=clamp(Math.round(20+((S.approval||45)-40)*0.8+(S.term>=2?15:S.phase==='cand'?-5:5)),5,80);
   S.after={inf,role:null,yrs:0,log:[],app:Math.round(S.approval||45),incumb:S._winner||null,start:S.y};return S.after}
 function afterLog(t){const A=afterInit();A.log.unshift({t,y:S.y});if(A.log.length>14)A.log.length=14}
@@ -7922,6 +7923,63 @@ document.addEventListener('click',e=>{const b=e.target.closest('[data-after],[da
 {const _dr=dynRecord;dynRecord=function(how){const r=_dr.apply(this,arguments);try{if(S.after&&S.after.role)r.role+=`, then ${ROLES[S.after.role].n}`}catch(e){}return r}}
 {const _om=openModal;openModal=function(...a){const r=_om.apply(this,a);try{const b=$('endBanner');if(b)b.hidden=true}catch(e){}return r}}
 {const _mg=migrate;migrate=function(x){const r=_mg.apply(this,arguments);try{const s0=r||x;if(s0&&s0.press&&typeof s0.press==='object'){s0.reporters=s0.reporters||s0.press;s0.press=0}if(s0&&typeof s0.press==='number'&&!isFinite(s0.press))s0.press=0}catch(e){}return r}}
+// ======================= v26.70: PLAYING THE NEXT CHAPTER: COUNTY MAYOR AND UNIVERSITY PRESIDENT =======================
+// These two roles now have their own stats, three moves a year, role-specific events, and consequences:
+// County mayors face voters every four years; university presidents answer to a board every five.
+const ROLE_ACTS=3;
+function coInit(A){if(!A.co)A.co={app:55,bud:85,jail:40,ph:45,sch:45,partner:0};return A.co}
+function uniInit(A){if(!A.uni)A.uni={end:120,enr:9000,rep:50,mood:60,prot:0};return A.uni}
+function cityMayor(){try{const f=S.reign&&S.reign.face;return(f&&f.name)||(S.after&&S.after.incumb&&S.after.incumb.name)||'the Memphis mayor'}catch(e){return'the Memphis mayor'}}
+const CO_ACTS={
+ schools:{n:'Fund MSCS schools',d:'$10M from the County budget · school funding +8 · parents like it',need:c=>c.bud>=10,do:(c,A)=>{c.bud-=10;c.sch=clamp(c.sch+8,0,100);c.app+=1.5;A.inf+=2;return'Every MSCS school got new money for teachers and repairs. The school board thanked you by name.'}},
+ jail:{n:'Reform the jail: pretrial release and fewer cash bails',sk:'safe',b:0.5,d:'Jail conditions +12 · works: approval +2 · fails: a high-profile re-arrest hurts (−3)',do:(c,A,ok)=>{c.jail=clamp(c.jail+12,0,100);if(ok){c.app+=2;return'The jail population dropped by 400, and crime didn\'t rise. Reformers and the sheriff both claimed credit.'}c.app-=3;return'Someone released under the new rules was re-arrested for a shooting. The story ran for a week.'}},
+ health:{n:'Expand the Health Department clinics',d:'$6M · public health +8 · renters and working families like it',need:c=>c.bud>=6,do:(c,A)=>{c.bud-=6;c.ph=clamp(c.ph+8,0,100);c.app+=1.5;return'Three new clinics opened in Frayser, Whitehaven and Hickory Hill.'}},
+ tax:{n:'Raise the County property tax',d:'+$15M to the County budget · approval −4',do:(c,A)=>{c.bud+=15;c.app-=4;return'The Commission passed it 7–6. Homeowners were not pleased.'}},
+ partner:{n:'Team up with the Memphis mayor',sk:'dip',b:0.5,d:()=>`Work with ${cityMayor()} on transit and blight · works: approval +3, $5M in shared savings · fails: a public feud (−2)`,do:(c,A,ok)=>{if(ok){c.app+=3;c.bud+=5;c.partner++;A.inf+=3;return`You and ${cityMayor()} announced a joint transit and blight plan. It looked like the city and County finally got along.`}c.app-=2;return`The meeting with ${cityMayor()} turned into a public feud over who pays.`}},
+ jobs:{n:'Recruit a big employer to the county',sk:'stew',b:0.45,d:'Works: 1,500 jobs, approval +3, more tax revenue · fails: they pick DeSoto County',do:(c,A,ok)=>{if(ok){c.app+=3;c.bud+=6;A.inf+=3;return'A medical-device maker chose Shelby County: 1,500 jobs near the airport.'}return'They went to DeSoto County. Mississippi offered more.'}}};
+const CO_EVENTS=[
+ {t:'A man died in the county jail, and video shows guards ignoring him',ch:[['Release the video and call in the DOJ',(c,A)=>{c.app+=2;c.jail+=6;A.inf+=2;return'Transparency hurt for a week, then earned you trust.'}],['Wait for the internal investigation',(c,A)=>{c.app-=4;return'The video leaked anyway. "What did the County mayor know?"'}]]},
+ {t:'A measles outbreak hits three schools',ch:[['Run free vaccine clinics everywhere ($3M)',(c,A)=>{c.bud-=3;c.ph+=5;c.app+=2;return'The outbreak stopped at 40 cases. The Health Department looked great.'}],['Let schools handle it',(c,A)=>{c.ph-=6;c.app-=2;return'It spread to 300 cases before it slowed.'}]]},
+ {t:'The MSCS board says it\'s short $30 million',ch:[['Cover half from the County budget',(c,A)=>{c.bud-=15;c.sch+=6;c.app+=1;return'Teachers kept their jobs. Your budget is tighter.'}],['Tell the board to cut',(c,A)=>{c.sch-=8;c.app-=2;return'The board cut bus routes and art teachers. Parents blamed everyone, including you.'}]]},
+ {t:()=>`${cityMayor()} asks the County to pay for city police overtime`,ch:[['Split the cost',(c,A)=>{c.bud-=5;c.partner++;return'The city mayor owes you one.'}],['Say no: the County has its own sheriff',(c,A)=>{c.app+=1;return'Suburban voters liked it. City Hall didn\'t.'}]]}];
+const UNI_ACTS={
+ raise:{n:'Raise money from big donors',sk:'cha',b:0.5,d:'Works: +$15–30M to the endowment · fails: +$3M',do:(u,A,ok)=>{const v=ok?15+Math.floor(Math.random()*16):3;u.end+=v;return ok?`A FedEx executive and two alumni families pledged $${v}M.`:'The donors were polite. Three million, not thirty.'}},
+ schol:{n:'Full scholarships for Memphis students',d:'$6M from the endowment · enrollment +400, reputation +3, influence in the city +3',need:u=>u.end>=6,do:(u,A)=>{u.end-=6;u.enr+=400;u.rep+=3;A.inf+=3;return'Four hundred Memphis kids got full rides. Their parents will remember your name.'}},
+ research:{n:'Build a research center',d:'$20M · reputation +8 · brings jobs to Memphis',need:u=>u.end>=20,do:(u,A)=>{u.end-=20;u.rep+=8;A.inf+=2;return'The new center for logistics and health research broke ground.'}},
+ sports:{n:'Invest in athletics',d:'$8M · campus mood +10, a shot at a bowl game (reputation)',need:u=>u.end>=8,do:(u,A)=>{u.end-=8;u.mood+=10;const ok=Math.random()<0.5;if(ok)u.rep+=4;return ok?'The team made a bowl game. The whole city wore your colors.':'A 6–6 season. Fans were happy anyway.'}},
+ mentor:{n:'Mentor student leaders',sk:'dip',b:0.55,d:'Works: 5 students become your protégés, future campaign volunteers for you or your heir',do:(u,A,ok)=>{if(ok){u.prot+=5;return'Five student leaders now meet with you every month. They\'ll knock doors for you someday.'}u.prot+=1;return'Most of them were too busy. One stuck with you.'}},
+ tuition:{n:'Raise tuition',d:'+$12M · campus mood −12, enrollment −300',do:(u,A)=>{u.end+=12;u.mood-=12;u.enr-=300;return'Students protested outside your office for a week.'}}};
+const UNI_EVENTS=[
+ {t:'Students occupy the administration building over a contract with a private prison company',ch:[['Meet them and end the contract',(u,A)=>{u.mood+=12;u.rep+=2;return'The sit-in ended with a handshake. Some donors grumbled.'}],['Call campus police',(u,A)=>{u.mood-=15;u.rep-=4;return'Video of students being carried out went viral.'}]]},
+ {t:'A big donor offers $40M, if the new building is named for him and he picks the dean',ch:[['Take the money, with strings',(u,A)=>{u.end+=40;u.rep-=6;u.mood-=6;return'The building is beautiful. The faculty senate voted no confidence in you.'}],['Take the name, refuse the strings',(u,A)=>{const ok=Math.random()<0.5;if(ok){u.end+=30;return'He agreed. $30M and your principles intact.'}return'He walked away. No money, but the faculty respect you.'}]]},
+ {t:'The head coach is caught in a recruiting scandal',ch:[['Fire him and report it to the NCAA',(u,A)=>{u.rep+=3;u.mood-=4;return'Painful season, clean program.'}],['Quietly settle it',(u,A)=>{if(Math.random()<0.4){u.rep-=12;return'It came out anyway. Now it\'s your scandal.'}return'It stayed quiet. For now.'}]]},
+ {t:'State lawmakers threaten to cut your funding over a professor\'s comments',ch:[['Defend academic freedom',(u,A)=>{u.mood+=8;u.rep+=4;try{facMod('state','The university defied us',-4)}catch(e){}return'Faculty cheered. Nashville noticed, and not kindly.'}],['Put the professor on leave',(u,A)=>{u.mood-=10;u.rep-=5;return'The legislature backed off. Your faculty didn\'t forgive you.'}]]}];
+function roleKit(){const A=afterInit();if(A.role==='county')return{st:coInit(A),acts:CO_ACTS,evs:CO_EVENTS};if(A.role==='uni')return{st:uniInit(A),acts:UNI_ACTS,evs:UNI_EVENTS};return null}
+function roleAct(k){const A=afterInit(),K=roleKit();if(!K)return;const X=K.acts[k];if(!X||(A.ra||0)>=ROLE_ACTS||(X.need&&!X.need(K.st)))return;A.ra=(A.ra||0)+1;const ok=X.sk?persuade(X.sk,X.b,[],8):true;const m=X.do(K.st,A,ok);roleClamp();A.inf=clamp(A.inf,0,100);afterLog(m);try{sfx(ok?'good':'bad')}catch(e){}save();AFTER_MSG=m;openAfter()}
+function roleClamp(){const A=S.after;if(A.co){const c=A.co;['app','jail','ph','sch'].forEach(k=>c[k]=clamp(c[k],0,100))}if(A.uni){const u=A.uni;['rep','mood'].forEach(k=>u[k]=clamp(u[k],0,100));u.enr=Math.max(4000,u.enr);u.end=Math.max(0,u.end)}}
+// the year ends: role events, elections and board reviews
+{const _ay=afterYear;afterYear=function(...a){const A=afterInit();const K=roleKit();const r=_ay.apply(this,a);try{if(!K||A.dead||A.prison)return r;A.ra=0;
+  if(A.role==='county'){const c=A.co;c.app+=(c.sch-50)/25+(c.ph-50)/30+(c.jail-50)/40;A.inf=clamp(A.inf+(c.app-50)/10,0,100);c.bud+=4;
+    if(A.yrs%4===0){const win=Math.random()<clamp(0.15+c.app/100,0.1,0.95);if(win){afterLog(`You won re-election as County mayor (approval ${Math.round(c.app)}%).`);A.inf+=5}else{afterLog(`You lost re-election as County mayor (approval ${Math.round(c.app)}%).`);A.role=null;A.co=null;A.tried={};AFTER_MSG='Voters turned you out of the County mayor\'s office. What\'s next?'}}}
+  if(A.role==='uni'){const u=A.uni;u.end*=1.05;u.rep+=(u.mood-50)/20;A.inf=clamp(A.inf+(u.rep-50)/12,0,100);
+    if(A.yrs%5===0){if(u.rep<35){afterLog(`The board did not renew your contract (reputation ${Math.round(u.rep)}).`);A.role=null;A.uni=null;A.tried={};AFTER_MSG='The board of trustees let you go. What\'s next?'}else afterLog(`The board renewed your contract for five more years (reputation ${Math.round(u.rep)}).`)}}
+  // half the time, a role event replaces the general one
+  if(A.role&&Math.random()<0.6){const E=pk2(K.evs);A.rev={t:typeof E.t==='function'?E.t():E.t,i:K.evs.indexOf(E)};A.ev=null}
+  roleClamp();save();if(!A.dead&&!A.prison)openAfter()}catch(e){console.warn('roleyear',e)}return r}}
+function roleEvent(i){const A=afterInit(),K=roleKit();if(!K||!A.rev)return;const E=K.evs[A.rev.i];const m=E.ch[i][1](K.st,A);roleClamp();A.inf=clamp(A.inf,0,100);A.rev=null;afterLog(m);save();AFTER_MSG=m;openAfter()}
+// the screen: a role desk above the year controls
+{const _oa=openAfter;openAfter=function(...a){const r=_oa.apply(this,a);try{const A=afterInit(),K=roleKit(),b=$('mBody');if(!K||!b||b.querySelector('.roledesk'))return r;const st=K.st;let h='<div class="roledesk">';
+  if(A.rev){const E=K.evs[A.rev.i];h+=`<div class="faccard"><b>${A.rev.t}</b><div class="choices">${E.ch.map((c,i)=>`<button class="choice" data-rev="${i}"><b>${c[0]}</b></button>`).join('')}</div></div>`}
+  if(A.role==='county')h+=`<h4 class="plh">Shelby County</h4><div class="qrgrid agrid"><div><small>County approval</small><p><b>${Math.round(st.app)}%</b></p></div><div><small>County budget</small><p><b>${fmtM(st.bud)}</b></p></div><div><small>Jail conditions</small><p><b>${Math.round(st.jail)}</b></p></div><div><small>Public health</small><p><b>${Math.round(st.ph)}</b></p></div><div><small>School funding</small><p><b>${Math.round(st.sch)}</b></p></div><div><small>Next County election</small><p><b>in ${4-(A.yrs%4)} yr</b></p></div></div><p class="note">Approval decides your re-election. Good schools, health and jail conditions lift it every year. You and ${cityMayor()} have teamed up ${st.partner} time${st.partner===1?'':'s'}.</p>`;
+  if(A.role==='uni')h+=`<h4 class="plh">The university</h4><div class="qrgrid agrid"><div><small>Endowment</small><p><b>${fmtM(st.end)}</b></p></div><div><small>Enrollment</small><p><b>${Math.round(st.enr).toLocaleString()}</b></p></div><div><small>Reputation</small><p><b>${Math.round(st.rep)}</b></p></div><div><small>Campus mood</small><p><b>${Math.round(st.mood)}</b></p></div><div><small>Your protégés</small><p><b>${st.prot}</b></p></div><div><small>Board review</small><p><b>in ${5-(A.yrs%5)} yr</b></p></div></div><p class="note">Reputation drives your influence and your contract: below 35 at a board review, you're out. Your protégés knock doors for you, or your heir, in a mayoral race.</p>`;
+  const left=ROLE_ACTS-(A.ra||0);h+=`<h4 class="plh">This year's moves · ${left} of ${ROLE_ACTS} left</h4><div class="choices">${Object.entries(K.acts).map(([k,X])=>{const can=left>0&&(!X.need||X.need(st));const d=typeof X.d==='function'?X.d():X.d;return`<button class="choice" data-ract="${k}" ${can?'':'disabled'}><b>${X.n}</b><small>${X.sk?oddsTag(X.sk,X.b)+' · ':''}${d}</small></button>`}).join('')}</div></div>`;
+  const yr=b.querySelector('[data-ayear]');const anchor=yr?yr.closest('.choices'):null;const x=document.createElement('div');x.innerHTML=h;if(anchor)anchor.parentNode.insertBefore(x.firstChild,anchor);else b.appendChild(x.firstChild);
+  if(A.rev&&yr)yr.disabled=true}catch(e){console.warn('roledesk',e)}return r};}
+document.addEventListener('click',e=>{const b=e.target.closest('[data-ract],[data-rev]');if(!b||!S)return;e.preventDefault();e.stopImmediatePropagation();if(b.dataset.ract){roleAct(b.dataset.ract);return}roleEvent(+b.dataset.rev)},true);
+// protégés and a county base pay off in a mayoral race
+{const _cb=comebackRun;comebackRun=function(...a){const A=S.after?{...S.after}:null;const r=_cb.apply(this,a);try{if(A){const p=(A.uni&&A.uni.prot)||0;if(p&&S.camp){S.camp.organizers=(S.camp.organizers||0)+Math.min(6,Math.round(p/3));notify('good','Your protégés showed up',`${p} former students are knocking doors for you.`,null,{ttl:12})}if(A.co&&S.cand){S.cand.rec=clamp(S.cand.rec+0.08,0,0.9);GROUPS.forEach(g=>groupLift(g.id,(A.co.app-50)/20,'Your record as County mayor'))}}}catch(e){}return r}}
+{const _ah=afterHeir;afterHeir=function(...a){const A=S.after?{...S.after}:null;const r=_ah.apply(this,a);try{const p=A&&A.uni&&A.uni.prot;if(p&&S.camp){S.camp.organizers=(S.camp.organizers||0)+Math.min(6,Math.round(p/3))}}catch(e){}return r}}
+TIPS.openAfter=['After City Hall','Each year you get three moves in your role, plus whatever comes up. County mayors face voters every four years; university presidents face the board every five. When an election nears, you can run for mayor again or back your grown child.'];
 function openLedger(){const L=S.log||[];openPanel('Everything that has happened, newest first','Ledger',L.length?`<div class="logl">${L.map(x=>`<div><span>${x.d}</span><p style="margin:0">${x.t}</p></div>`).join('')}</div>`:'<p class="note">Nothing yet. Start the clock with Space or ▶.</p>','ledger')}
 function openPolicies(){const ks=Object.keys(POLICIES);
   openPanel('Ongoing programs you control','Your initiatives',`<p>Mid-year, these are paid from the reserve fund. In April they go into the budget you send the council.</p>

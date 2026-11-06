@@ -4,6 +4,34 @@ A city-management game set in Memphis, Tennessee. You play the mayor. You handle
 
 **Play it:** https://erndae.github.io/Bluff-city-mayor/ (once GitHub Pages is turned on, see below)
 
+## v26.70: Playing the next chapter as County mayor or university president
+
+**Shelby County Mayor**
+- **Stats:** County approval, the County budget, jail conditions, public health, and school funding.
+- **Three moves a year:**
+  - Fund MSCS schools ($10M).
+  - Reform the jail (a Safe Streets check).
+  - Expand Health Department clinics ($6M).
+  - Raise the County property tax.
+  - Team up with the Memphis mayor (a Dealmaking check).
+  - Recruit a big employer (a Money Smarts check).
+- **County events:** a jail death caught on video, a measles outbreak, an MSCS budget hole, and the city asking the County to pay for police overtime.
+- **Consequences:** schools, health and jail conditions lift your approval every year. Every four years you face re-election, and losing sends you back to choosing a next chapter. A good County record helps a comeback run for mayor.
+
+**University president**
+- **Stats:** endowment, enrollment, reputation, campus mood, and protégés.
+- **Three moves a year:**
+  - Raise money from donors (a Star Power check).
+  - Fund full scholarships for Memphis students.
+  - Build a research center.
+  - Invest in athletics.
+  - Mentor student leaders (a Dealmaking check).
+  - Raise tuition.
+- **Campus events:** a student sit-in, a $40M donor with strings, a recruiting scandal, and lawmakers threatening funding.
+- **Consequences:** reputation drives your influence. The board reviews you every five years, and below 35 you're out. Your protégés become field organizers in your comeback or your heir's campaign.
+
+**Fix:** the role descriptions ("You're a kingmaker") had been attached to the wrong objects, which broke the yearly step for some roles.
+
 ## v26.60: The network, their secrets, and the press corps
 
 **People you've made dirty deals with come back.** About 6 months after a first deal, they return with a much bigger ask:
