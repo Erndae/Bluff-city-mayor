@@ -365,6 +365,7 @@ nav.actions [data-actsgo]{min-height:44px;padding:9px 17px;border-color:rgba(242
 .billrow{border:1px solid var(--line,#2c3e4c);border-radius:10px;padding:10px;margin:8px 0}.billrow small{display:block;color:var(--muted,#9aa7b2);margin:2px 0 6px}.stagepips{display:flex;gap:4px;margin-top:6px}.stagepips i{flex:1;height:4px;border-radius:2px;background:rgba(255,255,255,.12)}.stagepips i.on{background:var(--good)}
 .partyrow{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin:10px 0 2px}.partyrow span{margin-right:4px}
 .tnmap{width:100%;max-width:420px;height:auto!important;aspect-ratio:330/96;flex-shrink:0;display:block;margin:8px 0 2px}.homelife .neg{color:var(--bad,#e06060)}.tnmap .tnst{fill:var(--panel2,rgba(127,127,127,.08));stroke:var(--line,rgba(127,127,127,.4));stroke-width:1}.tnmap .tnl{font-size:9px;fill:var(--ink2,currentColor);font-weight:600}.tnmap .tnmem{fill:var(--acc,#e8b04f)}.tnmap .tncity{fill:var(--ink2,#888)}.faccard.homes{border-left:3px solid var(--acc,#e8b04f)}
+.calstrip{display:flex;gap:4px;margin:8px 0 4px}.calstrip span{flex:1;text-align:center;font-size:11px;font-weight:600;padding:5px 2px;border-radius:6px;border:1px solid var(--line,rgba(127,127,127,.35));opacity:.6}.calstrip span.rec{border-style:dashed}.calstrip span.done{opacity:.35}.calstrip span.on{opacity:1;background:var(--acc,#e8b04f);color:#1a1a1a;border-color:transparent}
 .adgain{display:block;width:100%;text-align:center;font-size:11px;font-weight:600;color:var(--good);margin-top:1px}
 #start{overflow-x:hidden;overflow-y:auto;touch-action:pan-y}.startbox{min-width:0;max-width:min(600px,100%);box-sizing:border-box}.startbox *{min-width:0}.create select,.create input{max-width:100%;width:100%;box-sizing:border-box;text-overflow:ellipsis}.create .tpick,.create .tpick>*{max-width:100%;box-sizing:border-box}
 @media (max-width:640px){.startbox{margin-left:0}#start{padding-left:max(16px,env(safe-area-inset-left,0px))}}
@@ -717,7 +718,7 @@ details.analysis{margin-top:6px}details.analysis summary{cursor:pointer;color:va
     <button class="btn primary" data-act="pause" id="bPlay"><svg class="ico" viewBox="0 0 12 12" aria-hidden="true"><path d="M3.2 1.6v8.8l7.2-4.4z" fill="currentColor"/></svg> Resume <kbd>Space</kbd></button>
   </nav>
   <div class="status" id="status">Loading map…</div>
-  <div class="credit"><span class="ver" id="verTag">v26.76</span></div>
+  <div class="credit"><span class="ver" id="verTag">v26.77</span></div>
   <div class="tip" id="tip" hidden></div>
   <div class="toast" id="toast" role="status"></div>
   <section class="panel" id="panel" hidden aria-live="polite">
@@ -745,7 +746,7 @@ details.analysis{margin-top:6px}details.analysis summary{cursor:pointer;color:va
         <button class="btn" data-music-open>Music &amp; volume</button>
       </div>
       <div id="slotList" hidden></div>
-      <p class="note startv">Version <b class="ver" id="verStart">v26.76</b></p>
+      <p class="note startv">Version <b class="ver" id="verStart">v26.77</b></p>
     </div>
     <div class="startbox create" id="create" hidden>
       <h2>Create your mayor</h2>
@@ -1556,7 +1557,7 @@ function enact(s,p){DIVS.forEach(d=>{s.enacted[d.id]=p.divs[d.id];s.ratio[d.id]=
 // Voter groups. Each has a share of residents, turnout, home districts, concerns and an approval of you.
 // Citywide approval is the turnout-weighted average of the groups; each council district's approval comes from the groups that live there.
 // Shares, district mix and turnout are modeled, loosely grounded in Memphis demographics; they are not survey data.
-const VERSION='v26.76';
+const VERSION='v26.77';
 const GROUPS=[
  {id:'working',sh:'Working families',n:'Working families',ic:'⚒︎',c:'#f2a93b',share:24,turn:.5,start:56,w:{jobs:1,safety:.8,transit:.5},
   d:'Hourly workers in logistics, warehouses, health care and service jobs. The biggest bloc in the city.',dm:{1:1.1,2:.8,3:1.3,4:1.2,5:.6,6:1.2,7:1.1}},
@@ -8246,7 +8247,7 @@ function sellDC(){const A=S&&S.after;if(!A||!A.res)return;const r=A.res;if(r.own
 const FLIGHTS=8;
 function flyTo(dest){const A=afterInit(),r=resOf();if(!r||!r.dc||r.where===dest||r.flights>=FLIGHTS)return;r.flights++;r.where=dest;const H=hInit();if(H)H.st=clamp(H.st+3,0,100);
   let m=dest==='dc'?`You flew from Memphis to Washington. ${r.fam==='memphis'?'Your family saw you off at the airport.':''}`:`You flew home to ${homeLabel()}. ${r.fam==='memphis'?'Your family met you at the airport.':''}`;
-  if(Math.random()<0.12&&(A.ra||0)<ROLE_ACTS){A.ra=(A.ra||0)+1;m+=' Storms delayed the flight for hours, and you lost a day of work (one move).'}
+  if(Math.random()<0.07&&(A.ra||0)<ROLE_ACTS){A.ra=(A.ra||0)+1;m+=' Storms delayed the flight for hours, and you lost a day of work (one move).'}
   if(dest==='home'&&r.fam==='memphis')homeAdd(3);afterLog(m.trim());save();AFTER_MSG=m.trim();openAfter()}
 // where each move happens
 const CG_LOC={grant:'dc',party:'dc',home:'dc',tv:'dc',approps:'dc',roads:'dc',reform:'dc',taxcred:'dc',hearing:'dc',bill:'dc',push:'dc',cosp:'dc',chair:'dc',whip:'dc',town:'home',case:'home',tour:'home',office:'home',senate:'any'};
@@ -8390,6 +8391,82 @@ Object.entries(SEN_N).forEach(([k,[h,s]])=>{const X=CG_ACTS[k];if(X)Object.defin
 {const X=CG_ACTS.office,_do=X.do;X.do=function(c,A){const m=_do.apply(this,arguments);return isSen()?'Your new offices in Nashville, Knoxville and Chattanooga handle Social Security and VA cases from every corner of the state.':m}}
 {const X=CG_ACTS.town,_do=X.do;X.do=function(c,A){const m=_do.apply(this,arguments);return isSen()?'Town halls in Jackson, Murfreesboro and Johnson City. People felt heard.':m}}
 {const X=CG_ACTS.case,_d=X.d;X.d=()=>isSen()?'Help veterans, retirees and families across Tennessee with federal agencies · approval +3':(typeof _d==='function'?_d():_d)}
+
+// ======================= v26.77: THE CONGRESSIONAL CALENDAR =======================
+// A year in Congress now runs in four stretches: the winter session, the spring session, the August recess and the
+// fall session. You get one move per stretch. Each session brings a floor vote, which needs you in Washington. In
+// recess, Washington work stops and work at home pays extra. Washington life throws events at you, and if your
+// roots back home run low, columnists say you've gone Washington and primary challengers circle.
+const CAL=[{n:'Winter session',m:'January to March',s:true},{n:'Spring session',m:'April to July',s:true},{n:'August recess',m:'August',s:false},{n:'Fall session',m:'September to December',s:true}];
+function inCG(){const A=S&&S.after;return!!A&&(A.role==='congress'||A.role==='senate')}
+function calOf(){const A=S.after;if(!inCG())return null;if(!A.cal){A.cal={p:0};A.ra=ROLE_ACTS-1;const c=cgX();if(!c.vote)c.vote=pk2(VOTES)}return A.cal}
+function chamberN(){return S.after&&S.after.role==='senate'?'Senate':'House'}
+// ---------- Washington-life events ----------
+const CG_LIFE=[
+ {id:'lobby',at:'dc',t:'A lobbyist invites you to a private dinner',b:'A defense contractor\'s lobbyist books a back room at a steakhouse near the Capitol. "Bring your appetite. My clients like to support members who understand their industry."',
+  ch:[['Go, and take the bundled donations they offer','Clout +3 · <b>a minor secret</b>: the donations skirt the rules',(c,A)=>{c.clout+=3;addSecret({t:'You took bundled donations from a defense lobbyist after a private dinner',sev:1,knows:[{name:'The lobbyist'},{name:'Your campaign treasurer'}]});return'The checks came in a stack, from employees you\'d never met. Your treasurer looked nervous.'}],
+      ['Go, but keep everything above board','Clout +1',(c)=>{c.clout+=1;return'Good steak, careful conversation, and no checks.'}],
+      ['Skip it','Nothing happens',()=>'You ate takeout at your desk.']]},
+ {id:'aisle',at:'dc',t:()=>`A member of the other party wants to write a bill with you`,b:'They\'re from a rural district on the other side of the country. "Your city and my towns have the same problem: crumbling water systems. Let\'s fix it together."',
+  ch:[['Write it together','Clout +5 · your party −4 · your newest bill +10 support',(c)=>{c.clout+=5;c.party-=4;const b=(c.bills||[]).filter(b=>b.stage<4).slice(-1)[0];if(b)b.sup+=10;return'The press loved the odd couple. Your leadership did not.'}],
+      ['Politely pass','Your party +2',(c)=>{c.party+=2;return'"Maybe next Congress," you said.'}]]},
+ {id:'visit',at:'dc',when:()=>{const r=S.after.res;return r&&r.fam==='memphis'},t:'Your family wants to visit you in Washington',b:'Spring break is coming. "The kids want to see the Capitol. And we want to see you."',
+  ch:[['Bring them up for a week','−$3,000 · home life +12',(c)=>{S.purse.cash-=3000;homeAdd(12,'A family week in Washington');return'A Capitol tour, the Smithsonian, and dinner at your cramped place. They loved it.'}],
+      ['It\'s a bad week','Home life −5',()=>{homeAdd(-5,'You told them not to come');return'"Next time," you said. They\'ve heard that before.'}]]},
+ {id:'recital',at:'dc',when:()=>{const r=S.after.res,F=S.fam;return r&&r.fam==='memphis'&&F&&F.kids.some(k=>k.age>=5&&k.age<18)},t:()=>{const k=S.fam.kids.filter(k=>k.age>=5&&k.age<18)[0];return`${k.name.split(' ')[0]}'s big night in Memphis is the same night as a vote`},b:'Leadership says the vote will be close. Your child has been practicing for months.',
+  ch:[['Fly home for it','You miss the vote (party −5) · home life +12 · a flight',(c,A)=>{c.party-=5;c.missed=(c.missed||0)+1;homeAdd(12,'You flew home for the big night');try{const k=S.fam.kids.filter(k=>k.age>=5&&k.age<18)[0];k.mood=clamp((k.mood||70)+15,0,100)}catch(e){}if(A.res)A.res.flights++;return'You were in the third row. Your child spotted you and grinned. Leadership found out the next morning.'}],
+      ['Stay for the vote','Party +2 · home life −10',(c)=>{c.party+=2;homeAdd(-10,'You missed the big night');try{const k=S.fam.kids.filter(k=>k.age>=5&&k.age<18)[0];k.mood=clamp((k.mood||70)-15,0,100)}catch(e){}return'You watched the video on your phone after the vote.'}]]},
+ {id:'allnight',at:'dc',t:'Leadership keeps the chamber in session all night',b:'A spending fight drags past midnight, then past dawn. Members are sleeping on couches in the cloakroom.',
+  ch:[['Stay for every vote','Party +4 · stress +8',(c)=>{c.party+=4;const H=hInit();if(H)H.st=clamp(H.st+8,0,100);return'You were there for every roll call. You need about two days of sleep.'}],
+      ['Pair off with a colleague and go home to sleep','Stress −4 · party −2',(c)=>{c.party-=2;const H=hInit();if(H)H.st=clamp(H.st-4,0,100);return'You slept. The whip noticed your empty seat.'}]]},
+ {id:'column',at:'home',when:()=>{const r=S.after.res;return r&&r.roots<40},t:'A local columnist says you\'ve gone Washington',b:'"When was the last time you saw your representative at a neighborhood meeting?" The column is all over social media.',
+  ch:[['Spend a week at neighborhood meetings','Roots +10 · clout −2',(c,A)=>{A.res.roots+=10;c.clout-=2;return'Five meetings in five nights. The columnist wrote a follow-up, grudgingly kinder.'}],
+      ['Ignore it','Roots −5 · approval −3',(c,A)=>{A.res.roots-=5;c.app-=3;return'The column kept circulating.'}]]},
+ {id:'church',at:'home',t:'Pastors invite you to speak on a Sunday',b:'Three churches in South Memphis and Whitehaven want you in the pulpit the same morning.',
+  ch:[['Make all three','Roots +6 · approval +2 · stress +3',(c,A)=>{A.res.roots+=6;c.app+=2;const H=hInit();if(H)H.st=clamp(H.st+3,0,100);return'Three sermons, three potluck plates, a lot of hugs.'}],
+      ['Pick one','Roots +3',(c,A)=>{A.res.roots+=3;return'A warm welcome at one church. The other two pastors noticed.'}]]}];
+function lifeRoll(){const A=S.after,r=A.res;if(!r||!r.dc||!r.fam)return;if(Math.random()>0.4)return;const pool=CG_LIFE.filter(e=>(e.at===r.where)&&(!e.when||e.when())&&e.id!==A.lastCev);if(!pool.length)return;const E=pk2(pool);A.cev={id:E.id};A.lastCev=E.id}
+function lifeAnswer(i){const A=S.after,c=A.cg;if(!A.cev)return;const E=CG_LIFE.find(e=>e.id===A.cev.id);A.cev=null;if(!E){openAfter();return}const m=E.ch[i][2](c,A);if(A.res)A.res.roots=clamp(A.res.roots,0,100);roleClamp();afterLog(m);save();AFTER_MSG=m;openAfter()}
+// ---------- moving through the year ----------
+function nextPeriod(){const A=S.after,K=calOf();if(!K||K.p>=3||A.cev||(A.cg&&A.cg.vote)||A.chalAsk)return;const r=A.res;
+  if(r&&r.dc){if(r.where==='home'){r.homeM++;r.roots+=4}else{r.dcM++;r.roots-=2}r.roots=clamp(r.roots,0,100)}
+  K.p++;A.ra=ROLE_ACTS-1;const P=CAL[K.p];if(P.s&&A.cg)A.cg.vote=pk2(VOTES.filter(v=>v.t!==(A.cg.lastVote||'')));if(A.cg&&A.cg.vote)A.cg.lastVote=A.cg.vote.t;
+  lifeRoll();const m=`The ${P.n.toLowerCase()} begins (${P.m}).${P.s?` The ${chamberN()} is voting.`:` Congress is out. Time to be home.`}`;afterLog(m);save();AFTER_MSG=m;openAfter()}
+// roleAct: Washington work stops in recess; work at home pays extra in recess
+{const _ra=roleAct;roleAct=function(k){const A=S.after,K=inCG()?calOf():null;if(K&&CG_ACTS[k]&&!CAL[K.p].s&&(CG_LOC[k]||'dc')==='dc')return;if(K&&A.cev)return;const before=A.ra||0;const r0=A.cg?{app:A.cg.app}:null;const out=_ra.apply(this,arguments);
+  try{if(K&&(A.ra||0)>before&&!CAL[K.p].s&&CG_LOC[k]==='home'&&A.cg){A.cg.app+=1.5;if(A.res)A.res.roots=clamp(A.res.roots+3,0,100);roleClamp();save();openAfter()}}catch(e){}return out}}
+// year end: reset the calendar; a primary challenger may appear when roots are low before an election year
+{const _ay=afterYear;afterYear=function(...a){const A=afterInit();const was=inCG();const c0=A.cg;let pen=0;
+  if(was&&c0&&A.chal){pen=A.chal;c0.app-=pen}
+  if(was&&A.res&&A.res.dc){const r=A.res;if(r.where==='home')r.homeM++;else r.dcM++}
+  const out=_ay.apply(this,a);
+  try{if(pen&&A.cg)A.cg.app=clamp(A.cg.app+pen,0,100);
+    const elecYr=(A.role==='congress'&&(A.yrs+1)%2===0)||(A.role==='senate'&&(A.yrs+1)%6===0);
+    if(was&&!inCG())A.chal=0;
+    if(inCG()){A.cal={p:0};A.ra=ROLE_ACTS-1;if(!elecYr)A.chal=0;
+      if(elecYr&&A.res&&A.res.roots<35&&!A.chal&&Math.random()<0.7)A.chalAsk=true;
+      lifeRoll();save();if(!A.dead&&!A.prison)openAfter()}}catch(e){console.warn('v77',e)}return out}}
+function chalAnswer(i){const A=S.after,c=A.cg;if(!A.chalAsk)return;A.chalAsk=false;let m;
+  if(i===0){A.res.roots=clamp(A.res.roots+12,0,100);c.clout-=3;A.chal=3;m='You spent the winter in Memphis church basements and union halls. The challenger is still running, but it\'s a race you can win.'}
+  else if(i===1&&S.purse.cash>=40000){S.purse.cash-=40000;A.chal=2;m='You put $40,000 of your own money into early ads and a big field team. The challenger\'s donors got nervous.'}
+  else{A.chal=7;m='You ignored the challenger. They\'re telling everyone you\'ve forgotten where you came from, and some people are listening.'}
+  roleClamp();afterLog(m);save();AFTER_MSG=m;openAfter()}
+// ---------- the screen ----------
+{const _oa=openAfter;openAfter=function(...a){const A=afterInit();if(inCG())calOf();const out=_oa.apply(this,a);try{if(!inCG())return out;const b=$('mBody'),desk=b&&b.querySelector('.roledesk');if(!desk||desk.querySelector('.calstrip'))return out;const K=A.cal,P=CAL[K.p],r=A.res,c=A.cg;
+  const ready=r&&r.dc&&r.fam;let h=`<div class="faccard calcard"><b>${P.n}</b> <small class="note">${P.m} · ${P.s?`the ${chamberN()} is in session`:'Congress is on recess'}</small><div class="calstrip">${CAL.map((x,i)=>`<span class="${i===K.p?'on':i<K.p?'done':''}${x.s?'':' rec'}">${['Winter','Spring','Recess','Fall'][i]}</span>`).join('')}</div>
+   <p class="note">One move per stretch. ${P.s?'Votes, committee work and bills need you in Washington.':'Washington work stops in recess. Work at home pays extra right now (approval +1.5, roots +3).'}</p>`;
+  if(A.chalAsk){h+=`<div class="faccard"><b>A primary challenger is getting ready to run against you</b><p class="note">Your roots back home are weak (${Math.round(r.roots)}). A popular local official says you've gone Washington.</p><div class="choices"><button class="choice" data-chal="0"><b>Campaign hard at home all winter</b><small>Roots +12 · clout −3 · the challenger costs you a little on Election Day</small></button><button class="choice" data-chal="1" ${S.purse.cash>=40000?'':'disabled'}><b>Spend to scare them off</b><small>−$40,000 of your own money · the challenger costs you a little on Election Day</small></button><button class="choice" data-chal="2"><b>Ignore them</b><small>The challenger costs you a lot on Election Day</small></button></div></div>`}
+  if(A.cev){const E=CG_LIFE.find(e=>e.id===A.cev.id);if(E)h+=`<div class="faccard"><b>${typeof E.t==='function'?E.t():E.t}</b><p class="note">${E.b}</p><div class="choices">${E.ch.map((x,i)=>`<button class="choice" data-cev="${i}"><b>${x[0]}</b><small>${x[1]}</small></button>`).join('')}</div></div>`}
+  const blocked=!!(A.cev||(c&&c.vote)||A.chalAsk||!ready);
+  if(K.p<3)h+=`<div class="choices"><button class="choice" data-cnext="1" ${blocked?'disabled':''}><b>Go on to the ${CAL[K.p+1].n.toLowerCase()}</b><small>${blocked?(A.cev||A.chalAsk?'Deal with what\'s in front of you first':c&&c.vote?'Cast or skip the floor vote first':'Set up your homes first'):`${CAL[K.p+1].m} · ${A.ra<ROLE_ACTS?'your move this stretch is still unused':'move on'}`}</small></button></div>`;
+  if(A.chal)h+=`<p class="note">⚑ A primary challenger is running against you this year.</p>`;
+  h+='</div>';const x=document.createElement('div');x.innerHTML=h;const homes=desk.querySelector('.faccard.homes');if(homes)homes.after(x.firstChild);else desk.prepend(x.firstChild);
+  // the moves header and recess rules
+  desk.querySelectorAll('h4.plh').forEach(h4=>{if(/This year's moves/.test(h4.textContent))h4.textContent=`This stretch's move · ${A.ra<ROLE_ACTS?'1 left':'used'}`});
+  if(!P.s)desk.querySelectorAll('[data-ract]').forEach(btn=>{if((CG_LOC[btn.dataset.ract]||'dc')==='dc'){btn.disabled=true;const sm=btn.querySelector('small');if(sm&&!/recess/.test(sm.textContent))sm.insertAdjacentHTML('afterbegin','<b>Congress is on recess</b> · ')}});
+  if(A.cev||A.chalAsk)desk.querySelectorAll('[data-ract],[data-cvote],[data-fly]').forEach(x=>x.disabled=true);
+  const yr=b.querySelector('[data-ayear]');if(yr){if(K.p<3||blocked)yr.disabled=true;const sm=yr.querySelector('small'),bb=yr.querySelector('b');if(bb)bb.textContent=K.p<3?'Finish the year (after the fall session)':'Finish the year';if(sm&&K.p<3)sm.textContent='Work through each stretch of the year first'}}catch(e){console.warn('cal',e)}return out}}
+document.addEventListener('click',e=>{const b=e.target.closest('[data-cnext],[data-cev],[data-chal]');if(!b||!S||!S.after)return;e.preventDefault();e.stopImmediatePropagation();if(b.dataset.cnext){nextPeriod();return}if(b.dataset.cev){lifeAnswer(+b.dataset.cev);return}chalAnswer(+b.dataset.chal)},true);
 
 function openLedger(){const L=S.log||[];openPanel('Everything that has happened, newest first','Ledger',L.length?`<div class="logl">${L.map(x=>`<div><span>${x.d}</span><p style="margin:0">${x.t}</p></div>`).join('')}</div>`:'<p class="note">Nothing yet. Start the clock with Space or ▶.</p>','ledger')}
 function openPolicies(){const ks=Object.keys(POLICIES);

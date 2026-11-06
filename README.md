@@ -4,6 +4,16 @@ A city-management game set in Memphis, Tennessee. You play the mayor. You handle
 
 **Play it:** https://erndae.github.io/Bluff-city-mayor/ (once GitHub Pages is turned on, see below)
 
+## v26.77: The congressional calendar
+
+- **Four stretches a year.** A year in Congress or the Senate now runs through the winter session (January to March), the spring session (April to July), the August recess, and the fall session (September to December), with one move per stretch. A calendar strip shows where you are.
+- **A floor vote every session.** Three votes a year. Each needs you in Washington: fly back or miss it.
+- **Recess.** Washington work stops in August, and work at home pays extra (approval +1.5, roots +3).
+- **Where you spend each stretch counts.** Ending a stretch at home builds roots back home and counts as time with your family; ending it in Washington costs a little roots.
+- **Washington life.** About 40% of stretches bring an event: a lobbyist's steakhouse dinner (take the bundled donations and you carry a secret), a member of the other party who wants to write a bill with you, your family visiting the Capitol, your child's big night in Memphis on the same night as a vote, an all-night session; at home, a columnist saying you've gone Washington, or three pulpits on one Sunday.
+- **Primary challengers.** If your roots are weak going into an election year, a challenger may get ready to run. Campaign at home, spend $40,000 of your own money, or ignore them, which costs you the most on Election Day.
+- Storm delays on flights are less common (7%), since one now costs a whole stretch's move.
+
 ## v26.76: Memphis in Congress, home life after City Hall, Senate wording
 
 - **Memphis in Congress (as mayor).** Under the 2026 map Memphis has three members of Congress (5th, 8th and 9th districts), and the city is a minority of each district. A new screen (People → Power and politics, or from Power players) shows each member (fictional), their party, and your relationship, which drifts based on whether you share a party. Ask a member for federal money (1 action, Money Smarts) or fly to Washington to lobby all three (2 actions, Dealmaking, once a year). Members ask favors every 8 to 12 months: sharing credit at a ribbon cutting, a town hall in the rural end of their district, backing their bill, or an election-year endorsement. Seats can change hands every other November. Friendly members also push FEMA after a disaster.
