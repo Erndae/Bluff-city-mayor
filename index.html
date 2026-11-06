@@ -719,7 +719,7 @@ details.analysis{margin-top:6px}details.analysis summary{cursor:pointer;color:va
     <button class="btn primary" data-act="pause" id="bPlay"><svg class="ico" viewBox="0 0 12 12" aria-hidden="true"><path d="M3.2 1.6v8.8l7.2-4.4z" fill="currentColor"/></svg> Resume <kbd>Space</kbd></button>
   </nav>
   <div class="status" id="status">Loading map…</div>
-  <div class="credit"><span class="ver" id="verTag">v26.78</span></div>
+  <div class="credit"><span class="ver" id="verTag">v26.79</span></div>
   <div class="tip" id="tip" hidden></div>
   <div class="toast" id="toast" role="status"></div>
   <section class="panel" id="panel" hidden aria-live="polite">
@@ -747,7 +747,7 @@ details.analysis{margin-top:6px}details.analysis summary{cursor:pointer;color:va
         <button class="btn" data-music-open>Music &amp; volume</button>
       </div>
       <div id="slotList" hidden></div>
-      <p class="note startv">Version <b class="ver" id="verStart">v26.78</b></p>
+      <p class="note startv">Version <b class="ver" id="verStart">v26.79</b></p>
     </div>
     <div class="startbox create" id="create" hidden>
       <h2>Create your mayor</h2>
@@ -1558,7 +1558,7 @@ function enact(s,p){DIVS.forEach(d=>{s.enacted[d.id]=p.divs[d.id];s.ratio[d.id]=
 // Voter groups. Each has a share of residents, turnout, home districts, concerns and an approval of you.
 // Citywide approval is the turnout-weighted average of the groups; each council district's approval comes from the groups that live there.
 // Shares, district mix and turnout are modeled, loosely grounded in Memphis demographics; they are not survey data.
-const VERSION='v26.78';
+const VERSION='v26.79';
 const GROUPS=[
  {id:'working',sh:'Working families',n:'Working families',ic:'⚒︎',c:'#f2a93b',share:24,turn:.5,start:56,w:{jobs:1,safety:.8,transit:.5},
   d:'Hourly workers in logistics, warehouses, health care and service jobs. The biggest bloc in the city.',dm:{1:1.1,2:.8,3:1.3,4:1.2,5:.6,6:1.2,7:1.1}},
@@ -8273,7 +8273,7 @@ function skipVote(){const A=afterInit(),c=A.cg;if(!c||!c.vote)return;c.party-=4;
     r.roots=clamp(r.roots,0,100);
     // the election this year: the district's lean and your roots back home count
     const p=myParty();const elec=(role==='congress'&&(A.yrs+1)%2===0)||(role==='senate'&&(A.yrs+1)%6===0);
-    if(elec&&c){const lean=role==='senate'?(p?PARTY_MOD.senate[p]:0):(p?distLean()[p]:0);tmp=lean*60+(r.roots-50)/4-(c.missed||0)*1.5;c.app+=tmp}
+    if(elec&&c){const lean=role==='senate'?(p?PARTY_MOD.senate[p]:0):(p?distLean()[p]:0);tmp=lean*60+(r.roots-50)/4-(c.missed||0)*3;c.app+=tmp}
     r.flights=0;r.dcM=0;r.homeM=0}}catch(e){console.warn('v75 pre',e)}
   const out=_ay.apply(this,a);
   try{if(tmp&&A.cg)A.cg.app=clamp(A.cg.app-tmp,0,100);if(A.cg)A.cg.missed=0;
@@ -8330,11 +8330,11 @@ function delegMonth(){if(!S||!inOffice()||S.over)return;const D=delegInit();Obje
 {const _eom=endOfMonth;endOfMonth=function(...a){const r=_eom.apply(this,a);try{delegMonth()}catch(e){console.warn('deleg',e)}return r}}
 // asking for money: one member at a time, or a trip to Washington to work all three
 function delegAsk(k){const D=delegInit(),r=D.reps[k];if(!r||S.slots<=0||nowM()-r.ask<6)return;S.slots--;r.ask=nowM();const b=clamp(0.3+r.rel/250+DELEG_SEAT[k].focus/2,0.1,0.85);const ok=persuade('stew',b,[],7);let m;
-  if(ok){const amt=Math.round((2+DELEG_SEAT[k].focus*10+Math.max(0,r.rel)/25)*10)/10;S.reserve+=amt;delegMod(r,3,'You made a good case');m=`${r.name} got ${fmtM(amt)} for Memphis into a federal spending bill.`;try{newsAdd(1,`${fmtM(amt)} in federal money coming to Memphis, says Rep. ${r.name}`)}catch(e){}}
+  if(ok){const amt=Math.round((1+DELEG_SEAT[k].focus*5+Math.max(0,r.rel)/40)*10)/10;S.reserve+=amt;delegMod(r,3,'You made a good case');m=`${r.name} got ${fmtM(amt)} for Memphis into a federal spending bill.`;try{newsAdd(1,`${fmtM(amt)} in federal money coming to Memphis, says Rep. ${r.name}`)}catch(e){}}
   else{delegMod(r,-3,'Another ask from the mayor');m=`${r.name}'s office said Memphis will have to wait for the next spending bill.`}
   try{sfx(ok?'good':'bad')}catch(e){}save();refreshHUD();DELEG_MSG=m;openDeleg()}
 function delegTrip(){const D=delegInit();if(S.slots<2||nowM()-D.trip<12)return;S.slots-=2;D.trip=nowM();const H=hInit();if(H)H.st=clamp(H.st+4,0,100);try{homeAdd(-3)}catch(e){}const ok=persuade('dip',0.5,[],8);let tot=0;const got=[];
-  Object.values(D.reps).forEach(r=>{if(ok&&r.rel>=-10){const a=Math.round((1.5+DELEG_SEAT[r.d].focus*6+Math.max(0,r.rel)/40)*10)/10;tot+=a;got.push(r.name.split(' ').slice(-1)[0]);delegMod(r,6,'You came to Washington to see them')}else delegMod(r,2,'You came to Washington')});
+  Object.values(D.reps).forEach(r=>{if(ok&&r.rel>=-10){const a=Math.round((1+DELEG_SEAT[r.d].focus*3+Math.max(0,r.rel)/60)*10)/10;tot+=a;got.push(r.name.split(' ').slice(-1)[0]);delegMod(r,6,'You came to Washington to see them')}else delegMod(r,2,'You came to Washington')});
   if(!ok)tot=1;S.reserve+=tot;const m=ok?`You flew to Washington for two days of meetings on Capitol Hill. ${got.length?`Reps. ${got.join(', ')} committed ${fmtM(tot)} for Memphis.`:'Nobody on the delegation would commit money.'}`:`You flew to Washington, but the House was tied up in a budget fight. You came home with promises and ${fmtM(1)}.`;
   if(ok&&tot)try{newsAdd(1,`Mayor returns from Washington with ${fmtM(tot)} in federal commitments`)}catch(e){}try{sfx(ok?'good':'bad')}catch(e){}save();refreshHUD();DELEG_MSG=m;openDeleg()}
 // favors they ask of you
@@ -8488,6 +8488,19 @@ function nextStop(){if(!S)return'';try{const q=(S.queue||[]).filter(x=>x.due>S.d
   const pb=$('bPlay');if(pb){pb.classList.toggle('contrun',run);pb.innerHTML=run?`<span class="contmain">${IC_PAUSE} Stop</span><small class="contto">moving ahead…</small>`:`<span class="contmain">${IC_PLAY} Continue</span><small class="contto">to ${nextStop()}</small>`}
   const cl=$('clock');if(cl)cl.classList.toggle('contrun',run)}catch(e){}return r}}
 {const _rh=refreshHUD;refreshHUD=function(...a){const r=_rh.apply(this,a);try{updateClock()}catch(e){}return r}}
+
+// ======================= v26.79: BALANCE PASS; INSTANT CONTINUE =======================
+// Bot testing showed approval in Congress climbing to 100 no matter how you played, even if you never voted or never
+// went home. Now approval drifts back toward 50 every year, gains get harder the more popular you already are, and
+// a federal grant can only be won once a year. Missed votes cost more at election time.
+// ---------- Congress and the Senate ----------
+{const _ay=afterYear;afterYear=function(...a){try{const A=S.after;if(A&&(A.role==='congress'||A.role==='senate')&&A.cg){const c=A.cg;c.app+=(50-c.app)*0.3}}catch(e){}return _ay.apply(this,a)}}
+{const _ra=roleAct;roleAct=function(k){const A=S.after;const c=A&&A.cg&&(A.role==='congress'||A.role==='senate')?A.cg:null;const b=c?c.app:0;const out=_ra.apply(this,arguments);
+  try{if(c&&A.cg===c&&c.app>b){const gain=c.app-b;const f=clamp(1-(b-50)/70,0.25,1);c.app=b+gain*f}}catch(e){}return out}}
+{const G=CG_ACTS.grant,_need=G.need,_do=G.do;G.need=c=>(!_need||_need(c))&&c.grantY!==S.y;G.do=function(c,A,ok){c.grantY=S.y;return _do.apply(this,arguments)};const _d=G._d||null;}
+// ---------- Continue: empty stretches go by almost instantly ----------
+{const _ts=timeStep;timeStep=function(dt){if(!S||!S.started||S.paused||S.over||clockHeld()||window.BCLife?.isOpen||window.BCMusic?.settingsOpen||!$('start').hidden)return _ts.apply(this,arguments);
+  const t0=performance.now();let g=0;while(g++<45&&performance.now()-t0<28){dayTick();if(S.paused||S.over||clockHeld())break}}}
 
 function openLedger(){const L=S.log||[];openPanel('Everything that has happened, newest first','Ledger',L.length?`<div class="logl">${L.map(x=>`<div><span>${x.d}</span><p style="margin:0">${x.t}</p></div>`).join('')}</div>`:'<p class="note">Nothing yet. Tap ▶ Continue to move ahead.</p>','ledger')}
 function openPolicies(){const ks=Object.keys(POLICIES);

@@ -4,6 +4,18 @@ A city-management game set in Memphis, Tennessee. You play the mayor. You handle
 
 **Play it:** https://erndae.github.io/Bluff-city-mayor/ (once GitHub Pages is turned on, see below)
 
+## v26.79: Balance pass and instant Continue
+
+- **Continue is near-instant.** Empty stretches now go by in a fraction of a second, still stopping at the same moments.
+- **Congress balance.** Bot testing showed approval climbing to 100 however you played, even if you never voted or never went home. Now:
+  - Approval drifts 30% of the way back toward 50 every year.
+  - Gains get harder the more popular you already are.
+  - A federal grant can be won only once a year.
+  - Missed votes count double at election time.
+- **Results (20 bot careers each, 12 years):** a Democrat who splits time well in the 9th lost 5 of 20 careers; one who stayed in Washington all the time lost 19 of 20 (low roots, challengers, family strain); one who stayed home and missed votes lost 7. A careful Republican in the 8th lost 2 of 20.
+- **Delegation money trimmed.** Asking a member of Congress now brings about $2.5M to $5.5M (was up to about $9M), and a lobbying trip about $2M to $3M per friendly member.
+- Campaign odds checked: a hard-working Democrat wins the 9th about a third of the time, a Republican about half the time, and a Republican in the 8th about 70% of the time, in line with the new map's lean.
+
 ## v26.78: The Continue button
 
 - **No more running clock.** Play/pause and the speed buttons are gone. One button, **Continue**, moves time ahead quickly and stops on its own when something needs you: someone new waiting to see you, a council vote, a crisis, a deadline, a debate, a chief-of-staff or campaign-manager check-in, or the start of a new month (when your actions refill). The button says where it's headed ("Continue to Oct 14: someone new wants to see you" or "Continue to Nov 1: a new month"). Tap it again while it runs to stop. Space still works.
