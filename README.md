@@ -4,6 +4,16 @@ A city-management game set in Memphis, Tennessee. You play the mayor. You handle
 
 **Play it:** https://erndae.github.io/Bluff-city-mayor/ (once GitHub Pages is turned on, see below)
 
+## v26.81: Big city events
+
+Three new multi-month storylines, run through the story system (they show up at City Hall, FedExForum or Beale Street, some choices are skill checks, and endings go on your record):
+
+- **The Grizzlies' playoff run** (April, some years). Watch parties, a barbecue bet with the other mayor, or extra police downtown; then game-night trouble on Beale Street (a safety plan, a teen curfew, or late-night youth programs); then the end of the season, which can be anything from a first-round exit to a championship and a parade.
+- **Project Bluebird.** A robotics company (fictional) is choosing between Memphis, Nashville and DeSoto County, Mississippi, for a $1.1 billion, 2,000-job plant. Your offer, how you handle neighbors' concerns, and whether you bring in the governor and County decide whether it comes.
+- **Riverline Logistics weighs a move.** A freight company (fictional) with 3,000 downtown headquarters jobs is looking at Dallas. Call the CEO, offer a retention package or rally employees; then answer Dallas's $40M offer. Whether they stay depends on what you did.
+
+Big storylines run alongside the regular ones. Offers of $1M or more still need the council's approval.
+
 ## v26.80: Nashville vs. Memphis, a home in your district, the map lawsuit
 
 - **Nashville vs. Memphis (as mayor).** Each January the General Assembly opens, and one or two bills may aim at Memphis: a state oversight board for MPD, a state-appointed MATA board, canceling the city's police ordinances, cutting Memphis's share of state-shared taxes (about $6M a year), or a state board for the lowest-performing schools. From February to April a bill can move one or two steps a month (committee, House, Senate, governor); anything not signed by May dies. Fight it: work the committee chair, rally the Memphis-area legislators, take it to the public (1 action each, one per bill per month), or cut a deal that kills it. If it becomes law, you can sue ($0.6M; 25–40% odds, better with Education skill). Colder relations with the legislature mean more and stronger bills. Find it in People → Power and politics, or on the Power players screen.

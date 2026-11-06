@@ -719,7 +719,7 @@ details.analysis{margin-top:6px}details.analysis summary{cursor:pointer;color:va
     <button class="btn primary" data-act="pause" id="bPlay"><svg class="ico" viewBox="0 0 12 12" aria-hidden="true"><path d="M3.2 1.6v8.8l7.2-4.4z" fill="currentColor"/></svg> Resume <kbd>Space</kbd></button>
   </nav>
   <div class="status" id="status">Loading map…</div>
-  <div class="credit"><span class="ver" id="verTag">v26.80</span></div>
+  <div class="credit"><span class="ver" id="verTag">v26.81</span></div>
   <div class="tip" id="tip" hidden></div>
   <div class="toast" id="toast" role="status"></div>
   <section class="panel" id="panel" hidden aria-live="polite">
@@ -747,7 +747,7 @@ details.analysis{margin-top:6px}details.analysis summary{cursor:pointer;color:va
         <button class="btn" data-music-open>Music &amp; volume</button>
       </div>
       <div id="slotList" hidden></div>
-      <p class="note startv">Version <b class="ver" id="verStart">v26.80</b></p>
+      <p class="note startv">Version <b class="ver" id="verStart">v26.81</b></p>
     </div>
     <div class="startbox create" id="create" hidden>
       <h2>Create your mayor</h2>
@@ -1558,7 +1558,7 @@ function enact(s,p){DIVS.forEach(d=>{s.enacted[d.id]=p.divs[d.id];s.ratio[d.id]=
 // Voter groups. Each has a share of residents, turnout, home districts, concerns and an approval of you.
 // Citywide approval is the turnout-weighted average of the groups; each council district's approval comes from the groups that live there.
 // Shares, district mix and turnout are modeled, loosely grounded in Memphis demographics; they are not survey data.
-const VERSION='v26.80';
+const VERSION='v26.81';
 const GROUPS=[
  {id:'working',sh:'Working families',n:'Working families',ic:'⚒︎',c:'#f2a93b',share:24,turn:.5,start:56,w:{jobs:1,safety:.8,transit:.5},
   d:'Hourly workers in logistics, warehouses, health care and service jobs. The biggest bloc in the city.',dm:{1:1.1,2:.8,3:1.3,4:1.2,5:.6,6:1.2,7:1.1}},
@@ -8585,6 +8585,83 @@ function switchTo9(yes){const A=S.after;if(!A.oldMap||curDist()==='9'||A.switchA
     if(h){const x=document.createElement('div');x.innerHTML=h;const anchor=desk.querySelector('.calcard')||desk.querySelector('.faccard.homes');if(anchor)anchor.after(...x.childNodes);else desk.prepend(...x.childNodes)}}
   if(A.role==='campaign'&&A.camp&&A.camp.office==='congress'&&mapCaseLive()&&!A.mapSide&&desk&&!desk.querySelector('.mapcase')){desk.insertAdjacentHTML('beforeend',`<div class="faccard mapcase"><b>The lawsuit over the 2026 map</b><p class="note">Reporters keep asking where you stand.</p><div class="choices"><button class="choice" data-maps="challenge"><b>Back the lawsuit</b><small>Slightly more likely the map is struck down</small></button><button class="choice" data-maps="defend"><b>Defend the map</b><small>Slightly more likely the map stands</small></button><button class="choice" data-maps="out"><b>Stay out of it</b></button></div></div>`)}}catch(e){console.warn('v80',e)}return out}}
 document.addEventListener('click',e=>{const b=e.target.closest('[data-maps],[data-sw9],[data-dhome]');if(!b||!S||!S.after)return;e.preventDefault();e.stopImmediatePropagation();const d=b.dataset;if(d.maps){mapStance(d.maps);return}if(d.sw9){switchTo9(d.sw9==='1');return}buyDistHome()},true);
+
+// ======================= v26.81: BIG CITY EVENTS =======================
+// Three multi-month storylines that can happen to any mayor: a Grizzlies playoff run (spring), a company scouting
+// Memphis for a big new plant, and a headquarters weighing a move out of town. Each runs through the story-chain
+// system, so steps show up at City Hall or FedExForum, choices can be skill checks, and endings go on your record.
+// The companies are fictional.
+Object.assign(STORY_NAMES,{grz:'The Grizzlies\' playoff run',bird:'Project Bluebird: a company scouting Memphis',hq:'Riverline Logistics weighs a move'});
+Object.assign(STORY_FIRST,{grz:'grz1',bird:'bird1',hq:'hq1'});
+const GRZ_R=s=>(((s.stories||{}).grz||{}).ctx||{}).r||0;
+const GRZ_TXT=['lost in the first round','won a first-round series before losing','reached the Western Conference finals','reached the NBA Finals','won the NBA championship'];
+EVENTS.push(
+// ---------- the Grizzlies' playoff run ----------
+ {id:'grz1',story:'grz',scripted:true,title:'The Grizzlies are in the playoffs',atFn:()=>'forum',tags:['culture'],
+  body:()=>'Grit and grind is back. The Grizzlies clinched a playoff spot, FedExForum is sold out for every home game, and the whole city is wearing Beale Street blue. The team asks what City Hall will do.',
+  choices:[{label:'Host free watch parties on the plaza outside FedExForum',cost:0.3,grp:{young:2,working:2,business:1},flag:'party',next:'grz2',delay:1},
+   {label:'Make a barbecue bet with the other city\'s mayor',grp:{young:1,working:1,owners:1},flag:'bet',next:'grz2',delay:1},
+   {label:'Add police and sanitation crews downtown on game nights',cost:0.2,grp:{owners:1,business:2},flag:'police',next:'grz2',delay:1}]},
+ {id:'grz2',story:'grz',scripted:true,title:'Game nights on Beale Street',atFn:()=>'beale',tags:['safety'],
+  body:s=>`The Grizzlies ${GRZ_R(s)>=1?'won their first series, and the crowds keep getting bigger':'are still fighting in their first series'}. ${SF(s,'grz').police?'Your extra officers kept most nights calm, but a fight':'A fight'} outside a Beale Street club after a game went viral, and business owners want action before the next home game.`,
+  choices:[{label:'Fund a permanent Beale Street safety plan',cost:0.8,fx:{crime:-0.3},grp:{owners:2,business:2,young:-1},flag:'beale',next:'grz3',delay:1},
+   {label:'Set an earlier downtown curfew for teenagers',grp:{owners:2,parents:1,young:-2,renters:-1},flag:'curfew',next:'grz3',delay:1},
+   {label:'Pay for late-night youth programs on game nights',cost:0.5,grp:{parents:2,young:2,faith:1},flag:'youth',next:'grz3',delay:1}]},
+ {id:'grz3',story:'grz',scripted:true,title:'The end of the Grizzlies\' season',atFn:()=>'forum',tags:['culture'],
+  body:s=>{const r=GRZ_R(s);return`The Grizzlies ${GRZ_TXT[r]}. ${r>=4?'Memphis has never seen anything like it. People are dancing on Beale and honking down Union Avenue. The team wants a parade.':r>=2?'It was the deepest run in years, and the city is proud. The team wants to thank the fans.':'It ended sooner than anyone hoped, but the city had a lot of fun.'}`},
+  choices:[{label:'Throw a celebration downtown, on the city',cost:0.5,grp:{young:3,working:2,business:2,owners:1},end:{t:'Celebrated the Grizzlies\' playoff run with the city',camp:{d:1,t:'Your ad shows you with the team and a sea of blue on Beale Street.'}}},
+   {label:'Let the team throw it, and show up',grp:{young:1,working:1,business:1},end:{t:'Joined the Grizzlies\' celebration',camp:{d:0.5,t:'A photo of you in a Grizzlies jersey goes around.'}}},
+   {label:'Keep City Hall out of it',grp:{young:-1,working:-1},end:{t:'Kept City Hall out of the Grizzlies\' run',camp:{d:-0.5,t:'Your opponent says you missed the city\'s best moment in years.'}}}]},
+// ---------- Project Bluebird: a company scouting Memphis ----------
+ {id:'bird1',story:'bird',scripted:true,title:'A company is quietly scouting Memphis',atFn:()=>'cityhall',tags:['jobs'],
+  body:()=>'Greater Memphis Chamber staff bring you a secret: a robotics manufacturer, code-named Project Bluebird, is choosing between Memphis, Nashville and a site in DeSoto County, Mississippi. It\'s a $1.1 billion plant and about 2,000 jobs. They want to know what Memphis will offer.',
+  choices:[{label:'Offer a big package: a 15-year PILOT tax break and free land',fx:{revenue:-1.5},grp:{business:2,owners:-1},flag:'big',next:'bird2',delay:2},
+   {label:'Offer a smaller tax break tied to hiring Memphians',sk:'dip',b:0.45,fx:{revenue:-0.5},grp:{working:1,labor:1},flag:'tied',next:'bird2',delay:2,fail:{flag:'lukewarm',next:'bird2',delay:2,grp:{business:-1}}},
+   {label:'Sell them on the city itself: the river, FedEx, the workforce',sk:'cha',b:0.4,flag:'pitch',next:'bird2',delay:2,fail:{flag:'nopitch',next:'bird2',delay:2}}]},
+ {id:'bird2',story:'bird',scripted:true,title:'Project Bluebird: neighbors and rivals',atFn:()=>'cityhall',tags:['jobs'],
+  body:s=>{const f=SF(s,'bird');return`${f.big?'The company loved your offer.':f.tied?'The company liked the hiring deal.':f.pitch?'The site visit went great. The CEO loved the riverfront.':'The company seemed unimpressed with your first offer.'} Word has leaked. Neighbors near the site worry about truck traffic and air quality, and Mississippi just raised its bid.`},
+  choices:[{label:'Sign a community benefits agreement with the neighborhood',cost:0.8,grp:{renters:2,faith:1,young:1},flag:'cba',next:'bird3',delay:2},
+   {label:'Fast-track the permits and skip extra hearings',grp:{business:2,renters:-2,young:-1},flag:'fast',next:'bird3',delay:2},
+   {label:'Bring in the governor and the County for a joint offer',sk:'dip',b:0.45,grp:{business:1},flag:'joint',next:'bird3',delay:2,fail:{flag:'nojoint',next:'bird3',delay:2}}]},
+ {id:'bird3w',story:'bird',scripted:true,title:'Project Bluebird chooses Memphis',atFn:()=>'cityhall',tags:['jobs'],
+  body:s=>`It's official: the robotics plant is coming to Memphis, with about 2,000 jobs. ${SF(s,'bird').cba?'The neighborhood agreement guarantees local hiring and air monitoring.':SF(s,'bird').fast?'Some neighbors are still angry about the skipped hearings.':''} The company wants a big announcement.`,
+  choices:[{label:'Announce it with the CEO at the site',fx:{jobs:1.5},grp:{working:2,business:2,labor:1},end:{t:'Landed a 2,000-job robotics plant',camp:{d:1.5,t:'Your ad: "2,000 jobs. In Memphis."'}}},
+   {label:'Use the win to recruit the company\'s suppliers too',cost:0.3,fx:{jobs:1.8},grp:{business:3,working:1},end:{t:'Landed a robotics plant and its suppliers',camp:{d:1.5,t:'Suppliers followed the plant to Memphis.'}}}]},
+ {id:'bird3l',story:'bird',scripted:true,title:'Project Bluebird goes to Mississippi',atFn:()=>'cityhall',tags:['jobs'],
+  body:s=>`The company chose the DeSoto County site, about 20 minutes south of the city line. ${SF(s,'bird').big?'Even your big offer wasn\'t enough.':'Mississippi simply offered more.'} Some Memphians will commute there; the property taxes won't come to the city.`,
+  choices:[{label:'Push for a bus line from Memphis to the new plant',cost:0.4,fx:{transit:0.3},grp:{working:2,renters:1},end:{t:'Lost Project Bluebird but connected workers to it',camp:{d:0,t:'At least Memphians can get to those jobs.'}}},
+   {label:'Study what went wrong and fix the city\'s pitch',grp:{business:1},end:{t:'Lost Project Bluebird to Mississippi',camp:{d:-0.5,t:'Your opponent says you let 2,000 jobs slip across the state line.'}}}]},
+// ---------- Riverline Logistics weighs a move ----------
+ {id:'hq1',story:'hq',scripted:true,title:'A headquarters may leave Memphis',atFn:()=>'cityhall',tags:['jobs'],
+  body:()=>'Riverline Logistics, a freight company with 3,000 headquarters jobs downtown, has hired consultants to look at moving to Dallas. Their lease is up in two years. The Commercial Appeal has the story.',
+  choices:[{label:'Call the CEO and ask what it would take to stay',sk:'dip',b:0.5,grp:{business:1},flag:'talk',next:'hq2',delay:2,fail:{flag:'notalk',next:'hq2',delay:2}},
+   {label:'Offer a retention package right away',cost:2,fx:{revenue:-0.5},grp:{business:2,working:1,renters:-1},flag:'pay',next:'hq2',delay:2},
+   {label:'Go public: rally employees and the Chamber',sk:'cha',b:0.45,grp:{working:1},flag:'rally',next:'hq2',delay:2,fail:{flag:'backlash',next:'hq2',delay:2,grp:{business:-1}}}]},
+ {id:'hq2',story:'hq',scripted:true,title:'Dallas makes its offer',atFn:()=>'cityhall',tags:['jobs'],
+  body:s=>{const f=SF(s,'hq');return`${f.talk?'The CEO told you plainly: they want better transit for their workers and a deal on a new building.':f.notalk?'The CEO wouldn\'t take your call.':f.rally?'Employees packed a rally at the Cannon Center. The company noticed.':f.backlash?'The company resented being pressured in public.':'The company thanked you for the retention offer and kept looking.'} Now Dallas has offered $40 million in incentives.`},
+  choices:[{label:'Match the offer',cost:4,fx:{revenue:-1},grp:{business:2,renters:-1,owners:-1},flag:'match',next:'hq3',delay:2},
+   {label:'Offer the transit and downtown upgrades their workers want',cost:2,fx:{transit:0.8},grp:{working:1,young:1,business:1},flag:'amen',next:'hq3',delay:2},
+   {label:'Let them go and court their suppliers instead',grp:{business:-1,owners:1},flag:'let',next:'hq3',delay:2}]},
+ {id:'hq3s',story:'hq',scripted:true,title:'Riverline Logistics stays in Memphis',atFn:()=>'cityhall',tags:['jobs'],
+  body:()=>'Riverline signed a 15-year lease downtown. Three thousand jobs stay, and the company says it will add 400 more.',
+  choices:[{label:'Announce it together at the riverfront',fx:{jobs:0.4},grp:{business:2,working:2},end:{t:'Kept Riverline Logistics\' 3,000 jobs in Memphis',camp:{d:1,t:'Your ad: "They almost left. We kept them."'}}},
+   {label:'Use it to pitch other headquarters',cost:0.3,fx:{jobs:0.6},grp:{business:3},end:{t:'Kept Riverline and pitched other headquarters',camp:{d:1,t:'The Chamber calls you its best recruiter.'}}}]},
+ {id:'hq3l',story:'hq',scripted:true,title:'Riverline Logistics moves to Dallas',atFn:()=>'cityhall',tags:['jobs'],
+  body:()=>'Riverline is moving its headquarters to Dallas. About 3,000 jobs leave downtown over the next year, and its tower on Front Street will sit half empty.',
+  choices:[{label:'Help the workers who aren\'t moving find new jobs',cost:0.8,fx:{jobs:-0.8},grp:{working:2,labor:1},end:{t:'Helped Riverline workers after the company left',camp:{d:-0.5,t:'Your opponent stands outside the empty Riverline tower.'}}},
+   {label:'Turn the tower into downtown apartments',cost:1,fx:{jobs:-1,blight:-0.3},grp:{young:2,business:1},end:{t:'Turned the Riverline tower into housing',camp:{d:-0.3,t:'The tower is filling up with renters.'}}},
+   {label:'Blame the state\'s tax system',fx:{jobs:-1.2},grp:{business:-1},end:{t:'Lost Riverline Logistics to Dallas',camp:{d:-1,t:'Your opponent says 3,000 jobs left on your watch.'}}}]});
+// where the stories branch on how things went
+{const _qs=queueStory;queueStory=function(sid,step,delay){try{const st=S.stories[sid],f=(st&&st.flags)||{};
+  if(sid==='bird'&&step==='bird3'){const score=(f.big?2:f.tied?2:f.pitch?1:0)+(f.joint?1:0)+(f.fast?1:0)+(f.cba?0.5:0)-(f.nojoint?0.5:0);step=score>=2.5||(score>=2&&Math.random()<0.6)?'bird3w':'bird3l'}
+  if(sid==='hq'&&step==='hq3'){const stay=f.match||(f.talk&&(f.pay||f.amen))||((f.rally||f.pay)&&f.amen&&Math.random()<0.7);step=stay?'hq3s':'hq3l'}
+  if(sid==='grz'&&step==='grz2'&&st&&st.ctx&&st.ctx.r==null)st.ctx.r=0}catch(e){console.warn('bigq',e)}return _qs.call(this,sid,step,delay)}}
+// when they start
+function bigMonth(){if(!S||!inOffice()||S.over)return;S.stories=S.stories||{};const live=['grz','bird','hq'].some(k=>S.stories[k]&&!S.stories[k].ended);if(live)return;
+  if(S.m===4&&S.bigGrz!==S.y){S.bigGrz=S.y;if(Math.random()<0.45){const x=Math.random();const r=x<0.35?0:x<0.65?1:x<0.85?2:x<0.95?3:4;startStory('grz',{r});logIt('A new storyline begins: the Grizzlies\' playoff run.');return}}
+  if(S.bigLast!=null&&nowM()-S.bigLast<7)return;if(nowM()-(S.termStart||0)<3)return;if(Math.random()>0.22)return;
+  const pool=['bird','hq'].filter(k=>!S.stories[k]);if(!pool.length)return;const k=pk2(pool);S.bigLast=nowM();startStory(k,{});logIt(`A new storyline begins: ${STORY_NAMES[k]}.`)}
+{const _eom=endOfMonth;endOfMonth=function(...a){const r=_eom.apply(this,a);try{if(S&&S.started&&S.phase!=='ai')bigMonth()}catch(e){console.warn('big',e)}return r}}
 
 function openLedger(){const L=S.log||[];openPanel('Everything that has happened, newest first','Ledger',L.length?`<div class="logl">${L.map(x=>`<div><span>${x.d}</span><p style="margin:0">${x.t}</p></div>`).join('')}</div>`:'<p class="note">Nothing yet. Tap ▶ Continue to move ahead.</p>','ledger')}
 function openPolicies(){const ks=Object.keys(POLICIES);

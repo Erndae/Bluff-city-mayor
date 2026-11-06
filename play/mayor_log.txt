@@ -1,0 +1,121 @@
+== 1 Oct 2026 slots 4 approval 52 reserve $96.0M pop 605200 crime 88 council 5/13 clout 29 nash 40 events 1 h2h - cash 40
+  week: "Make your three promises" -> [Make your campaign promises] clicked "Good jobs for MemphiansRaise the jobs climate index to 60 · " ['promises', 'promises', 'promises', 'promises', 'promises', 'promises']
+  week: "Make your three promises" -> [Make your campaign promises] clicked "✔ Good jobs for MemphiansRaise the jobs climate index to 60 " ['promises']
+  week: "Read your chief of staff's briefing" -> [Your visitors] clicked "Receive" ['closed: Audience with Renee Holloway']
+  audience Renee Holloway -> Understood. Let's get to work. ()
+  audience Renee Holloway -> nothing
+  audience Renee Holloway -> nothing
+  met via phone: Meeting with Kendra Mosby ask  -> “Mayor, I'll be straight with you. My district wants to see you deliver on public safety. What can you do for us?”
+  day 27 Oct 2026: Briefing from Renee Holloway -> Take the next step; FedExForum -> Go and mingle; closed: FedExForum
+== 1 Nov 2026 slots 5 approval 53 reserve $95.8M pop 604820 crime 88 council 6/13 clout 29 nash 40 events 2 h2h - cash 53
+  week: "Decide before it expires: Illegal dumping in Frayser" -> [Grizzlies home opener] clicked "Grab a mic and fire up the crowdStar Power 5 · 40% chance" ['closed: Grizzlies home opener', 'closed: Frayser']
+  week: "Decide before it expires: Illegal dumping in Frayser" -> [Frayser] clicked "Send a cleanup crew−$0.1M reserves · Blight ▲ · Pleases blig" ['closed: Frayser']
+  week: "Decide before it expires: Hollywood neighbors want a basketball court lights" -> [Hollywood] clicked "Fund it−$0.3M reserves · Public mood ▲ · Pleases Parents · P" ['closed: Hollywood']
+  met via phone: Meeting with Kendra Mosby ask  -> “Mayor, I'll be straight with you. My district wants to see you deliver on public safety. What can you do for us?”
+  day 11 Nov 2026: crisis: Boil-water notice for the whole city -> Hand out bottled water at every fire sta; closed: Boil-water notice for the whole city
+  day 26 Nov 2026: Briefing from Renee Holloway -> Take the next step; Hire a campaign manager -> Hire
+== 1 Dec 2026 slots 5 approval 53 reserve $93.1M pop 604478 crime 88 council 7/13 clout 26 nash 40 events 4 h2h - cash 60
+  week: "Decide before it expires: MLGW rate increase heads to the council" -> [MLGW Headquarters] clicked "Back the full increase: the pipes need itStreets ▲ · Pleases" ['closed: MLGW Headquarters']
+  week: "Decide before it expires: Who pays for the boil-water crisis?" -> [Your visitors] clicked "Receive" ['closed: Audience with Renee Holloway']
+  week: "Decide before it expires: Who pays for the boil-water crisis?" -> [Your visitors] clicked "Receive" ['closed: Audience with Renee Holloway']
+  audience Renee Holloway -> Ask the governor for a federal disaster declaration ()
+  audience Renee Holloway -> nothing
+  audience Renee Holloway -> nothing
+  met via phone: Meeting with Kendra Mosby ask  -> “Mayor, I'll be straight with you. My district wants to see you deliver on public safety. What can you do for us?”
+  day 27 Dec 2026: Briefing from Renee Holloway -> Take the next step; closed: Liberty Park & Simmons Bank Liberty Stadium
+  day 27 Jan 2027: Briefing from Renee Holloway -> Take the next step; Germantown -> Have MLGW build it at cost; closed: Germantown
+final 1 Feb 2027 phase mayor approval 53 cash 74 popn 603886
+
+NOTIFICATIONS (89)
+1 Oct 2026 [null] undefined | 
+1 Oct 2026 [good] Goal complete: Make your three promises | Next: Read your chief of staff's briefing
+1 Oct 2026 [info] Your promises are public. | Track them under City, Your desk.
+1 Oct 2026 [people] Your assistant: welcome to the office | 0 urgent decisions · 1 visitors · 0 neighborhood letters
+1 Oct 2026 [info] Amber pins on the map mark places that need you. | Click one.
+1 Oct 2026 [good] Goal complete: Read your chief of staff's briefing | Next: Continue
+1 Oct 2026 [good] Goal complete: Meet a council member in private | Next: Continue
+5 Oct 2026 [people] Renee Holloway: this week | Start a project toward your promises · 3 actions left
+8 Oct 2026 [event] Illegal dumping in Frayser | Frayser
+8 Oct 2026 [good] Goal complete: Continue | Next: Handle a problem on the map
+12 Oct 2026 [people] Renee Holloway: this week | Hire a campaign manager · 3 actions left
+14 Oct 2026 [event] Hollywood neighbors want a basketball court lights | Hollywood
+19 Oct 2026 [people] Renee Holloway: this week | Hire a campaign manager · 3 actions left
+21 Oct 2026 [event] Grizzlies home opener this week | FedExForum · tap to decide how to show up
+26 Oct 2026 [people] Renee Holloway: this week | Decide before it expires: Grizzlies home opener · 3 actions left
+27 Oct 2026 [info] You headed to the Grizzlies home opener. | 
+27 Oct 2026 [good] Goal complete: Handle a problem on the map | Next: Visit a police station, fire station or hospital
+27 Oct 2026 [info] Grizzlies home opener · 3 actions left | 
+31 Oct 2026 [bad] Memphis falls below 605,000 people | More people are leaving than moving in.
+1 Nov 2026 [alert] Kingsbury Career Technology Center | The air conditioning is out and classes moved to the gym.
+1 Nov 2026 [month] October closed | Approval 53% (+0.9) · reserve −$0.2M → $95.8M · 3 updates in the ledger
+1 Nov 2026 [people] Open seat on the Airport Authority | A term ended. Send the council a nominee.
+1 Nov 2026 [info] Where the money went in October | Reserve down $0.2M. Tap for every dollar.
+1 Nov 2026 [info] Decision made: Send a cleanup crew. | 
+1 Nov 2026 [info] Decision made: Fund it. | 
+2 Nov 2026 [people] Renee Holloway: this week | Hire a campaign manager · 4 actions left
+5 Nov 2026 [event] MLGW rate increase heads to the council | MLGW
+9 Nov 2026 [people] Renee Holloway: this week | Hire a campaign manager · 4 actions left
+15 Nov 2026 [event] Germantown asks for a backup water connection | Germantown
+16 Nov 2026 [people] Renee Holloway: this week | Hire a campaign manager · 4 actions left
+16 Nov 2026 [event] Boil-water notice for the whole city: the verdict | A week later: Some stations ran dry by noon. Your opponents are already using it.
+21 Nov 2026 [people] Who pays for the boil-water crisis? | City Hall
+23 Nov 2026 [people] Renee Holloway: this week | Hire a campaign manager · 4 actions left
+25 Nov 2026 [event] 911 hold times | 911 Center
+26 Nov 2026 [people] Dana Whitlock is your campaign manager | Money first. Build the war chest now and we buy the airwaves in August.
+27 Nov 2026 [people] Dana: Visit District 2 | 1 action · no cash cost. Current two-way estimate 50%: a competitive race. Careful with th
+30 Nov 2026 [people] Renee Holloway: this week | Visit District 2 · 4 actions left
+1 Dec 2026 [bad] The Bluff City Ledger | Mayor stumbles: Boil-water notice for the whole city
+1 Dec 2026 [people] Dana Whitlock: Decide before it expires: MLGW rate increase heads to the council | Ignoring it costs you.
+1 Dec 2026 [month] November closed | Approval 53% (+0.7) · reserve −$0.2M → $93.1M · 6 updates in the ledger
+1 Dec 2026 [info] Where the money went in November | Reserve down $2.7M. Tap for every dollar.
+1 Dec 2026 [info] Decision made: Back the full increase: the pipes need it. | 
+1 Dec 2026 [people] Your assistant: welcome to the office | 0 urgent decisions · 1 visitors · 0 neighborhood letters
+1 Dec 2026 [info] The governor said the damage didn't meet the threshold. | Memphis pays its own way.
+1 Dec 2026 [info] Skill up: Dealmaking is now 6. | 
+2 Dec 2026 [event] St. Jude Memphis Marathon this week | St. Jude Children's Research Hospital · tap to decide how to show up
+3 Dec 2026 [people] Whitfield asks: Sponsor a District 3 job fair and small-business grants | District 3
+4 Dec 2026 [people] Dana: Visit District 5 | 1 action · no cash cost. Current two-way estimate 51%: a competitive race. Ask the hard qu
+5 Dec 2026 [event] Downtown's tallest building is falling apart | 100 North Main
+7 Dec 2026 [people] Renee Holloway: this week | Decide before it expires: St. Jude Memphis Marathon · 4 actions left
+8 Dec 2026 [event] An hour between buses | MATA Terminal
+8 Dec 2026 [people] Dana: Hold a grassroots fundraiser | 1 action · no cash cost. Payroll is 3K/month; build funds before buying ads or adding staf
+11 Dec 2026 [event] Loose dogs in Castalia | Castalia
+11 Dec 2026 [people] Dana: Commission a citywide poll | No action · 20K. Current poll missing; keep 3K for payroll. District targeting below uses 
+14 Dec 2026 [people] Renee Holloway: this week | Visit District 5 · 4 actions left
+16 Dec 2026 [event] Ordinance: $17 minimum wage for city contractors | City Hall
+21 Dec 2026 [people] Renee Holloway: this week | Visit District 5 · 4 actions left
+25 Dec 2026 [event] AutoZone Liberty Bowl this week | Liberty Park & Simmons Bank Liberty Stadium · tap to decide how to show up
+28 Dec 2026 [people] Renee Holloway: this week | Decide before it expires: AutoZone Liberty Bowl · 4 actions left
+1 Jan 2027 [event] Trouble at the AutoZone Liberty Bowl | Fights and gridlock made the evening news. Approval dipped.
+1 Jan 2027 [event] State of the City | Time for this year's speech. Pick three priorities by the end of February.
+1 Jan 2027 [bad] Channel 6 Eyewitness News | Critics pan the mayor's call on "MLGW rate increase heads to the council"
+1 Jan 2027 [people] Dana Whitlock: Decide before it expires: Germantown asks for a backup water connection | Ignoring it costs you.
+1 Jan 2027 [month] December closed | Approval 53% (−0.3) · reserve −$0.3M → $92.9M · 4 updates in the ledger
+1 Jan 2027 [good] Renee Holloway is now a Seasoned chief of staff | You learn 4% faster.
+1 Jan 2027 [info] Where the money went in December | Reserve down $0.3M. Tap for every dollar.
+1 Jan 2027 [event] Nashville vs. Memphis | The legislature is back in session, and a bill would take power from the city.
+3 Jan 2027 [event] Fixing Elvis Presley Boulevard | District 3
+4 Jan 2027 [people] Sims asks: Sponsor a District 5 job fair and small-business grants | District 5
+4 Jan 2027 [people] Renee Holloway: this week | Decide before it expires: Germantown asks for a backup water connection · 5 actions left
+4 Jan 2027 [people] Dana: Visit District 5 | 1 action · no cash cost. Current two-way estimate 51%: a competitive race. Ask the hard qu
+8 Jan 2027 [people] Feud: Mosby vs. Ellison | City Hall
+8 Jan 2027 [people] A threat against your family | City Hall
+8 Jan 2027 [people] Dana: Hold a grassroots fundraiser | 1 action · no cash cost. Payroll is 3K/month; build funds before buying ads or adding staf
+9 Jan 2027 [people] Terrence Vaughn wants a comment | City Hall
+10 Jan 2027 [people] Holloway wants a cabinet retreat | City Hall
+11 Jan 2027 [people] Renee Holloway: this week | Decide before it expires: Germantown asks for a backup water connection · 5 actions left
+11 Jan 2027 [people] Dana: Ask Neighborhood associations coalition for backing | 1 action · no cash cost. Closest undecided endorsement: projected score 52 versus 50. The 
+13 Jan 2027 [event] MLK Day of Service this week | National Civil Rights Museum · tap to decide how to show up
+18 Jan 2027 [people] Renee Holloway: this week | Decide before it expires: Germantown asks for a backup water connection · 5 actions left
+19 Jan 2027 [people] Dana: Commission a citywide poll | No action · 20K. Current poll missing; keep 3K for payroll. District targeting below uses 
+25 Jan 2027 [people] Renee Holloway: this week | Decide before it expires: Germantown asks for a backup water connection · 5 actions left
+27 Jan 2027 [info] Decision made: Have MLGW build it at cost. | 
+1 Feb 2027 [alert] Methodist University Hospital | The emergency department is on diversion most nights, short on nurses.
+1 Feb 2027 [bad] Mid-South Daily | Months later, still broken at Kingsbury Career Technology Center
+1 Feb 2027 [people] Dana Whitlock: Decide before it expires: An hour between buses | Ignoring it costs you.
+1 Feb 2027 [month] January closed | Approval 53% (−0.2) · reserve −$0.3M → $92.2M · 9 updates in the ledger
+1 Feb 2027 [info] Where the money went in January | Reserve down $0.7M. Tap for every dollar.
+1 Feb 2027 [people] Renee Holloway: this week | Decide before it expires: An hour between buses · 5 actions left
+
+ERRORS
+CONSOLE error Failed to load resource: net::ERR_TUNNEL_CONNECTION_FAILED
