@@ -4,6 +4,33 @@ A city-management game set in Memphis, Tennessee. You play the mayor. You handle
 
 **Play it:** https://erndae.github.io/Bluff-city-mayor/ (once GitHub Pages is turned on, see below)
 
+## v26.58: Schemes, both ways
+
+**Plots against you.** Your opponent and hostile council members now plot against you:
+
+- **Your opponent** (during the campaign) can hire opposition researchers to leak a story about you, or plant a leaker inside your campaign who passes along your ad plans and debate prep.
+- **Hostile council members** (opinion −25 or lower) can organize a revolt to cut your office budget (1 fewer action a month for 3 months if 7 vote yes) or open a council investigation.
+- **A no-confidence vote** becomes possible when your approval drops below 38%.
+
+How plots unfold:
+
+- Each plot brews for 3 to 6 weeks before it strikes.
+- Whether you hear the rumor in time depends on your Inside Game skill, your chief of staff's level, and whether you have a source in the other campaign. The Back Room shows that chance.
+- Once you know about a plot, each counter-move costs 1 action and is a skill check:
+  - **Investigate:** learn exactly what they plan and when.
+  - **Get ahead of the story / rally the public:** the plot hurts a third as much, or loses 2 yes votes.
+  - **Cut a deal:** they drop it.
+  - **Find leverage:** they back off, and you get a hook on a council member.
+- Failed counter-moves make things worse.
+
+**Your own schemes:**
+
+- **Dig up dirt on your opponent** ($20K). Leak it anonymously (a skill check: a big hit, or traced back to you) or put it in an attack ad ($30K, a sure but smaller hit).
+- **Find leverage on a council member.** You get a hook to force one vote; if it fails, they find out.
+- **Plant a source in the other campaign** ($40K). For 6 months you see every plot your opponent starts; if caught, it becomes a front-page story about you.
+
+Find it all under **People → The back room**, Take action, and Campaign HQ. A known plot also appears at the top of what needs attention.
+
 ## v26.57: Story chains
 
 Six new storylines play out over months. Each has three chapters, branches on what you choose, and includes skill checks: succeed and the story goes one way, fail and it takes a different turn.

@@ -352,6 +352,7 @@ canvas.confetti{position:fixed;inset:0;z-index:100000;pointer-events:none}
 nav.actions [data-actsgo]{min-height:44px;padding:9px 17px;border-color:rgba(242,169,59,.55)}@media(max-width:860px){nav.actions{grid-template-columns:repeat(5,minmax(0,1fr))!important}nav.actions [data-flow-hub],nav.actions [data-actsgo]{justify-content:center;text-align:center}nav.actions [data-actsgo]{padding:8px 2px;font-size:12px;min-width:0;min-height:44px}}
 .faccard{border:1px solid var(--line,#2c3e4c);border-radius:12px;padding:12px;margin:10px 0;background:rgba(255,255,255,.02)}.fac-h{display:flex;align-items:center;gap:10px}.fac-h>div{flex:1;min-width:0}.fac-h b{display:block}.fac-h small{color:var(--muted,#9aa7b2)}.fac-ic{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;background:rgba(242,169,59,.15);color:var(--amber);font-size:17px;flex:none}.fac-rel{text-align:right;flex:none}.fac-rel b{font-size:20px}.fac-rel.pos b{color:var(--good)}.fac-rel.neg b{color:var(--bad)}.fac-rel small{display:block}.facbar{position:relative;height:6px;border-radius:3px;background:rgba(255,255,255,.08);margin:8px 0 2px}.facbar i{position:absolute;top:0;bottom:0;border-radius:3px}.facbar i.pos{background:var(--good)}.facbar i.neg{background:var(--bad)}.facbar i:first-child{left:50%;width:1px!important;background:rgba(255,255,255,.4)}.facspark{width:60px;height:18px;color:var(--amber);display:block;margin:2px 0 0 auto}.faccard h5{margin:8px 0 4px}.faccard .qrgrid p{font-size:13px;margin:2px 0 0}.facpend{color:var(--amber);font-weight:600;margin:8px 0 0}.faccard .btn small{opacity:.8}
 .storycard{border:1px solid var(--line,#2c3e4c);border-radius:12px;padding:12px;margin:10px 0}.storycard.done{opacity:.85}.sc-h{display:flex;justify-content:space-between;gap:10px;align-items:baseline}.sc-h span{color:var(--amber);font-size:13px;text-align:right}.storycard.done .sc-h span{color:var(--muted,#9aa7b2)}.sc-steps{margin:8px 0 0;padding-left:20px}.sc-steps li{margin:4px 0}.sc-steps small{color:var(--muted,#9aa7b2);margin-right:6px}.sc-end{margin:8px 0 0}.sc-end small.pos{color:var(--good)}.sc-end small.neg{color:var(--bad)}
+.plotcard{border:1px solid rgba(232,93,74,.45);border-radius:12px;padding:12px;margin:10px 0;background:rgba(232,93,74,.05)}.plotcard.mine{border-color:var(--line,#2c3e4c);background:rgba(255,255,255,.02)}.pl-h{display:flex;justify-content:space-between;gap:8px;align-items:baseline}.pl-d{color:var(--bad);font-weight:600;font-size:13px}.pl-who{margin:2px 0 6px;color:var(--muted,#9aa7b2);font-size:13px}.levlist{display:flex;flex-direction:column;gap:6px;margin-top:8px}.levlist .btn{text-align:left}.levlist small{opacity:.8}.note.pos{color:var(--good)}.note.neg{color:var(--bad)}
 .adgain{display:block;width:100%;text-align:center;font-size:11px;font-weight:600;color:var(--good);margin-top:1px}
 #start{overflow-x:hidden;overflow-y:auto;touch-action:pan-y}.startbox{min-width:0;max-width:min(600px,100%);box-sizing:border-box}.startbox *{min-width:0}.create select,.create input{max-width:100%;width:100%;box-sizing:border-box;text-overflow:ellipsis}.create .tpick,.create .tpick>*{max-width:100%;box-sizing:border-box}
 @media (max-width:640px){.startbox{margin-left:0}#start{padding-left:max(16px,env(safe-area-inset-left,0px))}}
@@ -704,7 +705,7 @@ details.analysis{margin-top:6px}details.analysis summary{cursor:pointer;color:va
     <button class="btn primary" data-act="pause" id="bPlay"><svg class="ico" viewBox="0 0 12 12" aria-hidden="true"><path d="M3.2 1.6v8.8l7.2-4.4z" fill="currentColor"/></svg> Resume <kbd>Space</kbd></button>
   </nav>
   <div class="status" id="status">Loading map…</div>
-  <div class="credit"><span class="ver" id="verTag">v26.57</span></div>
+  <div class="credit"><span class="ver" id="verTag">v26.58</span></div>
   <div class="tip" id="tip" hidden></div>
   <div class="toast" id="toast" role="status"></div>
   <section class="panel" id="panel" hidden aria-live="polite">
@@ -732,7 +733,7 @@ details.analysis{margin-top:6px}details.analysis summary{cursor:pointer;color:va
         <button class="btn" data-music-open>Music &amp; volume</button>
       </div>
       <div id="slotList" hidden></div>
-      <p class="note startv">Version <b class="ver" id="verStart">v26.57</b></p>
+      <p class="note startv">Version <b class="ver" id="verStart">v26.58</b></p>
     </div>
     <div class="startbox create" id="create" hidden>
       <h2>Create your mayor</h2>
@@ -1543,7 +1544,7 @@ function enact(s,p){DIVS.forEach(d=>{s.enacted[d.id]=p.divs[d.id];s.ratio[d.id]=
 // Voter groups. Each has a share of residents, turnout, home districts, concerns and an approval of you.
 // Citywide approval is the turnout-weighted average of the groups; each council district's approval comes from the groups that live there.
 // Shares, district mix and turnout are modeled, loosely grounded in Memphis demographics; they are not survey data.
-const VERSION='v26.57';
+const VERSION='v26.58';
 const GROUPS=[
  {id:'working',sh:'Working families',n:'Working families',ic:'⚒︎',c:'#f2a93b',share:24,turn:.5,start:56,w:{jobs:1,safety:.8,transit:.5},
   d:'Hourly workers in logistics, warehouses, health care and service jobs. The biggest bloc in the city.',dm:{1:1.1,2:.8,3:1.3,4:1.2,5:.6,6:1.2,7:1.1}},
@@ -6965,6 +6966,130 @@ document.addEventListener('click',e=>{const b=e.target.closest('[data-storygo],[
   if(b.dataset.storygo){const ev=storyWaiting(b.dataset.storygo);if(ev)openPlace(evAt(ev));return}openStories()},true);
 {const _om=openModal;openModal=function(...a){const r=_om.apply(this,a);try{const n=NAV.cur?NAV.cur.name:'';if(n==='flow_city'&&inOffice()){const g=$('mBody').querySelector('.flow-grid');if(g&&!g.querySelector('[data-stories]')){const R=storyRows(),o=R.filter(x=>!x.x.ended).length,w=R.filter(x=>!x.x.ended&&storyWaiting(x.sid)).length;
   g.insertAdjacentHTML('afterbegin',`<button class="flow-tile" data-stories="1"><b>Storylines${w?` · ${w} waiting`:''}</b><span>${o?`${o} open, building over months`:'Big stories that build over months'}</span></button>`)}}}catch(e){}return r}}
+// ======================= v26.58: SCHEMES, BOTH WAYS =======================
+// Your opponent and hostile council members plot against you. A plot brews for a few weeks before it strikes.
+// Your Intrigue skill and your chief of staff decide whether you hear the rumor in time. Once you know,
+// you can investigate, get ahead of it, cut a deal, or dig up leverage to make it go away.
+// You can also scheme: dig for dirt on your opponent and leak it, find leverage on a council member,
+// or plant a source inside your opponent's campaign.
+const PLOTS={
+ oppo:{n:'Opposition research',by:'rival',days:[24,40],
+  sign:p=>`A friendly reporter says ${p.who} has hired an opposition-research firm, and they're asking questions about ${p.topic}.`,
+  plan:p=>`${p.who} will leak a story about ${p.topic} to the press, timed for maximum damage.`,
+  strike:p=>{const d=rivalHit(GROUPS.map(g=>g.id),1.3*p.mul);popHit(-0.5*p.mul,`Story about ${p.topic}`);try{newsAdd(-1.2*p.mul,`Report raises questions about the ${isCand()?'candidate':'mayor'}'s ${p.topic}`)}catch(e){}return`The story about ${p.topic} broke. You lost about ${Math.max(0.1,d).toFixed(1)} points against ${p.who}.`}},
+ mole:{n:'A leak inside your camp',by:'rival',days:[20,34],
+  sign:p=>`Your ${isCand()?'campaign manager':'chief of staff'} noticed ${p.who}'s ads answering yours before yours even aired. Someone may be leaking your plans.`,
+  plan:p=>`A volunteer in your ${isCand()?'campaign':'office'} is passing your ad plans and debate prep to ${p.who}.`,
+  strike:p=>{let lost=0;for(const g in S.camp.boost){const b=S.camp.boost[g]||0;if(b>0){const c=b*0.35*p.mul;S.camp.boost[g]-=c;lost+=c}}S.camp.debate=(S.camp.debate||0)-0.4*p.mul;return`${p.who} got your ad plans and your debate prep. Your ads lost a third of their punch, and ${p.who} is ready for your debate lines.`}},
+ revolt:{n:'A council revolt',by:'council',days:[24,40],
+  sign:p=>`Your council liaison says ${p.who} is calling colleagues late at night, counting votes for something.`,
+  plan:p=>`${p.who} wants 7 votes to cut your office budget. If it passes, you lose 1 action a month for 3 months.`,
+  strike:p=>{const yes=revoltYes(p);p.tally=yes;if(yes>=7){S.revoltUntil=nowM()+3;popHit(-0.4*p.mul,'The council cut the mayor\'s budget');try{newsAdd(-1,`Council cuts the mayor's office budget ${yes}–${13-yes}`)}catch(e){}return`The council voted ${yes}–${13-yes} to cut your office budget. You'll have 1 fewer action a month for 3 months.`}
+   const m=S.council[p.k];addMod(m,'My revolt failed',-6);p.good=true;return`${p.who}'s revolt fell short, ${yes}–${13-yes}. It needed 7. ${p.who} looks weaker for trying.`}},
+ probe:{n:'A council investigation',by:'council',days:[28,44],
+  sign:p=>`${p.who}'s staff has been asking city departments for your emails.`,
+  plan:p=>`${p.who} will open a council investigation into ${p.topic} and subpoena your chief of staff.`,
+  strike:p=>{popHit(-0.8*p.mul,`Council investigation: ${p.topic}`);S.mood-=0.2*p.mul;try{newsAdd(-1.3*p.mul,`Council opens investigation into ${p.topic}`)}catch(e){}return`${p.who} opened a council investigation into ${p.topic}. It's on every front page.`}},
+ noconf:{n:'A no-confidence vote',by:'council',days:[18,30],
+  sign:p=>`${p.who} is drafting a resolution. Your liaison saw the title: "No confidence."`,
+  plan:p=>`${p.who} wants the council to vote no confidence in you. It's symbolic, but if 7 vote yes, it will lead the news for a week.`,
+  strike:p=>{const yes=revoltYes(p)-1;p.tally=yes;if(yes>=7){popHit(-1.2*p.mul,'The council voted no confidence');try{newsAdd(-1.8,`Council votes no confidence in the mayor, ${yes}–${13-yes}`)}catch(e){}return`The council voted no confidence in you, ${yes}–${13-yes}. It doesn't remove you, but it's a stain.`}
+   p.good=true;return`The no-confidence vote failed, ${yes}–${13-yes}. Several members said they'd rather work with you.`}}};
+const OPPO_ON_YOU_MAYOR=['a property-tax appeal on your own house','a donor whose company won a city contract','how much you\'ve spent on travel','the overtime at your security detail','a city job your cousin got'];
+const OPPO_ON_YOU_CAND=['an old social media post','a lawsuit from your old business partner','the years you didn\'t vote in city elections','a rental house with code violations','a donor with a messy past'];
+const PROBE_TOPICS=['how city contracts get awarded','the overtime budget at MPD','a missing $2 million in the parks budget','who got the downtown parking contract'];
+const DIRT_ON_RIVAL=['a city contract that went to their biggest donor','missing 40% of council votes last year','unpaid taxes on a rental property','a lawsuit from a former business partner','a nonprofit they ran that never filed its taxes','campaign money spent on a family member\'s company'];
+function pk2(a){return a[Math.floor(Math.random()*a.length)]}
+function revoltYes(p){let yes=0;S.council.forEach((m,i)=>{if(i===p.k||m.opinion<=-5||(m.opinion<8&&Math.random()<0.35))yes++});return Math.min(13,yes-(p.rallied||0))}
+function plotsInit(){S.plots=S.plots||[];return S.plots}
+function plotLive(){return plotsInit().filter(p=>!p.done)}
+function chiefLv(){try{return tLvl(teamInit().cos.xp)}catch(e){return 1}}
+function seeChance(){return clamp(0.35+mskill('intr')*0.03+(chiefLv()-1)*0.07+(S.moleUntil&&nowM()<=S.moleUntil?0.6:0),0.2,0.97)}
+function newPlot(kind,who,k,topic){const P=PLOTS[kind],d=dayN(),len=P.days[0]+Math.floor(Math.random()*(P.days[1]-P.days[0]));
+  const p={id:'p'+d+kind,kind,who,k,topic,start:d,strike:d+len,signAt:d+Math.floor(len*(0.25+Math.random()*0.3)),seen:false,known:false,mul:1,tried:{}};plotsInit().push(p);
+  if(S.moleUntil&&nowM()<=S.moleUntil&&P.by==='rival'){p.seen=true;p.known=true;notify('event','Your source inside the other campaign',`${P.plan(p)} You have about ${len} days.`,()=>openSchemes(),{ttl:20})}return p}
+function plotMonth(){if(!S||!S.started||S.over||S.phase==='ai')return;plotsInit();const live=plotLive();S.plotCd=S.plotCd||{};
+  // the opponent, during the campaign
+  const R=S.rival,camp=S.camp&&R&&R.camp&&!S.camp.voted&&(isCand()||(inOffice()&&monthsToElection()<=12));
+  if(camp&&!live.some(p=>PLOTS[p.kind].by==='rival')&&nowM()-(S.plotCd.rival||-99)>=3){let ch=0.28;try{if(R.style==='brawler')ch*=1.4}catch(e){}if(Math.random()<ch){S.plotCd.rival=nowM();const kind=Math.random()<0.65?'oppo':'mole';newPlot(kind,R.name,null,kind==='oppo'?pk2(isCand()?OPPO_ON_YOU_CAND:OPPO_ON_YOU_MAYOR):'')}}
+  // hostile council members, while you're mayor
+  if(inOffice()&&!live.some(p=>PLOTS[p.kind].by==='council')){
+    if(S.approval<38&&nowM()-(S.plotCd.noconf||-99)>=12&&Math.random()<0.3){const m=S.council.map((m,k)=>({m,k})).sort((a,b)=>a.m.opinion-b.m.opinion)[0];S.plotCd.noconf=nowM();S.plotCd.council=nowM();newPlot('noconf',m.m.name,m.k);return}
+    const foe=S.council.map((m,k)=>({m,k})).filter(x=>x.m.opinion<=-25).sort((a,b)=>a.m.opinion-b.m.opinion)[0];
+    if(foe&&nowM()-(S.plotCd.council||-99)>=5&&Math.random()<0.22){S.plotCd.council=nowM();const kind=Math.random()<0.5?'revolt':'probe';newPlot(kind,foe.m.name,foe.k,kind==='probe'?pk2(PROBE_TOPICS):'')}}}
+function plotDaily(){if(!S||!S.started||S.over||S.phase==='ai'||!S.plots)return;const d=dayN();
+  plotLive().forEach(p=>{const P=PLOTS[p.kind];
+    if(!p.seen&&!p.rolled&&d>=p.signAt){p.rolled=true;if(Math.random()<seeChance()){p.seen=true;try{sfx('crisis')}catch(e){}notify('bad',`Rumor: ${P.n.toLowerCase()}`,`${P.sign(p)} Tap to look into it.`,()=>openSchemes(),{ttl:20});logIt(`Rumor: ${P.sign(p)}`)}}
+    if(d>=p.strike){p.done=true;let msg;try{msg=P.strike(p)}catch(e){console.warn('plot',e);msg=''}p.result=msg;p.endD=dateStr();
+      try{if(!p.good)addRecord({t:`${P.n}: ${p.who}`,kind:'plot',bad:[],good:[]})}catch(e){}
+      notify(p.good?'good':'bad',p.good?`${P.n}: ${p.who} failed`:`${P.n}: ${p.who} struck`,`${msg}${p.seen?'':' You never saw it coming.'}`,()=>openSchemes(),{ttl:20});logIt(msg);try{refreshHUD()}catch(e){}}});
+  if(S.plots.length>30)S.plots=S.plots.slice(-30)}
+{const _dt=dayTick;dayTick=function(...a){const r=_dt.apply(this,a);try{plotDaily()}catch(e){console.warn('plotDaily',e)}return r}}
+{const _eom=endOfMonth;endOfMonth=function(...a){const r=_eom.apply(this,a);try{plotMonth()}catch(e){console.warn('plotMonth',e)}return r}}
+// a council budget cut costs you an action a month for 3 months
+{const _ab=actionBonus;actionBonus=function(...a){let n=_ab.apply(this,a);try{if(S&&S.revoltUntil&&nowM()<S.revoltUntil)n-=1}catch(e){}return n}}
+// ---------- counter-moves ----------
+const COUNTERS={
+ probe:{n:'Investigate',sk:'intr',b:0.5,d:'Learn exactly what they plan and when.',ok:p=>{p.known=true;return`You found out: ${PLOTS[p.kind].plan(p)}`},no:p=>{p.strike-=7;return`They noticed you asking around. They moved the date up a week.`}},
+ front:{n:p=>PLOTS[p.kind].by==='council'&&(p.kind==='revolt'||p.kind==='noconf')?'Rally the public against it':'Get ahead of the story',sk:'cha',b:0.45,d:p=>PLOTS[p.kind].by==='council'&&(p.kind==='revolt'||p.kind==='noconf')?'Make it costly to vote yes. Works: 2 fewer yes votes.':'Tell it your way first. Works: it hurts a third as much.',
+   ok:p=>{if(p.kind==='revolt'||p.kind==='noconf'){p.rallied=(p.rallied||0)+2;return'Calls flooded council offices. Two members told you they\'re voting no.'}if(p.kind==='mole'){p.done=true;p.result='You found the leaker and showed them the door.';return'You found the leak and let the volunteer go before any more damage.'}p.mul*=0.33;return'You told the story yourself, on your terms. When it lands, it will barely sting.'},
+   no:p=>{if(p.kind==='revolt'||p.kind==='noconf')return'The calls didn\'t move anyone. The vote count hasn\'t changed.';p.mul*=1.2;return'It came off defensive. Now reporters think there\'s something more to find.'}},
+ deal:{n:p=>PLOTS[p.kind].by==='rival'?'Back-channel a truce':'Cut a deal with them',sk:'dip',b:0.42,cash:p=>PLOTS[p.kind].by==='rival'?0:0,res:p=>PLOTS[p.kind].by==='council'?0.6:0,d:p=>PLOTS[p.kind].by==='council'?`Fund a project in their district (−$0.6M). Works: they drop it.`:'Agree to keep it clean. Works: they drop it.',
+   ok:p=>{p.done=true;p.result='Called off after a deal.';if(PLOTS[p.kind].by==='council'){S.reserve-=0.6;const m=S.council[p.k];addMod(m,'The mayor came to the table',10)}return`${p.who} called it off.`},no:p=>{if(PLOTS[p.kind].by==='council'){const m=S.council[p.k];addMod(m,'The mayor tried to buy me off',-6)}return`${p.who} turned you down flat.`}},
+ dig:{n:'Find leverage to make them stop',sk:'intr',b:0.4,need:p=>p.known,d:'Works: they back off, and you keep the leverage. Fails: they strike right away, harder.',
+   ok:p=>{p.done=true;p.result='They backed off when you found leverage.';if(PLOTS[p.kind].by==='council'){const m=S.council[p.k];m.hook={hk:'plot',since:nowM()};return`You found something on ${p.who}. They dropped it, and you hold a hook on them: you can force one vote later.`}S.rival.camp.dmg=(S.rival.camp.dmg||0)+1.5;return`You found something on ${p.who}, and they dropped it fast. Their campaign is rattled.`},
+   no:p=>{p.mul*=1.3;p.strike=dayN();return`${p.who} found out you were digging and went public right away.`}}};
+function counterDo(id,key){const p=plotLive().find(x=>x.id===id),C=COUNTERS[key];if(!p||!C||p.tried[key]||S.slots<=0)return;if(C.need&&!C.need(p))return;const res=C.res?C.res(p):0;if(res&&S.reserve<res)return;
+  S.slots--;p.tried[key]=1;const ok=persuade(C.sk,C.b+(p.known&&key!=='probe'?0.08:0),PLOTS[p.kind].by==='council'?[S.council[p.k]]:[],8);const msg=ok?C.ok(p):C.no(p);try{sfx(ok?'good':'bad')}catch(e){}
+  save();refreshHUD();if(p.strike<=dayN())try{plotDaily()}catch(e){}toast(msg);(SCHEME_MSG=msg,openSchemes())}
+// ---------- your own schemes ----------
+const MY_SCHEMES={
+ dirt:{n:'Dig up dirt on your opponent',need:()=>S.rival&&S.camp,cash:20,sk:'intr',b:0.5,d:()=>`Hire an opposition researcher ($20K campaign cash). Works: you get a file on ${S.rival.name} you can leak later.`},
+ lever:{n:'Find leverage on a council member',need:()=>inOffice(),sk:'intr',b:0.42,d:()=>'Works: a hook you can use to force one vote. Fails: they find out you were digging (−15 with them).'},
+ mole:{n:'Plant a source in the other campaign',need:()=>S.rival&&S.camp&&!(S.moleUntil&&nowM()<=S.moleUntil),cash:40,sk:'intr',b:0.38,d:()=>`$40K. Works: for 6 months you see every plot ${S.rival?S.rival.name:'your opponent'} starts, the day it starts. Fails: it becomes a story about you.`}};
+function schemeDo(key,k){const X=MY_SCHEMES[key];if(!X||!X.need()||S.slots<=0)return;if(X.cash&&(!S.camp||S.camp.cash<X.cash))return;
+  S.slots--;if(X.cash){S.camp.cash-=X.cash;S.camp.spent+=X.cash;try{flowC('other',X.cash)}catch(e){}}let msg;
+  if(key==='dirt'){const ok=persuade('intr',X.b,[S.rival],8);if(ok){S.dossier=S.dossier||[];const used=S.dossier.map(x=>x.t);const t=pk2(DIRT_ON_RIVAL.filter(x=>!used.includes(x)).concat(used.length>=DIRT_ON_RIVAL.length?DIRT_ON_RIVAL:[]));S.dossier.push({t,on:S.rival.name,m:nowM()});msg=`Your researcher found ${t}. It's in your file, ready to leak.`}else{msg='Your researcher came back with nothing usable.';if(Math.random()<0.2){popHit(-0.3,'Caught digging');msg+=` Worse, ${S.rival.name} found out and called it a smear campaign.`}}}
+  if(key==='lever'){const m=S.council[k];if(!m||m.hook)return;const ok=persuade('intr',X.b,[m],8);if(ok){m.hook={hk:'dig',since:nowM()};msg=`You found something on ${m.name}. You hold a hook: you can force one vote later.`}else{addMod(m,'Caught the mayor digging into me',-15);msg=`${m.name} found out you were digging, and is furious.`}}
+  if(key==='mole'){const ok=persuade('intr',X.b,[S.rival],8);if(ok){S.moleUntil=nowM()+6;plotLive().filter(p=>PLOTS[p.kind].by==='rival').forEach(p=>{p.seen=true;p.known=true});msg=`You have a source inside ${S.rival.name}'s campaign for the next 6 months.`}else{popHit(-0.8,'Spy in the other campaign exposed');try{newsAdd(-1.4,`${S.rival.name}'s campaign catches a spy tied to the ${isCand()?'candidate':'mayor'}`)}catch(e){}msg=`${S.rival.name}'s campaign caught your source. It's a front-page story about you.`}}
+  try{sfx(/found|have a source/.test(msg)?'good':'bad')}catch(e){}save();refreshHUD();toast(msg);(SCHEME_MSG=msg,openSchemes())}
+function leakDo(i,how){const D=(S.dossier||[])[i];if(!D||!S.rival||!S.camp)return;if(how==='ad'&&S.camp.cash<30)return;S.dossier.splice(i,1);const rc=S.rival.camp;let msg;
+  if(how==='ad'){S.camp.cash-=30;S.camp.spent+=30;try{flowC('ads',30)}catch(e){}rc.dmg=(rc.dmg||0)+2.2;(S.camp.attacks=S.camp.attacks||[]).push(nowM());msg=`Your ad about ${D.t} is on every station. It hurt ${S.rival.name}, but voters know it came from you.`}
+  else{const ok=persuade('intr',0.5,[S.rival],6);if(ok){rc.dmg=(rc.dmg||0)+3;try{newsAdd(0.4,`Report: ${S.rival.name} and ${D.t}`)}catch(e){}msg=`The story about ${D.t} broke, and nobody knows where it came from. ${S.rival.name} is on defense.`}
+    else{rc.dmg=(rc.dmg||0)+1.2;popHit(-0.9,'Your leak was traced back to you');msg=`The story ran, but a reporter traced the leak to your team. Now part of the story is about you.`}}
+  try{addRecord({t:`Leaked: ${S.rival.name} and ${D.t}`,kind:'plot',bad:[],good:[]})}catch(e){}save();refreshHUD();toast(msg);(SCHEME_MSG=msg,openSchemes())}
+// ---------- the screen ----------
+let SCHEME_MSG=null;
+function openSchemes(){const last=SCHEME_MSG;SCHEME_MSG=null;plotsInit();const live=plotLive(),seen=live.filter(p=>p.seen),past=S.plots.filter(p=>p.done&&(p.seen||p.result)).slice(-5).reverse();const sl=S.slots;
+  const dleft=p=>Math.max(0,p.strike-dayN());
+  const plotCard=p=>{const P=PLOTS[p.kind];const cs=Object.keys(COUNTERS).map(k=>{const C=COUNTERS[k],nm=typeof C.n==='function'?C.n(p):C.n,d=typeof C.d==='function'?C.d(p):C.d,blocked=p.tried[k]||sl<=0||(C.need&&!C.need(p));
+      const why=p.tried[k]?'Already tried':C.need&&!C.need(p)?'Investigate first':sl<=0?'No actions left':`1 action · ${oddsTag(C.sk,C.b+(p.known&&k!=='probe'?0.08:0),PLOTS[p.kind].by==='council'?[S.council[p.k]]:[])}`;
+      return`<button class="choice" data-counter="${p.id}|${k}" ${blocked?'disabled':''}><b>${nm}</b><small>${why} · ${d}</small></button>`}).join('');
+    return`<div class="plotcard"><div class="pl-h"><b>${P.n}</b><span class="pl-d">${p.known?`Strikes in ${dleft(p)} days`:'Date unknown'}</span></div><p class="pl-who">${p.who}</p>
+     <p>${p.known?P.plan(p):P.sign(p)}</p>${p.mul<1?'<p class="note pos">You\'ve blunted it.</p>':p.mul>1?'<p class="note neg">It\'s gotten worse.</p>':''}<div class="choices">${cs}</div></div>`};
+  const myBtns=Object.keys(MY_SCHEMES).filter(k=>MY_SCHEMES[k].need()).map(k=>{const X=MY_SCHEMES[k];if(k==='lever')return`<div class="plotcard mine"><b>${X.n}</b><p class="note">${X.d()}</p><div class="levlist">${S.council.map((m,i)=>({m,i})).sort((a,b)=>a.m.opinion-b.m.opinion).slice(0,5).map(({m,i})=>`<button class="btn" data-scheme="lever|${i}" ${m.hook||sl<=0?'disabled':''}>${m.name}<small> · ${m.hook?'hook held':`opinion ${Math.round(m.opinion)} · ${oddsTag('intr',X.b,[m])}`}</small></button>`).join('')}</div></div>`;
+    const poor=X.cash&&(!S.camp||S.camp.cash<X.cash);return`<button class="choice" data-scheme="${k}" ${sl<=0||poor?'disabled':''}><b>${X.n}</b><small>${sl<=0?'No actions left':poor?`Needs $${X.cash}K campaign cash`:`1 action · ${oddsTag(X.sk,X.b,S.rival&&k!=='lever'?[S.rival]:[])}`} · ${X.d()}</small></button>`}).join('');
+  const dos=(S.dossier||[]).filter(D=>S.rival&&D.on===S.rival.name);
+  const file=dos.length?dos.map(D=>{const i=S.dossier.indexOf(D);return`<div class="plotcard mine"><b>${D.on}: ${D.t}</b><div class="choices"><button class="choice" data-leak="${i}|anon"><b>Leak it to a reporter</b><small>Free · ${oddsTag('intr',0.5,[S.rival])} · works: a big hit to them that can't be traced · fails: traced to you</small></button><button class="choice" data-leak="${i}|ad" ${S.camp&&S.camp.cash>=30?'':'disabled'}><b>Put it in an attack ad</b><small>$30K · a sure hit, smaller, and voters know it's from you</small></button></div></div>`}).join(''):'';
+  const hooks=(S.council||[]).filter(m=>m.hook).map(m=>m.name);
+  openModal('The back room · '+(seen.length?seen.length+' plot'+(seen.length===1?'':'s')+' against you':'no known plots'),'Schemes',`${last?`<p class="scnreply">${last}</p>`:''}
+   <h4 class="plh">Plots against you</h4>${seen.length?seen.map(plotCard).join(''):`<p class="note">No rumors right now. Your chance of hearing about a plot in time: <b>${Math.round(seeChance()*100)}%</b> (Intrigue and your chief of staff${S.moleUntil&&nowM()<=S.moleUntil?', plus your source in the other campaign':''}).</p>`}
+   <h4 class="plh">Your moves</h4><div class="choices">${myBtns||'<p class="note">Nothing to scheme about right now.</p>'}</div>
+   ${file?`<h4 class="plh">Your file</h4>${file}`:''}${hooks.length?`<p class="note">Hooks you hold: ${hooks.join(', ')}. Use them from the council screen to force a vote.</p>`:''}
+   ${past.length?`<h4 class="plh">Recent plots</h4><ul class="numlist">${past.map(p=>`<li><b>${PLOTS[p.kind].n}</b> · ${p.who}: ${p.result||''}</li>`).join('')}</ul>`:''}
+   <div class="row"><button class="btn primary" data-act="close">Back</button></div>`,true)}
+openSchemes=navWrap('openSchemes',openSchemes);
+document.addEventListener('click',e=>{const b=e.target.closest('[data-counter],[data-scheme],[data-leak],[data-schemes]');if(!b||!S)return;e.preventDefault();e.stopImmediatePropagation();
+  if(b.dataset.counter){const[id,k]=b.dataset.counter.split('|');counterDo(id,k);return}
+  if(b.dataset.scheme){const[k,i]=b.dataset.scheme.split('|');schemeDo(k,+i);return}
+  if(b.dataset.leak){const[i,h]=b.dataset.leak.split('|');leakDo(+i,h);return}
+  if(modalOpen){onClose=null;closeModal()}openSchemes()},true);
+{const _om=openModal;openModal=function(...a){const r=_om.apply(this,a);try{const n=NAV.cur?NAV.cur.name:'',b=$('mBody');const seen=plotLive().filter(p=>p.seen).length;
+  if(n==='flow_people'){const g=b.querySelector('.flow-grid');if(g&&!g.querySelector('[data-schemes]'))g.insertAdjacentHTML('afterbegin',`<button class="flow-tile" data-schemes="1"><b>The back room${seen?` · ${seen} plot${seen===1?'':'s'}`:''}</b><span>${seen?'Someone is plotting against you':'Plots against you, and your own schemes'}</span></button>`)}
+  if(n==='openActions'&&!b.querySelector('[data-schemes]')){const x=b.querySelector('[data-powers]')||b.querySelector('[data-econ]');if(x)x.insertAdjacentHTML('afterend',' <button class="btn" data-schemes="1">The back room</button>')}
+  if(n==='openHQ'&&!b.querySelector('[data-schemes]'))b.insertAdjacentHTML('afterbegin',`<div class="row"><button class="btn${seen?' primary':''}" data-schemes="1">The back room${seen?` · ${seen} plot${seen===1?'':'s'} against you`:': plots and schemes'}</button></div>`)}catch(e){}return r}}
+// a known plot shows up in "what needs attention"
+{const _ns=nextSteps;nextSteps=function(...a){const r=_ns.apply(this,a);try{const p=plotLive().filter(p=>p.seen).sort((x,y)=>x.strike-y.strike)[0];if(p&&Array.isArray(r)){r.unshift({pri:96,t:`Deal with the plot: ${PLOTS[p.kind].n.toLowerCase()} by ${p.who}`,h:p.known?`Strikes in ${Math.max(0,p.strike-dayN())} days`:'A rumor you should look into',go:()=>openSchemes()})}}catch(e){}return r}}
 function openLedger(){const L=S.log||[];openPanel('Everything that has happened, newest first','Ledger',L.length?`<div class="logl">${L.map(x=>`<div><span>${x.d}</span><p style="margin:0">${x.t}</p></div>`).join('')}</div>`:'<p class="note">Nothing yet. Start the clock with Space or ▶.</p>','ledger')}
 function openPolicies(){const ks=Object.keys(POLICIES);
   openPanel('Ongoing programs you control','Your initiatives',`<p>Mid-year, these are paid from the reserve fund. In April they go into the budget you send the council.</p>
