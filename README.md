@@ -46,6 +46,16 @@ How the reporters work:
 - **Your scandals hit home.** Home life drops, and a spouse can walk out.
 - **Fix:** candidates now get the visitor events meant for them (family stories, straw-donor offers, blackmail and reporters). An old filter had been silently dropping them.
 
+## v26.62: Finding a partner, spouse skills, and children
+
+- **Start single.** Choose "Single" (or keep the default family) in People → Your family. A new game now prompts you to choose.
+- **Meet people** (1 action, once a month). You meet three people, and you can see each one's job, personality trait, attitude toward politics, and all six skills, with their best skill highlighted. Set who you're interested in: women, men, or everyone.
+- **Court them** with up to two dates a month at real Memphis spots: Beale Street, the Orpheum, the Big River Crossing, South Main, church and brunch, or Overton Square. Each date tests one of your skills, and their trait makes some dates go better. Ambitious partners care about your approval; devout partners care whether churchgoers like you.
+- **Propose** at 100% courtship (a Dealmaking check). Choose a small wedding ($8K) or a big one at the Peabody ($40K, which churches and homeowners love).
+- **Spouse skills boost yours**, like in Crusader Kings: about 1/6 of each of their skills, and 1/4 of their best one, are added to yours. That means better odds, and possibly more actions from Inside Game. The bonus stops while your spouse is unhappy, so home life matters.
+- **Children.** Try for a baby: about a 1 in 5 chance each month, a 9-month pregnancy, then you pick a name. Couples who can't conceive, or anyone, can adopt ($15K, about 6 months). A new baby boosts parents and churches, and costs you some sleep.
+- Spouses from older saves get skills automatically.
+
 ## v26.59: Dirty deals and secrets
 
 You can now break the law, and it can catch up with you.

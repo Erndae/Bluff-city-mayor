@@ -355,6 +355,7 @@ nav.actions [data-actsgo]{min-height:44px;padding:9px 17px;border-color:rgba(242
 .plotcard{border:1px solid rgba(232,93,74,.45);border-radius:12px;padding:12px;margin:10px 0;background:rgba(232,93,74,.05)}.plotcard.mine{border-color:var(--line,#2c3e4c);background:rgba(255,255,255,.02)}.pl-h{display:flex;justify-content:space-between;gap:8px;align-items:baseline}.pl-d{color:var(--bad);font-weight:600;font-size:13px}.pl-who{margin:2px 0 6px;color:var(--muted,#9aa7b2);font-size:13px}.levlist{display:flex;flex-direction:column;gap:6px;margin-top:8px}.levlist .btn{text-align:left}.levlist small{opacity:.8}.note.pos{color:var(--good)}.note.neg{color:var(--bad)}
 .plotcard.secret{border-color:rgba(242,169,59,.5);background:rgba(242,169,59,.05)}.plotcard.secret .pl-h b{font-size:15px}.plotcard.secret .pl-d{color:var(--amber)}.choice.dirtyc{border-color:rgba(232,93,74,.35)}
 .famlist{display:flex;flex-direction:column;gap:8px;margin:8px 0}.famcard{display:flex;gap:12px;align-items:center;border:1px solid var(--line,#2c3e4c);border-radius:12px;padding:10px}.famcard b{display:block}.famcard small{color:var(--muted,#9aa7b2)}.famcard .note{margin:4px 0 0}.fam-pic{flex:none;width:56px;height:56px;border-radius:50%;overflow:hidden;display:grid;place-items:center}.fam-pic svg,.fam-pic img{width:56px;height:56px}.homebar{margin:12px 0}.hb-h{display:flex;justify-content:space-between}.hb-h b.pos{color:var(--good)}.hb-h b.neg{color:var(--bad)}.homebar .facbar{height:8px}.famset{margin:12px 0}.famset summary{cursor:pointer;color:var(--amber)}.famset .row{flex-wrap:wrap}
+.psk{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:4px;margin:8px 0}.psk span{border:1px solid var(--line,#2c3e4c);border-radius:8px;padding:4px 6px;display:flex;justify-content:space-between;align-items:baseline;gap:4px}.psk span small{color:var(--muted,#9aa7b2);font-size:11px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.psk span.best{border-color:var(--amber)}@media(max-width:480px){.psk{grid-template-columns:repeat(2,minmax(0,1fr))}}.psk span.best b{color:var(--amber)}
 .adgain{display:block;width:100%;text-align:center;font-size:11px;font-weight:600;color:var(--good);margin-top:1px}
 #start{overflow-x:hidden;overflow-y:auto;touch-action:pan-y}.startbox{min-width:0;max-width:min(600px,100%);box-sizing:border-box}.startbox *{min-width:0}.create select,.create input{max-width:100%;width:100%;box-sizing:border-box;text-overflow:ellipsis}.create .tpick,.create .tpick>*{max-width:100%;box-sizing:border-box}
 @media (max-width:640px){.startbox{margin-left:0}#start{padding-left:max(16px,env(safe-area-inset-left,0px))}}
@@ -707,7 +708,7 @@ details.analysis{margin-top:6px}details.analysis summary{cursor:pointer;color:va
     <button class="btn primary" data-act="pause" id="bPlay"><svg class="ico" viewBox="0 0 12 12" aria-hidden="true"><path d="M3.2 1.6v8.8l7.2-4.4z" fill="currentColor"/></svg> Resume <kbd>Space</kbd></button>
   </nav>
   <div class="status" id="status">Loading map…</div>
-  <div class="credit"><span class="ver" id="verTag">v26.61</span></div>
+  <div class="credit"><span class="ver" id="verTag">v26.62</span></div>
   <div class="tip" id="tip" hidden></div>
   <div class="toast" id="toast" role="status"></div>
   <section class="panel" id="panel" hidden aria-live="polite">
@@ -735,7 +736,7 @@ details.analysis{margin-top:6px}details.analysis summary{cursor:pointer;color:va
         <button class="btn" data-music-open>Music &amp; volume</button>
       </div>
       <div id="slotList" hidden></div>
-      <p class="note startv">Version <b class="ver" id="verStart">v26.61</b></p>
+      <p class="note startv">Version <b class="ver" id="verStart">v26.62</b></p>
     </div>
     <div class="startbox create" id="create" hidden>
       <h2>Create your mayor</h2>
@@ -1546,7 +1547,7 @@ function enact(s,p){DIVS.forEach(d=>{s.enacted[d.id]=p.divs[d.id];s.ratio[d.id]=
 // Voter groups. Each has a share of residents, turnout, home districts, concerns and an approval of you.
 // Citywide approval is the turnout-weighted average of the groups; each council district's approval comes from the groups that live there.
 // Shares, district mix and turnout are modeled, loosely grounded in Memphis demographics; they are not survey data.
-const VERSION='v26.61';
+const VERSION='v26.62';
 const GROUPS=[
  {id:'working',sh:'Working families',n:'Working families',ic:'⚒︎',c:'#f2a93b',share:24,turn:.5,start:56,w:{jobs:1,safety:.8,transit:.5},
   d:'Hourly workers in logistics, warehouses, health care and service jobs. The biggest bloc in the city.',dm:{1:1.1,2:.8,3:1.3,4:1.2,5:.6,6:1.2,7:1.1}},
@@ -7388,7 +7389,7 @@ function famGen(kind){const g=(S.mayor&&S.mayor.g)||'m',sg=g==='m'?'f':'m',a=(S.
   if(kind==='married'||kind==='marriedkids')F.spouse={name:`${pk2(FAM_FIRST[sg])} ${surname()}`,g:sg,age:Math.max(28,a+Math.round(Math.random()*6-3)),job:pk2(Object.keys(SPOUSE_JOBS)),pol:pk2(['loves','tolerates','tolerates','hates']),mood:70,frame:'#6b4a5a'};
   if(kind==='marriedkids'||kind==='single1'){const n=kind==='single1'?1:1+Math.floor(Math.random()*2);F.kids=[];for(let i=0;i<n;i++){const kg=Math.random()<.5?'f':'m';F.kids.push({name:`${pk2(KID_FIRST[kg])} ${surname()}`,g:kg,age:Math.min(17,Math.max(7,a-30-i*3+Math.floor(Math.random()*5))),mood:70,frame:'#4a6b5a'})}}
   F.kids=F.kids||[];return F}
-function famInit(){if(!S)return null;if(S.fam&&S.fam.of&&S.mayor&&S.fam.of!==S.mayor.name)S.fam=null;if(!S.fam)S.fam=famGen(Math.random()<0.65?'marriedkids':Math.random()<0.5?'married':'single1');return S.fam}
+function famInit(){if(!S)return null;if(S.fam&&S.fam.of&&S.mayor&&S.fam.of!==S.mayor.name)S.fam=null;if(!S.fam)S.famAsk=true;if(!S.fam)S.fam=famGen(Math.random()<0.65?'marriedkids':Math.random()<0.5?'married':'single1');return S.fam}
 function famMembers(){const F=famInit();return[...(F.spouse&&!F.spouse.gone?[{...F.spouse,rel:F.spouse.g==='f'?'Wife':'Husband',id:'s'}]:[]),...F.kids.map((k,i)=>({...k,rel:k.g==='f'?'Daughter':'Son',id:'k'+i}))]}
 function famLog(t){const F=famInit();F.log.unshift({t,d:dateStr()});if(F.log.length>12)F.log.length=12}
 function homeAdd(v,why){const F=famInit();F.home=clamp(F.home+v,0,100);if(why&&Math.abs(v)>=5)famLog(`${why} (${v>0?'+':''}${Math.round(v)})`)}
@@ -7469,7 +7470,7 @@ function openFamily(){const F=famInit(),last=FAM_MSG;FAM_MSG=null;const M=famMem
     <p class="note">Every action you take wears it down; campaign season wears it down faster. ${F.spouse&&!F.spouse.gone&&F.spouse.pol==='hates'?'Your spouse hates politics, so it drops faster. ':''}Below 25, you're exhausted and lose an action. Very low, and ${F.spouse&&!F.spouse.gone?'your marriage is at risk':'your kids pull away'}. Your scandals hit home too.</p></div>
     <h4 class="plh">Time together</h4><div class="choices">${acts}</div>`:''}
    ${F.log.length?`<h4 class="plh">Family moments</h4><ul class="numlist">${F.log.slice(0,6).map(x=>`<li><small>${x.d}</small> ${x.t}</li>`).join('')}</ul>`:''}
-   <details class="famset"><summary>Change your family</summary><p class="note">Pick who's at home. New names and jobs are rolled each time.</p><div class="row">${kinds.map(([k,n])=>`<button class="btn" data-famset="${k}">${n}</button>`).join('')}</div></details>
+   <details class="famset"><summary>Change your family (or start single and find a partner)</summary><p class="note">Pick who's at home. New names and jobs are rolled each time.</p><div class="row">${kinds.map(([k,n])=>`<button class="btn" data-famset="${k}">${n}</button>`).join('')}</div></details>
    <div class="row"><button class="btn primary" data-act="close">Back</button></div>`,true)}
 openFamily=navWrap('openFamily',openFamily);
 document.addEventListener('click',e=>{const b=e.target.closest('[data-famact],[data-famset],[data-famopen]');if(!b||!S)return;e.preventDefault();e.stopImmediatePropagation();if(b.dataset.famact){famDo(b.dataset.famact);return}if(b.dataset.famset){famSet(b.dataset.famset);return}if(modalOpen){onClose=null;closeModal()}closePanel();openFamily()},true);
@@ -7477,6 +7478,89 @@ document.addEventListener('click',e=>{const b=e.target.closest('[data-famact],[d
   if(n==='flow_people'){const g=b.querySelector('.flow-grid');if(g&&!g.querySelector('[data-famopen]'))g.insertAdjacentHTML('afterbegin',`<button class="flow-tile" data-famopen="1"><b>Your family · home life ${Math.round(F.home)}</b><span>${famMembers().map(m=>m.name.split(' ')[0]).join(', ')||'You live alone'}</span></button>`)}
   if(n==='openHQ'&&!b.querySelector('[data-famopen]')&&FAM_ACT.trail.ok(F)){const x=b.querySelector('[data-schemes]');const h=`<button class="btn" data-famopen="1">Bring your family on the trail</button>`;if(x)x.insertAdjacentHTML('afterend',' '+h)}}catch(e){}return r}}
 {const _ns=nextSteps;nextSteps=function(...a){const r=_ns.apply(this,a);try{const F=S&&S.fam;if(F&&F.home<30&&(F.spouse&&!F.spouse.gone||F.kids.length)&&Array.isArray(r))r.push({pri:60,t:'Spend time with your family',h:`Home life is ${Math.round(F.home)}`,go:()=>openFamily()})}catch(e){}return r}}
+// ======================= v26.62: FINDING A PARTNER, AND HAVING CHILDREN =======================
+// Like Crusader Kings: if you're single you can meet people, see their skills, court them over a few dates,
+// propose and marry. Your spouse adds part of their skills to yours (about a fifth of each, more for their best one),
+// as long as the marriage is happy. Married couples can try for a baby, or adopt.
+const PJOBS={teacher:SPOUSE_JOBS.teacher,nurse:SPOUSE_JOBS.nurse,baker:SPOUSE_JOBS.baker,fedex:SPOUSE_JOBS.fedex,pastor:SPOUSE_JOBS.pastor,
+ lawyer:{n:'Attorney at a downtown law firm',short:'attorney',grp:['business','owners'],sk:'intr'},
+ doctor:{n:'Pediatrician at Le Bonheur',short:'pediatrician',grp:['parents','faith'],sk:'learn'},
+ artist:{n:'Musician at Stax Music Academy',short:'musician',grp:['young','renters'],sk:'cha'},
+ banker:{n:'Loan officer at a community bank',short:'banker',grp:['business','working'],sk:'stew'},
+ organizer:{n:'Community organizer in South Memphis',short:'organizer',grp:['renters','labor'],sk:'dip'},
+ deputy:{n:'Sheriff\'s deputy',short:'sheriff\'s deputy',grp:['owners','faith'],sk:'safe'}};
+['teacher','nurse','baker','fedex','pastor'].forEach((k,i)=>{PJOBS[k].sk=['learn','safe','stew','stew','cha'][i]});
+const PTRAITS={witty:{n:'Witty',d:'Loves a good laugh. Star Power dates go better.',sk:'cha'},gentle:{n:'Gentle',d:'Kind and patient. Dealmaking dates go better.',sk:'dip'},curious:{n:'Curious',d:'Always reading. Education dates go better.',sk:'learn'},
+ ambitious:{n:'Ambitious',d:'Wants a partner going places. Likes you more if your approval is high.',sk:'intr'},devout:{n:'Devout',d:'Faith comes first. Likes you more if churchgoers like you.',sk:'safe'},frugal:{n:'Frugal',d:'Hates waste. Money Smarts dates go better.',sk:'stew'}};
+const SKS=['dip','stew','intr','safe','learn','cha'];
+function personSkills(job){const o={};SKS.forEach(k=>o[k]=3+Math.floor(Math.random()*7));const best=PJOBS[job].sk;o[best]=11+Math.floor(Math.random()*6);return o}
+function newCandidate(){const F=famInit(),pref=F.pref||'any';const g=pref==='men'?'m':pref==='women'?'f':(Math.random()<.5?'f':'m');const a=(S.mayor&&S.mayor.age)||40;const job=pk2(Object.keys(PJOBS));
+  return{name:`${pk2(FAM_FIRST[g])} ${pk2(NEWNAMES.l)}`,g,age:clamp(a+Math.round(Math.random()*12-6),25,70),job,pol:pk2(['loves','tolerates','tolerates','hates']),trait:pk2(Object.keys(PTRAITS)),sk:personSkills(job),prog:0,dates:0,frame:pk2(['#6b4a5a','#4a5a6b','#5a6b4a','#6b5a3c'])}}
+// ---------- your spouse's skills help you ----------
+function spouseHelp(){const F=S&&S.fam;const s=F&&F.spouse;if(!s||s.gone||!s.sk)return null;const happy=(s.mood==null?70:s.mood)>=30;return happy?s:null}
+function spouseBonus(k){const s=spouseHelp();if(!s)return 0;const v=s.sk[k]||0;const best=PJOBS[s.job]&&PJOBS[s.job].sk===k;return Math.floor(v/(best?4:6))}
+{const _ms=mskill;mskill=function(k){const v=_ms.apply(this,arguments);try{return clamp(v+spouseBonus(k),0,25)}catch(e){return v}}}
+// older saves: give an existing spouse skills
+function spouseSkillsFix(){const F=S&&S.fam;if(F&&F.spouse&&!F.spouse.sk){F.spouse.sk=personSkills(F.spouse.job);F.spouse.trait=F.spouse.trait||pk2(Object.keys(PTRAITS))}}
+// ---------- dates ----------
+const DATES=[{id:'beale',n:'Live blues on Beale Street',sk:'cha',c:120},{id:'orph',n:'A show at the Orpheum',sk:'learn',c:220},{id:'river',n:'A walk across the Big River Crossing',sk:'dip',c:0},{id:'southmain',n:'Dinner on South Main',sk:'stew',c:180},{id:'church',n:'Sunday service, then brunch',sk:'safe',c:60},{id:'overton',n:'Drinks in Overton Square, talking politics',sk:'intr',c:90}];
+function dateOdds(c,D){let b=0.42;const T=PTRAITS[c.trait];if(T.sk===D.sk)b+=0.15;if(c.trait==='ambitious')b+=(S.approval-50)/200;if(c.trait==='devout'&&S.groups&&S.groups.faith)b+=(S.groups.faith.app-50)/200;if(c.pol==='hates'&&D.sk==='intr')b-=0.1;return clamp(b,0.15,0.8)}
+function datesLeft(){const F=famInit();F.dm=F.dm||{};return Math.max(0,2-(F.dm[nowM()]||0))}
+function goDate(i,did){const F=famInit(),c=(F.court||[])[i],D=DATES.find(x=>x.id===did);if(!c||!D||datesLeft()<=0||S.purse.cash<D.c)return;S.purse.cash-=D.c;F.dm[nowM()]=(F.dm[nowM()]||0)+1;c.dates++;
+  const ok=persuade(D.sk,dateOdds(c,D),[],5);const g=ok?28+Math.floor(Math.random()*10):6;c.prog=clamp(c.prog+g,0,100);homeAdd(ok?4:0);
+  const first=c.name.split(' ')[0];const msg=ok?`${D.n} with ${first} went great. ${c.prog>=100?`${first} is falling for you.`:`Getting closer (${c.prog}%).`}`:`${D.n} with ${first} was awkward. Closer, a little (${c.prog}%).`;
+  try{sfx(ok?'good':'bad')}catch(e){}save();refreshHUD();FAM_MSG=msg;openPartner()}
+function meetPeople(){const F=famInit();if(S.slots<=0||nowM()-(F.meetM||-99)<1)return;S.slots--;F.meetM=nowM();F.court=[newCandidate(),newCandidate(),newCandidate()];save();refreshHUD();FAM_MSG='Friends set you up, and you met three people worth getting to know.';openPartner()}
+function propose(i,big){const F=famInit(),c=(F.court||[])[i];if(!c||c.prog<100)return;const cost=big?40000:8000;if(S.purse.cash<cost)return;
+  if(!persuade('dip',0.65,[],8)){c.prog=75;FAM_MSG=`${c.name.split(' ')[0]} said "not yet." Keep dating, and ask again.`;save();openPartner();return}
+  S.purse.cash-=cost;const sp={name:c.name.split(' ')[0]+' '+surname(),born:c.name,g:c.g,age:c.age,job:c.job,pol:c.pol,trait:c.trait,sk:c.sk,mood:85,frame:c.frame};F.spouse=sp;F.kind=F.kids.length?'marriedkids':'married';F.court=null;F.of=S.mayor&&S.mayor.name;homeAdd(30,`You married ${c.name}`);
+  if(big){groupLift('faith',1.2,'A big Memphis wedding');groupLift('owners',0.6,'A big Memphis wedding');try{newsAdd(1.6,`The ${isCand()?'candidate':'mayor'} marries ${c.name} in a ceremony at the Peabody`)}catch(e){}}else try{newsAdd(0.8,`The ${isCand()?'candidate':'mayor'} quietly marries ${c.name}`)}catch(e){}
+  try{celebrate(true)}catch(e){}famLog(`You married ${c.name}`);save();refreshHUD();FAM_MSG=`You married ${c.name}. ${sp.g==='f'?'She':'He'} adds to your skills: ${bonusText()}.`;openFamily()}
+function bonusText(){const p=SKS.map(k=>[k,spouseBonus(k)]).filter(x=>x[1]>0).map(x=>`${skillName(x[0])} +${x[1]}`);return p.join(', ')||'nothing yet'}
+function skillRow(sk,best){return`<div class="psk">${SKS.map(k=>`<span class="${k===best?'best':''}"><small>${skillName(k)}</small><b>${sk[k]}</b></span>`).join('')}</div>`}
+function openPartner(){const F=famInit(),last=FAM_MSG;FAM_MSG=null;const L=F.court||[];const dl=datesLeft();
+  const card=(c,i)=>{const J=PJOBS[c.job],T=PTRAITS[c.trait];const tmp={...c,sk:c.sk,job:c.job};
+    const would=SKS.map(k=>[k,Math.floor((c.sk[k]||0)/(J.sk===k?4:6))]).filter(x=>x[1]>0).map(x=>`${skillName(x[0])} +${x[1]}`).join(', ')||'nothing';
+    return`<div class="faccard"><div class="famcard" style="border:0;padding:0"><div class="fam-pic">${(()=>{try{return portrait(c,56)}catch(e){return''}})()}</div><div><b>${c.name}</b><small>${c.age} · ${J.n}</small><p class="note">${T.n}: ${T.d} ${c.name.split(' ')[0]} ${SP_POL[c.pol]}.</p></div></div>
+     ${skillRow(c.sk,J.sk)}<p class="note">As your spouse, ${c.g==='f'?'she':'he'} would add: <b>${would}</b>.</p>
+     <div class="facbar"><i></i><i class="pos" style="left:0;width:${c.prog}%"></i></div><p class="note">Courtship: ${c.prog}%${c.prog>=100?' · ready to propose':''} · ${c.dates} date${c.dates===1?'':'s'}</p>
+     ${c.prog>=100?`<div class="choices"><button class="choice" data-prop="${i}|0" ${S.purse.cash<8000?'disabled':''}><b>Propose: a small wedding</b><small>$8,000 · ${oddsTag('dip',0.65)}</small></button><button class="choice" data-prop="${i}|1" ${S.purse.cash<40000?'disabled':''}><b>Propose: a big wedding at the Peabody</b><small>$40,000 · ${oddsTag('dip',0.65)} · churches and homeowners love it</small></button></div>`
+      :`<div class="choices">${DATES.map(D=>`<button class="choice" data-date="${i}|${D.id}" ${dl<=0||S.purse.cash<D.c?'disabled':''}><b>${D.n}</b><small>${D.c?'$'+D.c:'Free'} · ${skillName(D.sk)} ${mskill(D.sk)} · ${Math.round(dateOdds(c,D)*100)}% it goes well</small></button>`).join('')}</div>`}</div>`};
+  openModal(`Finding a partner · ${dl} date${dl===1?'':'s'} left this month`,'Your love life',`${last?`<p class="scnreply">${last}</p>`:''}
+   <p>Meet people, court them, and marry the one you want. Your spouse adds part of their skills to yours: about a fifth of each, and a quarter of their best. They stop helping if the marriage goes sour.</p>
+   <div class="row"><span class="note">Interested in:</span>${[['women','Women'],['men','Men'],['any','Everyone']].map(([k,n])=>`<button class="btn${(F.pref||'any')===k?' primary':''}" data-pref="${k}">${n}</button>`).join('')}</div>
+   ${L.length?L.map(card).join(''):'<p class="note">You haven\'t met anyone yet.</p>'}
+   <div class="row"><button class="btn" data-meet="1" ${S.slots<=0||nowM()-(F.meetM||-99)<1?'disabled':''}>${L.length?'Meet three new people':'Meet people'}<small> · 1 action · once a month</small></button><button class="btn primary" data-famopen="1">Back to your family</button></div>`,true)}
+openPartner=navWrap('openPartner',openPartner);
+// ---------- children ----------
+const BABY={f:['Amara','Harper','Zuri','Layla','Naomi','Sienna','Kennedy','Ruby'],m:['Isaiah','Bryce','Kingston','Elias','Jalen','Micah','Rowan','Desmond']};
+function canConceive(){const F=famInit(),s=F.spouse;if(!s||s.gone)return false;const me=S.mayor||{};const carrier=s.g==='f'?s:me.g==='f'?me:null;return!!carrier&&(carrier.age||40)<=44&&s.g!==me.g}
+function babyMonth(){const F=famInit();if(!F.spouse||F.spouse.gone)return;
+  if(F.preg){if(nowM()>=F.preg.due){const g=Math.random()<.5?'f':'m';F.preg=null;F.namePick={g,opts:[...BABY[g]].sort(()=>Math.random()-.5).slice(0,3)};queueBirth();}return}
+  if(F.adopt&&nowM()>=F.adopt.due){const g=F.adopt.g;const age=F.adopt.age;F.adopt=null;F.namePick={g,opts:[...BABY[g]].sort(()=>Math.random()-.5).slice(0,3),age,adopted:true};queueBirth();return}
+  if(F.trying&&canConceive()&&Math.random()<0.18){F.preg={due:nowM()+9,since:nowM()};const who=F.spouse.g==='f'?F.spouse.name.split(' ')[0]:'You';homeAdd(10,'A baby on the way');famLog(`${who==='You'?'You are':who+' is'} pregnant`);notify('good','A baby on the way!',`${who==='You'?'You are':who+' is'} pregnant. The baby is due in about 9 months.`,()=>openFamily(),{ttl:20});try{celebrate(false)}catch(e){}}}
+function queueBirth(){const F=famInit();try{sfx('fanfare')}catch(e){}notify('good',F.namePick.adopted?'Your child is home':'The baby is here!','Tap to choose a name.',()=>openFamily(),{ttl:30});setTimeout(()=>{try{if(!modalOpen)openFamily()}catch(e){}},300)}
+function nameBaby(n){const F=famInit(),P=F.namePick;if(!P)return;const k={name:`${n} ${surname()}`,g:P.g,age:P.age||0,mood:90,frame:'#4a6b5a',born:dateStr()};F.kids.push(k);F.namePick=null;F.kind='marriedkids';homeAdd(15,`Welcomed ${n}`);F.babyM=nowM();
+  groupLift('parents',0.8,'The mayor\'s new baby');groupLift('faith',0.6,'The mayor\'s new baby');try{newsAdd(1.2,`The ${isCand()?'candidate':'mayor'} welcomes ${P.adopted?'a child home':'a baby'}: ${n}`)}catch(e){}famLog(`Welcomed ${n} ${surname()}`);try{celebrate(true)}catch(e){}save();refreshHUD();FAM_MSG=`Welcome, ${n}.`;openFamily()}
+// a baby in the house is joy, and sleepless nights
+{const _fm=famMonth;famMonth=function(...a){const r=_fm.apply(this,a);try{spouseSkillsFix();babyMonth();const F=S.fam;if(F&&F.kids.some(k=>k.age<=1))homeAdd(-2)}catch(e){console.warn('baby',e)}return r}}
+// ---------- the family screen gets the new parts ----------
+{const _of=openFamily;openFamily=function(...a){const F=famInit();spouseSkillsFix();const r=_of.apply(this,a);try{const b=$('mBody');if(!b||b.querySelector('.v62wrap'))return r;const w=document.createElement('div');w.className='v62wrap';const s=F.spouse&&!F.spouse.gone?F.spouse:null;let h='';
+  if(F.namePick){h+=`<div class="faccard"><b>${F.namePick.adopted?'Your new child is home':'Your baby is here'}: a ${F.namePick.g==='f'?'girl':'boy'}!</b><p class="note">Choose a name.</p><div class="row">${F.namePick.opts.map(n=>`<button class="btn primary" data-baby="${n}">${n}</button>`).join('')}</div></div>`}
+  if(s&&s.sk){const J=PJOBS[s.job]||{};h+=`<div class="faccard"><b>${s.name.split(' ')[0]}'s skills</b>${skillRow(s.sk,J.sk)}<p class="note">${spouseHelp()?`Adds to yours: <b>${bonusText()}</b>.`:`${s.name.split(' ')[0]} is too unhappy to help you right now. Raise home life.`}${s.trait&&PTRAITS[s.trait]?` · ${PTRAITS[s.trait].n}`:''}</p></div>`}
+  if(s){const cc=canConceive();h+=`<h4 class="plh">Children</h4>${F.preg?`<p class="note">A baby is due in about <b>${Math.max(0,F.preg.due-nowM())} months</b>.</p>`:F.adopt?`<p class="note">Your adoption comes through in about <b>${Math.max(0,F.adopt.due-nowM())} months</b>.</p>`:`<div class="choices">${cc?`<button class="choice" data-trying="1"><b>${F.trying?'Stop trying for a baby':'Try for a baby'}</b><small>${F.trying?'You\'re trying now. About a 1 in 5 chance each month.':'Free · about a 1 in 5 chance each month once you start'}</small></button>`:''}<button class="choice" data-adopt="1" ${S.purse.cash<15000?'disabled':''}><b>Adopt a child</b><small>$15,000 in fees · a child joins your family in about 6 months</small></button></div>`}`}
+  else if(!F.namePick)h+=`<div class="faccard"><b>${F.spouse&&F.spouse.gone?'Start over':'Looking for someone?'}</b><p class="note">Meet people, see their skills, and court them. A spouse adds part of their skills to yours.</p><div class="row"><button class="btn primary" data-partner="1">${F.court&&F.court.length?'Back to dating':'Find a partner'}</button></div></div>`;
+  w.innerHTML=h;const first=b.querySelector('.homebar')||b.querySelector('.famset');if(first)b.insertBefore(w,first);else b.prepend(w)}catch(e){console.warn(e)}return r};VIEWS.openFamily=openFamily}
+document.addEventListener('click',e=>{const b=e.target.closest('[data-date],[data-prop],[data-meet],[data-pref],[data-partner],[data-baby],[data-trying],[data-adopt]');if(!b||!S)return;e.preventDefault();e.stopImmediatePropagation();const F=famInit();
+  if(b.dataset.date){const[i,d]=b.dataset.date.split('|');goDate(+i,d);return}if(b.dataset.prop){const[i,big]=b.dataset.prop.split('|');propose(+i,big==='1');return}
+  if(b.dataset.meet){meetPeople();return}if(b.dataset.pref){F.pref=b.dataset.pref;F.court=null;save();openPartner();return}if(b.dataset.baby){nameBaby(b.dataset.baby);return}
+  if(b.dataset.trying){F.trying=!F.trying;save();FAM_MSG=F.trying?'You\'re trying for a baby.':'You\'ve stopped trying, for now.';openFamily();return}
+  if(b.dataset.adopt){if(S.purse.cash<15000)return;S.purse.cash-=15000;F.adopt={due:nowM()+6,g:Math.random()<.5?'f':'m',age:Math.floor(Math.random()*6)};save();FAM_MSG='You started the adoption. A caseworker will match you with a child.';openFamily();return}
+  if(modalOpen){onClose=null;closeModal()}openPartner()},true);
+// the "Change your family" picker now also offers starting single, and the single family screen leads to dating
+{const _ns=nextSteps;nextSteps=function(...a){const r=_ns.apply(this,a);try{if(S&&S.famAsk&&Array.isArray(r))r.push({pri:55,t:'Choose your family: married, or single and looking',h:'Start with a spouse and kids, or find a partner yourself',go:()=>openFamily()})}catch(e){}return r}}
+{const _of=openFamily;openFamily=function(...a){if(S)S.famAsk=false;return _of.apply(this,a)};VIEWS.openFamily=openFamily}
+{const _fg=famGen;famGen=function(...a){const F=_fg.apply(this,a);try{if(F.spouse){F.spouse.sk=personSkills(F.spouse.job);F.spouse.trait=pk2(Object.keys(PTRAITS))}}catch(e){}return F}}
 function openLedger(){const L=S.log||[];openPanel('Everything that has happened, newest first','Ledger',L.length?`<div class="logl">${L.map(x=>`<div><span>${x.d}</span><p style="margin:0">${x.t}</p></div>`).join('')}</div>`:'<p class="note">Nothing yet. Start the clock with Space or ▶.</p>','ledger')}
 function openPolicies(){const ks=Object.keys(POLICIES);
   openPanel('Ongoing programs you control','Your initiatives',`<p>Mid-year, these are paid from the reserve fund. In April they go into the budget you send the council.</p>
