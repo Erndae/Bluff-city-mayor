@@ -4,6 +4,13 @@ A city-management game set in Memphis, Tennessee. You play the mayor. You handle
 
 **Play it:** https://erndae.github.io/Bluff-city-mayor/ (once GitHub Pages is turned on, see below)
 
+## v26.76: Memphis in Congress, home life after City Hall, Senate wording
+
+- **Memphis in Congress (as mayor).** Under the 2026 map Memphis has three members of Congress (5th, 8th and 9th districts), and the city is a minority of each district. A new screen (People → Power and politics, or from Power players) shows each member (fictional), their party, and your relationship, which drifts based on whether you share a party. Ask a member for federal money (1 action, Money Smarts) or fly to Washington to lobby all three (2 actions, Dealmaking, once a year). Members ask favors every 8 to 12 months: sharing credit at a ribbon cutting, a town hall in the rural end of their district, backing their bill, or an election-year endorsement. Seats can change hands every other November. Friendly members also push FEMA after a disaster.
+- **Home life after City Hall has consequences.** When home life falls below 25, a "Your marriage is in trouble" event comes up: come home (costs clout in Washington), move the family to D.C., or keep going, which can end the marriage. Home life now shows on the next-chapter screen.
+- **Senate wording.** Senators get state offices in Nashville, Knoxville and Chattanooga, town halls across Tennessee, a 95-county tour, and "break with your party for Tennessee."
+- Fixed: the district map could collapse to zero height on full-screen pages.
+
 ## v26.75: The 2026 map, two homes, and flying to Washington
 
 - **The new congressional map.** Tennessee's 2026 map splits Shelby County among the 5th, 8th and 9th districts, each running from part of Memphis into rural Tennessee. Choosing Congress now asks which district you'll run in, with a schematic map. Each district's partisan lean changes your odds (all three lean Republican under the new lines). A court ruling on the map can go either way during your career; if it's struck down, a compact Memphis-centered 9th District returns.

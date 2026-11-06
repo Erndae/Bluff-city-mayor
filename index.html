@@ -364,7 +364,7 @@ nav.actions [data-actsgo]{min-height:44px;padding:9px 17px;border-color:rgba(242
 .qrgrid.agrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.qrgrid.agrid p{margin:2px 0 0}
 .billrow{border:1px solid var(--line,#2c3e4c);border-radius:10px;padding:10px;margin:8px 0}.billrow small{display:block;color:var(--muted,#9aa7b2);margin:2px 0 6px}.stagepips{display:flex;gap:4px;margin-top:6px}.stagepips i{flex:1;height:4px;border-radius:2px;background:rgba(255,255,255,.12)}.stagepips i.on{background:var(--good)}
 .partyrow{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin:10px 0 2px}.partyrow span{margin-right:4px}
-.tnmap{width:100%;max-width:420px;display:block;margin:8px 0 2px}.tnmap .tnst{fill:var(--panel2,rgba(127,127,127,.08));stroke:var(--line,rgba(127,127,127,.4));stroke-width:1}.tnmap .tnl{font-size:9px;fill:var(--ink2,currentColor);font-weight:600}.tnmap .tnmem{fill:var(--acc,#e8b04f)}.tnmap .tncity{fill:var(--ink2,#888)}.faccard.homes{border-left:3px solid var(--acc,#e8b04f)}
+.tnmap{width:100%;max-width:420px;height:auto!important;aspect-ratio:330/96;flex-shrink:0;display:block;margin:8px 0 2px}.homelife .neg{color:var(--bad,#e06060)}.tnmap .tnst{fill:var(--panel2,rgba(127,127,127,.08));stroke:var(--line,rgba(127,127,127,.4));stroke-width:1}.tnmap .tnl{font-size:9px;fill:var(--ink2,currentColor);font-weight:600}.tnmap .tnmem{fill:var(--acc,#e8b04f)}.tnmap .tncity{fill:var(--ink2,#888)}.faccard.homes{border-left:3px solid var(--acc,#e8b04f)}
 .adgain{display:block;width:100%;text-align:center;font-size:11px;font-weight:600;color:var(--good);margin-top:1px}
 #start{overflow-x:hidden;overflow-y:auto;touch-action:pan-y}.startbox{min-width:0;max-width:min(600px,100%);box-sizing:border-box}.startbox *{min-width:0}.create select,.create input{max-width:100%;width:100%;box-sizing:border-box;text-overflow:ellipsis}.create .tpick,.create .tpick>*{max-width:100%;box-sizing:border-box}
 @media (max-width:640px){.startbox{margin-left:0}#start{padding-left:max(16px,env(safe-area-inset-left,0px))}}
@@ -717,7 +717,7 @@ details.analysis{margin-top:6px}details.analysis summary{cursor:pointer;color:va
     <button class="btn primary" data-act="pause" id="bPlay"><svg class="ico" viewBox="0 0 12 12" aria-hidden="true"><path d="M3.2 1.6v8.8l7.2-4.4z" fill="currentColor"/></svg> Resume <kbd>Space</kbd></button>
   </nav>
   <div class="status" id="status">Loading map…</div>
-  <div class="credit"><span class="ver" id="verTag">v26.75</span></div>
+  <div class="credit"><span class="ver" id="verTag">v26.76</span></div>
   <div class="tip" id="tip" hidden></div>
   <div class="toast" id="toast" role="status"></div>
   <section class="panel" id="panel" hidden aria-live="polite">
@@ -745,7 +745,7 @@ details.analysis{margin-top:6px}details.analysis summary{cursor:pointer;color:va
         <button class="btn" data-music-open>Music &amp; volume</button>
       </div>
       <div id="slotList" hidden></div>
-      <p class="note startv">Version <b class="ver" id="verStart">v26.75</b></p>
+      <p class="note startv">Version <b class="ver" id="verStart">v26.76</b></p>
     </div>
     <div class="startbox create" id="create" hidden>
       <h2>Create your mayor</h2>
@@ -1556,7 +1556,7 @@ function enact(s,p){DIVS.forEach(d=>{s.enacted[d.id]=p.divs[d.id];s.ratio[d.id]=
 // Voter groups. Each has a share of residents, turnout, home districts, concerns and an approval of you.
 // Citywide approval is the turnout-weighted average of the groups; each council district's approval comes from the groups that live there.
 // Shares, district mix and turnout are modeled, loosely grounded in Memphis demographics; they are not survey data.
-const VERSION='v26.75';
+const VERSION='v26.76';
 const GROUPS=[
  {id:'working',sh:'Working families',n:'Working families',ic:'⚒︎',c:'#f2a93b',share:24,turn:.5,start:56,w:{jobs:1,safety:.8,transit:.5},
   d:'Hourly workers in logistics, warehouses, health care and service jobs. The biggest bloc in the city.',dm:{1:1.1,2:.8,3:1.3,4:1.2,5:.6,6:1.2,7:1.1}},
@@ -8307,6 +8307,89 @@ function skipVote(){const A=afterInit(),c=A.cg;if(!c||!c.vote)return;c.party-=4;
   }catch(e){console.warn('v75 screen',e)}return out}}
 document.addEventListener('click',e=>{const b=e.target.closest('[data-dist],[data-distx],[data-dch],[data-famloc],[data-fly],[data-skipvote]');if(!b||!S||!S.after)return;e.preventDefault();e.stopImmediatePropagation();const d=b.dataset;
   if(d.dist){pickDistrict(d.dist);return}if(d.distx){S.after.pickDist=false;save();openAfter();return}if(d.dch){chooseDC(d.dch);return}if(d.famloc){chooseFamLoc(d.famloc);return}if(d.fly){flyTo(d.fly);return}if(d.skipvote)skipVote()},true);
+
+// ======================= v26.76: MEMPHIS'S DELEGATION IN CONGRESS; HOME LIFE AFTER CITY HALL; SENATE WORDING =======================
+// Under the 2026 map Memphis has three members of Congress (the 5th, 8th and 9th districts), and for each of them
+// Memphis is only part of the district. As mayor you work them for federal money: meetings, a lobbying trip to
+// Washington, sharing credit, and favors they ask of you. The people in this game are fictional.
+const DELEG_FIRST={m:['Wade','Curtis','Darnell','Harlan','Russell','Marcus','Glenn','Trent'],f:['Lorna','Renee','Dana','Carolyn','Tasha','Meredith','Joanne','Celeste']};
+const DELEG_LAST=['Pruitt','Haskins','Odom','Whitfield','Bramlett','Coker','Tillman','Sowell','Gaither','Ashby','Duckett','Rainey'];
+// how much each member's politics turn on Memphis (a game value), and the chance their seat is held by a Republican
+const DELEG_SEAT={'5':{focus:0.3,pR:0.9,home:'Middle Tennessee'},'8':{focus:0.25,pR:0.95,home:'Jackson and West Tennessee'},'9':{focus:0.4,pR:0.6,home:'the counties east toward Nashville'}};
+function delegNew(d){const g=Math.random()<0.5?'m':'f';const P=DELEG_SEAT[d];return{d,name:`${pk2(DELEG_FIRST[g])} ${pk2(DELEG_LAST)}`,g,age:44+Math.floor(Math.random()*20),frame:'#6a5f8a',party:Math.random()<P.pR?'R':'D',rel:0,ask:-99,fav:-99,log:[]}}
+function delegInit(){if(!S)return null;if(!S.deleg){const reps={};['5','8','9'].forEach(d=>{let r,g=0;do{r=delegNew(d)}while(g++<20&&Object.values(reps).some(x=>x.name.split(' ')[0]===r.name.split(' ')[0]||x.name.split(' ')[1]===r.name.split(' ')[1]));r.rel=delegBase(r);reps[d]=r});S.deleg={reps,trip:-99,next:nowM()+4}}const D=S.deleg;Object.values(D.reps).forEach(r=>{if(r.rel==null)r.rel=0});return D}
+function delegBase(r){const p=myParty();if(!p||p==='I')return 0;return p===r.party?15:-10}
+function delegMod(r,v,why){r.rel=clamp(r.rel+v,-100,100);r.log=r.log||[];r.log.unshift({t:why,v});r.log=r.log.slice(0,5)}
+function delegTitle(r){return`U.S. Rep. ${r.name} (${r.party}), ${distName(r.d)}`}
+// each month: relationships drift toward where party puts them; every 8 to 12 months, a member asks a favor
+function delegMonth(){if(!S||!inOffice()||S.over)return;const D=delegInit();Object.values(D.reps).forEach(r=>{const b=delegBase(r);if(r.rel>b)r.rel-=1;else if(r.rel<b)r.rel+=1});
+  if(S.m===11&&S.y%2===0&&D.elY!==S.y){D.elY=S.y;Object.keys(D.reps).forEach(k=>{if(Math.random()<0.2){const old=D.reps[k];D.reps[k]=delegNew(k);D.reps[k].rel=delegBase(D.reps[k]);try{newsAdd(0,`${D.reps[k].name} wins ${distName(k)}, replacing ${old.name}`)}catch(e){}}})}
+  if(nowM()>=D.next&&!(S.events||[]).some(e=>e.type==='deleg')&&!(S.queue||[]).some(q=>q.ev&&q.ev.type==='deleg')){D.next=nowM()+8+Math.floor(Math.random()*5);const r=pk2(Object.values(D.reps));const pool=['credit','townhall','bill'];if(S.y%2===0&&S.m>=5&&S.m<=9)pool.push('endorse');queueChar({type:'deleg',rid:r.d,f:pk2(pool),at:'cityhall'})}}
+{const _eom=endOfMonth;endOfMonth=function(...a){const r=_eom.apply(this,a);try{delegMonth()}catch(e){console.warn('deleg',e)}return r}}
+// asking for money: one member at a time, or a trip to Washington to work all three
+function delegAsk(k){const D=delegInit(),r=D.reps[k];if(!r||S.slots<=0||nowM()-r.ask<6)return;S.slots--;r.ask=nowM();const b=clamp(0.3+r.rel/250+DELEG_SEAT[k].focus/2,0.1,0.85);const ok=persuade('stew',b,[],7);let m;
+  if(ok){const amt=Math.round((2+DELEG_SEAT[k].focus*10+Math.max(0,r.rel)/25)*10)/10;S.reserve+=amt;delegMod(r,3,'You made a good case');m=`${r.name} got ${fmtM(amt)} for Memphis into a federal spending bill.`;try{newsAdd(1,`${fmtM(amt)} in federal money coming to Memphis, says Rep. ${r.name}`)}catch(e){}}
+  else{delegMod(r,-3,'Another ask from the mayor');m=`${r.name}'s office said Memphis will have to wait for the next spending bill.`}
+  try{sfx(ok?'good':'bad')}catch(e){}save();refreshHUD();DELEG_MSG=m;openDeleg()}
+function delegTrip(){const D=delegInit();if(S.slots<2||nowM()-D.trip<12)return;S.slots-=2;D.trip=nowM();const H=hInit();if(H)H.st=clamp(H.st+4,0,100);try{homeAdd(-3)}catch(e){}const ok=persuade('dip',0.5,[],8);let tot=0;const got=[];
+  Object.values(D.reps).forEach(r=>{if(ok&&r.rel>=-10){const a=Math.round((1.5+DELEG_SEAT[r.d].focus*6+Math.max(0,r.rel)/40)*10)/10;tot+=a;got.push(r.name.split(' ').slice(-1)[0]);delegMod(r,6,'You came to Washington to see them')}else delegMod(r,2,'You came to Washington')});
+  if(!ok)tot=1;S.reserve+=tot;const m=ok?`You flew to Washington for two days of meetings on Capitol Hill. ${got.length?`Reps. ${got.join(', ')} committed ${fmtM(tot)} for Memphis.`:'Nobody on the delegation would commit money.'}`:`You flew to Washington, but the House was tied up in a budget fight. You came home with promises and ${fmtM(1)}.`;
+  if(ok&&tot)try{newsAdd(1,`Mayor returns from Washington with ${fmtM(tot)} in federal commitments`)}catch(e){}try{sfx(ok?'good':'bad')}catch(e){}save();refreshHUD();DELEG_MSG=m;openDeleg()}
+// favors they ask of you
+const DELEG_FAV={
+ credit:{t:r=>`${r.name} wants top billing at a ribbon cutting`,b:r=>`A federally funded MATA project opens next week. ${r.name}'s chief of staff calls: "The congress${r.g==='f'?'woman':'man'} wants to cut the ribbon and give the speech. It was federal money, after all."`,
+  ch:[['Share the stage and the credit',()=>'Rep +12',(r)=>{delegMod(r,12,'You shared the credit');return`${r.name} gave a gracious speech and thanked you by name.`}],
+      ['Cut the ribbon yourself',()=>'Approval +0.3 · Rep −12',(r)=>{popHit(0.3,'You cut the ribbon');delegMod(r,-12,'You took the credit');return'It was your photo on the front page. Their office noticed.'}]]},
+ townhall:{t:r=>`${r.name} asks you to appear at a town hall in ${DELEG_SEAT[r.d].home}`,b:r=>`"Folks out here think Memphis only wants their tax money. Come show them the mayor of Memphis cares about the whole district."`,
+  ch:[['Make the drive',()=>'1 action · Rep +15',(r)=>{S.slots=Math.max(0,S.slots-1);delegMod(r,15,'You came to their town hall');return'A two-hour drive, a packed fellowship hall, and a long line of handshakes. Their office will remember.'}],
+      ['Send a deputy',()=>'Rep −6',(r)=>{delegMod(r,-6,'You sent a deputy');return'Your deputy did fine. The congress member wanted you.'}]]},
+ bill:{t:r=>`${r.name} wants your public support for a bill`,b:r=>`${r.name} is pushing ${r.party==='R'?'a bill to tie federal crime grants to tougher local sentencing':'a bill to expand federal housing vouchers'}. "A statement from the mayor of Memphis would help me a lot."`,
+  ch:[['Endorse the bill',(r)=>`Rep +14 · ${r.party==='R'?'homeowners and churches like it, young voters and renters don\'t':'renters and young voters like it, homeowners grumble'}`,(r)=>{delegMod(r,14,'You backed their bill');if(r.party==='R'){groupLift('owners',1,'Backed a tough-on-crime bill');groupLift('young',-1,'Backed a tough-on-crime bill')}else{groupLift('renters',1,'Backed housing vouchers');groupLift('owners',-0.5,'Backed housing vouchers')}return'Your statement made the evening news.'}],
+      ['Stay out of it',()=>'Rep −8',(r)=>{delegMod(r,-8,'You stayed out of their fight');return'"We\'ll remember that," their staffer said.'}]]},
+ endorse:{t:r=>`${r.name} asks for your endorsement for re-election`,b:r=>`It's an election year. "Your name would help me with Memphis voters. I've delivered for your city."`,
+  ch:[['Endorse them',()=>'Rep +25 · voters who back the other party notice (−0.3)',(r)=>{delegMod(r,25,'You endorsed them');popHit(-0.3,'Endorsed in a partisan race');return'Your face is on their mailers now.'}],
+      ['Stay neutral',()=>'Rep −8 · city races are nonpartisan, and you keep it that way',(r)=>{delegMod(r,-8,'You stayed neutral');return'You said the mayor\'s office stays out of partisan races.'}]]}};
+CHAR_TYPES.deleg={w:0,gen:()=>null,title:ev=>{const r=delegInit().reps[ev.rid];return DELEG_FAV[ev.f].t(r)},who:ev=>[['rep',ev.rid]],
+  body:ev=>{const r=delegInit().reps[ev.rid];return`${DELEG_FAV[ev.f].b(r)}<br><small>Your relationship: <b>${r.rel>0?'+':''}${Math.round(r.rel)}</b>. Friendlier members bring home more federal money.</small>`},
+  choices:[0,1].map(i=>({l:ev=>DELEG_FAV[ev.f].ch[i][0],s:ev=>DELEG_FAV[ev.f].ch[i][1](delegInit().reps[ev.rid]),do:ev=>{const r=delegInit().reps[ev.rid];const m=DELEG_FAV[ev.f].ch[i][2](r);save();refreshHUD();return m}}))};
+{const _cw=charWhoX;charWhoX=function(kind,id){if(kind==='rep'){const r=delegInit().reps[id];if(r)return{who:{name:r.name,g:r.g,age:r.age,frame:r.frame},role:`U.S. Representative (${r.party}), ${distName(r.d)}`,attr:'data-deleg="1"',o:null}}return _cw.apply(this,arguments)}}
+{const _vo=visitorOf;visitorOf=function(ev){if(ev&&ev.type==='deleg'){const x=charWhoX('rep',ev.rid);if(x)return{ev,who:x.who,role:x.role,title:(()=>{try{return CHAR_TYPES.deleg.title(ev)}catch(e){return'A member of Congress'}})()}}return _vo.apply(this,arguments)}}
+// the screen
+let DELEG_MSG=null;
+function openDeleg(){const D=delegInit(),m=DELEG_MSG;DELEG_MSG=null;const can=inOffice();const tripCd=Math.max(0,12-(nowM()-D.trip));
+  const cards=Object.values(D.reps).map(r=>{const cd=Math.max(0,6-(nowM()-r.ask));const b=clamp(0.3+r.rel/250+DELEG_SEAT[r.d].focus/2,0.1,0.85);const [tn,cl]=facTier(r.rel);
+   return`<div class="faccard"><div class="fac-h"><span class="fac-ic" style="color:${DIST[r.d].col}">★</span><div><b>${r.name}</b><small>${r.party==='R'?'Republican':'Democrat'} · ${distName(r.d)}</small></div><span class="fac-rel ${cl}"><b>${r.rel>0?'+':''}${Math.round(r.rel)}</b><small>${tn}</small></span></div>
+   <div class="facbar"><i style="left:50%;width:0"></i><i class="${r.rel>=0?'pos':'neg'}" style="${r.rel>=0?'left:50%':'right:50%'};width:${Math.abs(r.rel)/2}%"></i></div>
+   <p class="note">${DIST[r.d].reach} Their base is in ${DELEG_SEAT[r.d].home}; Memphis is ${DELEG_SEAT[r.d].focus>=0.4?'a big part':'a smaller part'} of their politics.${myParty()&&myParty()!=='I'?` You're ${myParty()===r.party?'in the same party':'in the other party'} (${delegBase(r)>0?'+':''}${delegBase(r)} over time).`:''}</p>
+   ${r.log&&r.log.length?`<ul class="numlist">${r.log.slice(0,3).map(x=>`<li>${x.t}: <b class="${x.v>0?'pos':'neg'}">${x.v>0?'+':'−'}${Math.abs(x.v)}</b></li>`).join('')}</ul>`:''}
+   ${can?`<div class="row"><button class="btn" data-dask="${r.d}" ${S.slots<=0||cd?'disabled':''}>Ask for federal money<small> · ${cd?`again in ${cd} mo`:`1 action · Money Smarts · ${Math.round(b*100)}% base`}</small></button></div>`:''}</div>`}).join('');
+  openModal('Memphis in Congress','Your delegation in Washington',`${m?`<p class="scnreply">${m}</p>`:''}<p>Tennessee's 2026 map splits Memphis among three congressional districts, so the city has three members of Congress, and Memphis voters are a minority in each district. Work them for federal money. Friendlier members bring home more. <small class="note">The members here are fictional.</small></p>${distMap(null)}
+   ${can?`<div class="faccard homes"><b>✈ Fly to Washington to lobby the delegation</b><p class="note">Two days on Capitol Hill. Every member who isn't hostile commits money if the trip goes well. Stress +4, a little time away from home.</p><div class="row"><button class="btn primary" data-dtrip="1" ${S.slots<2||tripCd?'disabled':''}>Make the trip<small> · ${tripCd?`again in ${tripCd} mo`:`2 actions · ${oddsTag('dip',0.5)}`}</small></button></div></div>`:''}
+   ${cards}<div class="row"><button class="btn" data-act="close">Back</button></div>`,true)}
+openDeleg=navWrap('openDeleg',openDeleg);
+document.addEventListener('click',e=>{const b=e.target.closest('[data-deleg],[data-dask],[data-dtrip]');if(!b||!S||S.after)return;e.preventDefault();e.stopImmediatePropagation();if(b.dataset.dask){delegAsk(b.dataset.dask);return}if(b.dataset.dtrip){delegTrip();return}if(modalOpen&&!(NAV.cur&&NAV.cur.name==='flow_people')){onClose=null;closeModal()}openDeleg()},true);
+{const _om=openModal;openModal=function(...a){const r=_om.apply(this,a);try{const n=NAV.cur?NAV.cur.name:'',b=$('mBody');
+  if(n==='flow_people'&&inOffice()&&!b.querySelector('[data-deleg]')){const p=b.querySelector('[data-powers]');const t=`<button class="flow-tile" data-deleg="1"><b>Memphis in Congress</b><span>Three members of Congress since the 2026 map. Work them for federal money.</span></button>`;if(p)p.insertAdjacentHTML('afterend',t);else{const g=b.querySelector('.flow-grid');if(g)g.insertAdjacentHTML('beforeend',t)}}
+  if(n==='openPowers'&&inOffice()&&!b.querySelector('[data-deleg]')){const row=b.querySelector('.row:last-child');if(row)row.insertAdjacentHTML('afterbegin','<button class="btn" data-deleg="1">Memphis in Congress</button>')}}catch(e){}return r}}
+// federal money from friendly members also helps after a disaster
+{const _rr=typeof CHAR_TYPES.recover!=='undefined'?CHAR_TYPES.recover.body:null;if(_rr)CHAR_TYPES.recover.body=function(ev){let h=_rr.apply(this,arguments);try{const D=delegInit();const fr=Object.values(D.reps).filter(r=>r.rel>=25).length;if(fr)h+=`<br><small>${fr} friendly member${fr===1?'':'s'} of Congress ${fr===1?'is':'are'} pushing FEMA for you.</small>`}catch(e){}return h}}
+
+// ---------- 1. home life after City Hall now has consequences ----------
+AFTER_EVENTS.push({id:'homecrisis',w:()=>{const F=S.fam;return F&&F.spouse&&!F.spouse.gone&&F.home<25?8:0},t:'Your marriage is in trouble',
+  ch:[['Come home. Step back from Washington this year',A=>{const F=S.fam;homeAdd(35,'You came home');F.spouse.mood=clamp(F.spouse.mood+25,0,100);if(A.cg){A.cg.clout=clamp(A.cg.clout-6,0,100);A.cg.party=clamp(A.cg.party-4,0,100)}if(A.res)A.res.roots=clamp(A.res.roots+10,0,100);return A.cg?'You cut your Washington schedule to the bone and came home. Leadership grumbled. Your family noticed.':'You cleared your calendar and came home. It helped.'}],
+      ['Move the family to Washington',A=>{const r=A.res;if(!r||r.fam!=='memphis'||!DC_HOMES[r.dc]||!DC_HOMES[r.dc].fam){homeAdd(-5);return'There\'s no room for them where you live in D.C. The argument got worse.'}r.fam='dc';r.roots=clamp(r.roots-8,0,100);homeAdd(25,'The family moved to Washington');S.fam.spouse.mood=clamp(S.fam.spouse.mood+15,0,100);return'The family packed up and moved to Washington. Hard on the kids, but you\'re together.'}],
+      ['Keep going. The work matters',A=>{const F=S.fam;homeAdd(-10,'You chose the job');F.spouse.mood=clamp(F.spouse.mood-25,0,100);if(F.home<20&&F.spouse.mood<35){try{famSplit()}catch(e){F.spouse.gone=true}try{(F.kids||[]).forEach(k=>k.mood=clamp((k.mood||70)-15,0,100))}catch(e){}if(A.cg)A.cg.app=clamp(A.cg.app-3,0,100);A.inf=clamp(A.inf-4,0,100);return'Your spouse moved out. The kids split their time between two homes, and the story made the papers.'}return'You went back to work. The house got quieter.'}]]});
+// the family's state shows on the next-chapter screen
+{const _oa=openAfter;openAfter=function(...a){const r=_oa.apply(this,a);try{const F=S.fam,b=$('mBody');if(F&&b&&!b.querySelector('.homelife')&&(F.spouse&&!F.spouse.gone||F.kids.some(k=>k.age<18))){const g=b.querySelector('.qrgrid');if(g)g.insertAdjacentHTML('beforeend',`<div class="homelife"><small>Home life</small><p><b class="${F.home<30?'neg':F.home>=60?'pos':''}">${Math.round(F.home)}</b></p></div>`)}}catch(e){}return r}}
+
+// ---------- 2. the Senate gets its own wording ----------
+function isSen(){return!!(S&&S.after&&S.after.role==='senate')}
+const SEN_N={case:['Expand casework in your district offices','Expand casework in your state offices'],home:['Break with your party for Memphis','Break with your party for Tennessee'],town:['Hold town halls back home','Hold town halls across Tennessee'],office:['Open a district office outside Memphis','Open state offices in Nashville, Knoxville and Chattanooga'],tour:['Tour the far end of your district','Tour Tennessee\'s 95 counties']};
+Object.entries(SEN_N).forEach(([k,[h,s]])=>{const X=CG_ACTS[k];if(X)Object.defineProperty(X,'n',{configurable:true,get(){return isSen()?s:h}})});
+{const X=CG_ACTS.office,_d=X.d;X.d=()=>isSen()?'Offices in the state\'s other big cities · roots +15, approval +2':(typeof _d==='function'?_d():_d)}
+{const X=CG_ACTS.office,_do=X.do;X.do=function(c,A){const m=_do.apply(this,arguments);return isSen()?'Your new offices in Nashville, Knoxville and Chattanooga handle Social Security and VA cases from every corner of the state.':m}}
+{const X=CG_ACTS.town,_do=X.do;X.do=function(c,A){const m=_do.apply(this,arguments);return isSen()?'Town halls in Jackson, Murfreesboro and Johnson City. People felt heard.':m}}
+{const X=CG_ACTS.case,_d=X.d;X.d=()=>isSen()?'Help veterans, retirees and families across Tennessee with federal agencies · approval +3':(typeof _d==='function'?_d():_d)}
 
 function openLedger(){const L=S.log||[];openPanel('Everything that has happened, newest first','Ledger',L.length?`<div class="logl">${L.map(x=>`<div><span>${x.d}</span><p style="margin:0">${x.t}</p></div>`).join('')}</div>`:'<p class="note">Nothing yet. Start the clock with Space or ▶.</p>','ledger')}
 function openPolicies(){const ks=Object.keys(POLICIES);
