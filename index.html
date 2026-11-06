@@ -353,6 +353,7 @@ nav.actions [data-actsgo]{min-height:44px;padding:9px 17px;border-color:rgba(242
 .faccard{border:1px solid var(--line,#2c3e4c);border-radius:12px;padding:12px;margin:10px 0;background:rgba(255,255,255,.02)}.fac-h{display:flex;align-items:center;gap:10px}.fac-h>div{flex:1;min-width:0}.fac-h b{display:block}.fac-h small{color:var(--muted,#9aa7b2)}.fac-ic{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;background:rgba(242,169,59,.15);color:var(--amber);font-size:17px;flex:none}.fac-rel{text-align:right;flex:none}.fac-rel b{font-size:20px}.fac-rel.pos b{color:var(--good)}.fac-rel.neg b{color:var(--bad)}.fac-rel small{display:block}.facbar{position:relative;height:6px;border-radius:3px;background:rgba(255,255,255,.08);margin:8px 0 2px}.facbar i{position:absolute;top:0;bottom:0;border-radius:3px}.facbar i.pos{background:var(--good)}.facbar i.neg{background:var(--bad)}.facbar i:first-child{left:50%;width:1px!important;background:rgba(255,255,255,.4)}.facspark{width:60px;height:18px;color:var(--amber);display:block;margin:2px 0 0 auto}.faccard h5{margin:8px 0 4px}.faccard .qrgrid p{font-size:13px;margin:2px 0 0}.facpend{color:var(--amber);font-weight:600;margin:8px 0 0}.faccard .btn small{opacity:.8}
 .storycard{border:1px solid var(--line,#2c3e4c);border-radius:12px;padding:12px;margin:10px 0}.storycard.done{opacity:.85}.sc-h{display:flex;justify-content:space-between;gap:10px;align-items:baseline}.sc-h span{color:var(--amber);font-size:13px;text-align:right}.storycard.done .sc-h span{color:var(--muted,#9aa7b2)}.sc-steps{margin:8px 0 0;padding-left:20px}.sc-steps li{margin:4px 0}.sc-steps small{color:var(--muted,#9aa7b2);margin-right:6px}.sc-end{margin:8px 0 0}.sc-end small.pos{color:var(--good)}.sc-end small.neg{color:var(--bad)}
 .plotcard{border:1px solid rgba(232,93,74,.45);border-radius:12px;padding:12px;margin:10px 0;background:rgba(232,93,74,.05)}.plotcard.mine{border-color:var(--line,#2c3e4c);background:rgba(255,255,255,.02)}.pl-h{display:flex;justify-content:space-between;gap:8px;align-items:baseline}.pl-d{color:var(--bad);font-weight:600;font-size:13px}.pl-who{margin:2px 0 6px;color:var(--muted,#9aa7b2);font-size:13px}.levlist{display:flex;flex-direction:column;gap:6px;margin-top:8px}.levlist .btn{text-align:left}.levlist small{opacity:.8}.note.pos{color:var(--good)}.note.neg{color:var(--bad)}
+.plotcard.secret{border-color:rgba(242,169,59,.5);background:rgba(242,169,59,.05)}.plotcard.secret .pl-h b{font-size:15px}.plotcard.secret .pl-d{color:var(--amber)}.choice.dirtyc{border-color:rgba(232,93,74,.35)}
 .adgain{display:block;width:100%;text-align:center;font-size:11px;font-weight:600;color:var(--good);margin-top:1px}
 #start{overflow-x:hidden;overflow-y:auto;touch-action:pan-y}.startbox{min-width:0;max-width:min(600px,100%);box-sizing:border-box}.startbox *{min-width:0}.create select,.create input{max-width:100%;width:100%;box-sizing:border-box;text-overflow:ellipsis}.create .tpick,.create .tpick>*{max-width:100%;box-sizing:border-box}
 @media (max-width:640px){.startbox{margin-left:0}#start{padding-left:max(16px,env(safe-area-inset-left,0px))}}
@@ -705,7 +706,7 @@ details.analysis{margin-top:6px}details.analysis summary{cursor:pointer;color:va
     <button class="btn primary" data-act="pause" id="bPlay"><svg class="ico" viewBox="0 0 12 12" aria-hidden="true"><path d="M3.2 1.6v8.8l7.2-4.4z" fill="currentColor"/></svg> Resume <kbd>Space</kbd></button>
   </nav>
   <div class="status" id="status">Loading map…</div>
-  <div class="credit"><span class="ver" id="verTag">v26.58</span></div>
+  <div class="credit"><span class="ver" id="verTag">v26.59</span></div>
   <div class="tip" id="tip" hidden></div>
   <div class="toast" id="toast" role="status"></div>
   <section class="panel" id="panel" hidden aria-live="polite">
@@ -733,7 +734,7 @@ details.analysis{margin-top:6px}details.analysis summary{cursor:pointer;color:va
         <button class="btn" data-music-open>Music &amp; volume</button>
       </div>
       <div id="slotList" hidden></div>
-      <p class="note startv">Version <b class="ver" id="verStart">v26.58</b></p>
+      <p class="note startv">Version <b class="ver" id="verStart">v26.59</b></p>
     </div>
     <div class="startbox create" id="create" hidden>
       <h2>Create your mayor</h2>
@@ -1544,7 +1545,7 @@ function enact(s,p){DIVS.forEach(d=>{s.enacted[d.id]=p.divs[d.id];s.ratio[d.id]=
 // Voter groups. Each has a share of residents, turnout, home districts, concerns and an approval of you.
 // Citywide approval is the turnout-weighted average of the groups; each council district's approval comes from the groups that live there.
 // Shares, district mix and turnout are modeled, loosely grounded in Memphis demographics; they are not survey data.
-const VERSION='v26.58';
+const VERSION='v26.59';
 const GROUPS=[
  {id:'working',sh:'Working families',n:'Working families',ic:'⚒︎',c:'#f2a93b',share:24,turn:.5,start:56,w:{jobs:1,safety:.8,transit:.5},
   d:'Hourly workers in logistics, warehouses, health care and service jobs. The biggest bloc in the city.',dm:{1:1.1,2:.8,3:1.3,4:1.2,5:.6,6:1.2,7:1.1}},
@@ -7090,6 +7091,140 @@ document.addEventListener('click',e=>{const b=e.target.closest('[data-counter],[
   if(n==='openHQ'&&!b.querySelector('[data-schemes]'))b.insertAdjacentHTML('afterbegin',`<div class="row"><button class="btn${seen?' primary':''}" data-schemes="1">The back room${seen?` · ${seen} plot${seen===1?'':'s'} against you`:': plots and schemes'}</button></div>`)}catch(e){}return r}}
 // a known plot shows up in "what needs attention"
 {const _ns=nextSteps;nextSteps=function(...a){const r=_ns.apply(this,a);try{const p=plotLive().filter(p=>p.seen).sort((x,y)=>x.strike-y.strike)[0];if(p&&Array.isArray(r)){r.unshift({pri:96,t:`Deal with the plot: ${PLOTS[p.kind].n.toLowerCase()} by ${p.who}`,h:p.known?`Strikes in ${Math.max(0,p.strike-dayN())} days`:'A rumor you should look into',go:()=>openSchemes()})}}catch(e){}return r}}
+// ======================= v26.59: DIRTY DEALS AND SECRETS =======================
+// People approach you with illegal offers (kickbacks, no-show jobs, bribes), and as mayor you can skim or steer
+// contracts yourself. Every dirty deal pays off now and leaves a secret behind. Each secret has a monthly chance
+// of coming out, which grows with how serious it is and how many people know. Anyone who knows can blackmail you,
+// which is a hook held against you. If a secret comes out, it's a scandal; the serious ones bring the FBI, a trial,
+// and possibly removal from office.
+const TEMPTS={
+ kickback:{who:{name:'Vince Marchetti',g:'m',age:56,frame:'#6b5a3c'},role:'Owner, Tri-State Paving',sev:2,mayor:true,
+  t:'A paving contractor offers you a kickback',
+  b:'"The city is about to award a $1.2 million resurfacing contract. Make sure it comes to us, and $60,000 in cash finds its way to you. Nobody has to know."',
+  take:{l:'Take the cash and steer the contract',s:'+$60,000 personal money · the city overpays $0.4M · a serious secret (1 person knows)',do:ev=>{S.purse.cash+=60000;S.reserve-=0.4;return'The contract went to Tri-State Paving. An envelope arrived a week later.'},sec:'You took a $60,000 kickback from Tri-State Paving for a paving contract'}},
+ noshow:{who:{name:'council',g:'m',age:50},role:'Council member',sev:1,mayor:true,council:true,
+  t:'A council member wants a job for a relative',
+  b:ev=>`"My nephew needs a city job. Put him on the payroll in General Services: $58,000 a year, no need for him to show up. Do this, and you'll have my vote whenever you need it."`,
+  take:{l:'Put the nephew on the payroll',s:'They owe you a favor (+15 with them) · −$0.06M a year · a minor secret (2 people know)',do:ev=>{const m=S.council[ev.mk];m.favors=(m.favors||0)+1;addMod(m,'Took care of my family',15);S.reserve-=0.06;return`${S.council[ev.mk].name}'s nephew is on the payroll. He has never been seen at work.`},sec:ev=>`You put ${S.council[ev.mk].name}'s nephew in a no-show city job`}},
+ zoning:{who:{name:'Preston Hale',g:'m',age:48,frame:'#3c5a6b'},role:'Developer, Hale Properties',sev:2,mayor:true,
+  t:'A developer offers a "consulting fee"',
+  b:'"My apartment project needs a rezoning the neighbors are fighting. I could hire a relative of yours as a consultant: $40,000 for some paperwork. Then you see the zoning through."',
+  take:{l:'Take the "consulting fee" and push the rezoning',s:'+$40,000 personal money · business +2, homeowners −2 · a serious secret (2 people know)',do:ev=>{S.purse.cash+=40000;groupLift('business',2,'A rezoning went through');groupLift('owners',-2,'A rezoning neighbors fought');return'The rezoning went through. The consulting check cleared.'},sec:'Your family took a $40,000 "consulting fee" from a developer you then rezoned for',knows:2}},
+ straw:{who:{name:'Gerald Pickens',g:'m',age:61,frame:'#5a3c6b'},role:'Trucking company owner',sev:2,mayor:false,
+  t:'A donor offers money through fake donors',
+  b:'"Contribution limits are a joke. I\'ll have 40 of my drivers each give you the maximum, and I\'ll pay them back in cash. That\'s $100,000. All I want is a fair shot at city trucking contracts."',
+  take:{l:'Take the straw donations',s:'+$100K campaign cash · a serious secret (41 people know, so it\'s risky)',do:ev=>{if(S.camp){S.camp.cash+=100;S.camp.raised+=100;try{flowC('donors',100)}catch(e){}}return'Forty checks for the maximum arrived in one week, all from Pickens Trucking drivers.'},sec:'You took $100,000 in illegal straw donations from Gerald Pickens\'s drivers',knows:4}},
+ inspect:{who:{name:'Lorraine Tate',g:'f',age:59,frame:'#6b3c4a'},role:'Landlord, 300 rental units',sev:1,mayor:true,
+  t:'A landlord wants code violations to disappear',
+  b:'"Your code inspectors wrote up 40 of my units. Make the reports go away, and there\'s $15,000 for you. Those tenants complain about everything anyway."',
+  take:{l:'Make the reports disappear',s:'+$15,000 personal money · blight worse · a minor secret (2 people know)',do:ev=>{S.purse.cash+=15000;S.met.blight+=0.4;return'The inspection reports were closed as "resolved." Nothing was fixed.'},sec:'You buried code violations on 40 rental units for $15,000',knows:2}},
+ trip:{who:{name:'Monica Reyes',g:'f',age:44,frame:'#3c6b5a'},role:'Lobbyist for a parking company',sev:1,mayor:true,
+  t:'A lobbyist offers a free luxury trip',
+  b:'"Our company is bidding on the downtown parking contract. We\'d love to host you and your family in Cabo for a week: private villa, all paid. Just a chance to talk about our proposal."',
+  take:{l:'Take the trip',s:'A week in Cabo (worth $30,000) · the parking contract leans their way · a minor secret (2 people know)',do:ev=>{S.purse.cash+=30000*0.3;S.mood+=0.1;return'Cabo was beautiful. The parking company got the contract a month later.'},sec:'You took a free $30,000 trip from a company that then won a city contract',knows:2}}};
+function tempt(ev){return TEMPTS[ev.tid]}
+function tempWho(ev){const T=tempt(ev);if(T.council){const m=S.council[ev.mk];return{who:m,role:`Council member, District ${m.d||ev.mk+1}`}}return{who:T.who,role:T.role}}
+CHAR_TYPES.tempt={w:0,gen:()=>null,title:ev=>tempt(ev).t,who:ev=>[['tempt',ev.id]],
+  body:ev=>{const T=tempt(ev),W=tempWho(ev);return`${W.who.name}, ${W.role.toLowerCase()}, closes your office door. ${typeof T.b==='function'?T.b(ev):T.b}<br><small>This is illegal. If you say yes, it becomes a secret that could come out later.</small>`},
+  choices:[
+   {l:ev=>tempt(ev).take.l,s:ev=>tempt(ev).take.s,do:ev=>{const T=tempt(ev);const msg=T.take.do(ev);const W=tempWho(ev);
+     addSecret({t:typeof T.take.sec==='function'?T.take.sec(ev):T.take.sec,sev:T.sev,knows:[{name:W.who.name,k:T.council?ev.mk:null,complicit:!!T.council}].concat(T.take.knows>1?[{name:T.council?'Your HR director':'Your aide who set up the meeting'}]:[]),crowd:T.take.knows>=4?40:0});
+     S.dirty=(S.dirty||0)+1;return msg+' You now carry a secret.'}},
+   {l:()=>'Say no, firmly',s:ev=>tempt(ev).council?'They\'re annoyed (−6 with them) · your conscience is clean':'They leave. Nothing happens',do:ev=>{if(tempt(ev).council)addMod(S.council[ev.mk],'The mayor wouldn\'t help my family',-6);return'You showed them the door.'}},
+   {l:()=>'Say no, and report them to the FBI',s:ev=>tempt(ev).council?`Integrity +, the public likes it (+1 approval) · ${S.council[ev.mk].name} becomes an enemy (−30)`:'Integrity +, the public likes it (+1 approval)',do:ev=>{popHit(0.6,'Reported a bribe attempt');try{newsAdd(1.4,`${isCand()?'Candidate':'Mayor'} reports bribe attempt to the FBI`)}catch(e){}if(tempt(ev).council)addMod(S.council[ev.mk],'The mayor reported me to the FBI',-30);S.clean=(S.clean||0)+1;try{addRecord({t:'Reported a bribe attempt to the FBI',kind:'law',good:[],bad:[]})}catch(e){}return'You called the FBI field office on Shelby Drive. Agents took it from there.'}}],
+  ignore:ev=>{}};
+{const _cw=charWhoX;charWhoX=function(kind,id){if(kind==='tempt'){const ev=(S.events||[]).find(e=>e.id===id)||(S.queue||[]).map(q=>q.ev).find(e=>e.id===id);if(ev){const W=tempWho(ev);return{who:W.who,role:W.role,attr:'',o:null}}}return _cw.apply(this,arguments)}}
+{const _vo=visitorOf;visitorOf=function(ev){if(ev&&ev.type==='tempt'&&TEMPTS[ev.tid]){const W=tempWho(ev);return{ev,who:W.who,role:W.role,title:tempt(ev).t}}return _vo.apply(this,arguments)}}
+// ---------- secrets ----------
+function addSecret(o){S.secrets=S.secrets||[];const s={id:'s'+Date.now()+Math.floor(Math.random()*1e4),m:nowM(),d:dateStr(),covered:1,obstr:false,...o};S.secrets.push(s);return s}
+function liveSecrets(){return(S.secrets||[]).filter(s=>!s.out)}
+function secretRisk(s){const age=nowM()-s.m;let p=s.sev*0.9+s.knows.length*0.7+(s.crowd?2.5:0);if(s.obstr)p+=1;p*=s.covered;p*=1-Math.min(0.45,mskill('intr')*0.025);if(age>24)p*=0.6;
+  if((S.plots||[]).some(x=>!x.done&&x.kind==='probe'))p*=2.5;if(S.fbi&&nowM()<=S.fbi)p*=2;return clamp(p,0.3,25)/100}
+function secretsMonth(){if(!S||!S.started||S.over||S.phase==='ai'||S.exposed)return;const L=liveSecrets();if(!L.length)return;
+  for(const s of L){if(Math.random()<secretRisk(s)){exposeSecret(s,'A reporter got the story');return}}
+  // someone who knows wants something
+  if(nowM()-(S.bmLast||-99)>=4){const s=L.find(s=>s.knows.some(w=>!w.complicit)&&Math.random()<0.07+(s.knows.some(w=>w.k!=null&&S.council[w.k]&&S.council[w.k].opinion<-10)?0.12:0));
+    if(s){S.bmLast=nowM();const can=s.knows.filter(w=>!w.complicit);const w=can.find(w=>w.k!=null&&S.council[w.k])||can[0];if(!w)return;queueChar({type:'blackmail',sid:s.id,wn:w.name,wk:w.k,amt:s.sev>=2?25000:10000,at:'cityhall'})}}}
+{const _eom=endOfMonth;endOfMonth=function(...a){const r=_eom.apply(this,a);try{secretsMonth();trialMonth()}catch(e){console.warn('secrets',e)}return r}}
+// ---------- blackmail: a hook held against you ----------
+CHAR_TYPES.blackmail={w:0,gen:()=>null,title:ev=>`${ev.wn} knows your secret`,who:ev=>[['bm',ev.id]],
+  body:ev=>{const s=(S.secrets||[]).find(x=>x.id===ev.sid);const m=ev.wk!=null?S.council[ev.wk]:null;return`${ev.wn} sits down and doesn't smile. "I know ${s?s.t.replace(/^You /,'you ').replace(/^Your /,'your '):'what you did'}. ${m?'I need your support on everything I bring to the council this year, starting with my district\'s budget.':'I need $'+ev.amt.toLocaleString()+' to keep my memory fuzzy.'} Or I start talking."`},
+  choices:[
+   {l:ev=>ev.wk!=null?'Give them what they want':'Pay them',s:ev=>ev.wk!=null?'−$1.2M for their district · they\'ll be back':`−$${ev.amt.toLocaleString()} personal money · they may come back`,need:ev=>ev.wk!=null?S.reserve>=1.2:S.purse.cash>=ev.amt,
+    do:ev=>{if(ev.wk!=null){S.reserve-=1.2;addMod(S.council[ev.wk],'The mayor does what I say',8)}else S.purse.cash-=ev.amt;S.hookPaid=(S.hookPaid||0)+1;return'They got what they wanted. For now, they\'re quiet.'}},
+   {l:()=>'Refuse',s:()=>'60% chance they go to the press',do:ev=>{const s=(S.secrets||[]).find(x=>x.id===ev.sid);if(s&&!s.out&&Math.random()<0.6){setTimeout(()=>exposeSecret(s,`${ev.wn} went to the press`),400);return`${ev.wn} walked out and went straight to a reporter.`}return`${ev.wn} blinked. They didn't talk, this time.`}},
+   {l:()=>'Turn the tables',s:ev=>`Uses 1 action · ${oddsTag('intr',0.42,ev.wk!=null?[S.council[ev.wk]]:[])} · works: you find dirt on them, and they'll never talk · fails: they talk, and it looks like a cover-up`,need:()=>S.slots>0,
+    do:ev=>{S.slots--;const s=(S.secrets||[]).find(x=>x.id===ev.sid);const ok=persuade('intr',0.42,ev.wk!=null?[S.council[ev.wk]]:[],10);if(ok){if(s)s.knows=s.knows.filter(w=>w.name!==ev.wn);if(ev.wk!=null)S.council[ev.wk].hook={hk:'bm',since:nowM()};return`You found something worse on ${ev.wn}. Now you both have a reason to stay quiet.`}
+     if(s){s.obstr=true;setTimeout(()=>exposeSecret(s,`${ev.wn} talked`),400)}return`${ev.wn} found out what you were doing and went to the FBI.`}}],
+  ignore:ev=>{const s=(S.secrets||[]).find(x=>x.id===ev.sid);if(s&&!s.out&&Math.random()<0.5)exposeSecret(s,`${ev.wn} got tired of waiting`)}};
+{const _cw=charWhoX;charWhoX=function(kind,id){if(kind==='bm'){const ev=(S.events||[]).find(e=>e.id===id)||(S.queue||[]).map(q=>q.ev).find(e=>e.id===id);if(ev){if(ev.wk!=null&&S.council[ev.wk])return{who:S.council[ev.wk],role:'Council member',attr:'',o:S.council[ev.wk].opinion};return{who:{name:ev.wn,g:'m',age:50,frame:'#4a4a4a'},role:'Knows your secret',attr:'',o:null}}}return _cw.apply(this,arguments)}}
+{const _vo=visitorOf;visitorOf=function(ev){if(ev&&ev.type==='blackmail'){const x=charWhoX('bm',ev.id);return{ev,who:x.who,role:x.role,title:`${ev.wn} knows your secret`}}return _vo.apply(this,arguments)}}
+// ---------- exposure ----------
+function exposeSecret(s,how){if(!s||s.out||S.over)return;s.out=true;s.outHow=how;s.outD=dateStr();S.exposed={sid:s.id,how};try{sfx('crisis')}catch(e){}try{newsAdd(-2.5,`${isCand()?'Candidate':'Mayor'} ${S.mayor.name}: ${s.t.replace(/^You /,'')}`)}catch(e){}
+  logIt(`EXPOSED: ${s.t}.`);try{notify('bad','Your secret is out',`${how}: ${s.t}.`,()=>openExposed(),{ttl:30})}catch(e){}save();try{openExposed()}catch(e){}}
+function exposedHit(s){return s.sev*2.2+(s.obstr?1.5:0)}
+function openExposed(){const X=S.exposed;if(!X)return;const s=(S.secrets||[]).find(x=>x.id===X.sid);if(!s){S.exposed=null;return}const hit=exposedHit(s);closePanel();
+  openModal('Scandal · it\'s out','Your secret is out',`<p><b>${X.how}.</b> The story: ${s.t.replace(/^You /,'you ').replace(/^Your /,'your ')}.</p>
+   <p>It's on every station tonight. ${s.sev>=2?'<b>The FBI has opened an investigation.</b> If they charge you and a jury convicts, you will be removed from office.':'It\'s embarrassing, and it will cost you, but it isn\'t likely to be a crime anyone prosecutes.'}</p>
+   <div class="choices">
+    <button class="choice" data-exp="deny"><b>Deny everything</b><small>${oddsTag('cha',0.4)} · works: the story fizzles (half the damage) · fails: it looks like a lie (+50% damage${s.sev>=2?', and prosecutors are more likely to charge you':''})</small></button>
+    <button class="choice" data-exp="sorry"><b>Apologize and make it right</b><small>${s.sev>=2?'Pay it back, $25,000 from your own money · ':''}About 60% of the damage · ${s.sev>=2?'prosecutors are less likely to charge you':'the story ends faster'}</small></button>
+    <button class="choice" data-exp="blame"><b>Blame someone on your staff</b><small>${oddsTag('intr',0.4)} · works: 40% of the damage · fails: the staffer talks, and it gets far worse</small></button></div>`,true)}
+openExposed=navWrap('openExposed',openExposed);
+{const _ch=clockHeld;clockHeld=function(){return _ch.apply(this,arguments)||!!(S&&S.exposed)}}
+document.addEventListener('click',e=>{const b=e.target.closest('[data-exp]');if(!b||!S||!S.exposed)return;e.preventDefault();e.stopImmediatePropagation();const s=(S.secrets||[]).find(x=>x.id===S.exposed.sid);if(!s){S.exposed=null;return}
+  const a=b.dataset.exp;let mul=1,msg='',charge=s.sev>=2?0.45+(s.obstr?0.15:0):0;
+  if(a==='deny'){if(persuade('cha',0.4,[],8)){mul=0.5;msg='Your denial held. Reporters moved on, mostly.'}else{mul=1.5;charge+=0.15;msg='Nobody believed you. A second story proved you lied.'}}
+  if(a==='sorry'){mul=0.6;if(s.sev>=2){S.purse.cash-=25000;charge-=0.2}msg='You stood at the podium and said you were wrong. Some people respected it.'}
+  if(a==='blame'){if(persuade('intr',0.4,[],8)){mul=0.4;msg='Your deputy took the fall. The story moved on, but your staff noticed.';try{const T=teamInit();T.cos.xp=Math.max(0,T.cos.xp-20)}catch(err){}}else{mul=1.8;charge+=0.2;s.obstr=true;msg='The staffer you blamed went on TV with your emails. Now it\'s a cover-up story.'}}
+  const hit=exposedHit(s)*mul;popHit(-hit/2,`Scandal: ${s.t}`);S.council.forEach(m=>addMod(m,'Mayor\'s scandal',-Math.round(hit*1.2)));S.mood-=hit*0.15;
+  if(S.rival&&S.rival.camp)S.rival.camp.cash+=Math.round(hit*6);try{addRecord({t:`Scandal: ${s.t}`,kind:'scandal',bad:GROUPS.map(g=>g.id),good:[]})}catch(err){}
+  S.exposed=null;if(charge>0&&Math.random()<clamp(charge,0.1,0.9)){S.trial={sid:s.id,due:nowM()+4,odds:clamp(0.35+s.sev*0.1+(s.obstr?0.15:0),0.2,0.85),lawyer:false};msg+=` <b>A federal grand jury indicted you.</b> Your trial starts in about 4 months.`;try{newsAdd(-2,`${S.mayor.name} indicted on federal corruption charges`)}catch(err){}}
+  else if(s.sev>=2)msg+=' Prosecutors decided not to charge you. You got lucky.';
+  save();refreshHUD();onClose=null;closeModal();openModal('Scandal','How it played',`<p class="scnreply">${msg}</p><p>You lost about <b>${(hit/2).toFixed(1)} points</b> of approval, and every council member trusts you less.</p><div class="row"><button class="btn primary" data-act="close">Continue</button>${S.trial?'<button class="btn" data-dirty="1">See your trial</button>':''}</div>`,true)}, true);
+// ---------- the trial ----------
+function trialMonth(){const T=S.trial;if(!T||S.over||nowM()<T.due)return;S.trial=null;const guilty=Math.random()<T.odds;
+  if(!guilty){popHit(1,'Acquitted');try{newsAdd(1,`Jury acquits ${S.mayor.name}`)}catch(e){}notify('good','Not guilty','The jury acquitted you. Your reputation is bruised, but you keep your job.',null,{ttl:20});return}
+  S.over=true;S.removed=true;try{addRecord({t:'Convicted of federal corruption charges and removed from office',kind:'scandal'})}catch(e){}save();
+  openModal('Federal court · Western District of Tennessee','Guilty',`<p>The jury found you guilty. ${isCand()?'Your campaign is over.':'Under the city charter, you are removed from office, and the council chair becomes interim mayor.'}</p><p class="note">Your secrets: ${(S.secrets||[]).map(s=>s.t).join('; ')}.</p>
+   <div class="facts"><h4>What now?</h4><div class="choices"><button class="choice" data-act="legacy"><b>See the Mayors of Memphis</b><small>How your time in office will be remembered</small></button><button class="choice" data-act="newgame"><b>Start over</b><small>A brand-new game, with a clean record</small></button></div></div>`,true)}
+// ---------- dirty moves you can start yourself ----------
+const DIRTY={
+ skim:{n:'Skim from the mayor\'s discretionary fund',need:()=>inOffice(),d:'+$50,000 to you · the city loses $0.05M · a serious secret (your finance aide knows)',
+  do:()=>{S.purse.cash+=50000;S.reserve-=0.05;addSecret({t:'You skimmed $50,000 from the mayor\'s discretionary fund',sev:2,knows:[{name:'Your finance aide'}]});return'The money moved through a "consulting" line item. It\'s in your account now.'}},
+ steer:{n:'Steer a city contract to a friend, for campaign cash',need:()=>inOffice()&&S.camp,d:'+$80K campaign cash · a serious secret (2 people know)',
+  do:()=>{S.camp.cash+=80;S.camp.raised+=80;try{flowC('donors',80)}catch(e){}addSecret({t:'You steered a city IT contract to a friend who then raised $80,000 for your campaign',sev:2,knows:[{name:'Your friend at the IT firm'},{name:'Your procurement director'}]});return'Your friend won the IT contract. A fundraiser at his house raised $80,000 the next week.'}},
+ campcash:{n:'Spend campaign money on yourself',need:()=>S.camp&&S.camp.cash>=30,d:'Move $30K of campaign cash into your pocket (+$30,000 to you) · a minor secret (your treasurer knows)',
+  do:()=>{S.camp.cash-=30;S.purse.cash+=30000;addSecret({t:'You spent $30,000 in campaign money on personal expenses',sev:1,knows:[{name:'Your campaign treasurer'}]});return'Your "campaign travel" covered a new car. Your treasurer looked the other way.'}}};
+function dirtyDo(k){const X=DIRTY[k];if(!X||!X.need()||S.slots<=0)return;S.slots--;S.dirty=(S.dirty||0)+1;const msg=X.do();try{sfx('bad')}catch(e){}save();refreshHUD();toast(msg);SCHEME_MSG=msg;openSchemes()}
+// covering your tracks
+function coverDo(id,how){const s=liveSecrets().find(x=>x.id===id);if(!s||S.slots<=0)return;let msg;
+  if(how==='hush'){const c=s.sev>=2?20000:8000;if(S.purse.cash<c)return;S.slots--;S.purse.cash-=c;s.covered=Math.max(0.35,s.covered*0.7);msg=`You paid people to stay quiet ($${c.toLocaleString()}). The risk went down.`}
+  if(how==='shred'){S.slots--;if(persuade('intr',0.45,[],8)){s.covered=Math.max(0.3,s.covered*0.55);msg='The paper trail is gone. Much harder to prove now.'}else{s.obstr=true;s.covered=Math.min(1.5,s.covered*1.3);msg='Someone saw the shredding. Now there\'s a second secret: obstruction.'}}
+  if(how==='clean'){S.slots--;s.out=true;s.outHow='You came clean';const hit=s.sev*1.1;popHit(-hit/2,`Came clean: ${s.t}`);if(s.sev>=2)S.purse.cash-=25000;try{addRecord({t:`Came clean: ${s.t}`,kind:'scandal'})}catch(e){}try{newsAdd(-1,`${S.mayor.name} admits wrongdoing, pays restitution`)}catch(e){}msg='You went public first and paid it back. It hurt, but far less than getting caught, and prosecutors usually go easy on people who come forward.'}
+  try{sfx('bad')}catch(e){}save();refreshHUD();toast(msg);SCHEME_MSG=msg;openSchemes()}
+function dirtyHTML(){const sl=S.slots;const L=liveSecrets();
+  const sec=L.length?L.map(s=>{const r=secretRisk(s)*100;return`<div class="plotcard secret"><div class="pl-h"><b>${s.t}</b><span class="pl-d">${r.toFixed(1)}% a month</span></div><p class="pl-who">${s.d} · ${s.sev>=2?'a crime that could end your career':'embarrassing if it comes out'} · who knows: ${s.knows.map(w=>w.name).join(', ')||'only you'}${s.crowd?' and dozens of drivers':''}${s.obstr?' · <b>plus obstruction</b>':''}</p>
+    <div class="choices"><button class="choice" data-cover="${s.id}|hush" ${sl<=0||S.purse.cash<(s.sev>=2?20000:8000)?'disabled':''}><b>Buy their silence</b><small>1 action · $${(s.sev>=2?20000:8000).toLocaleString()} of your money · risk −30%</small></button>
+     <button class="choice" data-cover="${s.id}|shred" ${sl<=0?'disabled':''}><b>Destroy the paper trail</b><small>1 action · ${oddsTag('intr',0.45)} · works: risk −45% · fails: you add obstruction</small></button>
+     <button class="choice" data-cover="${s.id}|clean" ${sl<=0?'disabled':''}><b>Come clean</b><small>1 action · about half the damage of getting caught, and no trial</small></button></div></div>`}).join(''):'<p class="note">You have no secrets. Nobody holds anything over you.</p>';
+  const moves=Object.keys(DIRTY).filter(k=>DIRTY[k].need()).map(k=>`<button class="choice dirtyc" data-dirtymove="${k}" ${sl<=0?'disabled':''}><b>${DIRTY[k].n}</b><small>${sl<=0?'No actions left':'1 action'} · ${DIRTY[k].d}</small></button>`).join('');
+  return`${S.exposed?'<div class="plotcard"><b>Your secret is out.</b><p>You have to answer the scandal before time moves on.</p><div class="row"><button class="btn primary" data-expopen="1">Answer the scandal</button></div></div>':''}<h4 class="plh">Your secrets</h4>${sec}${S.trial?`<div class="plotcard"><b>Your federal trial</b><p>It starts in about ${Math.max(0,S.trial.due-nowM())} months. Chance of conviction: <b>${Math.round(S.trial.odds*100)}%</b>.</p>${S.trial.lawyer?'<p class="note">You have a top defense lawyer.</p>':`<div class="choices"><button class="choice" data-lawyer="1" ${S.purse.cash<60000?'disabled':''}><b>Hire a top defense lawyer</b><small>$60,000 of your own money · conviction chance −20%</small></button></div>`}</div>`:''}
+   <h4 class="plh">Dirty moves</h4><p class="note">Illegal. Each one pays off now and leaves a secret that can come out later. Serious ones can end your career.</p><div class="choices">${moves||'<p class="note">None available right now.</p>'}</div>`}
+document.addEventListener('click',e=>{const b=e.target.closest('[data-dirtymove],[data-cover],[data-lawyer],[data-dirty],[data-expopen]');if(!b||!S)return;e.preventDefault();e.stopImmediatePropagation();
+  if(b.dataset.expopen){if(modalOpen){onClose=null;closeModal()}openExposed();return}
+  if(b.dataset.dirtymove){dirtyDo(b.dataset.dirtymove);return}if(b.dataset.cover){const[id,h]=b.dataset.cover.split('|');coverDo(id,h);return}
+  if(b.dataset.lawyer&&S.trial&&!S.trial.lawyer&&S.purse.cash>=60000){S.purse.cash-=60000;S.trial.lawyer=true;S.trial.odds=Math.max(0.1,S.trial.odds-0.2);save();refreshHUD();SCHEME_MSG='You hired the best defense lawyer in Memphis.';openSchemes();return}
+  if(modalOpen){onClose=null;closeModal()}openSchemes()},true);
+// show it in the back room
+{const _os=openSchemes;openSchemes=function(...a){const r=_os.apply(this,a);try{const b=$('mBody');if(b&&!b.querySelector('.dirtywrap')){const back=[...b.querySelectorAll('.row')].pop();const w=document.createElement('div');w.className='dirtywrap';w.innerHTML=dirtyHTML();if(back)b.insertBefore(w,back);else b.appendChild(w)}}catch(e){console.warn(e)}return r};VIEWS.openSchemes=openSchemes}
+// offers come to you every 5–9 months
+function temptMonth(){if(!S||!S.started||S.over||S.phase==='ai')return;if(S.temptNext==null){S.temptNext=nowM()+3+Math.floor(Math.random()*4);return}if(nowM()<S.temptNext)return;
+  if((S.events||[]).some(e=>e.type==='tempt')||(S.queue||[]).some(q=>q.ev.type==='tempt'))return;S.temptNext=nowM()+5+Math.floor(Math.random()*5);S.temptUsed=S.temptUsed||{};
+  const pool=Object.keys(TEMPTS).filter(k=>(inOffice()?true:!TEMPTS[k].mayor)&&!(S.temptUsed[k]&&nowM()-S.temptUsed[k]<30)&&(k!=='straw'||S.camp));if(!pool.length)return;const tid=pk2(pool);S.temptUsed[tid]=nowM();
+  let mk=null;if(TEMPTS[tid].council){const c=S.council.map((m,k)=>({m,k})).filter(x=>x.m.opinion>-20);mk=(c.length?pk2(c):{k:0}).k}queueChar({type:'tempt',tid,mk,at:'cityhall'})}
+{const _eom=endOfMonth;endOfMonth=function(...a){const r=_eom.apply(this,a);try{temptMonth()}catch(e){console.warn('tempt',e)}return r}}
+{const _ns=nextSteps;nextSteps=function(...a){const r=_ns.apply(this,a);try{if(S.exposed&&Array.isArray(r))r.unshift({pri:99,t:'Answer the scandal',h:'Your secret is out',go:()=>openExposed()})}catch(e){}return r}}
 function openLedger(){const L=S.log||[];openPanel('Everything that has happened, newest first','Ledger',L.length?`<div class="logl">${L.map(x=>`<div><span>${x.d}</span><p style="margin:0">${x.t}</p></div>`).join('')}</div>`:'<p class="note">Nothing yet. Start the clock with Space or ▶.</p>','ledger')}
 function openPolicies(){const ks=Object.keys(POLICIES);
   openPanel('Ongoing programs you control','Your initiatives',`<p>Mid-year, these are paid from the reserve fund. In April they go into the budget you send the council.</p>

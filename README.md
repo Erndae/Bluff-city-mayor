@@ -4,6 +4,28 @@ A city-management game set in Memphis, Tennessee. You play the mayor. You handle
 
 **Play it:** https://erndae.github.io/Bluff-city-mayor/ (once GitHub Pages is turned on, see below)
 
+## v26.59: Dirty deals and secrets
+
+You can now break the law, and it can catch up with you.
+
+**People come to you with offers.** About every 5 to 9 months, someone makes you an illegal offer in person:
+- A paving contractor offers a $60K kickback.
+- A council member wants a no-show job for a nephew in exchange for their vote.
+- A developer offers a $40K "consulting fee" for a rezoning.
+- A trucking owner offers $100K in straw donations.
+- A landlord offers $15K to bury code violations.
+- A lobbyist offers a free trip to Cabo.
+
+You can take it, turn it down, or report them to the FBI (+approval; a council member you report becomes an enemy).
+
+**You can also make dirty moves yourself** in the back room: skim $50K from the discretionary fund, steer a contract to a friend for $80K in campaign cash, or spend campaign money on yourself.
+
+**Every dirty deal leaves a secret.** Each secret has a monthly chance of coming out, shown in the back room. The chance goes up with how serious the secret is, how many people know, any council investigation, and obstruction. It goes down with your Inside Game skill, cover-ups, and time. You can cover your tracks by buying silence, destroying the paper trail (a skill check, which can add obstruction), or coming clean (about half the damage, and no trial).
+
+**Blackmail.** Anyone who knows a secret can blackmail you: pay up or support their agenda, or they talk. You can pay, refuse (60% chance they go to the press), or turn the tables with Inside Game, which silences them and gives you a hook on them.
+
+**Getting caught.** The game pauses until you respond. You can deny it (a Star Power check), apologize and pay it back, or blame a staffer (an Inside Game check that can backfire badly). A serious secret can lead to a federal indictment and a trial 4 months later. You can hire a defense lawyer for $60K to cut the odds. A conviction removes you from office and ends the game.
+
 ## v26.58: Schemes, both ways
 
 **Plots against you.** Your opponent and hostile council members now plot against you:
