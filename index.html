@@ -358,6 +358,8 @@ nav.actions [data-actsgo]{min-height:44px;padding:9px 17px;border-color:rgba(242
 .psk{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:4px;margin:8px 0}.psk span{border:1px solid var(--line,#2c3e4c);border-radius:8px;padding:4px 6px;display:flex;justify-content:space-between;align-items:baseline;gap:4px}.psk span small{color:var(--muted,#9aa7b2);font-size:11px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.psk span.best{border-color:var(--amber)}@media(max-width:480px){.psk{grid-template-columns:repeat(2,minmax(0,1fr))}}.psk span.best b{color:var(--amber)}
 .txtin{flex:1;min-width:0;background:var(--panel2,#0f1c26);border:1px solid var(--line,#2c3e4c);border-radius:10px;color:inherit;padding:10px 12px;font:inherit}.choice.on{border-color:var(--amber)}
 .faccard.gen.cur{border-color:var(--amber)}.genline{text-align:center;color:var(--muted,#9aa7b2);line-height:1;margin:-4px 0}.faccard.gen h4 small{font-weight:400;color:var(--muted,#9aa7b2)}
+.ph-sec .plh{margin:14px 0 6px}.ph-sec:first-child .plh{margin-top:4px}
+#endBanner{position:fixed;left:50%;transform:translateX(-50%);top:46%;z-index:90;max-width:calc(100vw - 32px);box-shadow:0 6px 24px rgba(0,0,0,.45)}#endBanner[hidden]{display:none}
 .adgain{display:block;width:100%;text-align:center;font-size:11px;font-weight:600;color:var(--good);margin-top:1px}
 #start{overflow-x:hidden;overflow-y:auto;touch-action:pan-y}.startbox{min-width:0;max-width:min(600px,100%);box-sizing:border-box}.startbox *{min-width:0}.create select,.create input{max-width:100%;width:100%;box-sizing:border-box;text-overflow:ellipsis}.create .tpick,.create .tpick>*{max-width:100%;box-sizing:border-box}
 @media (max-width:640px){.startbox{margin-left:0}#start{padding-left:max(16px,env(safe-area-inset-left,0px))}}
@@ -710,7 +712,7 @@ details.analysis{margin-top:6px}details.analysis summary{cursor:pointer;color:va
     <button class="btn primary" data-act="pause" id="bPlay"><svg class="ico" viewBox="0 0 12 12" aria-hidden="true"><path d="M3.2 1.6v8.8l7.2-4.4z" fill="currentColor"/></svg> Resume <kbd>Space</kbd></button>
   </nav>
   <div class="status" id="status">Loading map…</div>
-  <div class="credit"><span class="ver" id="verTag">v26.64</span></div>
+  <div class="credit"><span class="ver" id="verTag">v26.65</span></div>
   <div class="tip" id="tip" hidden></div>
   <div class="toast" id="toast" role="status"></div>
   <section class="panel" id="panel" hidden aria-live="polite">
@@ -738,7 +740,7 @@ details.analysis{margin-top:6px}details.analysis summary{cursor:pointer;color:va
         <button class="btn" data-music-open>Music &amp; volume</button>
       </div>
       <div id="slotList" hidden></div>
-      <p class="note startv">Version <b class="ver" id="verStart">v26.64</b></p>
+      <p class="note startv">Version <b class="ver" id="verStart">v26.65</b></p>
     </div>
     <div class="startbox create" id="create" hidden>
       <h2>Create your mayor</h2>
@@ -1549,7 +1551,7 @@ function enact(s,p){DIVS.forEach(d=>{s.enacted[d.id]=p.divs[d.id];s.ratio[d.id]=
 // Voter groups. Each has a share of residents, turnout, home districts, concerns and an approval of you.
 // Citywide approval is the turnout-weighted average of the groups; each council district's approval comes from the groups that live there.
 // Shares, district mix and turnout are modeled, loosely grounded in Memphis demographics; they are not survey data.
-const VERSION='v26.64';
+const VERSION='v26.65';
 const GROUPS=[
  {id:'working',sh:'Working families',n:'Working families',ic:'⚒︎',c:'#f2a93b',share:24,turn:.5,start:56,w:{jobs:1,safety:.8,transit:.5},
   d:'Hourly workers in logistics, warehouses, health care and service jobs. The biggest bloc in the city.',dm:{1:1.1,2:.8,3:1.3,4:1.2,5:.6,6:1.2,7:1.1}},
@@ -2703,7 +2705,7 @@ function endorsementFor(g){const E=ENDORSERS.find(x=>x.g===g.id);return E?S.camp
 // Offices work where the race is close: a district where you're far ahead or far behind gets little from one.
 function districtCloseness(d){return clamp(1-Math.abs(dApp(d)-50)/14,0.15,1)}
 function officeReach(g){const offs=Object.keys(S.camp.offices||{}).map(Number);if(!offs.length)return 0;let a=0,t=0;for(let d=1;d<=7;d++){const c=dComp(d)[g.id];t+=c;if(offs.includes(d))a+=c*districtCloseness(d)}return a/t}
-const CHALLENGER_EDGE=-1; // voters give a fresh face the benefit of the doubt; a sitting mayor runs on the record
+const CHALLENGER_EDGE=-5; // incumbency is worth about 5 points: a mayor in the low 50s is a modest favorite
 function groupSupport(g,o){o=o||{};const G=S.groups[g.id],R=S.rival||{champs:[]},rc=R.camp||{};const champ=R.champs.includes(g.id);const SUCC=S.term>=2&&!isCand();
   let b=(SUCC?20+G.app*0.66+(S.succ?S.succ.bonus:-4):G.app)+(S.mayor&&!SUCC?(mskill('cha')-8)*0.4:0)-(champ?(isCand()?3:4):0)-(isCand()||SUCC?0:CHALLENGER_EDGE);
   if(!o.noAds)b+=(S.camp.boost[g.id]||0);
@@ -6981,7 +6983,7 @@ const PLOTS={
  oppo:{n:'Opposition research',by:'rival',days:[24,40],
   sign:p=>`A friendly reporter says ${p.who} has hired an opposition-research firm, and they're asking questions about ${p.topic}.`,
   plan:p=>`${p.who} will leak a story about ${p.topic} to the press, timed for maximum damage.`,
-  strike:p=>{const d=rivalHit(GROUPS.map(g=>g.id),1.3*p.mul);popHit(-0.5*p.mul,`Story about ${p.topic}`);try{newsAdd(-1.2*p.mul,`Report raises questions about the ${isCand()?'candidate':'mayor'}'s ${p.topic}`)}catch(e){}return`The story about ${p.topic} broke. You lost about ${Math.max(0.1,d).toFixed(1)} points against ${p.who}.`}},
+  strike:p=>{const d=rivalHit(GROUPS.map(g=>g.id),0.75*p.mul);popHit(-0.2*p.mul,`Story about ${p.topic}`);try{newsAdd(-1.2*p.mul,`Report raises questions about ${third(p.topic)}`)}catch(e){}return`The story about ${p.topic} broke. You lost about ${Math.max(0.1,d).toFixed(1)} points against ${p.who}.`}},
  mole:{n:'A leak inside your camp',by:'rival',days:[20,34],
   sign:p=>`Your ${isCand()?'campaign manager':'chief of staff'} noticed ${p.who}'s ads answering yours before yours even aired. Someone may be leaking your plans.`,
   plan:p=>`A volunteer in your ${isCand()?'campaign':'office'} is passing your ad plans and debate prep to ${p.who}.`,
@@ -6994,12 +6996,13 @@ const PLOTS={
  probe:{n:'A council investigation',by:'council',days:[28,44],
   sign:p=>`${p.who}'s staff has been asking city departments for your emails.`,
   plan:p=>`${p.who} will open a council investigation into ${p.topic} and subpoena your chief of staff.`,
-  strike:p=>{popHit(-0.8*p.mul,`Council investigation: ${p.topic}`);S.mood-=0.2*p.mul;try{newsAdd(-1.3*p.mul,`Council opens investigation into ${p.topic}`)}catch(e){}return`${p.who} opened a council investigation into ${p.topic}. It's on every front page.`}},
+  strike:p=>{popHit(-0.4*p.mul,`Council investigation: ${p.topic}`);S.mood-=0.1*p.mul;try{newsAdd(-1.3*p.mul,`Council opens investigation into ${p.topic}`)}catch(e){}return`${p.who} opened a council investigation into ${p.topic}. It's on every front page.`}},
  noconf:{n:'A no-confidence vote',by:'council',days:[18,30],
   sign:p=>`${p.who} is drafting a resolution. Your liaison saw the title: "No confidence."`,
   plan:p=>`${p.who} wants the council to vote no confidence in you. It's symbolic, but if 7 vote yes, it will lead the news for a week.`,
-  strike:p=>{const yes=revoltYes(p)-1;p.tally=yes;if(yes>=7){popHit(-1.2*p.mul,'The council voted no confidence');try{newsAdd(-1.8,`Council votes no confidence in the mayor, ${yes}–${13-yes}`)}catch(e){}return`The council voted no confidence in you, ${yes}–${13-yes}. It doesn't remove you, but it's a stain.`}
+  strike:p=>{const yes=revoltYes(p)-1;p.tally=yes;if(yes>=7){popHit(-0.7*p.mul,'The council voted no confidence');try{newsAdd(-1.8,`Council votes no confidence in the mayor, ${yes}–${13-yes}`)}catch(e){}return`The council voted no confidence in you, ${yes}–${13-yes}. It doesn't remove you, but it's a stain.`}
    p.good=true;return`The no-confidence vote failed, ${yes}–${13-yes}. Several members said they'd rather work with you.`}}};
+function third(t){const w=isCand()?'the candidate':'the mayor';return String(t).replace(/\byou've\b/g,w+' has').replace(/\byou didn't\b/g,w+' didn\'t').replace(/\byour\b/g,w+'\'s').replace(/\byou\b/g,w)}
 const OPPO_ON_YOU_MAYOR=['a property-tax appeal on your own house','a donor whose company won a city contract','how much you\'ve spent on travel','the overtime at your security detail','a city job your cousin got'];
 const OPPO_ON_YOU_CAND=['an old social media post','a lawsuit from your old business partner','the years you didn\'t vote in city elections','a rental house with code violations','a donor with a messy past'];
 const PROBE_TOPICS=['how city contracts get awarded','the overtime budget at MPD','a missing $2 million in the parks budget','who got the downtown parking contract'];
@@ -7016,12 +7019,12 @@ function newPlot(kind,who,k,topic){const P=PLOTS[kind],d=dayN(),len=P.days[0]+Ma
 function plotMonth(){if(!S||!S.started||S.over||S.phase==='ai')return;plotsInit();const live=plotLive();S.plotCd=S.plotCd||{};
   // the opponent, during the campaign
   const R=S.rival,camp=S.camp&&R&&R.camp&&!S.camp.voted&&(isCand()||(inOffice()&&monthsToElection()<=12));
-  if(camp&&!live.some(p=>PLOTS[p.kind].by==='rival')&&nowM()-(S.plotCd.rival||-99)>=3){let ch=0.28;try{if(R.style==='brawler')ch*=1.4}catch(e){}if(Math.random()<ch){S.plotCd.rival=nowM();const kind=Math.random()<0.65?'oppo':'mole';newPlot(kind,R.name,null,kind==='oppo'?pk2(isCand()?OPPO_ON_YOU_CAND:OPPO_ON_YOU_MAYOR):'')}}
+  if(camp&&!live.some(p=>PLOTS[p.kind].by==='rival')&&nowM()-(S.plotCd.rival||-99)>=4){let ch=0.18;try{if(R.style==='brawler')ch*=1.4}catch(e){}if(Math.random()<ch){S.plotCd.rival=nowM();const kind=Math.random()<0.65?'oppo':'mole';newPlot(kind,R.name,null,kind==='oppo'?pk2(isCand()?OPPO_ON_YOU_CAND:OPPO_ON_YOU_MAYOR):'')}}
   // hostile council members, while you're mayor
   if(inOffice()&&!live.some(p=>PLOTS[p.kind].by==='council')){
     if(S.approval<38&&nowM()-(S.plotCd.noconf||-99)>=12&&Math.random()<0.3){const m=S.council.map((m,k)=>({m,k})).sort((a,b)=>a.m.opinion-b.m.opinion)[0];S.plotCd.noconf=nowM();S.plotCd.council=nowM();newPlot('noconf',m.m.name,m.k);return}
-    const foe=S.council.map((m,k)=>({m,k})).filter(x=>x.m.opinion<=-25).sort((a,b)=>a.m.opinion-b.m.opinion)[0];
-    if(foe&&nowM()-(S.plotCd.council||-99)>=5&&Math.random()<0.22){S.plotCd.council=nowM();const kind=Math.random()<0.5?'revolt':'probe';newPlot(kind,foe.m.name,foe.k,kind==='probe'?pk2(PROBE_TOPICS):'')}}}
+    const foe=S.council.map((m,k)=>({m,k})).filter(x=>x.m.opinion<=-30).sort((a,b)=>a.m.opinion-b.m.opinion)[0];
+    if(foe&&nowM()-(S.plotCd.council||-99)>=6&&Math.random()<0.15){S.plotCd.council=nowM();const kind=Math.random()<0.5?'revolt':'probe';newPlot(kind,foe.m.name,foe.k,kind==='probe'?pk2(PROBE_TOPICS):'')}}}
 function plotDaily(){if(!S||!S.started||S.over||S.phase==='ai'||!S.plots)return;const d=dayN();
   plotLive().forEach(p=>{const P=PLOTS[p.kind];
     if(!p.seen&&!p.rolled&&d>=p.signAt){p.rolled=true;if(Math.random()<seeChance()){p.seen=true;try{sfx('crisis')}catch(e){}notify('bad',`Rumor: ${P.n.toLowerCase()}`,`${P.sign(p)} Tap to look into it.`,()=>openSchemes(),{ttl:20});logIt(`Rumor: ${P.sign(p)}`)}}
@@ -7719,6 +7722,25 @@ function openLegacyFam(){const D=S.dynasty||[];const cur=dynRecord('today');cons
 openLegacyFam=navWrap('openLegacyFam',openLegacyFam);
 document.addEventListener('click',e=>{const b=e.target.closest('[data-legacyfam]');if(!b||!S)return;e.preventDefault();e.stopImmediatePropagation();if(modalOpen){onClose=null;closeModal()}openLegacyFam()},true);
 {const _om=openModal;openModal=function(...a){const r=_om.apply(this,a);try{const n=NAV.cur?NAV.cur.name:'';if(n==='flow_people'){const g=$('mBody').querySelector('.flow-grid');if(g&&!g.querySelector('[data-legacyfam]'))g.insertAdjacentHTML('beforeend',`<button class="flow-tile" data-legacyfam="1"><b>Family legacy</b><span>${(S.dynasty||[]).length+1} generation${(S.dynasty||[]).length?'s':''} of the ${surname()} family</span></button>`)}}catch(e){}return r}}
+// ======================= v26.65: TIDY PEOPLE HUB =======================
+// The People hub grew to 15 tiles; group them into three labeled sections.
+const PH_GROUPS=[['The city\'s people',['opinion','pop','region','council']],['Power and politics',['powers','schemes','pressopen','power','cabinet','teamopen']],['Your life',['famopen','legacyfam','mayor','insidehome','legacyopen']]];
+function tileKey(t){if(t.dataset.flowRoute)return t.dataset.flowRoute;const a=[...t.attributes].find(a=>a.name.startsWith('data-')&&a.name!=='data-flow-hub');return a?a.name.slice(5):''}
+{const _om=openModal;openModal=function(...a){const r=_om.apply(this,a);try{const n=NAV.cur?NAV.cur.name:'';if(n==='flow_people'){const b=$('mBody'),g=b.querySelector('.flow-grid');if(g&&!b.querySelector('.ph-sec')){const tiles=[...g.querySelectorAll('.flow-tile')];const used=new Set();const frag=document.createDocumentFragment();
+  PH_GROUPS.forEach(([h,keys])=>{const ts=keys.map(k=>tiles.find(t=>tileKey(t)===k)).filter(Boolean);if(!ts.length)return;const sec=document.createElement('div');sec.className='ph-sec';sec.innerHTML=`<h4 class="plh">${h}</h4>`;const gg=document.createElement('div');gg.className='flow-grid';ts.forEach(t=>{used.add(t);gg.appendChild(t)});sec.appendChild(gg);frag.appendChild(sec)});
+  const rest=tiles.filter(t=>!used.has(t));if(rest.length){const sec=document.createElement('div');sec.className='ph-sec';sec.innerHTML='<h4 class="plh">More</h4>';const gg=document.createElement('div');gg.className='flow-grid';rest.forEach(t=>gg.appendChild(t));sec.appendChild(gg);frag.appendChild(sec)}
+  g.replaceWith(frag)}}}catch(e){console.warn('ph',e)}return r}}
+// a won election can't be lost by closing the window: the oath happens anyway
+{const _ce=candElection;candElection=function(...a){const r=_ce.apply(this,a);try{if(S.lastElection&&S.lastElection.won&&isCand())S.mayorElect=true;else if(S.lastElection&&!S.lastElection.won){S.over=true;S.endKind='lost';save()}}catch(e){}return r}}
+// when a story has ended and the window was closed, a banner brings the choices back
+function openEndChoices(){if(!S||!S.over)return;const died=S.died,rem=S.removed,w=S._winner;const title=died?`${S.mayor.name} has died`:rem?'Removed from office':S.lastElection&&!S.lastElection.won?'You lost the election':'Your story has ended';
+  const base=w?afterLossChoices(w):`${heirHTML()}<div class="facts"><h4>What now?</h4><div class="choices"><button class="choice" data-act="legacy"><b>See the Mayors of Memphis</b><small>How your time will be remembered</small></button><button class="choice" data-act="newgame"><b>Start over</b><small>A brand-new game</small></button></div></div>`;
+  openModal('Your story',title,base,true)}
+{const _rh=refreshHUD;refreshHUD=function(...a){const r=_rh.apply(this,a);try{let b=$('endBanner');if(S&&S.started&&S.over){if(!b){b=document.createElement('button');b.id='endBanner';b.className='btn primary';b.textContent='Your story has ended · see your options';b.onclick=()=>openEndChoices();document.body.appendChild(b)}b.hidden=false}else if(b)b.hidden=true}catch(e){}return r}}
+{const _cm=closeModal;closeModal=function(...a){const r=_cm.apply(this,a);try{refreshHUD()}catch(e){}return r}}
+{const _to=takeOffice;takeOffice=function(...a){if(S)S.mayorElect=false;return _to.apply(this,a)}}
+{const _dt=dayTick;dayTick=function(...a){if(S&&S.mayorElect&&isCand()&&!modalOpen&&!S.over){S.mayorElect=false;try{takeOffice();return}catch(e){console.warn('oath',e)}}return _dt.apply(this,a)}}
+{const _fm=famMonth;famMonth=function(...a){const r=_fm.apply(this,a);try{const F=S&&S.fam;if(F&&(F.spouse&&!F.spouse.gone||F.kids.length)&&F.home<40&&nowM()-(F.warnM||-99)>=3&&!S.over&&S.phase!=='ai'){F.warnM=nowM();notify('people','Your family misses you',`Home life is down to ${Math.round(F.home)}. A family dinner is free and brings it back up. Below 25, you lose an action each month.`,()=>openFamily(),{ttl:14})}}catch(e){}return r}}
 function openLedger(){const L=S.log||[];openPanel('Everything that has happened, newest first','Ledger',L.length?`<div class="logl">${L.map(x=>`<div><span>${x.d}</span><p style="margin:0">${x.t}</p></div>`).join('')}</div>`:'<p class="note">Nothing yet. Start the clock with Space or ▶.</p>','ledger')}
 function openPolicies(){const ks=Object.keys(POLICIES);
   openPanel('Ongoing programs you control','Your initiatives',`<p>Mid-year, these are paid from the reserve fund. In April they go into the budget you send the council.</p>

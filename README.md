@@ -94,6 +94,23 @@ How the reporters work:
 - When an heir takes over, an heir who was on the council gives up the seat, and is never picked as the interim mayor they'd run against.
 - Family events no longer crash if their situation changes before you answer.
 
+## v26.65: Playtest fixes and balance
+
+I played full runs as mayor, as a challenger and as an heir, clicked through every button on the new screens, and checked every new screen at 360 and 390 pixels wide.
+
+**Bugs fixed:**
+- Winning as a challenger and closing the "You won" window with the X used to leave you stuck as a candidate forever. You now take the oath anyway.
+- Losing as a challenger and closing the window used to leave you campaigning with no race. The game now ends properly. A "Your story has ended" banner brings back your options (play as the winner, run again, play as your heir, start over) whenever a story has ended and the window was closed.
+- A garbled headline ("questions about the mayor's how much you've spent on travel") now reads correctly.
+
+**Balance:**
+- Plots were sending popular mayors into a downward spiral: lost approval led to a hostile council, which led to more plots. I confirmed this with A/B runs that switched systems off. Plots now hit softer, come less often, and council plots need a member at −30 or worse.
+- Incumbency is now worth about 5 points. A mayor in the low 50s goes into October a modest favorite; below 50 is real danger.
+- Home life now warns you at 40 (a family dinner is free) before you start losing actions at 25.
+
+**Cleanup:**
+- The People hub's 15 tiles are now grouped into three sections: The city's people, Power and politics, and Your life.
+
 ## v26.59: Dirty deals and secrets
 
 You can now break the law, and it can catch up with you.
