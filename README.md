@@ -4,6 +4,30 @@ A city-management game set in Memphis, Tennessee. You play the mayor. You handle
 
 **Play it:** https://erndae.github.io/Bluff-city-mayor/ (once GitHub Pages is turned on, see below)
 
+## v26.60: The network, their secrets, and the press corps
+
+**People you've made dirty deals with come back.** About 6 months after a first deal, they return with a much bigger ask:
+- Tri-State Paving: a $250K bribe for a $22M contract.
+- Preston Hale: $150K to rezone 40 acres of Orange Mound.
+- Pickens: the city fleet contract.
+- Lorraine Tate: 200 more units.
+- The parking company: a 30-year no-bid deal plus a condo.
+- The council member: six more no-show jobs.
+
+Many of these are major felonies, with a much higher chance of charges and conviction if they come out. You can do it, refuse (35% chance they tip off a reporter, which doubles the risk on your first secret), or wear a wire for the FBI (an Inside Game check: they're arrested and your old secret is forgiven, or they find the wire and go to the press).
+
+**Your opponent and council members have secrets too.** Each one is either clean, embarrassing, or hiding a real crime. Digging up dirt and finding leverage now uncover their actual secret. Leaking your opponent's crime can trigger an FBI investigation that wrecks their campaign. A council member's crime can be kept as a hook or handed to the FBI from the back room: if they're indicted and convicted, they lose their seat and the council appoints a replacement.
+
+**The press corps.** Three reporters cover City Hall:
+- **Corinne Prewitt** (The Bluff Ledger, investigations). If you've burned her, every secret is 50% more likely to come out. If she trusts you, she calls before publishing so you can come clean first.
+- **Terrence Vaughn** (Channel 6, TV). He shifts how hard bad news, scandals and attacks land, and how far good news goes.
+- **Keisha Monroe** (Beale Street Wire, neighborhoods). She amplifies your good news, or your failures, with renters, working families and churches.
+
+How the reporters work:
+- They remember what you did: denials, coming clean, reporting bribes, freezing them out.
+- They call for comment every 2 to 4 months. When you have secrets, Corinne often asks about one of them.
+- In **People → The press corps** (or the back room) you can give an exclusive interview (a skill check), give them a tip (including your file on your opponent, with less chance of it being traced to you), or freeze them out.
+
 ## v26.59: Dirty deals and secrets
 
 You can now break the law, and it can catch up with you.

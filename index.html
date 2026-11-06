@@ -706,7 +706,7 @@ details.analysis{margin-top:6px}details.analysis summary{cursor:pointer;color:va
     <button class="btn primary" data-act="pause" id="bPlay"><svg class="ico" viewBox="0 0 12 12" aria-hidden="true"><path d="M3.2 1.6v8.8l7.2-4.4z" fill="currentColor"/></svg> Resume <kbd>Space</kbd></button>
   </nav>
   <div class="status" id="status">Loading map…</div>
-  <div class="credit"><span class="ver" id="verTag">v26.59</span></div>
+  <div class="credit"><span class="ver" id="verTag">v26.60</span></div>
   <div class="tip" id="tip" hidden></div>
   <div class="toast" id="toast" role="status"></div>
   <section class="panel" id="panel" hidden aria-live="polite">
@@ -734,7 +734,7 @@ details.analysis{margin-top:6px}details.analysis summary{cursor:pointer;color:va
         <button class="btn" data-music-open>Music &amp; volume</button>
       </div>
       <div id="slotList" hidden></div>
-      <p class="note startv">Version <b class="ver" id="verStart">v26.59</b></p>
+      <p class="note startv">Version <b class="ver" id="verStart">v26.60</b></p>
     </div>
     <div class="startbox create" id="create" hidden>
       <h2>Create your mayor</h2>
@@ -1545,7 +1545,7 @@ function enact(s,p){DIVS.forEach(d=>{s.enacted[d.id]=p.divs[d.id];s.ratio[d.id]=
 // Voter groups. Each has a share of residents, turnout, home districts, concerns and an approval of you.
 // Citywide approval is the turnout-weighted average of the groups; each council district's approval comes from the groups that live there.
 // Shares, district mix and turnout are modeled, loosely grounded in Memphis demographics; they are not survey data.
-const VERSION='v26.59';
+const VERSION='v26.60';
 const GROUPS=[
  {id:'working',sh:'Working families',n:'Working families',ic:'⚒︎',c:'#f2a93b',share:24,turn:.5,start:56,w:{jobs:1,safety:.8,transit:.5},
   d:'Hourly workers in logistics, warehouses, health care and service jobs. The biggest bloc in the city.',dm:{1:1.1,2:.8,3:1.3,4:1.2,5:.6,6:1.2,7:1.1}},
@@ -7165,7 +7165,7 @@ function exposeSecret(s,how){if(!s||s.out||S.over)return;s.out=true;s.outHow=how
 function exposedHit(s){return s.sev*2.2+(s.obstr?1.5:0)}
 function openExposed(){const X=S.exposed;if(!X)return;const s=(S.secrets||[]).find(x=>x.id===X.sid);if(!s){S.exposed=null;return}const hit=exposedHit(s);closePanel();
   openModal('Scandal · it\'s out','Your secret is out',`<p><b>${X.how}.</b> The story: ${s.t.replace(/^You /,'you ').replace(/^Your /,'your ')}.</p>
-   <p>It's on every station tonight. ${s.sev>=2?'<b>The FBI has opened an investigation.</b> If they charge you and a jury convicts, you will be removed from office.':'It\'s embarrassing, and it will cost you, but it isn\'t likely to be a crime anyone prosecutes.'}</p>
+   <p>It's on every station tonight. ${s.sev>=3?'<b>This is a major felony, and the FBI is already on it.</b> A conviction is likely to remove you from office. ':''}${s.sev>=2?'<b>The FBI has opened an investigation.</b> If they charge you and a jury convicts, you will be removed from office.':'It\'s embarrassing, and it will cost you, but it isn\'t likely to be a crime anyone prosecutes.'}</p>
    <div class="choices">
     <button class="choice" data-exp="deny"><b>Deny everything</b><small>${oddsTag('cha',0.4)} · works: the story fizzles (half the damage) · fails: it looks like a lie (+50% damage${s.sev>=2?', and prosecutors are more likely to charge you':''})</small></button>
     <button class="choice" data-exp="sorry"><b>Apologize and make it right</b><small>${s.sev>=2?'Pay it back, $25,000 from your own money · ':''}About 60% of the damage · ${s.sev>=2?'prosecutors are less likely to charge you':'the story ends faster'}</small></button>
@@ -7173,7 +7173,7 @@ function openExposed(){const X=S.exposed;if(!X)return;const s=(S.secrets||[]).fi
 openExposed=navWrap('openExposed',openExposed);
 {const _ch=clockHeld;clockHeld=function(){return _ch.apply(this,arguments)||!!(S&&S.exposed)}}
 document.addEventListener('click',e=>{const b=e.target.closest('[data-exp]');if(!b||!S||!S.exposed)return;e.preventDefault();e.stopImmediatePropagation();const s=(S.secrets||[]).find(x=>x.id===S.exposed.sid);if(!s){S.exposed=null;return}
-  const a=b.dataset.exp;let mul=1,msg='',charge=s.sev>=2?0.45+(s.obstr?0.15:0):0;
+  const a=b.dataset.exp;let mul=1,msg='',charge=s.sev>=2?0.45+(s.obstr?0.15:0)+(s.sev>=3?0.25:0):0;
   if(a==='deny'){if(persuade('cha',0.4,[],8)){mul=0.5;msg='Your denial held. Reporters moved on, mostly.'}else{mul=1.5;charge+=0.15;msg='Nobody believed you. A second story proved you lied.'}}
   if(a==='sorry'){mul=0.6;if(s.sev>=2){S.purse.cash-=25000;charge-=0.2}msg='You stood at the podium and said you were wrong. Some people respected it.'}
   if(a==='blame'){if(persuade('intr',0.4,[],8)){mul=0.4;msg='Your deputy took the fall. The story moved on, but your staff noticed.';try{const T=teamInit();T.cos.xp=Math.max(0,T.cos.xp-20)}catch(err){}}else{mul=1.8;charge+=0.2;s.obstr=true;msg='The staffer you blamed went on TV with your emails. Now it\'s a cover-up story.'}}
@@ -7225,6 +7225,150 @@ function temptMonth(){if(!S||!S.started||S.over||S.phase==='ai')return;if(S.temp
   let mk=null;if(TEMPTS[tid].council){const c=S.council.map((m,k)=>({m,k})).filter(x=>x.m.opinion>-20);mk=(c.length?pk2(c):{k:0}).k}queueChar({type:'tempt',tid,mk,at:'cityhall'})}
 {const _eom=endOfMonth;endOfMonth=function(...a){const r=_eom.apply(this,a);try{temptMonth()}catch(e){console.warn('tempt',e)}return r}}
 {const _ns=nextSteps;nextSteps=function(...a){const r=_ns.apply(this,a);try{if(S.exposed&&Array.isArray(r))r.unshift({pri:99,t:'Answer the scandal',h:'Your secret is out',go:()=>openExposed()})}catch(e){}return r}}
+// ======================= v26.60: THE NETWORK, THEIR SECRETS, AND THE PRESS CORPS =======================
+// 1) People you've done dirty deals with come back with bigger asks, and once they own you, saying no is risky.
+// 2) Your opponent and every council member may be hiding something real. Digging can turn up a crime,
+//    and a crime handed to the FBI can end their career.
+// 3) Three City Hall reporters remember how you treat them, and decide how hard your stories land.
+// ---------- 1. the network ----------
+const ESCALATE={
+ kickback:{t:'Tri-State Paving wants the big one',b:'Vince Marchetti is back. "The airport road rebuild is $22 million. Steer it to us, and there\'s $250,000 for you. After last time, you and I are partners."',pay:250000,cost:3,sec:'You took a $250,000 bribe to steer the $22M airport road contract to Tri-State Paving',sev:3},
+ zoning:{t:'Preston Hale wants a whole neighborhood',b:'Preston Hale lays a map on your desk. "I want to rezone 40 acres in Orange Mound for townhomes. The neighbors will scream. Your family\'s consulting firm gets $150,000."',pay:150000,grp:{business:2,owners:-3,faith:-2},sec:'Your family took $150,000 from Preston Hale to rezone 40 acres in Orange Mound',sev:3},
+ straw:{t:'Gerald Pickens wants the trucking contract',b:'Gerald Pickens doesn\'t sit down. "I put $100,000 in your campaign. The city\'s $9 million fleet contract goes out next month. I expect to win it."',pay:0,camp:60,cost:1.5,sec:'You rigged the city fleet contract for Gerald Pickens after his illegal donations',sev:3},
+ inspect:{t:'Lorraine Tate has 200 more units',b:'Lorraine Tate is back. "Your inspectors are at my Frayser complexes now. Same deal, bigger: $45,000, and the reports go away."',pay:45000,blight:0.8,sec:'You buried code violations on 200 more of Lorraine Tate\'s units for $45,000',sev:2},
+ trip:{t:'The parking company wants a 30-year deal',b:'Monica Reyes slides a contract across the table. "A 30-year parking deal, no bidding. And a condo in Destin for your family to use whenever you like."',pay:60000,revenue:-1,sec:'You gave a no-bid 30-year parking contract to a company that gave your family a condo',sev:3},
+ noshow:{t:'The council member wants more jobs',b:ev=>`${S.council[ev.mk].name} is back, with a list. "Six more people need city jobs. Same arrangement as my nephew. You need my vote on the budget, don't you?"`,pay:0,council:true,cost:0.35,sec:ev=>`You put six of ${S.council[ev.mk].name}'s relatives and friends in no-show city jobs`,sev:2}};
+CHAR_TYPES.tempt2={w:0,gen:()=>null,title:ev=>ESCALATE[ev.tid].t,who:ev=>[['tempt',ev.id]],
+  body:ev=>{const E=ESCALATE[ev.tid];return`${typeof E.b==='function'?E.b(ev):E.b}<br><small>They already have something on you. Saying no to someone who owns you is risky.</small>`},
+  choices:[
+   {l:()=>'Do it',s:ev=>{const E=ESCALATE[ev.tid];const p=[];if(E.pay)p.push(`+$${E.pay.toLocaleString()} to you`);if(E.camp)p.push(`+$${E.camp}K campaign cash`);if(E.council)p.push('their vote on anything (+20, a favor)');if(E.cost)p.push(`the city loses ${fmtM(E.cost)}`);p.push(E.sev>=3?'<b>a major felony</b>: if it comes out, prison is likely':'a serious secret');return p.join(' · ')},
+    do:ev=>{const E=ESCALATE[ev.tid];if(E.pay)S.purse.cash+=E.pay;if(E.camp&&S.camp){S.camp.cash+=E.camp;S.camp.raised+=E.camp}if(E.cost)S.reserve-=E.cost;if(E.grp)for(const g in E.grp)groupLift(g,E.grp[g],'A rezoning');if(E.blight)S.met.blight+=E.blight;if(E.revenue)applyFx(S,{revenue:E.revenue});
+     if(E.council){const m=S.council[ev.mk];m.favors=(m.favors||0)+1;addMod(m,'The mayor takes care of us',20)}const W=tempWho({tid:ev.tid,mk:ev.mk});
+     addSecret({t:typeof E.sec==='function'?E.sec(ev):E.sec,sev:E.sev,knows:[{name:W.who.name,k:E.council?ev.mk:null,complicit:true},{name:'A bookkeeper who handled the money'}]});netOf(ev.tid).lvl=2;S.dirty=(S.dirty||0)+1;return'It\'s done. You\'re in deeper now.'}},
+   {l:()=>'Refuse, and cut ties',s:()=>'35% chance they make you regret it: an anonymous tip about the first deal',
+    do:ev=>{const N=netOf(ev.tid);N.cut=true;const s=liveSecrets().find(x=>x.net===ev.tid);if(Math.random()<0.35&&s){s.covered=Math.min(2,(s.covered||1)*2);s.tipped=true;try{notify('bad','Someone tipped off a reporter',`${tempWho({tid:ev.tid,mk:ev.mk}).who.name} didn't take no well. A reporter got an anonymous tip about your first deal. That secret is now twice as likely to come out.`,()=>openSchemes(),{ttl:20})}catch(e){}return'They left angry. You\'ll find out soon what that costs you.'}return'They left angry, but they kept quiet. For now.'}},
+   {l:()=>'Wear a wire for the FBI',s:()=>`Uses 1 action · ${oddsTag('intr',0.4)} · works: they're arrested, your old secret is forgiven, and you look like a hero · fails: they find out, and both of you go down`,need:()=>S.slots>0,
+    do:ev=>{S.slots--;const s=liveSecrets().find(x=>x.net===ev.tid);const W=tempWho({tid:ev.tid,mk:ev.mk});if(persuade('intr',0.4,[],12)){if(s){s.out=true;s.outHow='Forgiven for cooperating with the FBI'}netOf(ev.tid).cut=true;popHit(1.5,'Helped the FBI bust a bribery ring');try{newsAdd(2,`FBI arrests ${W.who.name} in bribery sting; ${isCand()?'candidate':'mayor'} cooperated`)}catch(e){}pressRel('dana',12);if(tempt({tid:ev.tid}).council)indictMember(ev.mk,'a bribery sting');try{addRecord({t:`Helped the FBI arrest ${W.who.name}`,kind:'law'})}catch(e){}return`The FBI arrested ${W.who.name}. Prosecutors agreed not to charge you for cooperating. The news calls you brave.`}
+     if(s)setTimeout(()=>exposeSecret(s,`${W.who.name} found the wire and went to the press first`),400);return`${W.who.name} spotted the wire. This is going to get ugly.`}}],
+  ignore:ev=>{netOf(ev.tid).cut=true}};
+{const _cw=charWhoX;charWhoX=function(kind,id){if(kind==='tempt'){const ev=(S.events||[]).find(e=>e.id===id)||(S.queue||[]).map(q=>q.ev).find(e=>e.id===id);if(ev&&ev.type==='tempt2'){const W=tempWho(ev);return{who:W.who,role:W.role,attr:'',o:null}}}return _cw.apply(this,arguments)}}
+{const _vo=visitorOf;visitorOf=function(ev){if(ev&&ev.type==='tempt2'&&ESCALATE[ev.tid]){const W=tempWho(ev);return{ev,who:W.who,role:W.role,title:ESCALATE[ev.tid].t}}return _vo.apply(this,arguments)}}
+function netOf(tid){S.net=S.net||{};return S.net[tid]=S.net[tid]||{lvl:0,since:nowM()}}
+// mark the first deal so they can come back
+{const T=CHAR_TYPES.tempt,take=T.choices[0],_do=take.do;take.do=function(ev){const before=(S.secrets||[]).length;const r=_do.apply(this,arguments);try{const s=(S.secrets||[])[before];if(s)s.net=ev.tid;const N=netOf(ev.tid);N.lvl=1;N.since=nowM();N.mk=ev.mk;N.cut=false}catch(e){}return r}}
+function networkMonth(){if(!S||!S.started||S.over||S.phase==='ai'||!S.net)return;if((S.events||[]).some(e=>e.type==='tempt2')||(S.queue||[]).some(q=>q.ev.type==='tempt2'))return;
+  for(const tid in S.net){const N=S.net[tid];if(N.lvl!==1||N.cut||nowM()-N.since<6)continue;if(!inOffice()&&tid!=='straw')continue;if(ESCALATE[tid].council&&(N.mk==null||!S.council[N.mk]))continue;if(Math.random()<0.35){N.since=nowM();queueChar({type:'tempt2',tid,mk:N.mk,at:'cityhall'});return}}}
+// a "major felony" (sev 3) is far more likely to bring charges and a conviction
+{const _eh=exposedHit;exposedHit=function(s){return _eh.apply(this,arguments)*(s.sev>=3?1.3:1)*tvMul()}}
+// ---------- 2. their secrets ----------
+const NPC_SEC={2:['took cash from a towing company that got a city contract','steered nonprofit grants to a group their spouse runs','has been living outside their district, which is illegal for a council member','used campaign money to pay off a personal loan','helped a donor dodge $400,000 in property taxes'],
+ 1:['has a stack of unpaid parking tickets and a lapsed business license','was sued by tenants over a rental house with no heat','gave a city job to a college roommate','skipped 30% of committee meetings last year','posted something ugly on social media years ago']};
+function npcSecret(name){S.npcSec=S.npcSec||{};if(!S.npcSec[name]){const r=Math.random();const sev=r<0.35?2:r<0.75?1:0;S.npcSec[name]={sev,t:sev?pk2(NPC_SEC[sev]):'',found:false}}return S.npcSec[name]}
+// digging on your opponent now finds their real secret, if they have one
+{const _sd=schemeDo;schemeDo=function(key,k){if(key==='dirt'&&S.rival&&S.camp&&S.slots>0&&S.camp.cash>=20){const X=MY_SCHEMES.dirt;S.slots--;S.camp.cash-=20;S.camp.spent+=20;try{flowC('other',20)}catch(e){}const N=npcSecret(S.rival.name);let msg;
+    if(persuade('intr',X.b,[S.rival],8)){S.dossier=S.dossier||[];if(N.sev&&!N.found){N.found=true;S.dossier.push({t:N.t,on:S.rival.name,m:nowM(),crime:N.sev>=2});msg=N.sev>=2?`Your researcher found a crime: ${S.rival.name} ${N.t}. This could end their campaign.`:`Your researcher found something embarrassing: ${S.rival.name} ${N.t}.`}
+     else{const t=pk2(NPC_SEC[1]);S.dossier.push({t,on:S.rival.name,m:nowM(),thin:true});msg=`${S.rival.name} is cleaner than you thought. The best your researcher found: they ${t}.`}}
+    else{msg='Your researcher came back with nothing usable.';if(Math.random()<0.2){popHit(-0.3,'Caught digging');msg+=` Worse, ${S.rival.name} found out.`}}
+    save();refreshHUD();toast(msg);SCHEME_MSG=msg;openSchemes();return}
+  if(key==='lever'){const m=S.council[k];if(!m||m.hook||S.slots<=0)return;S.slots--;const N=npcSecret(m.name);let msg;
+    if(persuade('intr',MY_SCHEMES.lever.b,[m],8)){if(N.sev){N.found=true;m.hook={hk:'dig',since:nowM()};msg=N.sev>=2?`You found a crime: ${m.name} ${N.t}. You hold a hook, or you can hand it to the FBI from the back room.`:`You found something: ${m.name} ${N.t}. Enough for a hook: you can force one vote later.`}
+     else msg=`${m.name} is clean. You found nothing to hold over them.`}
+    else{addMod(m,'Caught the mayor digging into me',-15);msg=`${m.name} found out you were digging, and is furious.`}
+    save();refreshHUD();toast(msg);SCHEME_MSG=msg;openSchemes();return}
+  return _sd.apply(this,arguments)}}
+// leaking a crime can sink your opponent
+{const _ld=leakDo;leakDo=function(i,how){const D=(S.dossier||[])[i];const r=_ld.apply(this,arguments);try{if(D&&D.crime&&S.rival&&S.rival.camp){if(Math.random()<0.55){const rc=S.rival.camp;rc.dmg=(rc.dmg||0)+6;rc.cash=Math.round(rc.cash*0.4);S.rival.indicted=true;try{newsAdd(1.5,`${S.rival.name} under federal investigation`)}catch(e){}notify('good',`${S.rival.name} is under investigation`,`The FBI opened a case after the story about how ${S.rival.name} ${D.t}. Their donors are running.`,()=>openSchemes(),{ttl:20})}}}catch(e){}return r}}
+function indictMember(k,why){const m=S.council[k];if(!m||m.indicted)return;m.indicted={due:nowM()+3,why};try{newsAdd(0.6,`Councilmember ${m.name} indicted over ${why}`)}catch(e){}notify('event',`${m.name} indicted`,`A federal grand jury indicted ${m.name}. Their trial is in about 3 months.`,null,{ttl:16})}
+function memberTrials(){(S.council||[]).forEach((m,k)=>{if(!m.indicted||nowM()<m.indicted.due)return;const old=m.name;if(Math.random()<0.7){if(S.rival&&S.rival.k===k){m.indicted=null;return}newCouncilFace(k);m.indicted=null;notify('event',`${old} convicted`,`${old} was convicted and removed from the council. The council appointed ${m.name} to the seat.`,null,{ttl:16});try{newsAdd(0.5,`${old} convicted; ${m.name} appointed`)}catch(e){}}
+  else{m.indicted=null;addMod(m,'The mayor tried to send me to prison',-40);notify('bad',`${old} acquitted`,`${old} was acquitted, and blames you.`,null,{ttl:14})}})}
+function fbiDo(k){const m=S.council[k];const N=m&&npcSecret(m.name);if(!m||!N||N.sev<2||!N.found||m.indicted||S.slots<=0)return;S.slots--;m.hook=null;N.fbi=true;let msg;
+  if(Math.random()<0.75){indictMember(k,N.t.split(' ').slice(0,4).join(' '));S.council.forEach(o=>{if(o!==m&&has(o,'reformer'))addMod(o,'Cleaned up City Hall',6)});popHit(0.5,'Turned in a corrupt council member');pressRel('dana',6);msg=`The FBI took your evidence. ${m.name} was indicted.`}
+  else msg='The FBI said the evidence wasn\'t strong enough to charge. They\'re keeping the file open.';
+  save();refreshHUD();toast(msg);SCHEME_MSG=msg;openSchemes()}
+// ---------- 3. the press corps ----------
+const PRESS={
+ dana:{name:'Corinne Prewitt',g:'f',age:41,frame:'#2f5d62',outlet:'The Bluff Ledger',beat:'Investigations',sk:'learn',
+  d:'Dana spends months on one story. She decides whether your secrets stay buried.',
+  hi:'She calls you before she publishes, which gives you a chance to come clean first.',lo:'She digs harder: every secret is 50% more likely to come out.'},
+ marcus:{name:'Terrence Vaughn',g:'m',age:36,frame:'#8a4b2a',outlet:'Channel 6 Eyewitness News',beat:'City Hall on TV',sk:'cha',
+  d:'Marcus decides what leads the 6 o\'clock news. He sets how hard scandals and attacks land.',
+  hi:'Scandals and attacks hurt up to 25% less, and good news gets more airtime.',lo:'Scandals and attacks hurt up to 25% more.'},
+ keisha:{name:'Keisha Monroe',g:'f',age:33,frame:'#5a3f7a',outlet:'Beale Street Wire',beat:'Neighborhoods',sk:'dip',
+  d:'Keisha covers what happens on the block: housing, buses and churches.',
+  hi:'Good news with renters, working families and churches spreads further (up to +25%).',lo:'Those groups hear about your failures first.'}};
+const PRESS_IDS=Object.keys(PRESS);
+function pressInit(){S.press=S.press||{};PRESS_IDS.forEach(id=>{if(!S.press[id])S.press[id]={rel:0,cd:-99,mods:[]}});return S.press}
+function pressRel(id,v,why){pressInit();const P=S.press[id];P.rel=clamp(P.rel+v,-100,100);if(why){P.mods.unshift({t:why,v,d:dateStr()});if(P.mods.length>6)P.mods.length=6}}
+function relOf(id){return(pressInit()[id]||{rel:0}).rel}
+function tvMul(){return 1-clamp(relOf('marcus'),-100,100)/400}
+{const _na=newsAdd;newsAdd=function(tone,head,opts){try{if(S&&S.press){const r=relOf('marcus');tone=tone<0?tone*(1-r/400):tone*(1+r/400)}}catch(e){}return _na.call(this,tone,head,opts)}}
+{const _gl=groupLift;groupLift=function(gid,v,label){try{if(S&&S.press&&['renters','working','faith'].includes(gid)){const r=relOf('keisha');v=v>0?v*(1+Math.max(0,r)/400):v*(1+Math.max(0,-r)/400)}}catch(e){}return _gl.call(this,gid,v,label)}}
+// Corinne: a burned investigative reporter digs harder; a friendly one calls first
+{const _sr=secretRisk;secretRisk=function(s){let p=_sr.apply(this,arguments);try{const r=relOf('dana');if(r<=-30)p*=1.5;else if(r<0)p*=1+(-r)/100*0.5}catch(e){}return clamp(p,0.003,0.35)}}
+{const _ex=exposeSecret;exposeSecret=function(s,how){try{if(s&&!s.out&&!s.warned&&relOf('dana')>=25&&/reporter/i.test(how||'')&&!S.over){s.warned=true;S.danaCall={sid:s.id,due:dayN()+3};try{sfx('crisis')}catch(e){}notify('bad','Corinne Prewitt is calling','She has the story and runs it in 3 days. Because you\'ve been straight with her, she\'s giving you the chance to respond first.',()=>openDanaCall(),{ttl:10});setTimeout(()=>{try{openDanaCall()}catch(e){}},300);return}}catch(e){}return _ex.apply(this,arguments)}}
+function openDanaCall(){const C=S.danaCall;if(!C)return;const s=(S.secrets||[]).find(x=>x.id===C.sid);if(!s||s.out){S.danaCall=null;return}closePanel();
+  openModal('The Bluff Ledger · Corinne Prewitt','She has the story',`<div class="dq"><small>Corinne Prewitt</small><p>"I have documents showing ${s.t.replace(/^You /,'you ').replace(/^Your /,'your ')}. It runs Thursday. I wanted you to hear it from me, and I'll print whatever you say."</p></div>
+   <div class="choices"><button class="choice" data-dana="clean"><b>Come clean to her, on the record</b><small>About half the damage, no trial · Corinne +10</small></button>
+   <button class="choice" data-dana="kill"><b>Ask her to hold the story</b><small>${oddsTag('dip',0.3)} · works: she holds it for now, and the secret is a little safer · fails: it runs, Corinne −15</small></button>
+   <button class="choice" data-dana="run"><b>Let it run</b><small>You'll answer it like any other scandal</small></button></div>`,true)}
+openDanaCall=navWrap('openDanaCall',openDanaCall);
+document.addEventListener('click',e=>{const b=e.target.closest('[data-dana]');if(!b||!S||!S.danaCall)return;e.preventDefault();e.stopImmediatePropagation();const s=(S.secrets||[]).find(x=>x.id===S.danaCall.sid);S.danaCall=null;onClose=null;closeModal();if(!s)return;const a=b.dataset.dana;
+  if(a==='clean'){S.slots++;coverDo(s.id,'clean');pressRel('dana',10,'Came clean to her first');return}
+  if(a==='kill'){if(persuade('dip',0.3,[],8)){s.covered=Math.max(0.4,s.covered*0.8);pressRel('dana',-4,'Asked her to hold a story');toast('Corinne agreed to hold it, for now. She won\'t forget.');return}pressRel('dana',-15,'Tried to kill her story');exposeSecret(s,'Corinne Prewitt\'s story ran');return}
+  exposeSecret(s,'Corinne Prewitt\'s story ran')},true);
+// reporters remember: scandal responses and integrity
+document.addEventListener('click',e=>{const b=e.target.closest('[data-exp]');if(!b||!S||!S.exposed)return;const a=b.dataset.exp;if(a==='deny'){pressRel('dana',-6,'Denied a story she knew was true');pressRel('marcus',-3,'Denied a scandal on camera')}if(a==='sorry'){pressRel('dana',4,'Owned up to a scandal');pressRel('marcus',3,'Owned up on camera')}if(a==='blame')pressRel('dana',-4,'Blamed a staffer')},true);
+{const T=CHAR_TYPES.tempt,c=T.choices[2],_do=c.do;c.do=function(ev){pressRel('dana',8,'Reported a bribe to the FBI');pressRel('marcus',5,'Reported a bribe to the FBI');return _do.apply(this,arguments)}}
+// the press room
+const PRESS_ACT={
+ interview:{n:'Give an exclusive interview',d:'Works: +12 with them and a good story · fails: +3, and the interview goes badly'},
+ tip:{n:'Give them a tip',d:'Hand them a story (your file on your opponent, or a city win). +8 with them'},
+ freeze:{n:'Freeze them out',d:'Free · −25 with them · they lose access, but they\'ll dig into you harder'}};
+function pressDo(id,a){const P=PRESS[id],st=pressInit()[id];if(a!=='freeze'&&(S.slots<=0||nowM()-st.cd<2))return;let msg;
+  if(a==='interview'){S.slots--;st.cd=nowM();if(persuade(P.sk,0.5,[],8)){pressRel(id,12,'A good exclusive interview');try{newsAdd(1,`${P.outlet}: an hour with the ${isCand()?'candidate':'mayor'}`)}catch(e){}msg=`${P.name}'s piece came out fair, even warm. +12.`}else{pressRel(id,3,'An awkward interview');try{newsAdd(-0.6,`${P.outlet}: the ${isCand()?'candidate':'mayor'} dodges hard questions`)}catch(e){}msg=`The interview went badly. ${P.name} wrote that you dodged. +3.`}}
+  if(a==='tip'){const D=(S.dossier||[]).findIndex(x=>S.rival&&x.on===S.rival.name);S.slots--;st.cd=nowM();pressRel(id,8,'Gave them a story');
+    if(D>=0&&id!=='keisha'){const X=S.dossier[D];S.dossier.splice(D,1);const rc=S.rival.camp;const traced=Math.random()>(relOf(id)>=20?0.9:0.6);rc.dmg=(rc.dmg||0)+(X.crime?4:2);if(X.crime&&Math.random()<0.55){rc.cash=Math.round(rc.cash*0.4);S.rival.indicted=true;rc.dmg+=3}
+      try{newsAdd(0.5,`${P.outlet}: ${S.rival.name} ${X.t}`)}catch(e){}if(traced)popHit(-0.6,'Your leak was traced');msg=`${P.name} ran the story about how ${S.rival.name} ${X.t}.${traced?' Another reporter figured out it came from you.':' Nobody knows it came from you.'}`}
+    else{try{newsAdd(0.9,`${P.outlet}: inside a city program that's working`)}catch(e){}if(id==='keisha'){groupLift('renters',0.8,'A good story on the Beale Street Wire');groupLift('working',0.6,'A good story on the Beale Street Wire')}msg=`${P.name} ran a story about something going right in Memphis. +8.`}}
+  if(a==='freeze'){pressRel(id,-25,'You froze them out');st.cd=nowM();msg=`Your office stopped returning ${P.name}'s calls. ${id==='dana'?'She took it as a sign there\'s something to find.':'They noticed.'}`}
+  try{sfx(/badly|traced|stopped/.test(msg)?'bad':'good')}catch(e){}save();refreshHUD();toast(msg);PRESS_MSG=msg;openPress()}
+let PRESS_MSG=null;
+function openPress(){pressInit();const last=PRESS_MSG;PRESS_MSG=null;const sl=S.slots;
+  const card=id=>{const P=PRESS[id],st=S.press[id],v=Math.round(st.rel),[tn,cl]=facTier(v),cd=Math.max(0,2-(nowM()-st.cd));
+    return`<div class="faccard"><div class="fac-h"><span class="fac-ic">${id==='marcus'?'▶':id==='dana'?'✎':'◉'}</span><div><b>${P.name}</b><small>${P.outlet} · ${P.beat}</small></div><span class="fac-rel ${cl}"><b>${v>0?'+':''}${v}</b><small>${tn}</small></span></div>
+     <div class="facbar"><i></i><i class="${v>=0?'pos':'neg'}" style="${v>=0?'left:50%':'right:50%'};width:${Math.abs(v)/2}%"></i></div><p class="note">${P.d}</p>
+     <div class="qrgrid"><div><small>If they trust you (+25)</small><p>${P.hi}</p></div><div><small>If you've burned them (−30)</small><p>${P.lo}</p></div></div>
+     ${st.mods.length?`<h5>What they remember</h5><ul class="numlist">${st.mods.slice(0,4).map(x=>`<li>${x.t} <b class="${x.v>0?'pos':'neg'}">${x.v>0?'+':''}${x.v}</b> <small>${x.d}</small></li>`).join('')}</ul>`:''}
+     <div class="choices">${Object.keys(PRESS_ACT).map(a=>{const A=PRESS_ACT[a];const dis=a!=='freeze'&&(sl<=0||cd);return`<button class="choice" data-press="${id}|${a}" ${dis?'disabled':''}><b>${A.n}</b><small>${a==='freeze'?'':cd?`Again in ${cd} mo · `:sl<=0?'No actions left · ':`1 action${a==='interview'?' · '+oddsTag(P.sk,0.5):''} · `}${A.d}</small></button>`}).join('')}</div></div>`};
+  openModal('The press corps · 3 reporters','Who covers you',`${last?`<p class="scnreply">${last}</p>`:''}<p>Three reporters cover City Hall. They remember how you treat them, and it changes how your stories land.</p>${PRESS_IDS.map(card).join('')}<div class="row"><button class="btn primary" data-act="close">Back</button></div>`,true)}
+openPress=navWrap('openPress',openPress);
+document.addEventListener('click',e=>{const b=e.target.closest('[data-press],[data-pressopen],[data-fbi]');if(!b||!S)return;e.preventDefault();e.stopImmediatePropagation();if(b.dataset.press){const[id,a]=b.dataset.press.split('|');pressDo(id,a);return}if(b.dataset.fbi){fbiDo(+b.dataset.fbi);return}if(modalOpen){onClose=null;closeModal()}openPress()},true);
+// reporters call you, about every 3 months
+CHAR_TYPES.press={w:0,gen:()=>null,title:ev=>`${PRESS[ev.pid].name} wants a comment`,who:ev=>[['press',ev.pid]],
+  body:ev=>`${PRESS[ev.pid].name} of ${PRESS[ev.pid].outlet}: "${ev.q}"`,
+  choices:[
+   {l:()=>'Sit down and answer',s:ev=>`Uses 1 action · ${oddsTag(PRESS[ev.pid].sk,0.5)} · works: +10 and a fair story · fails: +2`,need:()=>S.slots>0,do:ev=>{S.slots--;const ok=persuade(PRESS[ev.pid].sk,0.5,[],7);pressRel(ev.pid,ok?10:2,ok?'Answered her questions':'Answered, badly');if(ev.sid){const s=(S.secrets||[]).find(x=>x.id===ev.sid);if(s&&!ok)s.covered=Math.min(2,s.covered*1.15)}try{newsAdd(ok?0.7:-0.5,`${PRESS[ev.pid].outlet}: ${ok?'the mayor answers':'the mayor stumbles'}`)}catch(e){}return ok?'You gave straight answers. The story was fair.':'You stumbled through it. The story says so.'}},
+   {l:()=>'Send a written statement',s:()=>'Free · −2 with them',do:ev=>{pressRel(ev.pid,-2,'Sent a statement instead of talking');return'You sent two careful paragraphs.'}},
+   {l:()=>'No comment',s:ev=>`Free · −8 with them${ev.sid?' · she keeps digging':''}`,do:ev=>{pressRel(ev.pid,-8,'"No comment"');if(ev.sid){const s=(S.secrets||[]).find(x=>x.id===ev.sid);if(s)s.covered=Math.min(2,s.covered*1.1)}return'"No comment." They printed that, too.'}}],
+  ignore:ev=>{pressRel(ev.pid,-6,'Never called back')}};
+{const _cw=charWhoX;charWhoX=function(kind,id){if(kind==='press'&&PRESS[id]){const P=PRESS[id];return{who:P,role:`${P.beat}, ${P.outlet}`,attr:'data-pressopen="1"',o:relOf(id)}}return _cw.apply(this,arguments)}}
+{const _vo=visitorOf;visitorOf=function(ev){if(ev&&ev.type==='press'&&PRESS[ev.pid]){const P=PRESS[ev.pid];return{ev,who:P,role:`${P.beat}, ${P.outlet}`,title:`${P.name} wants a comment`}}return _vo.apply(this,arguments)}}
+function pressMonth(){if(!S||!S.started||S.over||S.phase==='ai')return;pressInit();if(S.pressNext==null)S.pressNext=nowM()+2;if(nowM()<S.pressNext)return;if((S.events||[]).some(e=>e.type==='press')||(S.queue||[]).some(q=>q.ev.type==='press'))return;S.pressNext=nowM()+2+Math.floor(Math.random()*3);
+  const L=liveSecrets();let pid,q,sid=null;
+  if(L.length&&Math.random()<0.5){const s=pk2(L);pid='dana';sid=s.id;q=`I keep hearing the same rumor: that ${s.t.replace(/^You /,'you ').replace(/^Your /,'your ').split(' ').slice(0,9).join(' ')}... I'd like your side before I go further.`}
+  else{pid=pk2(PRESS_IDS);q=pid==='dana'?'I\'m looking at how the city awards contracts. Who decides, and who checks them?':pid==='marcus'?`Violent crime is ${Math.round(S.met.crime)} on the city's index. Viewers want to know: are they safer than when you started?`:`Folks in ${pk2(['Frayser','Orange Mound','Whitehaven','Hickory Hill','Binghampton','South Memphis'])} say City Hall forgot them. What do you tell them?`}
+  queueChar({type:'press',pid,q,sid,at:'cityhall'})}
+{const _eom=endOfMonth;endOfMonth=function(...a){const r=_eom.apply(this,a);try{networkMonth();memberTrials();pressMonth();if(S.danaCall&&dayN()>S.danaCall.due){const s=(S.secrets||[]).find(x=>x.id===S.danaCall.sid);S.danaCall=null;if(s)exposeSecret(s,'Corinne Prewitt\'s story ran')}}catch(e){console.warn('v60',e)}return r}}
+// back room additions: crimes you can hand to the FBI, and the press corps button
+{const _os=openSchemes;openSchemes=function(...a){const r=_os.apply(this,a);try{const b=$('mBody');if(b&&!b.querySelector('.v60wrap')){const w=document.createElement('div');w.className='v60wrap';
+  const crimes=(S.council||[]).map((m,k)=>({m,k,N:S.npcSec&&S.npcSec[m.name]})).filter(x=>x.N&&x.N.found&&x.N.sev>=2&&!x.m.indicted&&!x.N.fbi);
+  const ind=(S.council||[]).filter(m=>m.indicted).map(m=>m.name);
+  w.innerHTML=`<div class="row"><button class="btn" data-pressopen="1">The press corps: ${PRESS_IDS.map(id=>`${PRESS[id].name.split(' ')[0]} ${relOf(id)>0?'+':''}${Math.round(relOf(id))}`).join(' · ')}</button></div>
+   ${crimes.length?`<h4 class="plh">Crimes you know about</h4>${crimes.map(x=>`<div class="plotcard mine"><b>${x.m.name} ${x.N.t}</b><p class="note">Keep it as a hook, or hand it to the FBI. If they're convicted, they lose their seat.</p><div class="choices"><button class="choice" data-fbi="${x.k}" ${S.slots<=0?'disabled':''}><b>Hand it to the FBI</b><small>1 action · 75% chance they're indicted · reformers and Corinne like it</small></button></div></div>`).join('')}`:''}
+   ${ind.length?`<p class="note">Under indictment: ${ind.join(', ')}.</p>`:''}${S.rival&&S.rival.indicted?`<p class="note">${S.rival.name} is under federal investigation.</p>`:''}`;
+  const first=b.querySelector('h4.plh');if(first)b.insertBefore(w,first);else b.prepend(w)}}catch(e){console.warn(e)}return r};VIEWS.openSchemes=openSchemes}
+{const _om=openModal;openModal=function(...a){const r=_om.apply(this,a);try{const n=NAV.cur?NAV.cur.name:'';if(n==='flow_people'){const g=$('mBody').querySelector('.flow-grid');if(g&&!g.querySelector('[data-pressopen]'))g.insertAdjacentHTML('beforeend',`<button class="flow-tile" data-pressopen="1"><b>The press corps</b><span>${PRESS_IDS.map(id=>PRESS[id].name.split(' ')[0]).join(', ')}: who covers you, and what they remember</span></button>`)}}catch(e){}return r}}
+{const _dt=dayTick;dayTick=function(...a){const r=_dt.apply(this,a);try{if(S&&S.danaCall&&dayN()>S.danaCall.due&&!modalOpen){const s=(S.secrets||[]).find(x=>x.id===S.danaCall.sid);S.danaCall=null;if(s)exposeSecret(s,'Corinne Prewitt\'s story ran')}}catch(e){}return r}}
 function openLedger(){const L=S.log||[];openPanel('Everything that has happened, newest first','Ledger',L.length?`<div class="logl">${L.map(x=>`<div><span>${x.d}</span><p style="margin:0">${x.t}</p></div>`).join('')}</div>`:'<p class="note">Nothing yet. Start the clock with Space or ▶.</p>','ledger')}
 function openPolicies(){const ks=Object.keys(POLICIES);
   openPanel('Ongoing programs you control','Your initiatives',`<p>Mid-year, these are paid from the reserve fund. In April they go into the budget you send the council.</p>
