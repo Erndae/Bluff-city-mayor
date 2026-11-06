@@ -111,6 +111,26 @@ I played full runs as mayor, as a challenger and as an heir, clicked through eve
 **Cleanup:**
 - The People hub's 15 tiles are now grouped into three sections: The city's people, Power and politics, and Your life.
 
+## v26.66 to v26.69: Tips, health, disasters, and life after City Hall
+
+- **First-time explainers (v26.66).** The first time you open the back room, power players, the press corps, your family, dating, a child's page, the family legacy, storylines, the economy, places or health, a short card explains it. Tap "Got it", or turn tips off. The back room now links to **Save and load** (4 slots) so you can save a copy before risky moves.
+- **Your health (v26.67).**
+  - Health and stress are tracked under People → Your life → Your health.
+  - What raises stress: busy months, campaign season, scandals, trials and plots.
+  - What brings it back down: a strong home life, free exercise and sleep, a $300 yearly checkup that catches problems early, and a vacation (2 actions, $3,000).
+  - What poor health costs: health below 40, or stress above 80, takes skill points. Health below 25 also costs an action, and poor health raises your yearly chance of dying.
+  - A health scare (your cardiologist calls, or you collapse in public) asks whether to tell the public, keep it private (a secret), or step back to recover.
+- **Disasters (v26.68).**
+  - **A Mississippi River flood** joins the ice storm, tornadoes and heat wave.
+  - **Damage:** disasters now damage city property, costing $0.6M to $5M from the reserve.
+  - **Who pays:** a few weeks later, decide who pays. Ask the governor for a federal disaster declaration (odds depend on your standing in Nashville), ask the County to split the cost (city–county relations), or pay it all and recover fast.
+  - **Emergency readiness:** for $1.5M and 1 action, under Take action, you can halve the next disaster's damage and make every response option 10 points likelier to work.
+- **Life after City Hall (v26.69).**
+  - **A next chapter:** after a lost race or term limits, choose "Start your next chapter." Run for Shelby County Mayor or Congress (odds shown), join a law firm, lead a university, or become a kingmaker.
+  - **Year by year:** each year brings income, influence, aging and one decision: a memoir, endorsements, a board seat, mentoring, or an old secret resurfacing (which can end in prison).
+  - **At election time:** run for mayor again, starting known and with money, or put your influence behind your grown child's campaign. The family legacy records what you did after City Hall.
+- **Fix:** the press corps' memory was stored under the same name as the existing press-coverage number, which silently broke both. The reporters now have their own storage, and older saves are repaired on load.
+
 ## v26.59: Dirty deals and secrets
 
 You can now break the law, and it can catch up with you.

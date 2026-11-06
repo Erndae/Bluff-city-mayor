@@ -360,6 +360,8 @@ nav.actions [data-actsgo]{min-height:44px;padding:9px 17px;border-color:rgba(242
 .faccard.gen.cur{border-color:var(--amber)}.genline{text-align:center;color:var(--muted,#9aa7b2);line-height:1;margin:-4px 0}.faccard.gen h4 small{font-weight:400;color:var(--muted,#9aa7b2)}
 .ph-sec .plh{margin:14px 0 6px}.ph-sec:first-child .plh{margin-top:4px}
 #endBanner{position:fixed;left:50%;transform:translateX(-50%);top:46%;z-index:90;max-width:calc(100vw - 32px);box-shadow:0 6px 24px rgba(0,0,0,.45)}#endBanner[hidden]{display:none}
+.tipcard{border:1px solid var(--amber);background:rgba(242,169,59,.08);border-radius:12px;padding:12px;margin:0 0 12px}.tipcard p{margin:6px 0 8px}
+.qrgrid.agrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.qrgrid.agrid p{margin:2px 0 0}
 .adgain{display:block;width:100%;text-align:center;font-size:11px;font-weight:600;color:var(--good);margin-top:1px}
 #start{overflow-x:hidden;overflow-y:auto;touch-action:pan-y}.startbox{min-width:0;max-width:min(600px,100%);box-sizing:border-box}.startbox *{min-width:0}.create select,.create input{max-width:100%;width:100%;box-sizing:border-box;text-overflow:ellipsis}.create .tpick,.create .tpick>*{max-width:100%;box-sizing:border-box}
 @media (max-width:640px){.startbox{margin-left:0}#start{padding-left:max(16px,env(safe-area-inset-left,0px))}}
@@ -712,7 +714,7 @@ details.analysis{margin-top:6px}details.analysis summary{cursor:pointer;color:va
     <button class="btn primary" data-act="pause" id="bPlay"><svg class="ico" viewBox="0 0 12 12" aria-hidden="true"><path d="M3.2 1.6v8.8l7.2-4.4z" fill="currentColor"/></svg> Resume <kbd>Space</kbd></button>
   </nav>
   <div class="status" id="status">Loading map…</div>
-  <div class="credit"><span class="ver" id="verTag">v26.65</span></div>
+  <div class="credit"><span class="ver" id="verTag">v26.69</span></div>
   <div class="tip" id="tip" hidden></div>
   <div class="toast" id="toast" role="status"></div>
   <section class="panel" id="panel" hidden aria-live="polite">
@@ -740,7 +742,7 @@ details.analysis{margin-top:6px}details.analysis summary{cursor:pointer;color:va
         <button class="btn" data-music-open>Music &amp; volume</button>
       </div>
       <div id="slotList" hidden></div>
-      <p class="note startv">Version <b class="ver" id="verStart">v26.65</b></p>
+      <p class="note startv">Version <b class="ver" id="verStart">v26.69</b></p>
     </div>
     <div class="startbox create" id="create" hidden>
       <h2>Create your mayor</h2>
@@ -1551,7 +1553,7 @@ function enact(s,p){DIVS.forEach(d=>{s.enacted[d.id]=p.divs[d.id];s.ratio[d.id]=
 // Voter groups. Each has a share of residents, turnout, home districts, concerns and an approval of you.
 // Citywide approval is the turnout-weighted average of the groups; each council district's approval comes from the groups that live there.
 // Shares, district mix and turnout are modeled, loosely grounded in Memphis demographics; they are not survey data.
-const VERSION='v26.65';
+const VERSION='v26.69';
 const GROUPS=[
  {id:'working',sh:'Working families',n:'Working families',ic:'⚒︎',c:'#f2a93b',share:24,turn:.5,start:56,w:{jobs:1,safety:.8,transit:.5},
   d:'Hourly workers in logistics, warehouses, health care and service jobs. The biggest bloc in the city.',dm:{1:1.1,2:.8,3:1.3,4:1.2,5:.6,6:1.2,7:1.1}},
@@ -6673,7 +6675,7 @@ const FACS={
   d:'The voice of the city\'s big employers: FedEx, AutoZone, St. Jude, the hospitals and the logistics industry. It cares about taxes, permits and incentives.',
   hi:'Members send campaign money every month in the run-up to an election, and recruit employers to Memphis.',
   lo:'Members fund your opponent instead, and the business leaders\' endorsement goes the other way.'},
- county:{n:'Shelby County Commission',tn:'the Shelby County Commission',sh:'The County',ic:'▣',sk:'dip',grp:['parents'],
+ county:{as:'Shelby County mayor',n:'Shelby County Commission',tn:'the Shelby County Commission',sh:'The County',ic:'▣',sk:'dip',grp:['parents'],
   lead:{name:'Commissioner Andre Mitchell',g:'m',age:55,frame:'#7a6a9b'},role:'Chair, Shelby County Commission',
   d:'The County funds Memphis-Shelby County Schools, the jail and the Health Department. Memphis residents pay county taxes too, so the city and county have to split a lot of bills.',
   hi:'The County picks up a share of joint costs once a year, and school reading scores improve a little faster.',
@@ -7295,7 +7297,7 @@ function fbiDo(k){const m=S.council[k];const N=m&&npcSecret(m.name);if(!m||!N||N
 // ---------- 3. the press corps ----------
 const PRESS={
  dana:{name:'Corinne Prewitt',g:'f',age:41,frame:'#2f5d62',outlet:'The Bluff Ledger',beat:'Investigations',sk:'learn',
-  d:'Dana spends months on one story. She decides whether your secrets stay buried.',
+  d:'Corinne spends months on one story. She decides whether your secrets stay buried.',
   hi:'She calls you before she publishes, which gives you a chance to come clean first.',lo:'She digs harder: every secret is 50% more likely to come out.'},
  marcus:{name:'Terrence Vaughn',g:'m',age:36,frame:'#8a4b2a',outlet:'Channel 6 Eyewitness News',beat:'City Hall on TV',sk:'cha',
   d:'Marcus decides what leads the 6 o\'clock news. He sets how hard scandals and attacks land.',
@@ -7304,12 +7306,12 @@ const PRESS={
   d:'Keisha covers what happens on the block: housing, buses and churches.',
   hi:'Good news with renters, working families and churches spreads further (up to +25%).',lo:'Those groups hear about your failures first.'}};
 const PRESS_IDS=Object.keys(PRESS);
-function pressInit(){S.press=S.press||{};PRESS_IDS.forEach(id=>{if(!S.press[id])S.press[id]={rel:0,cd:-99,mods:[]}});return S.press}
-function pressRel(id,v,why){pressInit();const P=S.press[id];P.rel=clamp(P.rel+v,-100,100);if(why){P.mods.unshift({t:why,v,d:dateStr()});if(P.mods.length>6)P.mods.length=6}}
+function pressInit(){S.reporters=S.reporters||{};PRESS_IDS.forEach(id=>{if(!S.reporters[id])S.reporters[id]={rel:0,cd:-99,mods:[]}});return S.reporters}
+function pressRel(id,v,why){pressInit();const P=S.reporters[id];P.rel=clamp(P.rel+v,-100,100);if(why){P.mods.unshift({t:why,v,d:dateStr()});if(P.mods.length>6)P.mods.length=6}}
 function relOf(id){return(pressInit()[id]||{rel:0}).rel}
 function tvMul(){return 1-clamp(relOf('marcus'),-100,100)/400}
-{const _na=newsAdd;newsAdd=function(tone,head,opts){try{if(S&&S.press){const r=relOf('marcus');tone=tone<0?tone*(1-r/400):tone*(1+r/400)}}catch(e){}return _na.call(this,tone,head,opts)}}
-{const _gl=groupLift;groupLift=function(gid,v,label){try{if(S&&S.press&&['renters','working','faith'].includes(gid)){const r=relOf('keisha');v=v>0?v*(1+Math.max(0,r)/400):v*(1+Math.max(0,-r)/400)}}catch(e){}return _gl.call(this,gid,v,label)}}
+{const _na=newsAdd;newsAdd=function(tone,head,opts){try{if(S&&S.reporters){const r=relOf('marcus');tone=tone<0?tone*(1-r/400):tone*(1+r/400)}}catch(e){}return _na.call(this,tone,head,opts)}}
+{const _gl=groupLift;groupLift=function(gid,v,label){try{if(S&&S.reporters&&['renters','working','faith'].includes(gid)){const r=relOf('keisha');v=v>0?v*(1+Math.max(0,r)/400):v*(1+Math.max(0,-r)/400)}}catch(e){}return _gl.call(this,gid,v,label)}}
 // Corinne: a burned investigative reporter digs harder; a friendly one calls first
 {const _sr=secretRisk;secretRisk=function(s){let p=_sr.apply(this,arguments);try{const r=relOf('dana');if(r<=-30)p*=1.5;else if(r<0)p*=1+(-r)/100*0.5}catch(e){}return clamp(p,0.003,0.35)}}
 {const _ex=exposeSecret;exposeSecret=function(s,how){try{if(s&&!s.out&&!s.warned&&relOf('dana')>=25&&/reporter/i.test(how||'')&&!S.over){s.warned=true;S.danaCall={sid:s.id,due:dayN()+3};try{sfx('crisis')}catch(e){}notify('bad','Corinne Prewitt is calling','She has the story and runs it in 3 days. Because you\'ve been straight with her, she\'s giving you the chance to respond first.',()=>openDanaCall(),{ttl:10});setTimeout(()=>{try{openDanaCall()}catch(e){}},300);return}}catch(e){}return _ex.apply(this,arguments)}}
@@ -7341,7 +7343,7 @@ function pressDo(id,a){const P=PRESS[id],st=pressInit()[id];if(a!=='freeze'&&(S.
   try{sfx(/badly|traced|stopped/.test(msg)?'bad':'good')}catch(e){}save();refreshHUD();toast(msg);PRESS_MSG=msg;openPress()}
 let PRESS_MSG=null;
 function openPress(){pressInit();const last=PRESS_MSG;PRESS_MSG=null;const sl=S.slots;
-  const card=id=>{const P=PRESS[id],st=S.press[id],v=Math.round(st.rel),[tn,cl]=facTier(v),cd=Math.max(0,2-(nowM()-st.cd));
+  const card=id=>{const P=PRESS[id],st=S.reporters[id],v=Math.round(st.rel),[tn,cl]=facTier(v),cd=Math.max(0,2-(nowM()-st.cd));
     return`<div class="faccard"><div class="fac-h"><span class="fac-ic">${id==='marcus'?'▶':id==='dana'?'✎':'◉'}</span><div><b>${P.name}</b><small>${P.outlet} · ${P.beat}</small></div><span class="fac-rel ${cl}"><b>${v>0?'+':''}${v}</b><small>${tn}</small></span></div>
      <div class="facbar"><i></i><i class="${v>=0?'pos':'neg'}" style="${v>=0?'left:50%':'right:50%'};width:${Math.abs(v)/2}%"></i></div><p class="note">${P.d}</p>
      <div class="qrgrid"><div><small>If they trust you (+25)</small><p>${P.hi}</p></div><div><small>If you've burned them (−30)</small><p>${P.lo}</p></div></div>
@@ -7736,11 +7738,190 @@ function tileKey(t){if(t.dataset.flowRoute)return t.dataset.flowRoute;const a=[.
 function openEndChoices(){if(!S||!S.over)return;const died=S.died,rem=S.removed,w=S._winner;const title=died?`${S.mayor.name} has died`:rem?'Removed from office':S.lastElection&&!S.lastElection.won?'You lost the election':'Your story has ended';
   const base=w?afterLossChoices(w):`${heirHTML()}<div class="facts"><h4>What now?</h4><div class="choices"><button class="choice" data-act="legacy"><b>See the Mayors of Memphis</b><small>How your time will be remembered</small></button><button class="choice" data-act="newgame"><b>Start over</b><small>A brand-new game</small></button></div></div>`;
   openModal('Your story',title,base,true)}
-{const _rh=refreshHUD;refreshHUD=function(...a){const r=_rh.apply(this,a);try{let b=$('endBanner');if(S&&S.started&&S.over){if(!b){b=document.createElement('button');b.id='endBanner';b.className='btn primary';b.textContent='Your story has ended · see your options';b.onclick=()=>openEndChoices();document.body.appendChild(b)}b.hidden=false}else if(b)b.hidden=true}catch(e){}return r}}
+{const _rh=refreshHUD;refreshHUD=function(...a){const r=_rh.apply(this,a);try{let b=$('endBanner');if(S&&S.started&&S.over&&!modalOpen){if(!b){b=document.createElement('button');b.id='endBanner';b.className='btn primary';b.textContent='Your story has ended · see your options';b.onclick=()=>openEndChoices();document.body.appendChild(b)}b.hidden=false}else if(b)b.hidden=true}catch(e){}return r}}
 {const _cm=closeModal;closeModal=function(...a){const r=_cm.apply(this,a);try{refreshHUD()}catch(e){}return r}}
 {const _to=takeOffice;takeOffice=function(...a){if(S)S.mayorElect=false;return _to.apply(this,a)}}
 {const _dt=dayTick;dayTick=function(...a){if(S&&S.mayorElect&&isCand()&&!modalOpen&&!S.over){S.mayorElect=false;try{takeOffice();return}catch(e){console.warn('oath',e)}}return _dt.apply(this,a)}}
 {const _fm=famMonth;famMonth=function(...a){const r=_fm.apply(this,a);try{const F=S&&S.fam;if(F&&(F.spouse&&!F.spouse.gone||F.kids.length)&&F.home<40&&nowM()-(F.warnM||-99)>=3&&!S.over&&S.phase!=='ai'){F.warnM=nowM();notify('people','Your family misses you',`Home life is down to ${Math.round(F.home)}. A family dinner is free and brings it back up. Below 25, you lose an action each month.`,()=>openFamily(),{ttl:14})}}catch(e){}return r}}
+// ======================= v26.66: FIRST-TIME EXPLAINERS, AND SAVE-A-COPY SHORTCUTS =======================
+// The first time you open one of the deeper screens, a short card explains it. Tips can be turned off.
+const TIPS={
+ openSchemes:['The back room','Your opponent and council members plot against you here. A rumor gives you warning; then each counter-move costs an action and is a skill check. You can scheme too, and the dirty moves at the bottom are crimes: they pay now and leave secrets that can come out later.'],
+ openPowers:['Power players','Five organized groups with their own agendas. Each one\'s score comes from what you\'ve done (the reasons are listed) and how you\'ve treated them. They\'ll come to your office with demands: agree, bargain with a skill, or say no. Allies help you, and enemies make trouble.'],
+ openPress:['The press corps','Three reporters cover you, and each remembers how you treat them. Corinne decides whether your secrets stay buried, Terrence decides how hard bad news hits, and Keisha decides how far good news travels in the neighborhoods.'],
+ openFamily:['Your family','Home life wears down as you work and comes back with dinners and outings. Below 25 you\'re exhausted and lose an action. A happy spouse adds part of their skills to yours. Tap a child to choose their school; grown children can carry on the family name.'],
+ openPartner:['Finding a partner','Meet three people at a time and see their skills. Dates test your skills, and a partner\'s trait makes some go better. At 100% you can propose. Your spouse adds about a sixth of each of their skills to yours, and a quarter of their best.'],
+ openKid:['School and skills','Pick a school and an after-school activity; each one focuses different skills. Strong home life speeds things up. At 21 or older, this child can take over as you if your story ends.'],
+ openLegacyFam:['Family legacy','Every generation of your family: who held office, how their stories ended, and what their children became. It grows each time an heir takes over.'],
+ openStories:['Storylines','Big stories play out over several months. What you choose in one chapter changes the next, and some choices are skill checks. Every ending goes on your record for the next election.'],
+ openEconomy:['The economy','Every lever the mayor has over jobs and wages, with its cost and how the council would vote today. Tennessee law bars a city minimum wage, so the levers are city pay, contracts, taxes and incentives.'],
+ openPlaces:['Go to a place','Jump anywhere without hunting on the map: your home, City Hall, places that need you, landmarks and neighborhoods.']};
+function tipsOff(){try{return localStorage.getItem('bcm-tipsoff')==='1'}catch(e){return false}}
+{const _om=openModal;openModal=function(...a){const r=_om.apply(this,a);try{const n=NAV.cur?NAV.cur.name:'';const T=TIPS[n];if(T&&S&&!tipsOff()){S.tips=S.tips||{};if(!S.tips[n]){const b=$('mBody');if(b&&!b.querySelector('.tipcard')){b.insertAdjacentHTML('afterbegin',`<div class="tipcard"><b>New: ${T[0]}</b><p>${T[1]}</p><div class="row"><button class="btn primary" data-tipok="${n}">Got it</button><button class="btn" data-tipoff="1">Turn off tips</button></div></div>`)}}}}catch(e){}return r}}
+document.addEventListener('click',e=>{const b=e.target.closest('[data-tipok],[data-tipoff]');if(!b||!S)return;e.preventDefault();e.stopImmediatePropagation();S.tips=S.tips||{};
+  if(b.dataset.tipok)S.tips[b.dataset.tipok]=1;else{try{localStorage.setItem('bcm-tipsoff','1')}catch(err){}}save();const c=b.closest('.tipcard');if(c)c.remove()},true);
+// save a copy before you do something risky
+{const _os=openSchemes;openSchemes=function(...a){const r=_os.apply(this,a);try{const b=$('mBody');const w=b&&b.querySelector('.dirtywrap');if(w&&!w.querySelector('[data-slotopen]')){const h=w.querySelector('h4.plh:last-of-type');const x=document.createElement('p');x.className='note';x.innerHTML='Want to try this without risking your main game? <a href="#" data-slotopen="1">Save a copy to another slot first</a>.';const mv=[...w.querySelectorAll('h4.plh')].find(h=>/Dirty moves/.test(h.textContent));if(mv)mv.insertAdjacentElement('afterend',x)}}catch(e){}return r};VIEWS.openSchemes=openSchemes}
+// ======================= v26.67: YOUR HEALTH =======================
+// Health (0–100) and stress (0–100). Hard months, scandals and campaign season raise stress; exercise, a strong home
+// life and vacations bring it down. High stress wears down health, and so does age. Poor health costs you skill
+// points and, below 25, an action; it also raises the yearly chance of dying. Checkups catch problems early.
+function hInit(){if(!S||!S.mayor)return null;if(!S.hl){const a=S.mayor.age||45;S.hl={hp:clamp(Math.round(88-(a-40)*0.5),40,95),st:30,cd:{},log:[],check:-99}}return S.hl}
+function hLog(t){const H=hInit();H.log.unshift({t,d:dateStr()});if(H.log.length>10)H.log.length=10}
+function hTier(v){return v>=75?['Strong','pos']:v>=55?['Fair','']:v>=35?['Poor','neg']:['Failing','neg']}
+function hMonth(){if(!S||!S.started||S.over||S.phase==='ai')return;const H=hInit();if(!H)return;const a=S.mayor.age||45;const used=S.lastSlotsUsed!=null?S.lastSlotsUsed:3;
+  let st=used*3-8;if(S.camp&&!S.camp.voted&&(isCand()||monthsToElection()<=4))st+=5;if(S.exposed||(S.trial))st+=12;if((S.plots||[]).some(p=>!p.done&&p.seen))st+=4;if(S.crisis&&S.crisis.ci==null)st+=6;
+  const F=S.fam;if(F&&(F.spouse&&!F.spouse.gone||F.kids.length))st+=F.home>=60?-4:F.home<30?4:0;H.st=clamp(H.st+st,0,100);
+  let dh=-Math.max(0,(H.st-45)/12)-(a>=60?(a-55)*0.06:0)+(H.st<30?0.6:0);H.hp=clamp(H.hp+dh,1,100);
+  if(H.hp<40&&nowM()-(H.warn||-99)>=4){H.warn=nowM();notify('bad','Your health is slipping',`Health ${Math.round(H.hp)}, stress ${Math.round(H.st)}. Exercise is free, a checkup catches problems early, and a vacation resets stress.`,()=>openHealth(),{ttl:16})}
+  // a health scare, more likely when health is poor
+  const p=(H.hp<45?0.05:0.008)*(a>=55?1.6:1);if(nowM()-(H.cd.scare||-99)>=10&&Math.random()<p&&!(S.queue||[]).some(q=>q.ev.type==='health')&&!(S.events||[]).some(e=>e.type==='health')){H.cd.scare=nowM();queueChar({type:'health',early:nowM()-H.check<=12,at:'cityhall'})}}
+{const _fm=famMonth;famMonth=function(...a){const r=_fm.apply(this,a);try{hMonth()}catch(e){console.warn('health',e)}return r}}
+// poor health and high stress cost skill points; failing health costs an action
+function hPenalty(){const H=S&&S.hl;if(!H)return 0;return(H.hp<25?2:H.hp<40?1:0)+(H.st>80?1:0)}
+{const _ms=mskill;mskill=function(k){const v=_ms.apply(this,arguments);try{const p=hPenalty();return p?clamp(v-p,0,25):v}catch(e){return v}}}
+{const _ab=actionBonus;actionBonus=function(...a){let n=_ab.apply(this,a);try{if(S&&S.hl&&S.hl.hp<25)n-=1}catch(e){}return n}}
+{const _dc=deathChance;deathChance=function(a){let p=_dc.apply(this,arguments);try{const H=S&&S.hl;if(H)p*=H.hp<25?3:H.hp<40?2:H.hp<60?1.3:H.hp>=80?0.6:1}catch(e){}return p}}
+// ---------- taking care of yourself ----------
+const HACT={
+ exercise:{n:'Exercise',d:'Free · once a month · a run on the Big River Crossing or a pickup game at the Y · stress −10, health +2',ok:H=>nowM()-(H.cd.exercise||-99)>=1,do:H=>{H.cd.exercise=nowM();H.st=clamp(H.st-10,0,100);H.hp=clamp(H.hp+2,0,100);return'You ran across the river and back. Clearer head, stronger legs.'}},
+ checkup:{n:'Annual checkup',d:'$300 · once a year · health +3, and catches problems early',ok:H=>nowM()-H.check>=12&&S.purse.cash>=300,do:H=>{H.check=nowM();S.purse.cash-=300;H.hp=clamp(H.hp+3,0,100);const found=H.hp<55&&Math.random()<0.5;if(found){H.hp=clamp(H.hp+6,0,100);hLog('A checkup caught something early');return'Your doctor caught something early: blood pressure. A new prescription, and you\'re ahead of it.'}return'A clean bill of health, mostly. See you next year.'}},
+ vacation:{n:'Take a vacation',d:'Uses 2 actions · $3,000 · stress −35, health +5, home life +15 · once every 6 months',ok:H=>S.slots>=2&&S.purse.cash>=3000&&nowM()-(H.cd.vacation||-99)>=6,do:H=>{H.cd.vacation=nowM();S.slots-=2;S.purse.cash-=3000;H.st=clamp(H.st-35,0,100);H.hp=clamp(H.hp+5,0,100);try{homeAdd(15,'A family vacation')}catch(e){}if(Math.random()<0.3)try{newsAdd(-0.4,`${isCand()?'Candidate':'Mayor'} ${S.mayor.name} on vacation as city problems pile up`)}catch(e){}hLog('A week away');return'A week on the Gulf Coast. You came back a different person.'}},
+ sleep:{n:'Protect your sleep',d:'Free · once a month · stress −6, health +1',ok:H=>nowM()-(H.cd.sleep||-99)>=1,do:H=>{H.cd.sleep=nowM();H.st=clamp(H.st-6,0,100);H.hp=clamp(H.hp+1,0,100);return'Phone in another room by ten. You forgot what eight hours felt like.'}}};
+let H_MSG=null;
+function hDo(k){const H=hInit(),A=HACT[k];if(!H||!A||!A.ok(H))return;const m=A.do(H);try{sfx('good')}catch(e){}save();refreshHUD();toast(m);H_MSG=m;openHealth()}
+function openHealth(){const H=hInit();if(!H)return;const last=H_MSG;H_MSG=null;const[ht,hc]=hTier(H.hp),sc=H.st>=70?'neg':H.st<35?'pos':'';const a=S.mayor.age||45;const pen=hPenalty();
+  const bar=(v,c)=>`<div class="facbar"><i></i><i class="${c}" style="left:0;width:${v}%"></i></div>`;
+  openModal(`Your health · age ${a}`,'Your health',`${last?`<p class="scnreply">${last}</p>`:''}
+   <div class="homebar"><div class="hb-h"><b>Health</b><b class="${hc}">${Math.round(H.hp)} · ${ht}</b></div>${bar(H.hp,H.hp>=55?'pos':'neg')}</div>
+   <div class="homebar"><div class="hb-h"><b>Stress</b><b class="${sc}">${Math.round(H.st)}</b></div><div class="facbar"><i></i><i style="left:0;width:${H.st}%;background:${H.st>=70?'var(--bad)':H.st>=45?'var(--warn,#e8b04f)':'var(--good)'}"></i></div></div>
+   <p class="note">${pen?`<b>Right now you're ${pen} point${pen===1?'':'s'} down on every skill.</b> `:''}Health below 40 costs a skill point (2 below 25, plus an action). Stress above 80 costs another point. Stress above 45 slowly wears down your health, and so does age after 55. Your chance of dying this year: about <b>${(deathChance(a)*100).toFixed(1)}%</b>.</p>
+   <h4 class="plh">Take care of yourself</h4><div class="choices">${Object.entries(HACT).map(([k,A])=>`<button class="choice" data-hact="${k}" ${A.ok(H)?'':'disabled'}><b>${A.n}</b><small>${A.ok(H)?A.d:k==='vacation'&&S.slots<2?'Needs 2 actions':k==='checkup'&&nowM()-H.check<12?`Next checkup in ${12-(nowM()-H.check)} months`:'Done for now'}</small></button>`).join('')}</div>
+   ${H.log.length?`<h4 class="plh">Recent</h4><ul class="numlist">${H.log.slice(0,5).map(x=>`<li><small>${x.d}</small> ${x.t}</li>`).join('')}</ul>`:''}
+   <div class="row"><button class="btn primary" data-act="close">Back</button></div>`,true)}
+openHealth=navWrap('openHealth',openHealth);
+document.addEventListener('click',e=>{const b=e.target.closest('[data-hact],[data-healthopen]');if(!b||!S)return;e.preventDefault();e.stopImmediatePropagation();if(b.dataset.hact){hDo(b.dataset.hact);return}if(modalOpen){onClose=null;closeModal()}closePanel();openHealth()},true);
+// ---------- the health scare ----------
+const DOC={name:'Dr. Imani Brooks',g:'f',age:52,frame:'#3c6b6b'};
+CHAR_TYPES.health={w:0,gen:()=>null,title:ev=>ev.early?'Your doctor wants to see you':'You collapsed at a public event',who:()=>[['doc',0]],
+  body:ev=>ev.early?'A follow-up from your last checkup found a heart problem. It\'s treatable, especially caught this early, but it means surgery and a few weeks of rest. Your chief of staff wants to know what to tell the public.':'You felt dizzy at a ribbon cutting and went down hard. Paramedics took you to Regional One. Doctors say it\'s your heart: you need surgery and rest. The video is everywhere.',
+  choices:[
+   {l:()=>'Tell the public everything',s:()=>`${oddsTag('cha',0.5)} · works: an outpouring of sympathy (+1.5) · fails: people wonder if you're up to the job (−1) · health +20 after treatment`,do:ev=>{const H=hInit();H.hp=clamp(H.hp+(ev.early?24:18),0,100);H.st=clamp(H.st-10,0,100);hLog('Heart surgery, done in public');if(persuade('cha',0.5,[],6)){popHit(0.9,'Honest about your health');try{newsAdd(1,`${S.mayor.name} recovering after heart surgery; well-wishers flood City Hall`)}catch(e){}return'Cards and casseroles poured in. You came back stronger.'}popHit(-0.6,'Questions about your health');return'Some people wondered aloud whether you can still do the job.'}},
+   {l:()=>'Keep the details private',s:()=>`Health +20 after treatment · <b>a minor secret</b>: if it comes out, it looks like a cover-up`,do:ev=>{const H=hInit();H.hp=clamp(H.hp+(ev.early?22:16),0,100);addSecret({t:'You hid how serious your heart condition was from the public',sev:1,knows:[{name:'Your cardiologist\'s office'},{name:'Your chief of staff'}]});hLog('Heart surgery, kept quiet');return'"A minor procedure," your office said. A few people know better.'}},
+   {l:()=>'Step back for a month to recover fully',s:()=>'You lose your actions this month · health +32, stress −30 · your deputy runs things',do:ev=>{const H=hInit();S.slots=0;H.hp=clamp(H.hp+32,0,100);H.st=clamp(H.st-30,0,100);try{homeAdd(10,'Time at home recovering')}catch(e){}hLog('A month off to recover');return'A month at home. Your family took care of you, and you came back whole.'}}],
+  ignore:ev=>{const H=hInit();H.hp=clamp(H.hp-12,1,100);hLog('Ignored a health warning')}};
+CAND_CHAR.add('health');
+{const _cw=charWhoX;charWhoX=function(kind,id){if(kind==='doc')return{who:DOC,role:'Your cardiologist',attr:'data-healthopen="1"',o:null};return _cw.apply(this,arguments)}}
+{const _vo=visitorOf;visitorOf=function(ev){if(ev&&ev.type==='health')return{ev,who:DOC,role:'Your cardiologist',title:CHAR_TYPES.health.title(ev)};return _vo.apply(this,arguments)}}
+// a place to find it: People → Your life, and the character card
+{const _om=openModal;openModal=function(...a){const r=_om.apply(this,a);try{const n=NAV.cur?NAV.cur.name:'';if(n==='flow_people'&&S&&S.mayor){const H=hInit();const g=[...$('mBody').querySelectorAll('.ph-sec')].find(s=>/Your life/.test(s.textContent));const gg=g&&g.querySelector('.flow-grid');if(gg&&!gg.querySelector('[data-healthopen]')){const[t]=hTier(H.hp);gg.insertAdjacentHTML('afterbegin',`<button class="flow-tile" data-healthopen="1"><b>Your health · ${Math.round(H.hp)}</b><span>${t} · stress ${Math.round(H.st)}</span></button>`)}}}catch(e){}return r}}
+TIPS.openHealth=['Your health','Busy months, scandals and campaign season raise your stress. High stress and age wear down your health, which costs skill points and raises your chance of dying. Exercise and sleep are free; checkups catch problems early; vacations reset stress.'];
+{const _ns=nextSteps;nextSteps=function(...a){const r=_ns.apply(this,a);try{const H=S&&S.hl;if(H&&(H.hp<40||H.st>80)&&Array.isArray(r))r.push({pri:62,t:'Take care of your health',h:`Health ${Math.round(H.hp)}, stress ${Math.round(H.st)}`,go:()=>openHealth()})}catch(e){}return r}}
+// ======================= v26.68: DISASTERS: THE RIVER, THE DAMAGE, AND WHO PAYS =======================
+// A Mississippi River flood joins the ice storm, tornadoes and heat wave. Disasters now do real damage to the reserve.
+// A few weeks later comes the recovery fight: your relationships with the state and the County decide whether
+// FEMA money and cost-sharing come through. Investing in emergency readiness ahead of time halves the damage
+// and improves your odds when it hits.
+const FLOOD={id:'flood',mo:[3,4,5],t:'The Mississippi is flooding',at:'pyramid',intro:'After weeks of rain upriver, the Mississippi is cresting at 47 feet, the highest since 2011. Water is backing up the Wolf River and Nonconnah Creek into Frayser, Raleigh and Southwest Memphis. Hundreds of homes are flooding.',
+ ch:[{l:'Order evacuations early and open shelters',sk:'safe',b:0.5,cost:1,ok:['renters','working','faith'],okT:'Buses got 2,000 people out before the water rose. Not one drowning. The shelters were full, and so were the thank-you notes.',noT:'The evacuation order came late, and boats had to pull families off rooftops on live TV.'},
+  {l:'Get the Army Corps of Engineers and the state to sandbag the weak spots',sk:'dip',b:0.45,ok:['owners','business'],okT:'Soldiers and volunteers stacked a million sandbags. The levees held where it mattered.',noT:'The help came, but too slowly. A levee in Southwest Memphis gave way.'},
+  {l:'Be on the water: tour the flooded streets and lead the response',sk:'cha',b:0.5,ok:['working','faith','parents'],okT:'The photo of you in waders carrying a child\'s bike to dry land went national.',noT:'It looked like a photo op while people were still stranded.'}]};
+CRISES.push(FLOOD);CMAP.flood=FLOOD;
+const DMG={ice:3,storm:5,heat:0.6,flood:4,water:1.5,bridge:0.8,video:0};
+const DIS_NAME={ice:'the ice storm',storm:'the tornadoes',heat:'the heat wave',flood:'the flood',water:'the boil-water crisis',bridge:'the bridge closing'};
+function prepOn(){return S&&S.prep&&nowM()<=S.prep.until&&!S.prep.used}
+// damage, and readiness
+{const _cs=crisisStart;crisisStart=function(id){const prep=prepOn();const C=CMAP[id];if(prep&&C){C.ch.forEach(x=>{x._b0=x.b;x.b=Math.min(0.9,x.b+0.1)})}const r=_cs.apply(this,arguments);try{const d=(DMG[id]||0)*(prep?0.5:1);if(S.crisis){S.crisis.dmg=d;S.crisis.prep=prep}if(d>0){S.reserve-=d;logIt(`${C.t}: about ${fmtM(d)} in damage to city property${prep?' (halved by your emergency readiness)':''}.`)}if(prep){S.prep.used=true}}catch(e){console.warn(e)}return r}}
+{const _cf=crisisFollow;crisisFollow=function(...a){const c=S.crisis;const r=_cf.apply(this,a);try{const C=c&&CMAP[c.id];if(C)C.ch.forEach(x=>{if(x._b0!=null){x.b=x._b0;delete x._b0}});if(c&&c.dmg>=1)setTimeout(()=>{try{queueChar({type:'recover',cid:c.id,dmg:c.dmg,at:'cityhall'})}catch(e){}},0)}catch(e){console.warn(e)}return r}}
+// the crisis card shows the damage and the readiness bonus
+{const _oc=openCrisis;openCrisis=function(...a){const r=_oc.apply(this,a);try{const c=S.crisis,b=$('mBody');if(c&&b&&!b.querySelector('.dmgline')){const pr=c.prep!=null?c.prep:prepOn(),dm=c.dmg!=null?c.dmg:(DMG[c.id]||0)*(pr?0.5:1);b.querySelector('.crisisbar').insertAdjacentHTML('afterend',`<p class="note dmgline">${dm>0?`Damage to city property so far: <b>${fmtM(dm)}</b>. `:''}${pr?'<b>Your emergency readiness is paying off:</b> damage halved, and every option is 10 points likelier to work.':'Tip: emergency readiness (Take action) halves the damage of the next disaster.'}</p>`)}}catch(e){}return r}}
+// ---------- the recovery: who pays ----------
+function stateOdds(d){let r=0;try{r=facRel('state')}catch(e){}return clamp(0.3+r/150+(d>=3?0.15:0),0.1,0.85)}
+function countyOdds(){let r=0;try{r=facRel('county')}catch(e){}return clamp(0.35+r/150,0.1,0.85)}
+CHAR_TYPES.recover={w:0,gen:()=>null,title:ev=>`Who pays for ${DIS_NAME[ev.cid]||'the disaster'}?`,who:()=>[['staff','cos']],
+  body:ev=>`The cleanup and repairs from ${DIS_NAME[ev.cid]||'the disaster'} cost the city about <b>${fmtM(ev.dmg)}</b>. A federal disaster declaration would cover 75%, but only the governor can ask for one. The County could split some of it. Your relationships decide whether they say yes.`,
+  choices:[
+   {l:()=>'Ask the governor for a federal disaster declaration',s:ev=>{const p=stateOdds(ev.dmg);let r=0;try{r=Math.round(facRel('state'))}catch(e){}return`About ${Math.round(p*100)}% (your standing in Nashville: ${r>0?'+':''}${r}) · works: FEMA covers ${fmtM(ev.dmg*0.75)}`},
+    do:ev=>{if(Math.random()<stateOdds(ev.dmg)){S.reserve+=ev.dmg*0.75;try{facMod('state','The governor helped after the disaster',4)}catch(e){}try{newsAdd(0.8,'Federal disaster declaration approved for Memphis')}catch(e){}return`The governor asked, and the President approved. FEMA will cover ${fmtM(ev.dmg*0.75)}.`}try{facMod('state','You went over our heads',-2)}catch(e){}try{newsAdd(-0.5,'Governor declines to seek federal aid for Memphis')}catch(e){}return'The governor said the damage didn\'t meet the threshold. Memphis pays its own way.'}},
+   {l:()=>'Ask the County to split the cost',s:ev=>{const p=countyOdds();return`About ${Math.round(p*100)}% (city–county relations matter) · works: the County pays ${fmtM(ev.dmg*0.4)}`},
+    do:ev=>{if(Math.random()<countyOdds()){S.reserve+=ev.dmg*0.4;try{facMod('county','We stood together after the disaster',6)}catch(e){}return`The County Commission voted to cover ${fmtM(ev.dmg*0.4)}. Shelby County stood together.`}try{facMod('county','The city tried to stick us with its bill',-4)}catch(e){}return'The County said the city\'s streets are the city\'s problem.'}},
+   {l:()=>'Pay for it all and move fast',s:()=>'No reimbursement · everyone sees the city back on its feet quickly (+1 citywide)',do:ev=>{popHit(0.6,'A fast recovery');GROUPS.forEach(g=>groupLift(g.id,0.4,'A fast recovery'));return'Crews worked around the clock. Within weeks, you could hardly tell.'}}],
+  ignore:ev=>{popHit(-0.4,'A slow recovery')}};
+// ---------- emergency readiness ----------
+function prepBuy(){if(prepOn()||S.reserve<1.5||S.slots<=0)return;S.reserve-=1.5;S.slots--;S.prep={until:nowM()+36,used:false,since:nowM()};try{gainXP('safe',6)}catch(e){}save();refreshHUD();toast('Generators, salt trucks, cooling buses and sandbags are stocked. The next disaster will hurt half as much.')}
+document.addEventListener('click',e=>{const b=e.target.closest('[data-prep]');if(!b||!S)return;e.preventDefault();e.stopImmediatePropagation();prepBuy();if(modalOpen){onClose=null;closeModal()}openActions()},true);
+{const _om=openModal;openModal=function(...a){const r=_om.apply(this,a);try{const n=NAV.cur?NAV.cur.name:'',b=$('mBody');if(n==='openActions'&&inOffice()&&!b.querySelector('[data-prep]')){const x=b.querySelector('[data-schemes]')||b.querySelector('[data-powers]');const on=prepOn();const h=` <button class="btn" data-prep="1" ${on||S.reserve<1.5||S.slots<=0?'disabled':''}>${on?`Emergency readiness: stocked until ${MONTHS[(S.prep.until-1)%12]} ${Math.floor((S.prep.until-1)/12)}`:'Emergency readiness · $1.5M · 1 action'}</button>`;if(x)x.insertAdjacentHTML('afterend',h)}}catch(e){}return r}}
+// ======================= v26.69: LIFE AFTER CITY HALL =======================
+// When your time in office ends (or a campaign falls short), you can start a next chapter instead of stopping:
+// run for County mayor or Congress, join a law firm, lead a university, or stay home as a kingmaker.
+// Each year you build influence and money, age, and face what comes up. At election time you can mount
+// a comeback for mayor yourself, or put your influence behind your grown child's campaign.
+function nextElYear(){let y=2027;while(y<S.y||(y===S.y&&S.m>=3))y+=4;return y}
+heirYear=function(k){let y=nextElYear();while(k.age+(y-S.y)<HEIR_MIN)y+=4;return y};
+const ROLES={
+ county:{n:'Shelby County Mayor',d:'Run countywide. Win, and you run the County: the jail, the Health Department, school funding.',inc:130000,inf:9,run:()=>clamp(0.3+((S.after?S.after.app:50)-50)/150+((()=>{try{return facRel('county')}catch(e){return 0}})())/250+mskill('dip')/60,0.15,0.85),lose:'You lost the County mayor\'s race.'},
+ congress:{as:'in Congress',n:'U.S. Congress (Tennessee\'s 9th District)',d:'Run for the House seat that covers Memphis. Win, and you\'re in Washington, with national influence.',inc:174000,inf:11,run:()=>clamp(0.22+((S.after?S.after.app:50)-50)/150+mskill('cha')/50,0.1,0.8),lose:'You lost the congressional primary.'},
+ law:{as:'a law firm partner',n:'Partner at a downtown law firm',d:'Big money and a Rolodex. Some people will call you a lobbyist.',inc:420000,inf:4},
+ uni:{as:'a university president',n:'President of a university',d:'Respected, steady and well paid. Good for your reputation.',inc:260000,inf:6},
+ king:{as:'a kingmaker',n:'Kingmaker',d:'No title and no salary. You live on savings, take meetings and decide who gets your support.',inc:0,inf:8}};
+function afterInit(){const a=S.after;if(a)return a;const inf=clamp(Math.round(20+((S.approval||45)-40)*0.8+(S.term>=2?15:S.phase==='cand'?-5:5)),5,80);
+  S.after={inf,role:null,yrs:0,log:[],app:Math.round(S.approval||45),incumb:S._winner||null,start:S.y};return S.after}
+function afterLog(t){const A=afterInit();A.log.unshift({t,y:S.y});if(A.log.length>14)A.log.length=14}
+function afterStart(){const how=S.lastElection&&S.lastElection.succ?'term-limited':S.phase==='cand'?null:'lost re-election';const w=S._winner;
+  afterInit();if(how)try{histAdd(S.mayor,how)}catch(e){}
+  S.phase='ai';S.over=true;S.exposed=null;try{toJan()}catch(e){}if(w&&w.k!=null&&w.k>=0)try{newCouncilFace(w.k)}catch(e){}if(w)try{reignStart(w,true)}catch(e){}
+  save();refreshHUD();openAfter()}
+function chooseRole(k){const A=afterInit(),R=ROLES[k];if(!R||A.role)return;let msg;
+  if(R.run){if(Math.random()<R.run()){A.role=k;A.inf=clamp(A.inf+10,0,100);msg=`You won. You're now ${R.n}.`;try{newsAdd(0,`${S.mayor.name} elected ${R.n}`)}catch(e){}}else{A.inf=clamp(A.inf-8,0,100);msg=`${R.lose} You can try something else.`;A.tried=A.tried||{};A.tried[k]=1;afterLog(msg);save();AFTER_MSG=msg;openAfter();return}}
+  else{A.role=k;msg=`You're now ${R.n}.`}
+  afterLog(msg);save();AFTER_MSG=msg;openAfter()}
+// a year passes
+const AFTER_EVENTS=[
+ {id:'memoir',w:()=>1,t:'A publisher wants your memoir',ch:[['Tell it all, honestly',A=>{S.purse.cash+=120000;A.inf+=4;return'The memoir sold well. Some former allies stopped calling.'}],['Keep it gracious',A=>{S.purse.cash+=60000;A.inf+=2;return'A kind book. Modest sales, no new enemies.'}]]},
+ {id:'endorse',w:()=>1,t:'Two candidates for council want your endorsement',ch:[['Back the young reformer',A=>{const w=Math.random()<0.45+A.inf/250;A.inf+=w?8:-4;return w?'Your candidate won. People noticed who made it happen.':'Your candidate lost. Your touch looked a little cold.'}],['Back the old ally',A=>{const w=Math.random()<0.55;A.inf+=w?5:-3;return w?'Your ally held the seat. Loyalty pays.':'Your ally lost. The new guard remembers who you backed.'}]]},
+ {id:'board',w:()=>1,t:'A company offers you a paid board seat',ch:[['Take it',A=>{S.purse.cash+=80000;A.inf-=3;return'$80,000 a year for four meetings. Reporters noted it.'}],['Turn it down',A=>{A.inf+=2;return'You said no. It was noticed, in a good way.'}]]},
+ {id:'mentor',w:()=>1,t:'Young organizers ask you to mentor them',ch:[['Say yes',A=>{A.inf+=6;return'A dozen young leaders now call you first.'}],['You\'re too busy',A=>{return'You passed. Someone else took them under their wing.'}]]},
+ {id:'oldsecret',w:()=>liveSecrets().length?3:0,t:'A reporter is digging into your years in office',ch:[['Get ahead of it and come clean',A=>{const s=liveSecrets()[0];if(s){s.out=true;s.outHow='You came clean after leaving office'}A.inf-=10;return'You told the story yourself. It stung, and then it passed.'}],['Say nothing',A=>{const s=liveSecrets()[0];if(s&&Math.random()<0.5){s.out=true;s.outHow='It came out after you left office';A.inf-=25;if(s.sev>=2&&Math.random()<0.4){A.prison=true;return'The story broke, and federal prosecutors charged you. You were convicted.'}return'The story broke. Your reputation took a real hit.'}return'The reporter moved on. For now.'}]]}];
+let AFTER_MSG=null;
+function afterYear(){const A=afterInit();if(!A.role||A.prison)return;const R=ROLES[A.role];
+  for(let i=0;i<12;i++){try{aiMonth()}catch(e){console.warn(e)}try{const F=S.fam;if(F){F.kids.forEach(k=>{kidInit(k);kidGrow(k,1)});if(S.m===1){F.kids.forEach(k=>k.age++);if(F.spouse&&!F.spouse.gone)F.spouse.age++;try{adultYear()}catch(e){}}}}catch(e){}}
+  S.mayor.age++;A.yrs++;S.purse.cash+=R.inc;A.inf=clamp(A.inf+R.inf-Math.max(0,A.yrs-6)*1.5,0,100);
+  const H=hInit();if(H){H.st=clamp(H.st-15,0,100);H.hp=clamp(H.hp+2-Math.max(0,(S.mayor.age-55)*0.5),1,100)}
+  let note=`${S.y-1}: another year as ${R.as.replace(/^in /,'a member of ')}. Influence ${Math.round(A.inf)}.`;
+  if(Math.random()<deathChance(S.mayor.age)){A.dead=true;afterLog(`${S.mayor.name} died at ${S.mayor.age}.`);save();S.died=true;openModal('Memphis mourns',`${S.mayor.name}, ${S.mayor.age}`,`<p>${S.mayor.name} died this year, at ${S.mayor.age}, after ${A.yrs} year${A.yrs===1?'':'s'} as ${R.n}.</p>${heirHTML()}<div class="facts"><div class="choices"><button class="choice" data-act="legacy"><b>See the Mayors of Memphis</b><small>How you'll be remembered</small></button><button class="choice" data-act="newgame"><b>Start over</b><small>A brand-new game</small></button></div></div>`,true);return}
+  const pool=AFTER_EVENTS.filter(e=>e.w()>0&&(A.last!==e.id));let tot=pool.reduce((a,e)=>a+e.w(),0),r=Math.random()*tot;A.ev=pool.find(e=>(r-=e.w())<0)||pool[0];A.last=A.ev.id;afterLog(note);save();AFTER_MSG=note;openAfter()}
+function afterEvent(i){const A=afterInit();const E=AFTER_EVENTS.find(e=>e.id===(A.ev&&A.ev.id));if(!E)return;const m=E.ch[i][1](A);A.inf=clamp(A.inf,0,100);A.ev=null;afterLog(m);save();
+  if(A.prison){openModal('Federal court','Convicted',`<p>${m} Your public life is over.</p>${heirHTML()}<div class="facts"><div class="choices"><button class="choice" data-act="legacy"><b>See the Mayors of Memphis</b><small>How you'll be remembered</small></button><button class="choice" data-act="newgame"><b>Start over</b><small>A brand-new game</small></button></div></div>`,true);return}
+  AFTER_MSG=m;openAfter()}
+// ---------- coming back ----------
+function comebackRun(){const A=afterInit();if(A.prison||A.dead)return;const y=nextElYear();let g=0;S.phase='ai';while(!(S.y===y&&S.m===3)&&g++<12*8){try{aiMonth()}catch(e){break}}
+  const w=A.incumb||{name:'Mayor',g:'m',age:55};S.elY=y;S.incumb={name:w.name,g:w.g||'m',age:(w.age||55)+(y-A.start),frame:'#8a96a3'};
+  const M=S.mayor;const CR0={...newCR(),name:M.name,g:M.g,age:M.age,look:M.look||defaultLook(M.g),skills:{...M.skills},focus:M.focus||'dip',traits:[...(M.traits||[])],occ:'nonprofit',run:true,keep:true};
+  const fam=S.fam,hl=S.hl,cash=S.purse.cash,dyn=S.dynasty;S.over=false;onClose=null;try{closeModal()}catch(e){}closePanel();beginCampaign(CR0,true);
+  S.fam=fam;S.hl=hl;S.dynasty=dyn;S.purse.cash=cash;S.cand.rec=Math.max(S.cand.rec,clamp(0.45+A.inf/300,0,0.8));S.camp.cash+=Math.round(A.inf*1.5);S.camp.raised=S.camp.cash;
+  GROUPS.forEach(g=>groupLift(g.id,A.inf/40,'A familiar name'));S.after=null;S.comeback=(S.comeback||0)+1;save();refreshHUD();notify('event',`${M.name} is running again`,`The comeback starts now. Election Day is in October ${y}. People know your name.`,()=>openCandActions(),{ttl:16})}
+function afterHeir(i){const A=afterInit();const inf=A.inf;S.died=false;S.phase='cand';heirRun(i);S.after=null;try{S.cand.rec=clamp(S.cand.rec+inf/300,0,0.85);S.camp.cash+=Math.round(inf*1.2);S.camp.raised=S.camp.cash;notify('good','Your parent opened doors',`Your parent's influence (${Math.round(inf)}) brought name recognition and early money.`,null,{ttl:14})}catch(e){}}
+// ---------- the screen ----------
+function openAfter(){const A=afterInit(),last=AFTER_MSG;AFTER_MSG=null;const R=A.role&&ROLES[A.role];const y=nextElYear(),soon=y-S.y<=1;
+  const H=heirs();let h=`${last?`<p class="scnreply">${last}</p>`:''}<div class="qrgrid agrid"><div><small>Influence</small><p><b>${Math.round(A.inf)}</b></p></div><div><small>Age</small><p><b>${S.mayor.age}</b></p></div><div><small>Savings</small><p><b>$${Math.round(S.purse.cash).toLocaleString()}</b></p></div><div><small>Next mayoral election</small><p><b>${y}</b></p></div></div>`;
+  if(!A.role){h+=`<p>Your time at City Hall is over. What's next?</p><div class="choices">${Object.entries(ROLES).map(([k,X])=>`<button class="choice" data-role="${k}" ${A.tried&&A.tried[k]?'disabled':''}><b>${X.n}</b><small>${X.d}${X.run?` · about ${Math.round(X.run()*100)}% to win`:''} · ${X.inc?`$${X.inc.toLocaleString()} a year`:'no salary'} · influence +${X.inf} a year${A.tried&&A.tried[k]?' · you already lost this race':''}</small></button>`).join('')}</div>`}
+  else if(A.ev){const E=AFTER_EVENTS.find(e=>e.id===A.ev.id);h+=`<div class="faccard"><b>${E.t}</b><div class="choices">${E.ch.map((c,i)=>`<button class="choice" data-aev="${i}"><b>${c[0]}</b></button>`).join('')}</div></div>`}
+  else{h+=`<p>You're <b>${R.as}</b>. Year ${A.yrs+1}.</p><div class="choices"><button class="choice" data-ayear="1"><b>Live the next year</b><small>+$${R.inc.toLocaleString()} · influence +${R.inf} · something will come up</small></button>
+    <button class="choice" data-acome="1"><b>Run for mayor again in ${y}</b><small>A comeback: you start known (name recognition ${Math.round(clamp(0.45+A.inf/300,0,0.8)*100)}%), with campaign money from your influence${y-S.y>1?` · skips ahead to March ${y}`:''}</small></button>
+    ${H.map(({k,i})=>`<button class="choice" data-aheir="${i}"><b>Back ${k.name}'s run for mayor</b><small>Your child runs in ${heirYear(k)} with your influence behind them: more name recognition and early money</small></button>`).join('')}
+    <button class="choice" data-act="legacy"><b>Retire for good</b><small>See how the Mayors of Memphis will remember you</small></button></div>`}
+  if(A.log.length)h+=`<h4 class="plh">Your years since City Hall</h4><ul class="numlist">${A.log.slice(0,8).map(x=>`<li>${x.t}</li>`).join('')}</ul>`;
+  openModal(`After City Hall · ${S.y}`,R?`${S.mayor.name}, ${R.n}`:'Your next chapter',h,true)}
+document.addEventListener('click',e=>{const b=e.target.closest('[data-after],[data-role],[data-ayear],[data-aev],[data-acome],[data-aheir]');if(!b||!S)return;e.preventDefault();e.stopImmediatePropagation();
+  if(b.dataset.after){afterStart();return}if(b.dataset.role){chooseRole(b.dataset.role);return}if(b.dataset.ayear){afterYear();return}if(b.dataset.aev){afterEvent(+b.dataset.aev);return}if(b.dataset.acome){comebackRun();return}if(b.dataset.aheir){afterHeir(+b.dataset.aheir);return}},true);
+// offer it where a story ends (not after death or removal)
+{const _al=afterLossChoices;afterLossChoices=function(w){const h=_al.apply(this,arguments);try{if(!S.died&&!S.removed)return h.replace('<div class="choices">','<div class="choices"><button class="choice" data-after="1"><b>Start your next chapter</b><small>County mayor, Congress, a law firm, a university, or kingmaker. Come back later, or back your child.</small></button>')}catch(e){}return h}}
+{const _oe=openEndChoices;openEndChoices=function(...a){if(S&&S.after&&!S.after.dead&&!S.after.prison){openAfter();return}return _oe.apply(this,a)}}
+{const _rh=refreshHUD;refreshHUD=function(...a){const r=_rh.apply(this,a);try{const b=$('endBanner');if(b&&S&&S.after&&!S.after.dead&&!S.after.prison)b.textContent=`After City Hall · ${S.after.role?ROLES[S.after.role].n:'choose your next chapter'}`}catch(e){}return r}}
+// the family legacy remembers what came after
+{const _dr=dynRecord;dynRecord=function(how){const r=_dr.apply(this,arguments);try{if(S.after&&S.after.role)r.role+=`, then ${ROLES[S.after.role].n}`}catch(e){}return r}}
+{const _om=openModal;openModal=function(...a){const r=_om.apply(this,a);try{const b=$('endBanner');if(b)b.hidden=true}catch(e){}return r}}
+{const _mg=migrate;migrate=function(x){const r=_mg.apply(this,arguments);try{const s0=r||x;if(s0&&s0.press&&typeof s0.press==='object'){s0.reporters=s0.reporters||s0.press;s0.press=0}if(s0&&typeof s0.press==='number'&&!isFinite(s0.press))s0.press=0}catch(e){}return r}}
 function openLedger(){const L=S.log||[];openPanel('Everything that has happened, newest first','Ledger',L.length?`<div class="logl">${L.map(x=>`<div><span>${x.d}</span><p style="margin:0">${x.t}</p></div>`).join('')}</div>`:'<p class="note">Nothing yet. Start the clock with Space or ▶.</p>','ledger')}
 function openPolicies(){const ks=Object.keys(POLICIES);
   openPanel('Ongoing programs you control','Your initiatives',`<p>Mid-year, these are paid from the reserve fund. In April they go into the budget you send the council.</p>
