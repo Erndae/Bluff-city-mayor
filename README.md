@@ -4,6 +4,39 @@ A city-management game set in Memphis, Tennessee. You play the mayor. You handle
 
 **Play it:** https://erndae.github.io/Bluff-city-mayor/ (once GitHub Pages is turned on, see below)
 
+## v26.71: Congress, the law firm, and the kingmaker
+
+**Congress (TN-9)**
+- **Stats:** district approval, federal money won, clout in Washington, party standing, and your committee seat.
+- **Moves:**
+  - Win a federal grant for Memphis (worth double once you're on Appropriations).
+  - Vote with your party, or break with it for Memphis.
+  - Go on national TV.
+  - Hold town halls.
+  - Seek a seat on Appropriations.
+- **Events:** a government shutdown, a primary challenger, and FedEx's tax ask.
+- **Consequences:** re-election every two years. The federal money you bring home helps a mayoral comeback.
+
+**Law firm partner**
+- **Stats:** reputation, clients, ethics risk, and big cases won.
+- **Moves:**
+  - Land a Fortune 500 client.
+  - Lobby your old City Hall colleagues (big money, plus a secret).
+  - Take a pro bono civil-rights case.
+  - Represent a dirty client.
+  - Mentor young lawyers.
+- **Events:** a client's indictment, a big settlement, and a bar complaint.
+- **Consequences:** once ethics risk passes 60, an investigation becomes possible. Above 80, you can lose your license.
+
+**Kingmaker**
+- **Moves:**
+  - Recruit council candidates.
+  - Host fundraisers.
+  - Endorse your slate.
+  - Broker deals between council factions to earn favors.
+  - Groom your grown child for office.
+- **Consequences:** your slate runs in the next city election. Winners take real council seats and start out owing you their seat, which carries into a comeback or your heir's run.
+
 ## v26.70: Playing the next chapter as County mayor or university president
 
 **Shelby County Mayor**

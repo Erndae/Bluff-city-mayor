@@ -714,7 +714,7 @@ details.analysis{margin-top:6px}details.analysis summary{cursor:pointer;color:va
     <button class="btn primary" data-act="pause" id="bPlay"><svg class="ico" viewBox="0 0 12 12" aria-hidden="true"><path d="M3.2 1.6v8.8l7.2-4.4z" fill="currentColor"/></svg> Resume <kbd>Space</kbd></button>
   </nav>
   <div class="status" id="status">Loading map…</div>
-  <div class="credit"><span class="ver" id="verTag">v26.70</span></div>
+  <div class="credit"><span class="ver" id="verTag">v26.71</span></div>
   <div class="tip" id="tip" hidden></div>
   <div class="toast" id="toast" role="status"></div>
   <section class="panel" id="panel" hidden aria-live="polite">
@@ -742,7 +742,7 @@ details.analysis{margin-top:6px}details.analysis summary{cursor:pointer;color:va
         <button class="btn" data-music-open>Music &amp; volume</button>
       </div>
       <div id="slotList" hidden></div>
-      <p class="note startv">Version <b class="ver" id="verStart">v26.70</b></p>
+      <p class="note startv">Version <b class="ver" id="verStart">v26.71</b></p>
     </div>
     <div class="startbox create" id="create" hidden>
       <h2>Create your mayor</h2>
@@ -1553,7 +1553,7 @@ function enact(s,p){DIVS.forEach(d=>{s.enacted[d.id]=p.divs[d.id];s.ratio[d.id]=
 // Voter groups. Each has a share of residents, turnout, home districts, concerns and an approval of you.
 // Citywide approval is the turnout-weighted average of the groups; each council district's approval comes from the groups that live there.
 // Shares, district mix and turnout are modeled, loosely grounded in Memphis demographics; they are not survey data.
-const VERSION='v26.70';
+const VERSION='v26.71';
 const GROUPS=[
  {id:'working',sh:'Working families',n:'Working families',ic:'⚒︎',c:'#f2a93b',share:24,turn:.5,start:56,w:{jobs:1,safety:.8,transit:.5},
   d:'Hourly workers in logistics, warehouses, health care and service jobs. The biggest bloc in the city.',dm:{1:1.1,2:.8,3:1.3,4:1.2,5:.6,6:1.2,7:1.1}},
@@ -7864,7 +7864,7 @@ const ROLES={
  law:{n:'Partner at a downtown law firm',d:'Big money and a Rolodex. Some people will call you a lobbyist.',inc:420000,inf:4},
  uni:{n:'President of a university',d:'Respected, steady and well paid. Good for your reputation.',inc:260000,inf:6},
  king:{n:'Kingmaker',d:'No title and no salary. You live on savings, take meetings and decide who gets your support.',inc:0,inf:8}};
-Object.assign(ROLES.county,{as:'Shelby County mayor'});Object.assign(ROLES.congress,{as:'in Congress'});Object.assign(ROLES.law,{as:'a law firm partner'});Object.assign(ROLES.uni,{as:'a university president',inf:3});Object.assign(ROLES.county,{inf:4});Object.assign(ROLES.king,{as:'a kingmaker'});
+Object.assign(ROLES.county,{as:'Shelby County mayor'});Object.assign(ROLES.congress,{as:'in Congress'});Object.assign(ROLES.law,{as:'a law firm partner',inc:300000});Object.assign(ROLES.uni,{as:'a university president',inf:3});Object.assign(ROLES.county,{inf:4});Object.assign(ROLES.king,{as:'a kingmaker'});
 function afterInit(){const a=S.after;if(a)return a;const inf=clamp(Math.round(20+((S.approval||45)-40)*0.8+(S.term>=2?15:S.phase==='cand'?-5:5)),5,80);
   S.after={inf,role:null,yrs:0,log:[],app:Math.round(S.approval||45),incumb:S._winner||null,start:S.y};return S.after}
 function afterLog(t){const A=afterInit();A.log.unshift({t,y:S.y});if(A.log.length>14)A.log.length=14}
@@ -7980,6 +7980,58 @@ document.addEventListener('click',e=>{const b=e.target.closest('[data-ract],[dat
 {const _cb=comebackRun;comebackRun=function(...a){const A=S.after?{...S.after}:null;const r=_cb.apply(this,a);try{if(A){const p=(A.uni&&A.uni.prot)||0;if(p&&S.camp){S.camp.organizers=(S.camp.organizers||0)+Math.min(6,Math.round(p/3));notify('good','Your protégés showed up',`${p} former students are knocking doors for you.`,null,{ttl:12})}if(A.co&&S.cand){S.cand.rec=clamp(S.cand.rec+0.08,0,0.9);GROUPS.forEach(g=>groupLift(g.id,(A.co.app-50)/20,'Your record as County mayor'))}}}catch(e){}return r}}
 {const _ah=afterHeir;afterHeir=function(...a){const A=S.after?{...S.after}:null;const r=_ah.apply(this,a);try{const p=A&&A.uni&&A.uni.prot;if(p&&S.camp){S.camp.organizers=(S.camp.organizers||0)+Math.min(6,Math.round(p/3))}}catch(e){}return r}}
 TIPS.openAfter=['After City Hall','Each year you get three moves in your role, plus whatever comes up. County mayors face voters every four years; university presidents face the board every five. When an election nears, you can run for mayor again or back your grown child.'];
+// ======================= v26.71: CONGRESS, THE LAW FIRM, AND THE KINGMAKER =======================
+function cgInit(A){if(!A.cg)A.cg={app:55,fed:0,clout:8,party:50,approps:false};return A.cg}
+function lwInit(A){if(!A.lw)A.lw={rep:50,clients:3,ethics:10,won:0};return A.lw}
+function kmInit(A){if(!A.km)A.km={slate:[],favors:0,allies:0};return A.km}
+const KM_FIRST=['Andre','Keisha','Marcus','Tamika','Brandon','Erica','Luis','Danielle','Jerome','Priya'];
+const CG_ACTS={
+ grant:{n:'Win a federal grant for Memphis',sk:'stew',b:0.45,d:c=>`Works: $${c.approps?'60':'30'}M for a Memphis project, approval +3 · fails: $5M`,do:(c,A,ok)=>{const v=ok?(c.approps?60:30):5;c.fed+=v;c.app+=ok?3:0;A.inf+=ok?3:0;return ok?`You landed $${v}M for the Lamar Avenue rebuild and new MATA buses. The ribbon cutting was packed.`:'The grant went to Nashville instead. You got $5M in a consolation round.'}},
+ party:{n:'Vote with party leadership on a big bill',d:'Party standing +12 · voters back home grumble (−2)',do:(c,A)=>{c.party+=12;c.app-=2;return'Leadership thanked you. Some Memphians asked who you work for.'}},
+ home:{n:'Break with your party for Memphis',d:'Approval +4 · party standing −12',do:(c,A)=>{c.app+=4;c.party-=12;return'You voted with your district. Leadership took you off a committee waiting list.'}},
+ tv:{n:'Go on national TV',sk:'cha',b:0.5,d:'Works: clout +6, approval +1 · fails: a gaffe goes viral (−2)',do:(c,A,ok)=>{if(ok){c.clout+=6;c.app+=1;A.inf+=2;return'Your Sunday-show appearance made you a name in Washington.'}c.app-=2;return'One awkward answer became a meme.'}},
+ town:{n:'Hold town halls back home',d:'Approval +3',do:(c,A)=>{c.app+=3;return'Three packed town halls in Frayser, Whitehaven and Cordova. People felt heard.'}},
+ approps:{n:'Seek a seat on the Appropriations Committee',sk:'intr',b:0.4,d:c=>c.approps?'You already sit on Appropriations':'Needs clout 15 · works: grants are worth twice as much from now on',need:c=>!c.approps&&c.clout>=15,do:(c,A,ok)=>{if(ok){c.approps=true;c.clout+=5;A.inf+=4;return'You\'re on Appropriations, where the money gets written. Memphis just got more powerful.'}c.party-=4;return'Leadership gave the seat to someone more senior.'}}};
+const CG_EVENTS=[
+ {t:'The government shuts down, and FedEx and federal workers in Memphis go without pay',ch:[['Vote to reopen with your party\'s deal',c=>{c.party+=6;c.app+=1;return'The shutdown ended. Both sides claimed victory.'}],['Hold out for back pay for Memphis workers',c=>{c.app+=4;c.party-=8;return'Back pay was in the final deal. Leadership was furious.'}]]},
+ {t:'A primary challenger says you\'ve gone Washington',ch:[['Spend time and money at home',c=>{c.app+=4;c.clout-=2;return'You knocked doors for a month. The challenger faded.'}],['Ignore it',c=>{c.app-=4;return'The challenger got a lot of attention.'}]]},
+ {t:'FedEx wants a tax provision that would save it $200 million',ch:[['Champion it',c=>{c.fed+=10;c.clout+=3;c.app-=1;return'FedEx got its provision and expanded its Memphis hub.'}],['Ask for 2,000 new Memphis jobs in return',c=>{const ok=Math.random()<0.5;if(ok){c.app+=4;return'FedEx agreed to the jobs. A win for Memphis.'}c.clout-=2;return'FedEx went around you.'}]]}];
+const LW_ACTS={
+ corp:{n:'Land a Fortune 500 client',sk:'cha',b:0.5,d:'Works: +$150,000 and reputation +3',do:(l,A,ok)=>{if(ok){S.purse.cash+=150000;l.rep+=3;l.clients++;return'A national retailer hired the firm for its Southeast work.'}return'They went with a Nashville firm.'}},
+ lobby:{n:'Lobby your old colleagues at City Hall',d:'+$250,000 · influence +2 · ethics risk +20 · a minor secret',do:(l,A)=>{S.purse.cash+=250000;l.ethics+=20;A.inf+=2;addSecret({t:'You lobbied your former City Hall colleagues without registering as a lobbyist',sev:1,knows:[{name:'A council member you called'}]});return'A few phone calls, and your client\'s contract went through.'}},
+ probono:{n:'Take a big civil-rights case for free',sk:'learn',b:0.45,d:'Works: reputation +8, influence +4 · no fee',do:(l,A,ok)=>{if(ok){l.rep+=8;l.won++;A.inf+=4;return'You won a landmark case for tenants in South Memphis.'}l.rep+=2;return'You lost, but people saw you fight for them.'}},
+ dirty:{n:'Represent a client with a dirty reputation',d:'+$400,000 · reputation −8 · ethics risk +25',do:(l,A)=>{S.purse.cash+=400000;l.rep-=8;l.ethics+=25;return'The money was enormous. So were the questions.'}},
+ mentor:{n:'Mentor young lawyers',d:'Reputation +2 · influence +2',do:(l,A)=>{l.rep+=2;A.inf+=2;return'Three young associates now call you their mentor.'}}};
+const LW_EVENTS=[
+ {t:'A client is indicted, and prosecutors want your files',ch:[['Cooperate fully',l=>{l.rep+=3;l.ethics-=10;return'You handed over the files. Clean, if costly.'}],['Fight the subpoena',l=>{l.ethics+=10;S.purse.cash+=100000;return'You won the fight and kept the client. Some people wondered why.'}]]},
+ {t:'A big settlement comes in',ch:[['Take the bonus',l=>{S.purse.cash+=300000;return'A seven-figure settlement, and your share.'}],['Give part of it to a legal-aid clinic',l=>{S.purse.cash+=150000;l.rep+=5;return'The clinic named a room after you.'}]]},
+ {t:'The bar association opens a complaint against you',ch:[['Answer it openly',l=>{l.ethics-=8;l.rep-=2;return'The complaint was dismissed after a review.'}],['Have a friend make it go away',l=>{addSecret({t:'You had a friend quash a bar complaint against you',sev:1,knows:[{name:'A friend on the bar committee'}]});l.ethics+=5;return'It went away. Someone knows how.'}]]}];
+const KM_ACTS={
+ recruit:{n:'Recruit a candidate for city council',sk:'dip',b:0.5,d:'Works: a promising candidate joins your slate (strength 45–60)',need:k=>k.slate.length<4,do:(k,A,ok)=>{const nm=`${pk2(KM_FIRST)} ${pk2(NEWNAMES.l)}`;k.slate.push({name:nm,str:ok?45+Math.floor(Math.random()*16):30});return ok?`${nm} is running for council, with you behind them.`:`${nm} signed on, but they're green.`}},
+ fund:{n:'Host a fundraiser for your slate',sk:'stew',b:0.5,d:'Works: every candidate +10 strength, influence +2 · fails: +3',need:k=>k.slate.length>0,do:(k,A,ok)=>{k.slate.forEach(c=>c.str+=ok?10:3);A.inf+=ok?2:0;return ok?'A packed room at the Peabody. Your slate is flush.':'Thin crowd, thin checks.'}},
+ endorse:{n:'Endorse your slate in public',d:'Every candidate +6 strength · your reputation rides on them',need:k=>k.slate.length>0,do:(k,A)=>{k.slate.forEach(c=>c.str+=6);k.public=true;return'Your name is on their mailers now.'}},
+ broker:{n:'Broker a deal between council factions',sk:'intr',b:0.45,d:'Works: two favors owed, influence +4',do:(k,A,ok)=>{if(ok){k.favors+=2;A.inf+=4;return'A budget standoff ended in your living room. Both sides owe you.'}return'Neither side trusted you enough.'}},
+ groom:{n:'Groom your child for office',d:'An adult child gains Star Power and Dealmaking',need:()=>(S.fam&&S.fam.kids.some(k=>k.age>=18)),do:(k,A)=>{const c=S.fam.kids.filter(x=>x.age>=18).sort((a,b)=>b.age-a.age)[0];kidInit(c);c.sk.cha=Math.min(18,c.sk.cha+1.5);c.sk.dip=Math.min(18,c.sk.dip+1.5);c.mood=clamp((c.mood||70)+5,0,100);return`${c.name.split(' ')[0]} shadowed you at every meeting this year.`}}};
+const KM_EVENTS=[
+ {t:'One of your candidates is caught in a scandal',ch:[['Cut them loose',k=>{const c=k.slate.pop();return c?`You dropped ${c.name}. Cold, but clean.`:'Nothing to cut.'}],['Stand by them',k=>{const c=k.slate[k.slate.length-1];if(c)c.str-=15;const A=S.after;A.inf-=4;return'You stood by them. It cost you.'}]]},
+ {t:'A rival power broker is building a slate of their own',ch:[['Outspend them',k=>{if(S.purse.cash>=50000){S.purse.cash-=50000;k.slate.forEach(c=>c.str+=6);return'You spent $50,000 of your own money. Your slate held.'}return'You didn\'t have the money.'}],['Make peace and split the seats',k=>{k.favors+=1;return'You split the map. Everyone owes everyone.'}]]}];
+{const _rk=roleKit;roleKit=function(){const A=afterInit();if(A.role==='congress')return{st:cgInit(A),acts:CG_ACTS,evs:CG_EVENTS};if(A.role==='law')return{st:lwInit(A),acts:LW_ACTS,evs:LW_EVENTS};if(A.role==='king')return{st:kmInit(A),acts:KM_ACTS,evs:KM_EVENTS};return _rk.apply(this,arguments)}}
+{const _rc=roleClamp;roleClamp=function(){_rc();const A=S.after;if(A.cg){const c=A.cg;['app','party','clout'].forEach(k=>c[k]=clamp(c[k],0,100))}if(A.lw){const l=A.lw;['rep','ethics'].forEach(k=>l[k]=clamp(l[k],0,100))}if(A.km)A.km.slate.forEach(c=>c.str=clamp(c.str,0,95))}}
+// the descriptions can depend on stats
+{const _oa=openAfter;openAfter=function(...a){const A=afterInit();const K=roleKit();if(K&&['congress','law','king'].includes(A.role)){for(const k in K.acts){const X=K.acts[k];if(typeof X.d==='function'&&!X._d){X._d=X.d;X.d=()=>{const k2=roleKit();return X._d(k2?k2.st:{})}}}}const r=_oa.apply(this,a);
+  try{const b=$('mBody');const desk=b&&b.querySelector('.roledesk');if(desk&&!desk.querySelector('.rolestats')&&['congress','law','king'].includes(A.role)){let h='';
+   if(A.role==='congress'){const c=A.cg;h=`<h4 class="plh">Tennessee's 9th District</h4><div class="qrgrid agrid rolestats"><div><small>District approval</small><p><b>${Math.round(c.app)}%</b></p></div><div><small>Federal money won</small><p><b>${fmtM(c.fed)}</b></p></div><div><small>Clout in Washington</small><p><b>${Math.round(c.clout)}</b></p></div><div><small>Party standing</small><p><b>${Math.round(c.party)}</b></p></div><div><small>Committee</small><p><b>${c.approps?'Appropriations':'None yet'}</b></p></div><div><small>Next election</small><p><b>in ${2-(A.yrs%2)} yr</b></p></div></div><p class="note">House members face voters every two years. Approval decides it, and low party standing invites a primary challenger. Federal money you bring home counts toward your record if you run for mayor again.</p>`}
+   if(A.role==='law'){const l=A.lw;h=`<h4 class="plh">The firm</h4><div class="qrgrid agrid rolestats"><div><small>Reputation</small><p><b>${Math.round(l.rep)}</b></p></div><div><small>Clients</small><p><b>${l.clients}</b></p></div><div><small>Ethics risk</small><p><b class="${l.ethics>=60?'neg':''}">${Math.round(l.ethics)}</b></p></div><div><small>Big cases won</small><p><b>${l.won}</b></p></div></div><p class="note">The money is great. If ethics risk climbs past 60, an investigation can cost you your reputation, and your license.</p>`}
+   if(A.role==='king'){const k=A.km;h=`<h4 class="plh">Your slate</h4><div class="qrgrid agrid rolestats"><div><small>Favors owed</small><p><b>${k.favors}</b></p></div><div><small>Council members you put there</small><p><b>${k.allies}</b></p></div></div>${k.slate.length?`<ul class="numlist">${k.slate.map(c=>`<li><b>${c.name}</b> · running for council · strength ${Math.round(c.str)}</li>`).join('')}</ul>`:'<p class="note">No candidates yet. Recruit some.</p>'}<p class="note">Your candidates run in the next city election (${nextElYear()}). Winners take council seats and owe you, which helps if you or your child run for mayor.</p>`}
+   desk.insertAdjacentHTML('afterbegin',h)}}catch(e){console.warn(e)}return r}}
+// yearly consequences
+{const _ay=afterYear;afterYear=function(...a){const A=afterInit();const role=A.role;const yBefore=S.y;const r=_ay.apply(this,a);try{if(A.dead||A.prison||!A.role||A.role!==role)return r;
+  if(role==='congress'){const c=A.cg;A.inf=clamp(A.inf+c.clout/12+(c.app-50)/15,0,100);if(A.yrs%2===0){const p=clamp(0.27+c.app/100-(c.party<30?0.12:0),0.1,0.95);if(Math.random()<p)afterLog(`You won re-election to Congress (approval ${Math.round(c.app)}%).`);else{afterLog(`You lost your seat in Congress (approval ${Math.round(c.app)}%).`);A.role=null;A.cg=null;A.tried={};AFTER_MSG='Voters sent someone else to Washington. What\'s next?'}}}
+  if(role==='law'){const l=A.lw;S.purse.cash+=l.clients*20000;A.inf=clamp(A.inf+(l.rep-50)/20,0,100);l.ethics=Math.max(0,l.ethics-5);if(l.ethics>=60&&Math.random()<0.3){l.rep-=20;A.inf-=15;if(l.ethics>=80){afterLog('The bar suspended your law license after an ethics investigation.');A.role=null;A.lw=null;A.tried={};AFTER_MSG='You lost your law license. What\'s next?'}else afterLog('An ethics investigation dragged your name through the papers.')}}
+  if(role==='king'){const k=A.km;if((yBefore-2027)%4===0&&S.m>=1&&k.slate.length){let w=0;const names=[];k.slate.forEach(c=>{if(Math.random()<c.str/100){w++;names.push(c.name);const opts=S.council.map((m,i)=>({m,i})).filter(x=>!x.m.kin&&!x.m.km);const x=pk2(opts);if(x){newCouncilFace(x.i);const m=S.council[x.i];m.name=c.name;m.km=true;m.mods=[{t:'Owes you their seat',v:25,perm:true}]}}});k.allies+=w;k.favors+=w*2;A.inf=clamp(A.inf+w*5-(k.slate.length-w)*(k.public?3:1),0,100);afterLog(`Election ${yBefore}: ${w} of ${k.slate.length} of your candidates won${names.length?': '+names.join(', '):''}.`);k.slate=[];k.public=false}}
+  roleClamp();save();if(!A.dead&&!A.prison)openAfter()}catch(e){console.warn('role2',e)}return r}}
+// in a comeback, your record follows you
+{const _cb=comebackRun;comebackRun=function(...a){const A=S.after?JSON.parse(JSON.stringify(S.after)):null;const r=_cb.apply(this,a);try{if(A&&S.cand){if(A.cg&&A.cg.fed){S.cand.rec=clamp(S.cand.rec+0.1,0,0.9);GROUPS.forEach(g=>groupLift(g.id,Math.min(3,A.cg.fed/60),'The federal money you brought home'))}if(A.km&&A.km.allies){notify('good','Your council allies',`${A.km.allies} council member${A.km.allies===1?'':'s'} you helped elect owe you their seat.`,null,{ttl:12})}}}catch(e){}return r}}
 function openLedger(){const L=S.log||[];openPanel('Everything that has happened, newest first','Ledger',L.length?`<div class="logl">${L.map(x=>`<div><span>${x.d}</span><p style="margin:0">${x.t}</p></div>`).join('')}</div>`:'<p class="note">Nothing yet. Start the clock with Space or ▶.</p>','ledger')}
 function openPolicies(){const ks=Object.keys(POLICIES);
   openPanel('Ongoing programs you control','Your initiatives',`<p>Mid-year, these are paid from the reserve fund. In April they go into the budget you send the council.</p>
