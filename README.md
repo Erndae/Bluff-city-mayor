@@ -4,6 +4,13 @@ A city-management game set in Memphis, Tennessee. You play the mayor. You handle
 
 **Play it:** https://erndae.github.io/Bluff-city-mayor/ (once GitHub Pages is turned on, see below)
 
+## v26.80: Nashville vs. Memphis, a home in your district, the map lawsuit
+
+- **Nashville vs. Memphis (as mayor).** Each January the General Assembly opens, and one or two bills may aim at Memphis: a state oversight board for MPD, a state-appointed MATA board, canceling the city's police ordinances, cutting Memphis's share of state-shared taxes (about $6M a year), or a state board for the lowest-performing schools. From February to April a bill can move one or two steps a month (committee, House, Senate, governor); anything not signed by May dies. Fight it: work the committee chair, rally the Memphis-area legislators, take it to the public (1 action each, one per bill per month), or cut a deal that kills it. If it becomes law, you can sue ($0.6M; 25–40% odds, better with Education skill). Colder relations with the legislature mean more and stronger bills. Find it in People → Power and politics, or on the Power players screen.
+- **A home in your district (Congress).** Buy a house out in the rural part of your district for $180,000: roots +12 now and +3 a year, and fewer "gone Washington" columns. You get 95% back when you sell.
+- **The map lawsuit.** As a member of Congress or a congressional candidate, file a brief backing the lawsuit, defending the map, or stay out. A brief nudges the ruling's odds and affects your standing with your party. If the court restores a Memphis-centered 9th while you hold the 5th or 8th, you can switch to run in the 9th.
+- **Code sweep.** Checked every new screen for buttons that do nothing and for phone layout problems, and scanned for code fighting over the same name or click. Fixed: since v26.60, the press corps never reacted when you denied, apologized for or blamed someone for an exposed scandal, because another click handler swallowed the click first.
+
 ## v26.79: Balance pass and instant Continue
 
 - **Continue is near-instant.** Empty stretches now go by in a fraction of a second, still stopping at the same moments.

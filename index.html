@@ -719,7 +719,7 @@ details.analysis{margin-top:6px}details.analysis summary{cursor:pointer;color:va
     <button class="btn primary" data-act="pause" id="bPlay"><svg class="ico" viewBox="0 0 12 12" aria-hidden="true"><path d="M3.2 1.6v8.8l7.2-4.4z" fill="currentColor"/></svg> Resume <kbd>Space</kbd></button>
   </nav>
   <div class="status" id="status">Loading map…</div>
-  <div class="credit"><span class="ver" id="verTag">v26.79</span></div>
+  <div class="credit"><span class="ver" id="verTag">v26.80</span></div>
   <div class="tip" id="tip" hidden></div>
   <div class="toast" id="toast" role="status"></div>
   <section class="panel" id="panel" hidden aria-live="polite">
@@ -747,7 +747,7 @@ details.analysis{margin-top:6px}details.analysis summary{cursor:pointer;color:va
         <button class="btn" data-music-open>Music &amp; volume</button>
       </div>
       <div id="slotList" hidden></div>
-      <p class="note startv">Version <b class="ver" id="verStart">v26.79</b></p>
+      <p class="note startv">Version <b class="ver" id="verStart">v26.80</b></p>
     </div>
     <div class="startbox create" id="create" hidden>
       <h2>Create your mayor</h2>
@@ -1558,7 +1558,7 @@ function enact(s,p){DIVS.forEach(d=>{s.enacted[d.id]=p.divs[d.id];s.ratio[d.id]=
 // Voter groups. Each has a share of residents, turnout, home districts, concerns and an approval of you.
 // Citywide approval is the turnout-weighted average of the groups; each council district's approval comes from the groups that live there.
 // Shares, district mix and turnout are modeled, loosely grounded in Memphis demographics; they are not survey data.
-const VERSION='v26.79';
+const VERSION='v26.80';
 const GROUPS=[
  {id:'working',sh:'Working families',n:'Working families',ic:'⚒︎',c:'#f2a93b',share:24,turn:.5,start:56,w:{jobs:1,safety:.8,transit:.5},
   d:'Hourly workers in logistics, warehouses, health care and service jobs. The biggest bloc in the city.',dm:{1:1.1,2:.8,3:1.3,4:1.2,5:.6,6:1.2,7:1.1}},
@@ -7331,7 +7331,7 @@ document.addEventListener('click',e=>{const b=e.target.closest('[data-dana]');if
   if(a==='kill'){if(persuade('dip',0.3,[],8)){s.covered=Math.max(0.4,s.covered*0.8);pressRel('dana',-4,'Asked her to hold a story');toast('Corinne agreed to hold it, for now. She won\'t forget.');return}pressRel('dana',-15,'Tried to kill her story');exposeSecret(s,'Corinne Prewitt\'s story ran');return}
   exposeSecret(s,'Corinne Prewitt\'s story ran')},true);
 // reporters remember: scandal responses and integrity
-document.addEventListener('click',e=>{const b=e.target.closest('[data-exp]');if(!b||!S||!S.exposed)return;const a=b.dataset.exp;if(a==='deny'){pressRel('dana',-6,'Denied a story she knew was true');pressRel('marcus',-3,'Denied a scandal on camera')}if(a==='sorry'){pressRel('dana',4,'Owned up to a scandal');pressRel('marcus',3,'Owned up on camera')}if(a==='blame')pressRel('dana',-4,'Blamed a staffer')},true);
+window.addEventListener('click',e=>{const b=e.target.closest('[data-exp]');if(!b||!S||!S.exposed)return;const a=b.dataset.exp;if(a==='deny'){pressRel('dana',-6,'Denied a story she knew was true');pressRel('marcus',-3,'Denied a scandal on camera')}if(a==='sorry'){pressRel('dana',4,'Owned up to a scandal');pressRel('marcus',3,'Owned up on camera')}if(a==='blame')pressRel('dana',-4,'Blamed a staffer')},true);
 {const T=CHAR_TYPES.tempt,c=T.choices[2],_do=c.do;c.do=function(ev){pressRel('dana',8,'Reported a bribe to the FBI');pressRel('marcus',5,'Reported a bribe to the FBI');return _do.apply(this,arguments)}}
 // the press room
 const PRESS_ACT={
@@ -8501,6 +8501,90 @@ function nextStop(){if(!S)return'';try{const q=(S.queue||[]).filter(x=>x.due>S.d
 // ---------- Continue: empty stretches go by almost instantly ----------
 {const _ts=timeStep;timeStep=function(dt){if(!S||!S.started||S.paused||S.over||clockHeld()||window.BCLife?.isOpen||window.BCMusic?.settingsOpen||!$('start').hidden)return _ts.apply(this,arguments);
   const t0=performance.now();let g=0;while(g++<45&&performance.now()-t0<28){dayTick();if(S.paused||S.over||clockHeld())break}}}
+
+// ======================= v26.80: NASHVILLE VS. MEMPHIS; A HOME IN YOUR DISTRICT; THE MAP LAWSUIT =======================
+// Every January the Tennessee General Assembly opens its session, and some bills aim at Memphis. Bills move from
+// committee to the House, the Senate and the governor's desk between February and April. You can work the committee
+// chair, rally the Memphis-area legislators, take it to the public, or cut a deal. If a bill becomes law, you can sue.
+// How the legislature feels about you (the state power player) decides how many bills come and how strong they are.
+const LEG_STAGES=['Filed','Passed committee','Passed the House','Passed the Senate','Signed into law'];
+const LEG_BILLS={
+ mpd:{t:'A state oversight board for MPD',d:'Lawmakers want a state-appointed board to review Memphis police policy and discipline.',why:'Some lawmakers say Memphis can\'t manage its own police department.',
+  fx:()=>{popHit(-0.4,'The state took over police oversight');groupLift('young',-0.6,'State police board');groupLift('owners',0.4,'State police board')},undo:()=>{popHit(0.3,'Police oversight back in Memphis hands')},deal:{t:'Agree to a joint city-state review panel instead',cost:0,grp:{young:-0.4}},sue:0.4},
+ mata:{t:'A state-appointed board for MATA',d:'The governor and legislative leaders would appoint a majority of the transit authority\'s board.',why:'Lawmakers point to late buses and budget trouble at MATA.',
+  fx:()=>{applyFx(S,{transit:-2});groupLift('renters',-0.6,'State takeover of MATA')},undo:()=>{applyFx(S,{transit:1.5})},deal:{t:'Put $3M more into MATA and add two state seats to the board',cost:3,grp:{}},sue:0.35},
+ ords:{t:'A bill to cancel Memphis\'s local police ordinances',d:'It would void city rules on traffic stops and police conduct and bar new ones.',why:'Lawmakers say city rules tie officers\' hands.',
+  fx:()=>{groupLift('young',-1,'State canceled city police rules');groupLift('renters',-0.6,'State canceled city police rules');groupLift('owners',0.4,'State canceled city police rules')},undo:()=>{groupLift('young',0.6,'City police rules restored')},deal:{t:'Agree to rewrite the ordinances with the police union at the table',cost:0,grp:{young:-0.5},fac:{fop:6}},sue:0.3},
+ tax:{t:'A cut to Memphis\'s share of state-shared taxes',d:'It would send less state sales and business tax money to Memphis: about $6M a year.',why:'Lawmakers say Memphis should live within its means.',
+  fx:()=>{applyFx(S,{revenue:-6})},undo:()=>{applyFx(S,{revenue:6})},deal:{t:'Agree to a state audit of city finances',cost:0.5,grp:{}},sue:0.25},
+ schools:{t:'A state board for the lowest-performing Memphis schools',d:'A state-appointed board would take over schools with the worst test scores.',why:'Lawmakers point to reading scores.',
+  fx:()=>{applyFx(S,{reading:-0.5});groupLift('parents',-0.8,'State school takeover')},undo:()=>{groupLift('parents',0.4,'Schools back under local control')},deal:{t:'Put $2M into a city reading program the state can monitor',cost:2,grp:{parents:0.5}},sue:0.35}};
+function legInit(){if(!S)return null;if(!S.leg)S.leg={y:0,bills:[],laws:{},log:[]};return S.leg}
+function legLog(t){const L=legInit();L.log.unshift({d:dateStr(),t});L.log=L.log.slice(0,10)}
+function legNeed(){return 50}
+function legMonth(){if(!S||!inOffice()||S.over)return;const L=legInit(),rel=facRel('state');
+  if(S.m===1&&L.y!==S.y){L.y=S.y;L.bills=[];const n=rel<=-15?2:rel>=25?(Math.random()<0.5?0:1):1;const pool=Object.keys(LEG_BILLS).filter(k=>!L.laws[k]);for(let i=0;i<n&&pool.length;i++){const k=pool.splice(Math.floor(Math.random()*pool.length),1)[0];L.bills.push({id:k,st:0,str:Math.round(clamp(56-rel/3+Math.random()*12,35,85)),acted:-99,dead:false})}
+    if(L.bills.length){legLog(`The General Assembly opened in Nashville. ${L.bills.length} bill${L.bills.length>1?'s':''} aimed at Memphis: ${L.bills.map(b=>LEG_BILLS[b.id].t.toLowerCase()).join('; ')}.`);notify('event','Nashville vs. Memphis',`The legislature is back in session, and ${L.bills.length===1?'a bill':'two bills'} would take power from the city.`,()=>openNash(),{ttl:16})}return}
+  if(S.m>=2&&S.m<=4&&L.y===S.y){L.bills.forEach(b=>{for(let roll=0;roll<2;roll++){if(b.dead||b.st>=4)return;if(b.str+(Math.random()*40-20)>=legNeed()){b.st++;if(b.st===4){L.laws[b.id]=S.y;try{LEG_BILLS[b.id].fx()}catch(e){}legLog(`The governor signed it: ${LEG_BILLS[b.id].t.toLowerCase()}.`);try{newsAdd(-1,`Governor signs ${LEG_BILLS[b.id].t.toLowerCase()}`)}catch(e){}try{addRecord({t:`State law: ${LEG_BILLS[b.id].t}`,kind:'law',bad:['young','renters'],good:[]})}catch(e){}notify('bad','A state law hits Memphis',LEG_BILLS[b.id].t+'. You can sue to block it.',()=>openNash(),{ttl:16})}else legLog(`${LEG_BILLS[b.id].t}: ${LEG_STAGES[b.st].toLowerCase()}.`)}}})}
+  if(S.m===5&&L.y===S.y){L.bills.forEach(b=>{if(!b.dead&&b.st<4){b.dead=true;legLog(`The session ended. ${LEG_BILLS[b.id].t} died.`)}})}}
+{const _eom=endOfMonth;endOfMonth=function(...a){const r=_eom.apply(this,a);try{legMonth()}catch(e){console.warn('leg',e)}return r}}
+const LEG_MOVES={
+ chair:{n:'Work the committee chair',sk:'intr',b:0.45,d:'Works: support −12 · fails: −3',do:(b,ok)=>{b.str-=ok?12:3;return ok?'The chair agreed to slow-walk it.':'The chair listened politely and did nothing.'}},
+ deleg:{n:'Rally the Memphis-area legislators',sk:'dip',b:0.5,d:'They\'re outnumbered, but they know the rules · works: support −10 · fails: −3',do:(b,ok)=>{b.str-=ok?10:3;return ok?'Memphis lawmakers tied it up with amendments.':'They tried, but leadership moved it along.'}},
+ public:{n:'Take it to the public',sk:'cha',b:0.5,d:'Works: support −8, and Memphians rally behind you · fails: lawmakers resent it (state −4)',do:(b,ok)=>{if(ok){b.str-=8;GROUPS.forEach(g=>groupLift(g.id,0.25,'Stood up to Nashville'));return'A packed rally on the City Hall plaza. Statewide TV covered it.'}facMod('state','The mayor attacked us on TV',-4);return'The rally was small, and lawmakers rolled their eyes.'}}};
+function legAct(i,k){const L=legInit(),b=L.bills[i],X=LEG_MOVES[k];if(!b||!X||b.dead||b.st>=4||S.slots<=0||b.acted===nowM())return;S.slots--;b.acted=nowM();const ok=persuade(X.sk,X.b,[],7);const m=`${LEG_BILLS[b.id].t}: ${X.do(b,ok)}`;b.str=clamp(b.str,0,100);legLog(m);try{sfx(ok?'good':'bad')}catch(e){}save();refreshHUD();NASH_MSG=m;openNash()}
+function legDeal(i){const L=legInit(),b=L.bills[i];if(!b||b.dead||b.st>=4)return;const D=LEG_BILLS[b.id].deal;if(D.cost&&S.reserve<D.cost)return;if(D.cost)S.reserve-=D.cost;for(const g in D.grp||{})groupLift(g,D.grp[g],'Your deal with Nashville');for(const f in D.fac||{})facMod(f,'Your deal with Nashville',D.fac[f]);facMod('state','The mayor cut a deal',6);b.dead=true;const m=`You cut a deal: ${D.t.charAt(0).toLowerCase()+D.t.slice(1)}. The bill is dead.`;legLog(m);save();refreshHUD();NASH_MSG=m;openNash()}
+function legSue(k){const L=legInit();if(!L.laws[k]||S.reserve<0.6||(L.sued||{})[k])return;S.reserve-=0.6;L.sued=L.sued||{};L.sued[k]=S.y;const ok=Math.random()<clamp(LEG_BILLS[k].sue+(mskill('learn')-8)/50,0.1,0.7);let m;
+  if(ok){delete L.laws[k];try{LEG_BILLS[k].undo()}catch(e){}facMod('state','The city beat us in court',-5);m=`A court blocked the state law: ${LEG_BILLS[k].t.toLowerCase()}.`;try{newsAdd(1.2,`Court blocks ${LEG_BILLS[k].t.toLowerCase()}`)}catch(e){}}
+  else m=`The court upheld the state law: ${LEG_BILLS[k].t.toLowerCase()}. The city spent $600,000 on the case.`;legLog(m);save();refreshHUD();NASH_MSG=m;openNash()}
+let NASH_MSG=null;
+function openNash(){const L=legInit(),m=NASH_MSG;NASH_MSG=null;const rel=facRel('state'),[tn]=facTier(rel);const live=L.bills.filter(b=>L.y===S.y);const inSess=S.m>=1&&S.m<=4&&L.y===S.y;
+  const card=(b,i)=>{const B=LEG_BILLS[b.id];const st=b.dead?'Dead':LEG_STAGES[b.st];const canAct=inOffice()&&!b.dead&&b.st<4&&S.m<=4;const cd=b.acted===nowM();
+   return`<div class="faccard"><b>${B.t}</b><p class="note">${B.d} ${B.why}</p><div class="stagepips">${LEG_STAGES.map((s,j)=>`<i class="${!b.dead&&j<=b.st?'on':''}" title="${s}"></i>`).join('')}</div><small class="note">${st}${!b.dead&&b.st<4?` · support in the legislature: <b>${Math.round(b.str)}</b> (above ${legNeed()}, it usually moves; below, it usually stalls)`:''}</small>
+    ${canAct?`<div class="choices">${Object.entries(LEG_MOVES).map(([k,X])=>`<button class="choice" data-legm="${i}:${k}" ${S.slots<=0||cd?'disabled':''}><b>${X.n}</b><small>${cd?'You already worked this bill this month':`1 action · ${oddsTag(X.sk,X.b)} · ${X.d}`}</small></button>`).join('')}<button class="choice" data-legd="${i}" ${B.deal.cost&&S.reserve<B.deal.cost?'disabled':''}><b>Cut a deal: ${B.deal.t}</b><small>${B.deal.cost?`−${fmtM(B.deal.cost)} · `:''}kills the bill · the legislature warms to you (+6)</small></button></div>`:''}</div>`};
+  const laws=Object.keys(L.laws);
+  openModal('Nashville vs. Memphis','The state legislature',`${m?`<p class="scnreply">${m}</p>`:''}<p>The Tennessee General Assembly can overrule the city. Each January it opens its session, and some bills aim at Memphis. From February through April they can move a step or two a month: committee, the House, the Senate, then the governor. Whatever hasn't passed by May dies.</p>
+   <div class="qrgrid"><div><small>The legislature and you</small><p><b>${tn} (${rel>0?'+':''}${rel})</b></p></div><div><small>Session</small><p><b>${inSess?'In session':'Out of session (opens in January)'}</b></p></div><div><small>State laws in force</small><p><b>${laws.length}</b></p></div></div>
+   <p class="note">Colder relations mean more bills, and stronger ones. Meet with the legislature on the Power players screen to warm them up.</p>
+   ${live.length?`<h4 class="plh">This session</h4>${live.map(card).join('')}`:'<p class="note">No bills aimed at Memphis this session.</p>'}
+   ${laws.length?`<h4 class="plh">State laws in force</h4>${laws.map(k=>{const sued=(L.sued||{})[k];return`<div class="faccard"><b>${LEG_BILLS[k].t}</b><small class="note">Signed in ${L.laws[k]}</small>${inOffice()?`<div class="row"><button class="btn" data-legs="${k}" ${sued||S.reserve<0.6?'disabled':''}>Sue to block it<small> · ${sued?'already tried':`−$0.6M in legal costs · about ${Math.round(clamp(LEG_BILLS[k].sue+(mskill('learn')-8)/50,0.1,0.7)*100)}% to win`}</small></button></div>`:''}</div>`}).join('')}`:''}
+   ${L.log.length?`<h4 class="plh">Recent</h4><ul class="numlist">${L.log.slice(0,6).map(x=>`<li>${x.d}: ${x.t}</li>`).join('')}</ul>`:''}
+   <div class="row"><button class="btn" data-act="close">Back</button></div>`,true)}
+openNash=navWrap('openNash',openNash);
+document.addEventListener('click',e=>{const b=e.target.closest('[data-legm],[data-legd],[data-legs],[data-nash]');if(!b||!S||S.after)return;e.preventDefault();e.stopImmediatePropagation();const d=b.dataset;
+  if(d.legm){const[i,k]=d.legm.split(':');legAct(+i,k);return}if(d.legd){legDeal(+d.legd);return}if(d.legs){legSue(d.legs);return}if(modalOpen&&!(NAV.cur&&NAV.cur.name==='flow_people')){onClose=null;closeModal()}openNash()},true);
+{const _om=openModal;openModal=function(...a){const r=_om.apply(this,a);try{const n=NAV.cur?NAV.cur.name:'',b=$('mBody');
+  if(n==='flow_people'&&inOffice()&&!b.querySelector('[data-nash]')){const p=b.querySelector('.flow-tile[data-deleg]')||b.querySelector('[data-powers]');const L=legInit();const live=L.bills.filter(x=>L.y===S.y&&!x.dead&&x.st<4).length;const t=`<button class="flow-tile" data-nash="1"><b>Nashville vs. Memphis</b><span>${live?`${live} bill${live>1?'s':''} aimed at Memphis right now`:'The state legislature can overrule the city'}</span></button>`;if(p)p.insertAdjacentHTML('afterend',t)}
+  if(n==='openPowers'&&inOffice()&&!b.querySelector('[data-nash]')){const row=b.querySelector('.row:last-child');if(row)row.insertAdjacentHTML('afterbegin','<button class="btn" data-nash="1">Nashville vs. Memphis</button>')}}catch(e){}return r}}
+// the state taxes law costs money every year it stays on the books (handled by revBoost); the MATA and schools laws keep pulling a little
+{const _eom=endOfMonth;endOfMonth=function(...a){const r=_eom.apply(this,a);try{const L=S&&S.leg;if(L&&inOffice()&&S.m===7){if(L.laws.mata)applyFx(S,{transit:-0.5});if(L.laws.schools)applyFx(S,{reading:-0.2})}}catch(e){}return r}}
+
+// ---------- a home in your district (Congress) ----------
+function buyDistHome(){const A=S.after,r=resOf();if(!r||r.distHome||S.purse.cash<180000||A.role!=='congress')return;S.purse.cash-=180000;r.distHome={paid:180000,y:S.y};r.roots=clamp(r.roots+12,0,100);const m=`You bought a house out in ${DIST[curDist()||'9'].rural}. You split your nights at home between there and Memphis now.`;afterLog(m);save();AFTER_MSG=m;openAfter()}
+{const _sd=sellDC;sellDC=function(){try{const A=S.after,r=A&&A.res;if(r&&r.distHome){const back=Math.round(r.distHome.paid*0.95);S.purse.cash+=back;afterLog(`You sold the house in the district for $${back.toLocaleString()}.`)}}catch(e){}return _sd.apply(this,arguments)}}
+// the district house slows how fast roots fade, and blunts "you don't live here" attacks
+{const _ay=afterYear;afterYear=function(...a){try{const A=S.after,r=A&&A.res;if(r&&r.distHome&&A.role==='congress')r.roots=clamp(r.roots+3,0,100)}catch(e){}return _ay.apply(this,a)}}
+{const _lr=lifeRoll;lifeRoll=function(){const r=_lr.apply(this,arguments);try{const A=S.after;if(A.cev&&A.cev.id==='column'&&A.res&&A.res.distHome&&Math.random()<0.5)A.cev=null}catch(e){}return r}}
+
+// ---------- the lawsuit over the map ----------
+function mapCaseLive(){const A=S.after;return!!A&&!!A.dist&&!A.court&&(A.role==='congress'||(A.role==='campaign'&&A.camp&&A.camp.office==='congress'))}
+function mapStance(k){const A=S.after;if(!mapCaseLive()||A.mapSide)return;const p=myParty();let m;
+  if(k==='challenge'){A.mapSide='challenge';A.courtTilt=0.15;if(A.cg){A.cg.party+=p==='D'?5:p==='R'?-8:0;A.cg.clout+=3}m='You filed a brief backing the lawsuit and testified about how the lines split Memphis neighborhoods.'}
+  else if(k==='defend'){A.mapSide='defend';A.courtTilt=-0.15;if(A.cg){A.cg.party+=p==='R'?5:p==='D'?-8:0;A.cg.clout+=3}m='You filed a brief defending the map, arguing the legislature drew it within its authority.'}
+  else{A.mapSide='out';A.courtTilt=0;m='You said the courts should settle it and stayed out of the case.'}
+  try{roleClamp()}catch(e){}afterLog(m);save();AFTER_MSG=m;openAfter()}
+// the ruling: your brief nudges the odds
+{const _ay=afterYear;afterYear=function(...a){const A=afterInit();try{if(mapCaseLive()&&Math.random()<0.15){A.court=true;const pStrike=clamp(0.5+(A.courtTilt||0),0.2,0.8);if(Math.random()<pStrike){A.oldMap=true;afterLog(curDist()==='9'?'A federal court struck down the 2026 map and ordered a compact, Memphis-centered 9th District.':`A federal court struck down the 2026 map and put most Memphis voters back in a compact 9th District. ${distName()} loses its Memphis neighborhoods.`)}else afterLog('A federal court upheld the 2026 map. The districts stay as drawn.')}}catch(e){}return _ay.apply(this,a)}}
+// switching to the restored 9th
+function switchTo9(yes){const A=S.after;if(!A.oldMap||curDist()==='9'||A.switchAsked)return;A.switchAsked=true;let m;if(yes){A.dist='9';if(A.res)A.res.roots=clamp(A.res.roots-10,0,100);if(A.cg)A.cg.app=clamp(A.cg.app-5,0,100);m='You announced you\'ll run in the restored 9th District next time. New voters, a new map, and a lot of new hands to shake.'}else m=`You're staying in ${distName()}, now without its Memphis neighborhoods.`;afterLog(m);save();AFTER_MSG=m;openAfter()}
+{const _oa=openAfter;openAfter=function(...a){const out=_oa.apply(this,a);try{const A=S.after,b=$('mBody');if(!A||!b)return out;const desk=b.querySelector('.roledesk');
+  if(desk&&A.role==='congress'&&!desk.querySelector('.mapcase')){let h='';
+    if(mapCaseLive()){h+=`<div class="faccard mapcase"><b>The lawsuit over the 2026 map</b><p class="note">Rep. Steve Cohen, the Tennessee NAACP, the state Democratic Party and the ACLU sued over the map. A federal court could rule any year.${A.mapSide?` ${A.mapSide==='challenge'?'You backed the challenge.':A.mapSide==='defend'?'You defended the map.':'You stayed out of it.'}`:' Where do you stand?'}</p>${A.mapSide?'':`<div class="choices"><button class="choice" data-maps="challenge"><b>File a brief backing the lawsuit</b><small>Clout +3 · ${myParty()==='D'?'your party +5':myParty()==='R'?'your party −8':'no party effect'} · slightly more likely the map is struck down</small></button><button class="choice" data-maps="defend"><b>File a brief defending the map</b><small>Clout +3 · ${myParty()==='R'?'your party +5':myParty()==='D'?'your party −8':'no party effect'} · slightly more likely the map stands</small></button><button class="choice" data-maps="out"><b>Stay out of it</b><small>Let the courts decide</small></button></div>`}</div>`}
+    if(A.oldMap&&curDist()!=='9'&&!A.switchAsked)h+=`<div class="faccard mapcase"><b>The restored 9th District</b><p class="note">The court put most Memphis voters back in a compact 9th District. You can keep running in ${distName()}, or switch to the new 9th.</p><div class="choices"><button class="choice" data-sw9="1"><b>Run in the restored 9th next time</b><small>Its lean: ${(()=>{const p=myParty();if(!p)return'heavily Democratic';const L=OLD9[p];return`${L>0?'+':''}${Math.round(L*100)} points for you`})()} · roots −10, approval −5 while voters get to know you</small></button><button class="choice" data-sw9="0"><b>Stay in ${distName()}</b><small>Keep the voters who know you</small></button></div></div>`;
+    const r=A.res;if(r&&r.dc&&r.fam)h+=r.distHome?`<p class="note mapcase">You own a house out in ${DIST[curDist()||'9'].rural}. Roots fade more slowly, and "you don't live here" attacks land less often.</p>`:`<div class="faccard mapcase"><b>Buy a house out in the district</b><p class="note">Memphis is only part of ${distName()}. A second home out in ${DIST[curDist()||'9'].rural} shows the rest of the district you live there too.</p><div class="choices"><button class="choice" data-dhome="1" ${S.purse.cash>=180000?'':'disabled'}><b>Buy it</b><small>−$180,000 (you get most of it back when you sell) · roots +12 now and +3 every year · fewer "gone Washington" columns</small></button></div></div>`;
+    if(h){const x=document.createElement('div');x.innerHTML=h;const anchor=desk.querySelector('.calcard')||desk.querySelector('.faccard.homes');if(anchor)anchor.after(...x.childNodes);else desk.prepend(...x.childNodes)}}
+  if(A.role==='campaign'&&A.camp&&A.camp.office==='congress'&&mapCaseLive()&&!A.mapSide&&desk&&!desk.querySelector('.mapcase')){desk.insertAdjacentHTML('beforeend',`<div class="faccard mapcase"><b>The lawsuit over the 2026 map</b><p class="note">Reporters keep asking where you stand.</p><div class="choices"><button class="choice" data-maps="challenge"><b>Back the lawsuit</b><small>Slightly more likely the map is struck down</small></button><button class="choice" data-maps="defend"><b>Defend the map</b><small>Slightly more likely the map stands</small></button><button class="choice" data-maps="out"><b>Stay out of it</b></button></div></div>`)}}catch(e){console.warn('v80',e)}return out}}
+document.addEventListener('click',e=>{const b=e.target.closest('[data-maps],[data-sw9],[data-dhome]');if(!b||!S||!S.after)return;e.preventDefault();e.stopImmediatePropagation();const d=b.dataset;if(d.maps){mapStance(d.maps);return}if(d.sw9){switchTo9(d.sw9==='1');return}buyDistHome()},true);
 
 function openLedger(){const L=S.log||[];openPanel('Everything that has happened, newest first','Ledger',L.length?`<div class="logl">${L.map(x=>`<div><span>${x.d}</span><p style="margin:0">${x.t}</p></div>`).join('')}</div>`:'<p class="note">Nothing yet. Tap ▶ Continue to move ahead.</p>','ledger')}
 function openPolicies(){const ks=Object.keys(POLICIES);
