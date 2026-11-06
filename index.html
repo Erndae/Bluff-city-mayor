@@ -350,6 +350,7 @@ canvas.confetti{position:fixed;inset:0;z-index:100000;pointer-events:none}
 .econcard{border:1px solid var(--line);border-radius:10px;padding:10px 12px;margin-bottom:8px}.econcard p{margin:4px 0;font-size:14px}.econcard>small{display:block;color:var(--muted);font-size:12.5px}.econcard .row{align-items:center;gap:8px;margin-top:6px;flex-wrap:wrap}.econcard.passed{border-color:var(--good)}
 #hSlots.many .act-p i{width:12px;height:12px;margin-right:2px}#hSlots.many .act-r{display:none}
 nav.actions [data-actsgo]{min-height:44px;padding:9px 17px;border-color:rgba(242,169,59,.55)}@media(max-width:860px){nav.actions{grid-template-columns:repeat(5,minmax(0,1fr))!important}nav.actions [data-flow-hub],nav.actions [data-actsgo]{justify-content:center;text-align:center}nav.actions [data-actsgo]{padding:8px 2px;font-size:12px;min-width:0;min-height:44px}}
+.faccard{border:1px solid var(--line,#2c3e4c);border-radius:12px;padding:12px;margin:10px 0;background:rgba(255,255,255,.02)}.fac-h{display:flex;align-items:center;gap:10px}.fac-h>div{flex:1;min-width:0}.fac-h b{display:block}.fac-h small{color:var(--muted,#9aa7b2)}.fac-ic{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;background:rgba(242,169,59,.15);color:var(--amber);font-size:17px;flex:none}.fac-rel{text-align:right;flex:none}.fac-rel b{font-size:20px}.fac-rel.pos b{color:var(--good)}.fac-rel.neg b{color:var(--bad)}.fac-rel small{display:block}.facbar{position:relative;height:6px;border-radius:3px;background:rgba(255,255,255,.08);margin:8px 0 2px}.facbar i{position:absolute;top:0;bottom:0;border-radius:3px}.facbar i.pos{background:var(--good)}.facbar i.neg{background:var(--bad)}.facbar i:first-child{left:50%;width:1px!important;background:rgba(255,255,255,.4)}.facspark{width:60px;height:18px;color:var(--amber);display:block;margin:2px 0 0 auto}.faccard h5{margin:8px 0 4px}.faccard .qrgrid p{font-size:13px;margin:2px 0 0}.facpend{color:var(--amber);font-weight:600;margin:8px 0 0}.faccard .btn small{opacity:.8}
 .adgain{display:block;width:100%;text-align:center;font-size:11px;font-weight:600;color:var(--good);margin-top:1px}
 #start{overflow-x:hidden;overflow-y:auto;touch-action:pan-y}.startbox{min-width:0;max-width:min(600px,100%);box-sizing:border-box}.startbox *{min-width:0}.create select,.create input{max-width:100%;width:100%;box-sizing:border-box;text-overflow:ellipsis}.create .tpick,.create .tpick>*{max-width:100%;box-sizing:border-box}
 @media (max-width:640px){.startbox{margin-left:0}#start{padding-left:max(16px,env(safe-area-inset-left,0px))}}
@@ -702,7 +703,7 @@ details.analysis{margin-top:6px}details.analysis summary{cursor:pointer;color:va
     <button class="btn primary" data-act="pause" id="bPlay"><svg class="ico" viewBox="0 0 12 12" aria-hidden="true"><path d="M3.2 1.6v8.8l7.2-4.4z" fill="currentColor"/></svg> Resume <kbd>Space</kbd></button>
   </nav>
   <div class="status" id="status">Loading map…</div>
-  <div class="credit"><span class="ver" id="verTag">v26.55</span></div>
+  <div class="credit"><span class="ver" id="verTag">v26.56</span></div>
   <div class="tip" id="tip" hidden></div>
   <div class="toast" id="toast" role="status"></div>
   <section class="panel" id="panel" hidden aria-live="polite">
@@ -730,7 +731,7 @@ details.analysis{margin-top:6px}details.analysis summary{cursor:pointer;color:va
         <button class="btn" data-music-open>Music &amp; volume</button>
       </div>
       <div id="slotList" hidden></div>
-      <p class="note startv">Version <b class="ver" id="verStart">v26.55</b></p>
+      <p class="note startv">Version <b class="ver" id="verStart">v26.56</b></p>
     </div>
     <div class="startbox create" id="create" hidden>
       <h2>Create your mayor</h2>
@@ -1541,7 +1542,7 @@ function enact(s,p){DIVS.forEach(d=>{s.enacted[d.id]=p.divs[d.id];s.ratio[d.id]=
 // Voter groups. Each has a share of residents, turnout, home districts, concerns and an approval of you.
 // Citywide approval is the turnout-weighted average of the groups; each council district's approval comes from the groups that live there.
 // Shares, district mix and turnout are modeled, loosely grounded in Memphis demographics; they are not survey data.
-const VERSION='v26.55';
+const VERSION='v26.56';
 const GROUPS=[
  {id:'working',sh:'Working families',n:'Working families',ic:'⚒︎',c:'#f2a93b',share:24,turn:.5,start:56,w:{jobs:1,safety:.8,transit:.5},
   d:'Hourly workers in logistics, warehouses, health care and service jobs. The biggest bloc in the city.',dm:{1:1.1,2:.8,3:1.3,4:1.2,5:.6,6:1.2,7:1.1}},
@@ -5614,12 +5615,12 @@ function openAudience(){const V=officeVisitors();DEV.kind='aud';DEV.app=false;do
    <div class="audlist">${V.map((v,i)=>`<div class="audrow">${portrait(v.who,52)}<div class="audwho"><b>${v.who.name}</b><small>${v.role}</small><span>${v.title}</span>${evLeftM(v.ev)<=0?'<em>Leaves at the end of the month</em>':''}</div><button class="btn primary" data-audrecv="${i}">Receive</button></div>`).join('')}</div>
    <div class="row"><button class="btn" data-act="close">Close the door</button></div>`,true)}
 let AUD_V=[];
-document.addEventListener('click',e=>{const b=e.target.closest('[data-audrecv]');if(!b||!S)return;e.preventDefault();e.stopImmediatePropagation();const v=officeVisitors()[+b.dataset.audrecv];if(!v)return;DEV.app=true;onClose=null;closeModal();
+document.addEventListener('click',e=>{const b=e.target.closest('[data-audrecv]');if(!b||!S)return;e.preventDefault();e.stopImmediatePropagation();const v=officeVisitors()[+b.dataset.audrecv];if(!v)return;DEV.app=true;window.__audOpening=Date.now();onClose=null;closeModal();
   setTimeout(()=>{try{const i=S.events.indexOf(v.ev);openPanel(`Office hours · ${v.role}`,`Audience with ${v.who.name}`,meetingScene(v.who,v.who.name,v.role,'office','Ready to talk')+eventCard(v.ev,i),'aud')}catch(err){console.warn(err)}devFrame(true)},30)},true);
 // once you decide, the visitor leaves and the next one is up
 document.addEventListener('click',e=>{const b=e.target.closest('[data-ev]');if(!b||panelFor!=='aud')return;setTimeout(()=>{if(panelFor==='aud'&&!$('panel').hidden)closePanel()},50)});
 // after a visitor's business is done, the list comes back; the 3D office updates who's still standing there
-{const _da=devAfterClose;devAfterClose=function(){setTimeout(()=>{try{window.BCInterior&&BCInterior.refresh&&BCInterior.refresh()}catch(e){}if(DEV.kind==='aud'){if(modalOpen||!$('panel').hidden)return;if(DEV.app){openAudience();return}document.body.classList.remove('dev-aud');endDevice()}},0);if(DEV.kind!=='aud')_da()}}
+{const _da=devAfterClose;devAfterClose=function(){setTimeout(()=>{try{window.BCInterior&&BCInterior.refresh&&BCInterior.refresh()}catch(e){}if(DEV.kind==='aud'){if(modalOpen||!$('panel').hidden||Date.now()-(window.__audOpening||0)<400)return;if(DEV.app){openAudience();return}document.body.classList.remove('dev-aud');endDevice()}},0);if(DEV.kind!=='aud')_da()}}
 {const _ed=endDevice;endDevice=function(){document.body.classList.remove('dev-aud');return _ed()}}
 document.addEventListener('click',e=>{const b=e.target.closest('[data-meetphone]');if(!b||!S)return;e.preventDefault();e.stopImmediatePropagation();onClose=null;closeModal();openDevice('phone')},true);
 // ======================= v26.30: SOMETHING TO DO, A CLOCK THAT KEEPS MOVING, CLEARER CAMPAIGN SCREENS =======================
@@ -6642,6 +6643,152 @@ function ensureActsBtn(){const bar=document.querySelector('nav.actions');if(bar&
 document.addEventListener('click',e=>{const b=e.target.closest('[data-actsgo]');if(!b||!S||!S.started)return;e.preventDefault();e.stopImmediatePropagation();if(modalOpen){onClose=null;closeModal()}closePanel();openActions()},true);
 // the actions meter fits even with 6 or 7 actions
 {const _rb=renderBank;renderBank=function(...a){const r=_rb.apply(this,a);try{const el=$('hSlots');if(el)el.classList.toggle('many',el.querySelectorAll('.act-p i').length>4)}catch(e){}return r}}
+// ======================= v26.56: ORGANIZED POWER PLAYERS =======================
+// Five organized groups with their own agenda: the police union, the city workers' union, the Chamber,
+// the County Commission and the state legislature. Each one's relationship with you comes from what
+// you've done (live factors) plus memories of how you treated them (fading over time). They make
+// demands you can meet, bargain down with a skill, or refuse, and the relationship has real effects.
+const FACS={
+ fop:{n:'Memphis Police Association',tn:'the Memphis Police Association',sh:'Police union',ic:'⛨',sk:'safe',grp:['owners','faith'],
+  lead:{name:'Sgt. Ray Dupree',g:'m',age:52,frame:'#5b7fa6'},role:'President, Memphis Police Association',
+  d:'The union for about 2,000 Memphis police officers. It cares about pay, staffing and whether the mayor has officers\' backs.',
+  hi:'Officers help with recruiting, so headcount grows faster. Its endorsement moves homeowners and churches.',
+  lo:'Officers may call in sick together (a "blue flu"), and crime jumps for a month. It may endorse your opponent.'},
+ afscme:{n:'AFSCME Local 1733',tn:'AFSCME Local 1733',sh:'City workers\' union',ic:'⚒',sk:'dip',grp:['labor','working'],
+  lead:{name:'Gloria Banks',g:'f',age:58,frame:'#b5543a'},role:'President, AFSCME Local 1733',
+  d:'The sanitation workers\' union whose 1968 strike brought Dr. King to Memphis. Today it represents sanitation, public works, parks and other city workers.',
+  hi:'Its members knock doors for you in election years, and the union council is more likely to endorse you.',
+  lo:'Crews slow down on the job: streets get worse and blight grows. A strike vote becomes possible.'},
+ chamber:{n:'Greater Memphis Chamber',tn:'the Greater Memphis Chamber',sh:'Business leaders',ic:'◆',sk:'stew',grp:['business','young'],
+  lead:{name:'Whitney Calloway',g:'f',age:49,frame:'#3f7d6b'},role:'President and CEO, Greater Memphis Chamber',
+  d:'The voice of the city\'s big employers: FedEx, AutoZone, St. Jude, the hospitals and the logistics industry. It cares about taxes, permits and incentives.',
+  hi:'Members send campaign money every month in the run-up to an election, and recruit employers to Memphis.',
+  lo:'Members fund your opponent instead, and the business leaders\' endorsement goes the other way.'},
+ county:{n:'Shelby County Commission',tn:'the Shelby County Commission',sh:'The County',ic:'▣',sk:'dip',grp:['parents'],
+  lead:{name:'Commissioner Andre Mitchell',g:'m',age:55,frame:'#7a6a9b'},role:'Chair, Shelby County Commission',
+  d:'The County funds Memphis-Shelby County Schools, the jail and the Health Department. Memphis residents pay county taxes too, so the city and county have to split a lot of bills.',
+  hi:'The County picks up a share of joint costs once a year, and school reading scores improve a little faster.',
+  lo:'The County shifts costs back onto the city once a year, and school cooperation stalls.'},
+ state:{n:'Tennessee General Assembly',tn:'the Tennessee General Assembly',sh:'The state legislature',ic:'★',sk:'intr',grp:['owners'],
+  lead:{name:'Rep. Dale Whitaker',g:'m',age:61,frame:'#8a5a3c'},role:'Chair, House Local Government Committee',
+  d:'The legislature in Nashville can overrule Memphis. State law already bars a city minimum wage, and lawmakers have taken over local boards before.',
+  hi:'Lawmakers steer a state grant to Memphis once a year.',
+  lo:'Lawmakers hold back state road money and can pass bills that cancel city laws they don\'t like.'}};
+const FAC_IDS=Object.keys(FACS);
+function facInit(){S.fac=S.fac||{};FAC_IDS.forEach((id,i)=>{if(!S.fac[id])S.fac[id]={mods:[],next:nowM()+3+i*2,meet:-99,yr:{}}});return S.fac}
+function facMod(id,t,v){facInit();if(id==='county'){S.county=clamp((S.county||50)+v/2,0,100);return}const F=S.fac[id];F.mods.unshift({t,v,m:nowM()});if(F.mods.length>12)F.mods.length=12}
+function facModsLive(id){const F=facInit()[id];return(F.mods||[]).map(x=>({t:x.t,v:x.v*Math.pow(0.88,Math.max(0,nowM()-x.m))})).filter(x=>Math.abs(x.v)>=0.5)}
+function facStance(id){const L=[],P=S.laws||{},r=k=>(S.ratio&&S.ratio[k])||1;if(!inOffice())return L;
+  if(id==='fop'){const pr=(r('police')-1)*100;if(Math.abs(pr)>=0.5)L.push({t:`Police budget ${pr>0?'+':''}${pr.toFixed(1)}%`,v:pr*2});
+    const o=(S.met.officers||1917)-1950;if(Math.abs(o)>=20)L.push({t:`${Math.round(S.met.officers).toLocaleString()} officers on the force`,v:o/20});
+    if(P.bodycam)L.push({t:'You passed 30-day body-cam video release',v:-8});if(S.policies&&S.policies.recruit)L.push({t:'You fund police recruiting',v:5})}
+  if(id==='afscme'){const ra=(S.raise==null?2:S.raise);if(ra!==2)L.push({t:`${ra}% raise for city workers in your budget`,v:(ra-2)*5});
+    if(P.livingwage)L.push({t:'You raised city workers to $20 an hour',v:14});
+    const nb=(['pw','gs','parks'].reduce((a,k)=>a+r(k),0)/3-1)*100;if(Math.abs(nb)>=0.5)L.push({t:`Public Works, General Services and Parks budgets ${nb>0?'+':''}${nb.toFixed(1)}%`,v:nb*1.5});
+    if(P.minwage)L.push({t:'You set a $17 wage floor for city contractors',v:4});if(P.hirelocal)L.push({t:'You passed local hiring',v:3})}
+  if(id==='chamber'){const tx=(S.taxRate-3.39)*100;if(Math.abs(tx)>=0.5)L.push({t:`Property tax rate ${tx>0?'up':'down'} ${Math.abs(tx).toFixed(0)}¢`,v:-tx*0.8});
+    const lk={dc_fast:['You fast-tracked data centers',8],oppzone:['You passed opportunity-zone tax breaks',6],smallbiz:['You fund storefront grants',3],taxcut:['You passed a tax cut',6],minwage:['You set a contractor wage floor',-10],pilotrules:['You tightened PILOT tax breaks',-12],livingwage:['City pay raises cost taxpayers',-3],hirelocal:['Local-hiring rules on contractors',-4],landlord:['Fines on landlords',-3]};
+    for(const k in lk)if(P[k])L.push({t:lk[k][0],v:lk[k][1]})}
+  if(id==='county'){const c=(S.county||50)-50;if(Math.abs(c)>=1)L.push({t:`City–county relations ${c>0?'good':'strained'}`,v:c*1.0})}
+  if(id==='state'){if(P.minwage)L.push({t:'Your contractor wage floor tests the state preemption law',v:-14});if(P.pilotrules)L.push({t:'Tougher PILOT rules worry lawmakers',v:-3});if(P.bodycam)L.push({t:'Body-cam release rules',v:-4});if(P.taxcut)L.push({t:'You cut taxes',v:4});
+    try{const c=clout();if(Math.abs(c-35)>=5)L.push({t:`Your clout statewide (${Math.round(c)})`,v:(c-35)/4})}catch(e){}}
+  return L}
+function facBase(id){return mskill(FACS[id].sk)>=12?6:mskill(FACS[id].sk)>=9?2:0}
+function facParts(id){const L=facStance(id).concat(id==='county'?[]:facModsLive(id));const b=facBase(id);if(b)L.push({t:`Your ${skillName(FACS[id].sk)}`,v:b});return L}
+function facRel(id){return clamp(Math.round(facParts(id).reduce((a,x)=>a+x.v,0)),-100,100)}
+function facTier(v){return v<=-40?['Hostile','neg']:v<=-15?['Cold','neg']:v<15?['Neutral','']:v<40?['Friendly','pos']:['Allies','pos']}
+// ---------- demands ----------
+const FDEM={
+ fop:[
+  {id:'pay',t:'A 5% raise for police officers',b:'"Nashville and the suburbs are hiring our officers away. Give them a 5% raise this year or we keep losing them."',cost:9,fx:{officers:25},grp:{owners:1},bk:{sk:'dip',b:0.45,cost:4.5,fx:{officers:12}}},
+  {id:'staff',t:'Hire 150 more officers',b:'"Response times are too slow because we\'re short-staffed. Fund 150 new officers."',cost:12,fx:{officers:60},grp:{owners:1,faith:1},bk:{sk:'stew',b:0.45,cost:6,fx:{officers:30}}},
+  {id:'bodycam',when:()=>(S.laws||{}).bodycam,t:'Slow the body-cam video release to 60 days',b:'"Thirty days isn\'t enough to finish an investigation. Give us 60 or officers won\'t trust you."',cost:0,law:'bodycam',grp:{young:-2,renters:-1},bk:{sk:'intr',b:0.4,cost:0}}],
+ afscme:[
+  {id:'raise',t:'A 4% raise for city workers',b:'"Our members haven\'t kept up with rent. Sanitation crews deserve a 4% raise this year."',cost:6,grp:{labor:2,working:1},bk:{sk:'dip',b:0.5,cost:3}},
+  {id:'trucks',t:'New garbage trucks and heat-safety rules',b:'"In 1968, Echol Cole and Robert Walker were crushed by a broken garbage truck. Our crews still ride old trucks in 100-degree heat. Replace them."',cost:3,fx:{blight:-0.6,mood:0.2},grp:{labor:1},bk:{sk:'stew',b:0.5,cost:1.5,fx:{blight:-0.3}}},
+  {id:'private',t:'No outsourcing of garbage pickup',b:'"We hear City Hall is talking to private haulers. Promise us you won\'t outsource our jobs."',cost:0,fx:{revenue:-1},grp:{labor:1},refuseFx:{revenue:1.5},bk:{sk:'dip',b:0.45,cost:0}}],
+ chamber:[
+  {id:'taxcut',t:'Cut the property tax rate by 5 cents',b:'"Memphis has the highest property tax in the region. Cut it 5 cents and our members will hire here, not in DeSoto County."',tax:-0.05,grp:{business:2,owners:1},bk:{sk:'stew',b:0.45,tax:-0.02}},
+  {id:'permits',t:'Building permits in 30 days',b:'"A warehouse permit takes four months here and six weeks in Olive Branch. Get it to 30 days."',cost:1.5,fx:{jobs:0.6},grp:{business:1},bk:{sk:'learn',b:0.5,cost:0.8,fx:{jobs:0.3}}},
+  {id:'pilot',t:'A big tax break for a new distribution center',b:'"A company wants to build a 1,200-job distribution hub near the airport. They need a PILOT tax break to choose Memphis."',fx:{jobs:1.2,revenue:-1.5},grp:{business:1,working:1,labor:-1},bk:{sk:'intr',b:0.45,fx:{jobs:1,revenue:-0.8}}}],
+ county:[
+  {id:'schools',t:'Split the cost of school building repairs',b:'"MSCS buildings are falling apart, and the County can\'t fix them alone. Put up $5M and we\'ll match it."',cost:5,fx:{reading:0.3},grp:{parents:2},bk:{sk:'dip',b:0.5,cost:2.5,fx:{reading:0.15}}},
+  {id:'jail',t:'Pay part of the jail and juvenile court costs',b:'"Most people in the county jail were arrested by MPD. The city should pay its share."',cost:4,bk:{sk:'stew',b:0.5,cost:2}},
+  {id:'transit',t:'Back a countywide transit tax on the ballot',b:'"MATA needs steady money. Back a half-cent sales tax for transit on the county ballot."',fx:{transit:1.5},grp:{renters:2,young:1,owners:-1.5},bk:{sk:'cha',b:0.45,fx:{transit:0.8}}}],
+ state:[
+  {id:'preempt',when:()=>(S.laws||{}).minwage,t:'Repeal the contractor wage floor or face a lawsuit',b:'"Your $17 contractor wage breaks state law. Repeal it, or the attorney general will sue the city."',law:'minwage',grp:{labor:-2,working:-1},bk:{sk:'intr',b:0.4}},
+  {id:'roads',t:'Match state money for Lamar Avenue',b:'"The state will rebuild Lamar Avenue if Memphis puts up a $4M match."',cost:4,fx:{streets:1.2},grp:{owners:1,working:1},bk:{sk:'cha',b:0.45,cost:2,fx:{streets:0.6}}},
+  {id:'board',when:()=>facRel('state')<=-15,t:'A bill to put MPD under a state oversight board',b:'"Some of my colleagues think Memphis can\'t run its own police department. Give us something, or the bill moves."',grp:{},bk:{sk:'cha',b:0.4}}]};
+function demText(D){const p=[];if(D.cost)p.push(`−${fmtM(D.cost)} from the reserve`);if(D.tax)p.push(`tax rate ${D.tax<0?'−':'+'}${Math.round(Math.abs(D.tax)*100)}¢`);if(D.law)p.push('repeals the law');const fx=D.fx||{};
+  const nm={officers:'officers',jobs:'jobs',revenue:'revenue a year ($M)',blight:'blight',reading:'reading',transit:'transit',streets:'streets',mood:'mood'};for(const k in fx)p.push(`${nm[k]||k} ${fx[k]>0?'+':''}${fx[k]}`);return p.join(' · ')}
+function demApply(D){if(D.cost)S.reserve-=D.cost;if(D.tax)S.taxRate=Math.max(2.5,+(S.taxRate+D.tax).toFixed(2));if(D.law&&S.laws){delete S.laws[D.law];try{addRecord({t:`Repealed: ${(PROPOSALS.find(p=>p.id===D.law)||{}).title||D.law}`,kind:'law',bad:[],good:[]})}catch(e){}}applyFx(S,D.fx);if(D.grp)for(const g in D.grp)groupLift(g,D.grp[g]*0.8,D.t)}
+CHAR_TYPES.facdem={w:0,gen:()=>null,title:ev=>`${FACS[ev.fid].sh}: ${FDEM[ev.fid].find(x=>x.id===ev.did).t}`,
+  who:ev=>[['fac',ev.fid]],
+  body:ev=>{const F=FACS[ev.fid],D=FDEM[ev.fid].find(x=>x.id===ev.did),v=facRel(ev.fid),[tn]=facTier(v);return`${F.lead.name} of ${F.tn}: ${D.b}<br><small>Your relationship: <b>${tn} (${v>0?'+':''}${v})</b>.</small>`},
+  choices:[
+   {l:()=>'Agree to it',s:ev=>{const D=FDEM[ev.fid].find(x=>x.id===ev.did);return`${demText(D)||'No cost'} · ${FACS[ev.fid].sh} +18`},
+    need:ev=>{const D=FDEM[ev.fid].find(x=>x.id===ev.did);return!D.cost||S.reserve>=D.cost},
+    do:ev=>{const D=FDEM[ev.fid].find(x=>x.id===ev.did);demApply(D);facMod(ev.fid,`You agreed: ${D.t.toLowerCase()}`,18);try{addRecord({t:`Agreed with the ${FACS[ev.fid].sh.toLowerCase()}: ${D.t.toLowerCase()}`,kind:'fac',good:FACS[ev.fid].grp,bad:[]})}catch(e){}return`You gave ${FACS[ev.fid].tn} what it asked for.`}},
+   {l:()=>'Bargain for a smaller deal',s:ev=>{const D=FDEM[ev.fid].find(x=>x.id===ev.did),B=D.bk;return`Uses 1 action · ${oddsTag(B.sk,B.b)} · works: ${demText(B)||'no cost'}, +9 · fails: they walk away, −4`},need:()=>S.slots>0,
+    do:ev=>{S.slots--;const D=FDEM[ev.fid].find(x=>x.id===ev.did),B=D.bk;const ok=persuade(B.sk,B.b,[],8);if(ok){demApply({...B,t:D.t,grp:null});if(D.law&&ev.fid==='state')facMod('state','You promised to revisit the wage law',9);else facMod(ev.fid,'You met them halfway',9);return ev.fid==='state'&&D.id==='board'?'You traded a joint task force for the bill. It died in committee.':D.law?'You bought time. They\'ll wait, for now.':'You split the difference. Both sides can call it a win.'}facMod(ev.fid,'Your offer insulted them',-4);return'The talks went nowhere. They left unhappy.'}},
+   {l:()=>'Turn them down',s:ev=>`${FACS[ev.fid].sh} −14${ev.fid==='state'&&ev.did==='preempt'?' · the state may sue':''}${ev.fid==='state'&&ev.did==='board'?' · the bill may pass':''}`,
+    do:ev=>{const D=FDEM[ev.fid].find(x=>x.id===ev.did);facMod(ev.fid,`You refused: ${D.t.toLowerCase()}`,-14);if(D.refuseFx)applyFx(S,D.refuseFx);
+     if(ev.fid==='state'&&D.id==='preempt'){S.fac.state.suit=nowM()}if(ev.fid==='state'&&D.id==='board'){S.fac.state.board=nowM()}
+     FACS[ev.fid].grp.forEach(g=>groupLift(g,-0.6,`Turned down the ${FACS[ev.fid].sh.toLowerCase()}`));return`You said no. ${FACS[ev.fid].tn.replace(/^the /,'The ')} won't forget it.`}}],
+  ignore:ev=>{facMod(ev.fid,'You never answered us',-8)}};
+{const _cw=charWhoX;charWhoX=function(kind,id){if(kind==='fac'){const F=FACS[id];return{who:F.lead,role:F.role,attr:`data-facgo="${id}"`,o:facRel(id)}}return _cw.apply(this,arguments)}}
+{const _vo=visitorOf;visitorOf=function(ev){if(ev&&ev.type==='facdem'&&FACS[ev.fid]){const F=FACS[ev.fid];return{ev,who:F.lead,role:F.role,title:(()=>{try{return evTitle(ev)}catch(e){return'A request'}})()}}return _vo.apply(this,arguments)}}
+// ---------- monthly effects ----------
+function facMonth(report){if(!inOffice()||S.over)return;facInit();const yr=S.y,el=electionDate(),elYr=el.y===S.y;
+  FAC_IDS.forEach(id=>{const F=S.fac[id],v=facRel(id);F.hist=F.hist||[];F.hist.push(v);if(F.hist.length>24)F.hist.shift();
+    // a new demand every 7–11 months
+    if(nowM()>=F.next&&!(S.events||[]).some(e=>e.type==='facdem'&&e.fid===id)&&!(S.queue||[]).some(q=>q.ev.type==='facdem'&&q.ev.fid===id)){
+      const U=F.used||{};const pool=FDEM[id].filter(D=>(!D.when||D.when())&&(U[D.id]==null||nowM()-U[D.id]>=24));
+      if(pool.length){const D=pool[Math.floor(Math.random()*pool.length)];F.used=F.used||{};F.used[D.id]=nowM();queueChar({type:'facdem',fid:id,did:D.id,at:id==='state'||id==='county'?'cityhall':'cityhall'})}F.next=nowM()+7+Math.floor(Math.random()*5)}
+    const y=F.yr||(F.yr={});
+    if(id==='fop'){if(v>=40)S.met.officers+=4;if(v<=-40&&Math.random()<0.18&&nowM()-(F.flu||-99)>=8){F.flu=nowM();S.met.crime+=3;S.mood-=0.3;notify('bad','Blue flu: officers call in sick',`Hundreds of officers called in sick to protest City Hall. Crime is up this month. Your relationship with the police union: ${v}.`,()=>openPowers(),{ttl:14});report&&report.push('Officers staged a "blue flu" sickout.');try{newsAdd(-1.4,'"Blue flu" sickout leaves MPD shifts short')}catch(e){}}}
+    if(id==='afscme'&&v<=-40&&Math.random()<0.2&&nowM()-(F.slow||-99)>=6){F.slow=nowM();S.met.streets-=1;S.met.blight+=1.5;notify('bad','City crews slow down',`Sanitation and public works crews are working to rule. Trash is piling up and street repairs have stalled. Your relationship with AFSCME: ${v}.`,()=>openPowers(),{ttl:14});report&&report.push('City workers staged a slowdown.');try{newsAdd(-1.1,'City crews slow down in dispute with the mayor')}catch(e){}}
+    if(id==='chamber'&&S.camp&&monthsToElection()<=18){if(v>=30){const k=Math.round(v/4);S.camp.cash+=k;S.camp.raised+=k;try{flowC('donors',k)}catch(e){}}else if(v<=-30&&S.rival&&S.rival.camp)S.rival.camp.cash+=Math.round(-v/4)}
+    if(id==='chamber'&&v>=40)S.jobsBoost+=0.05;
+    if((id==='county'||id==='state')&&S.m===7&&!y[yr]){y[yr]=1;if(v>=40){const a=id==='county'?2:3;S.reserve+=a;notify('good',id==='county'?'The County picks up a shared cost':'A state grant for Memphis',`${FACS[id].tn.replace(/^the /,'The ')} sent ${fmtM(a)} because of your good relationship.`,()=>openPowers(),{ttl:10});report&&report.push(`${FACS[id].sh}: +${fmtM(a)}.`)}
+      else if(v<=-40){const a=id==='county'?1.5:2;S.reserve-=a;notify('bad',id==='county'?'The County shifts a cost to the city':'The state holds back road money',`${FACS[id].tn.replace(/^the /,'The ')} cost the city ${fmtM(a)} this year. Your relationship: ${v}.`,()=>openPowers(),{ttl:10});report&&report.push(`${FACS[id].sh}: −${fmtM(a)}.`)}}
+    if(id==='state'){if(F.suit!=null&&S.laws&&S.laws.minwage&&nowM()-F.suit>=3&&Math.random()<0.35){delete S.laws.minwage;F.suit=null;notify('bad','A court strikes down the contractor wage floor','The state attorney general sued, and a judge ruled the $17 contractor wage breaks the state preemption law. The law is gone.',()=>openPowers(),{ttl:16});report&&report.push('The state won its lawsuit against the contractor wage floor.');groupLift('labor',-1,'Lost the wage lawsuit')}
+      if(F.board!=null&&nowM()-F.board>=4){F.board=null;if(Math.random()<0.5){S.mood-=0.6;popHit(-0.8,'The state took over MPD oversight');notify('bad','The state takes over police oversight','The legislature passed the bill. A state-appointed board now oversees MPD policy.',()=>openPowers(),{ttl:16});try{newsAdd(-1.5,'Legislature puts MPD under a state board')}catch(e){}}else notify('good','The police oversight bill dies','The bill to put MPD under a state board stalled in the Senate.',()=>openPowers(),{ttl:10})}}
+  });
+  // endorsements late in an election year
+  if(elYr&&S.m===9){const F=S.fac.fop;if(!F.end||F.end!==yr){F.end=yr;const v=facRel('fop');if(v>=20){groupLift('owners',2,'The police union endorsed you');groupLift('faith',1,'The police union endorsed you');notify('good','The police union endorsed you',`${FACS.fop.tn.replace(/^the /,'The ')} backed your re-election.`,()=>openPowers(),{ttl:12});report&&report.push('The police union endorsed you.')}
+    else if(v<=-20&&S.rival){S.rival.camp&&(S.rival.camp.cash+=20);groupLift('owners',-1.5,`The police union endorsed ${S.rival.name}`);notify('bad',`The police union endorsed ${S.rival.name}`,`${FACS.fop.tn.replace(/^the /,'The ')} is backing your opponent.`,()=>openPowers(),{ttl:12});report&&report.push(`The police union endorsed ${S.rival.name}.`)}}}}
+{const _eom=endOfMonth;endOfMonth=function(...a){const r=_eom.apply(this,a);try{if(S&&S.started&&S.phase!=='ai')facMonth(null)}catch(e){console.warn('fac',e)}return r}}
+// the union council and business leaders' endorsements follow the relationship
+{const _es=endorseScore;endorseScore=function(E){const r=_es.apply(this,arguments);try{if(inOffice()&&S.fac){if(E.id==='unions')r.you+=facRel('afscme')/6;if(E.id==='bizlead')r.you+=facRel('chamber')/6}}catch(e){}return r}}
+// AFSCME volunteers knock doors for an ally in the last 4 months
+{const _gt=groupTurnout;groupTurnout=function(g,sup,o){let t=_gt.apply(this,arguments);try{if(inOffice()&&S.fac&&sup>=0.5&&monthsToElection()<=4&&(g.id==='labor'||g.id==='working')){const v=facRel('afscme');if(v>=30)t=clamp(t*1.05,0,1)}}catch(e){}return t}}
+// ---------- meeting them ----------
+function facMeet(id){const F=facInit()[id];if(S.slots<=0||nowM()-F.meet<3)return;S.slots--;F.meet=nowM();const sk=FACS[id].sk;const ok=persuade(sk,0.5,[],7);
+  facMod(id,ok?'A good meeting with the mayor':'A tense meeting with the mayor',ok?8:2);save();refreshHUD();try{sfx(ok?'good':'bad')}catch(e){}
+  toast(ok?`Good meeting with ${FACS[id].lead.name}. ${FACS[id].sh} +8.`:`The meeting with ${FACS[id].lead.name} was tense. ${FACS[id].sh} +2.`);openPowers()}
+// ---------- the screen ----------
+function facCard(id){const F=FACS[id],v=facRel(id),[tn,cl]=facTier(v),parts=facParts(id).slice().sort((a,b)=>Math.abs(b.v)-Math.abs(a.v)).slice(0,5);const st=S.fac[id];
+  const pend=(S.events||[]).some(e=>e.type==='facdem'&&e.fid===id);const cd=Math.max(0,3-(nowM()-st.meet));const hist=(st.hist||[]).slice(-12);
+  const spark=hist.length>1?`<svg class="facspark" viewBox="0 0 60 18" aria-hidden="true"><line x1="0" y1="9" x2="60" y2="9" stroke="currentColor" opacity=".25"/><polyline fill="none" stroke="currentColor" stroke-width="1.6" points="${hist.map((h,i)=>`${(i/(hist.length-1)*60).toFixed(1)},${(9-h/100*9).toFixed(1)}`).join(' ')}"/></svg>`:'';
+  return`<div class="faccard"><div class="fac-h"><span class="fac-ic">${F.ic}</span><div><b>${F.n}</b><small>${F.lead.name} · ${F.role.split(',')[0]}</small></div><span class="fac-rel ${cl}"><b>${v>0?'+':''}${v}</b><small>${tn}</small></span></div>
+   <div class="facbar"><i style="left:50%;width:0"></i><i class="${v>=0?'pos':'neg'}" style="${v>=0?'left:50%':'right:50%'};width:${Math.abs(v)/2}%"></i></div>${spark}
+   <p class="note">${F.d}</p>
+   <h5>Why they feel this way</h5><ul class="numlist">${parts.length?parts.map(x=>`<li>${x.t}: <b class="${x.v>0?'pos':'neg'}">${x.v>0?'+':'−'}${Math.abs(x.v).toFixed(0)}</b></li>`).join(''):'<li>Nothing yet. They\'re waiting to see what you do.</li>'}</ul>
+   <div class="qrgrid"><div><small>If they're allies (+40)</small><p>${F.hi}</p></div><div><small>If they're hostile (−40)</small><p>${F.lo}</p></div></div>
+   ${pend?`<p class="facpend">⚑ They have a request waiting for you at City Hall.</p>`:''}
+   <div class="row">${pend?`<button class="btn primary" data-facreq="${id}">See their request</button>`:''}${inOffice()||isCand()?`<button class="btn" data-facmeet="${id}" ${S.slots<=0||cd?'disabled':''}>Meet with ${F.lead.name.split(' ').slice(-1)[0]}<small> · ${cd?`again in ${cd} mo`:`1 action · ${oddsTag(F.sk,0.5)}`}</small></button>`:''}</div></div>`}
+function openPowers(){facInit();const ids=FAC_IDS.slice().sort((a,b)=>facRel(a)-facRel(b));
+  openModal('Power players · '+FAC_IDS.length+' organized groups','Who has power in Memphis',`<p>These groups aren't voters you win over one by one. They're organized, they make demands, and they can help or hurt you. ${isCand()?'As a candidate you can meet with them now; their demands start once you\'re mayor.':'Each one asks for something every 7 to 11 months. You can agree, bargain with a skill, or say no.'}</p>
+   ${ids.map(facCard).join('')}<div class="row"><button class="btn primary" data-act="close">Back</button></div>`,true)}
+openPowers=navWrap('openPowers',openPowers);
+document.addEventListener('click',e=>{const b=e.target.closest('[data-facmeet],[data-facreq],[data-facgo],[data-powers]');if(!b||!S)return;e.preventDefault();e.stopImmediatePropagation();
+  if(b.dataset.facmeet){facMeet(b.dataset.facmeet);return}if(b.dataset.facreq){if(modalOpen){onClose=null;closeModal()}openPlace('cityhall');return}if(modalOpen){onClose=null;closeModal()}openPowers()},true);
+// entry points: Take action, the People hub and the economy screen
+{const _om=openModal;openModal=function(...a){const r=_om.apply(this,a);try{const n=NAV.cur?NAV.cur.name:'',b=$('mBody');
+  if(n==='flow_people'){const g=b.querySelector('.flow-grid');if(g&&!g.querySelector('[data-powers]'))g.insertAdjacentHTML('afterbegin',`<button class="flow-tile" data-powers="1"><b>Power players</b><span>Police union, city workers, the Chamber, the County and the state</span></button>`)}
+  if(n==='openActions'&&!b.querySelector('[data-powers]')){const x=b.querySelector('[data-econ]');if(x)x.insertAdjacentHTML('afterend',' <button class="btn" data-powers="1">Power players</button>')}
+  if(n==='openEconomy'&&!b.querySelector('[data-powers]'))b.insertAdjacentHTML('beforeend','<div class="row"><button class="btn" data-powers="1">See how unions, the Chamber and the state feel about you</button></div>')}catch(e){}return r}}
 function openLedger(){const L=S.log||[];openPanel('Everything that has happened, newest first','Ledger',L.length?`<div class="logl">${L.map(x=>`<div><span>${x.d}</span><p style="margin:0">${x.t}</p></div>`).join('')}</div>`:'<p class="note">Nothing yet. Start the clock with Space or ▶.</p>','ledger')}
 function openPolicies(){const ks=Object.keys(POLICIES);
   openPanel('Ongoing programs you control','Your initiatives',`<p>Mid-year, these are paid from the reserve fund. In April they go into the budget you send the council.</p>

@@ -4,6 +4,22 @@ A city-management game set in Memphis, Tennessee. You play the mayor. You handle
 
 **Play it:** https://erndae.github.io/Bluff-city-mayor/ (once GitHub Pages is turned on, see below)
 
+## v26.56: Power players
+
+Five organized groups now act on their own: the Memphis Police Association, AFSCME Local 1733 (the city workers' union), the Greater Memphis Chamber, the Shelby County Commission and the Tennessee General Assembly.
+
+- **Relationships with reasons.** Each group's relationship with you runs from −100 to +100. It comes from what you've done: the police budget and headcount, city worker raises, the tax rate and business laws, city–county relations, and laws that test the state's preemption rules. It also counts how you've treated them, which fades over time. Open **People → Power players**, **Take action** or **The economy** to see every reason.
+- **Demands.** Every 7 to 11 months each group asks for something, such as an officer raise, new garbage trucks, a 5-cent tax cut, a split of the jail costs, or a state match for Lamar Avenue. You can agree, bargain with a skill (1 action, smaller deal), or say no. Their leader comes to your office in person.
+- **Consequences:**
+  - A hostile police union can stage a "blue flu" sickout.
+  - A hostile AFSCME can slow city crews.
+  - The Chamber funds you or your opponent before elections.
+  - The County and the state either send money or shift costs once a year.
+  - The state can sue to strike down the contractor wage floor or put MPD under a state board.
+  - Allies help you: recruiting, door-knocking and endorsements. The union council and business leaders' endorsements follow these relationships, and the police union endorses in September of an election year.
+- **Meet with them.** You can meet each group's leader once every 3 months (1 action, skill check).
+- **Fix:** "Receive" in office hours no longer reopens the visitor list on top of the conversation.
+
 ## v26.55: A campaign manager who reads the race and the budget
 
 - Manager priorities, periodic tips and routine campaign desk suggestions share one availability-aware plan. It targets the closest available two-way district race and labels long shots honestly instead of automatically recommending the weakest district.
