@@ -366,6 +366,7 @@ nav.actions [data-actsgo]{min-height:44px;padding:9px 17px;border-color:rgba(242
 .partyrow{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin:10px 0 2px}.partyrow span{margin-right:4px}
 .tnmap{width:100%;max-width:420px;height:auto!important;aspect-ratio:330/96;flex-shrink:0;display:block;margin:8px 0 2px}.homelife .neg{color:var(--bad,#e06060)}.tnmap .tnst{fill:var(--panel2,rgba(127,127,127,.08));stroke:var(--line,rgba(127,127,127,.4));stroke-width:1}.tnmap .tnl{font-size:9px;fill:var(--ink2,currentColor);font-weight:600}.tnmap .tnmem{fill:var(--acc,#e8b04f)}.tnmap .tncity{fill:var(--ink2,#888)}.faccard.homes{border-left:3px solid var(--acc,#e8b04f)}
 .calstrip{display:flex;gap:4px;margin:8px 0 4px}.calstrip span{flex:1;text-align:center;font-size:11px;font-weight:600;padding:5px 2px;border-radius:6px;border:1px solid var(--line,rgba(127,127,127,.35));opacity:.6}.calstrip span.rec{border-style:dashed}.calstrip span.done{opacity:.35}.calstrip span.on{opacity:1;background:var(--acc,#e8b04f);color:#1a1a1a;border-color:transparent}
+.clock .cspeed,.clock .ptag{display:none!important}#bPlay .contto{display:block;font-size:11px;font-weight:600;opacity:.8;letter-spacing:0;text-transform:none;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}#bPlay{flex-direction:column;line-height:1.15}#bPlay.contrun{opacity:.85}#bPlay .contmain{display:inline-flex;align-items:center;gap:6px}
 .adgain{display:block;width:100%;text-align:center;font-size:11px;font-weight:600;color:var(--good);margin-top:1px}
 #start{overflow-x:hidden;overflow-y:auto;touch-action:pan-y}.startbox{min-width:0;max-width:min(600px,100%);box-sizing:border-box}.startbox *{min-width:0}.create select,.create input{max-width:100%;width:100%;box-sizing:border-box;text-overflow:ellipsis}.create .tpick,.create .tpick>*{max-width:100%;box-sizing:border-box}
 @media (max-width:640px){.startbox{margin-left:0}#start{padding-left:max(16px,env(safe-area-inset-left,0px))}}
@@ -718,7 +719,7 @@ details.analysis{margin-top:6px}details.analysis summary{cursor:pointer;color:va
     <button class="btn primary" data-act="pause" id="bPlay"><svg class="ico" viewBox="0 0 12 12" aria-hidden="true"><path d="M3.2 1.6v8.8l7.2-4.4z" fill="currentColor"/></svg> Resume <kbd>Space</kbd></button>
   </nav>
   <div class="status" id="status">Loading map…</div>
-  <div class="credit"><span class="ver" id="verTag">v26.77</span></div>
+  <div class="credit"><span class="ver" id="verTag">v26.78</span></div>
   <div class="tip" id="tip" hidden></div>
   <div class="toast" id="toast" role="status"></div>
   <section class="panel" id="panel" hidden aria-live="polite">
@@ -746,7 +747,7 @@ details.analysis{margin-top:6px}details.analysis summary{cursor:pointer;color:va
         <button class="btn" data-music-open>Music &amp; volume</button>
       </div>
       <div id="slotList" hidden></div>
-      <p class="note startv">Version <b class="ver" id="verStart">v26.77</b></p>
+      <p class="note startv">Version <b class="ver" id="verStart">v26.78</b></p>
     </div>
     <div class="startbox create" id="create" hidden>
       <h2>Create your mayor</h2>
@@ -1557,7 +1558,7 @@ function enact(s,p){DIVS.forEach(d=>{s.enacted[d.id]=p.divs[d.id];s.ratio[d.id]=
 // Voter groups. Each has a share of residents, turnout, home districts, concerns and an approval of you.
 // Citywide approval is the turnout-weighted average of the groups; each council district's approval comes from the groups that live there.
 // Shares, district mix and turnout are modeled, loosely grounded in Memphis demographics; they are not survey data.
-const VERSION='v26.77';
+const VERSION='v26.78';
 const GROUPS=[
  {id:'working',sh:'Working families',n:'Working families',ic:'⚒︎',c:'#f2a93b',share:24,turn:.5,start:56,w:{jobs:1,safety:.8,transit:.5},
   d:'Hourly workers in logistics, warehouses, health care and service jobs. The biggest bloc in the city.',dm:{1:1.1,2:.8,3:1.3,4:1.2,5:.6,6:1.2,7:1.1}},
@@ -4046,7 +4047,7 @@ const anyAct=re=>Object.keys(S.acts||{}).some(k=>re.test(k));
 const GUIDE_MAYOR=[
  {id:'brief',t:'Read your chief of staff\'s briefing',h:'Open City Hall and answer the briefing.',done:()=>!S.events.some(e=>e.id==='briefing'),go:()=>openPlace('cityhall')},
  {id:'prom',t:'Make your three promises',h:'They become your record in the next election.',done:()=>!!S.promises,go:()=>openPromises()},
- {id:'clock',t:'Start the clock',h:'Tap ▶ Resume. Time runs day by day; + and − change the speed.',done:()=>!S.paused||S.day>=5||nowM()>(S.guide.m0||0),go:()=>setPaused(false)},
+ {id:'clock',t:'Continue',h:'Tap ▶ Continue. Time moves ahead and stops on its own when something needs you.',done:()=>!S.paused||S.day>=5||nowM()>(S.guide.m0||0),go:()=>setPaused(false)},
  {id:'issue',t:'Handle a problem on the map',h:'Click an amber pin, or a desk item, and choose a response.',done:()=>((S.stats||{}).resolved||0)>0,go:()=>{const e=S.events.find(e=>e.kind==='event'&&e.id!=='briefing');if(e)openPlace(evAt(e));else openDesk()}},
  {id:'meet',t:'Meet a council member in private',h:'Open the Council, pick a member, and use one of your monthly actions.',done:()=>S.council.some(m=>m.met!=null&&m.met>=0),go:()=>openCouncil()},
  {id:'civic',t:'Visit a police station, fire station or hospital',h:'Click a ★, ▲ or ✚ on the map.',done:()=>Object.values(S.civic||{}).some(c=>Object.keys(c.acts||{}).length),go:()=>openCivicList('fire')},
@@ -4062,7 +4063,7 @@ const GUIDE_MAYOR=[
  {id:'budget',t:'Send the council your budget in April',h:'In April, open the Budget office and submit.',done:()=>S.stage==='submitted'||S.stage==='adopted'||!!S.pending||(S.fyIndex||0)>(S.guide.fy0||0),go:()=>openBudget()}];
 const GUIDE_CAND=[
  {id:'plat',t:'Choose your platform',h:'Three planks. If you win, they become your promises.',done:()=>!!S.promises,go:()=>openPromises()},
- {id:'clock',t:'Start the clock',h:'Tap ▶ Resume.',done:()=>!S.paused||S.day>=5||nowM()>(S.guide.m0||0),go:()=>setPaused(false)},
+ {id:'clock',t:'Continue',h:'Tap ▶ Continue.',done:()=>!S.paused||S.day>=5||nowM()>(S.guide.m0||0),go:()=>setPaused(false)},
  {id:'doors',t:'Knock doors in a district',h:'Actions (E) → Knock doors. It builds support and name recognition.',done:()=>anyAct(/^kd\d/),go:()=>openActions()},
  {id:'leaders',t:'Meet community leaders',h:'Actions (E) → Meet community leaders.',done:()=>anyAct(/^cg/),go:()=>openActions()},
  {id:'fund',t:'Hold a grassroots fundraiser',h:'Campaign HQ (K). Money pays for ads, organizers and polls.',done:()=>anyAct(/^fr_/),go:()=>openHQ()},
@@ -4581,7 +4582,7 @@ function citizenMark(root){if(!S||!S.started||inOffice()||!root)return;root.quer
 // off to the first decision (promises or platform). It can be replayed from the Guide.
 const TUT_MAYOR=[
  {t:()=>`Welcome, Mayor ${S.mayor.name.split(' ').pop()}`,b:()=>`You run Memphis: a $906 million budget, 13 council members, about 605,000 people. Your term ends on <b>Election Day, Thursday, October 7, 2027</b>. Keep the city working and voters on your side, and you win a second term.`},
- {sel:'#clock',t:()=>'Time',b:()=>'The game is paused. Press ▶ (or Space) and days start to pass. New problems pause the clock for you. + and − change the speed. You get 4 actions a month; your chief of staff checks in every Monday, and four days before the month ends pauses the clock if you still have actions or decisions left. One unused action carries over.'},
+ {sel:'#clock',t:()=>'Time',b:()=>'Press ▶ Continue (or Space) and time moves ahead until something needs you: a visitor, a vote, a crisis, a deadline, or a new month. You get 4 actions a month, and they refill at the start of each month. One unused action carries over.'},
  {sel:'.hud-top .stat.click',t:()=>'Approval and clout',b:()=>'Approval is what wins elections. Clout, next to it, is your pull beyond City Hall: the more popular you are, the more you can move the school district, the county or the state.'},
  {sel:'#hRes',up:1,t:()=>'The reserve',b:()=>'The city\'s savings. Projects and programs draw on it. Spending $1M or more from it outside the budget takes 7 council votes.'},
  {sel:'#hCouncil',up:1,t:()=>'The council',b:()=>'Thirteen members; 7 votes pass anything, including your budget in June. Meet them privately, deliver for their districts, and keep their favor.'},
@@ -4595,7 +4596,7 @@ const TUT_CAND=[
  {sel:'.actions [data-act="actions"]',t:()=>'Meet voters',b:()=>'Actions (E): knock doors in a district, meet community groups and give speeches on the issues. Each uses one of your 3 actions a month.'},
  {sel:'.actions [data-act="hq"]',t:()=>'Campaign HQ',b:()=>'Campaign HQ (K): raise money, run polls and ads, hire organizers, open offices and ask groups for endorsements. Ads work best in the last three months.'},
  {sel:'#desk',mob:'.actions [data-act="desk"]',t:()=>'Your desk',b:()=>'Candidate forums and debates show up here, along with <b>What to do next</b>.'},
- {sel:'#clock',t:()=>'Time',b:()=>'Press ▶ (or Space) to let days pass. Forums and debates pause the clock for you. Your campaign manager checks in every Monday, and four days before the month ends pauses the clock if you still have actions left. One unused action carries over.'}];
+ {sel:'#clock',t:()=>'Time',b:()=>'Press ▶ Continue (or Space) and time moves ahead until something needs you: a forum, a debate, a check-in from your campaign manager, or a new month. One unused action carries over.'}];
 let TUT=null;
 function tutTarget(st){if(!st.sel)return null;const mob=window.innerWidth<=860;let el=mob&&st.mob?document.querySelector(st.mob):document.querySelector(st.sel);
   for(let i=0;el&&i<(st.up||0);i++)el=el.parentElement;if(!el||!el.offsetParent)return null;try{const strip=el.closest('.actions');if(strip&&strip.scrollWidth>strip.clientWidth&&el.id!=='bPlay'){strip.scrollLeft=Math.max(0,el.offsetLeft-strip.clientWidth/2+el.offsetWidth/2)}else el.scrollIntoView({block:'nearest',inline:'nearest'})}catch(e){}const r=el.getBoundingClientRect();return r.width&&r.height?r:null}
@@ -5806,7 +5807,7 @@ CHAR_TYPES.grudge={w:0,title:ev=>`${S.council[ev.a].name} has a grudge`,gen:()=>
 GUIDE_CAND.length=0;GUIDE_CAND.push(
  {id:'plat',t:'Choose your platform',h:'Three promises you run on. If you win, they become your agenda.',done:()=>!!S.promises,go:()=>openPromises()},
  {id:'mgr',t:'Hire a campaign manager',h:'They plan your race, check in every two weeks and point you to the next move.',done:()=>!!curMgr(),go:()=>openMgr()},
- {id:'clock',t:'Start the clock',h:'Tap ▶. Time keeps moving while you look around.',done:()=>!S.paused||S.day>=5||nowM()>(S.guide.m0||0),go:()=>setPaused(false)},
+ {id:'clock',t:'Continue',h:'Tap ▶ Continue. Time moves ahead until something needs you.',done:()=>!S.paused||S.day>=5||nowM()>(S.guide.m0||0),go:()=>setPaused(false)},
  {id:'doors',t:'Knock doors in a district',h:'Uses 1 action. Builds support and name recognition where you knock.',done:()=>anyAct(/^kd\d/),go:()=>goSection(openCandActions,'Knock doors')},
  {id:'calls',t:'Call donors',h:'Free, once a week. Money pays for ads, polls and organizers.',done:()=>!!(S.free&&S.free.calls!=null),go:()=>openFree()},
  {id:'speak',t:'Speak out on an issue',h:'Free, once a month. Pick what your weakest groups care about.',done:()=>anyAct(/^cspeak/),go:()=>goSection(openCandActions,'Speak out')},
@@ -7312,13 +7313,13 @@ const PRESS={
 const PRESS_IDS=Object.keys(PRESS);
 function pressInit(){S.reporters=S.reporters||{};PRESS_IDS.forEach(id=>{if(!S.reporters[id])S.reporters[id]={rel:0,cd:-99,mods:[]}});return S.reporters}
 function pressRel(id,v,why){pressInit();const P=S.reporters[id];P.rel=clamp(P.rel+v,-100,100);if(why){P.mods.unshift({t:why,v,d:dateStr()});if(P.mods.length>6)P.mods.length=6}}
-function relOf(id){return(pressInit()[id]||{rel:0}).rel}
-function tvMul(){return 1-clamp(relOf('marcus'),-100,100)/400}
-{const _na=newsAdd;newsAdd=function(tone,head,opts){try{if(S&&S.reporters){const r=relOf('marcus');tone=tone<0?tone*(1-r/400):tone*(1+r/400)}}catch(e){}return _na.call(this,tone,head,opts)}}
-{const _gl=groupLift;groupLift=function(gid,v,label){try{if(S&&S.reporters&&['renters','working','faith'].includes(gid)){const r=relOf('keisha');v=v>0?v*(1+Math.max(0,r)/400):v*(1+Math.max(0,-r)/400)}}catch(e){}return _gl.call(this,gid,v,label)}}
+function pressRelOf(id){return(pressInit()[id]||{rel:0}).rel}
+function tvMul(){return 1-clamp(pressRelOf('marcus'),-100,100)/400}
+{const _na=newsAdd;newsAdd=function(tone,head,opts){try{if(S&&S.reporters){const r=pressRelOf('marcus');tone=tone<0?tone*(1-r/400):tone*(1+r/400)}}catch(e){}return _na.call(this,tone,head,opts)}}
+{const _gl=groupLift;groupLift=function(gid,v,label){try{if(S&&S.reporters&&['renters','working','faith'].includes(gid)){const r=pressRelOf('keisha');v=v>0?v*(1+Math.max(0,r)/400):v*(1+Math.max(0,-r)/400)}}catch(e){}return _gl.call(this,gid,v,label)}}
 // Corinne: a burned investigative reporter digs harder; a friendly one calls first
-{const _sr=secretRisk;secretRisk=function(s){let p=_sr.apply(this,arguments);try{const r=relOf('dana');if(r<=-30)p*=1.5;else if(r<0)p*=1+(-r)/100*0.5}catch(e){}return clamp(p,0.003,0.35)}}
-{const _ex=exposeSecret;exposeSecret=function(s,how){try{if(s&&!s.out&&!s.warned&&relOf('dana')>=25&&/reporter/i.test(how||'')&&!S.over){s.warned=true;S.danaCall={sid:s.id,due:dayN()+3};try{sfx('crisis')}catch(e){}notify('bad','Corinne Prewitt is calling','She has the story and runs it in 3 days. Because you\'ve been straight with her, she\'s giving you the chance to respond first.',()=>openDanaCall(),{ttl:10});setTimeout(()=>{try{openDanaCall()}catch(e){}},300);return}}catch(e){}return _ex.apply(this,arguments)}}
+{const _sr=secretRisk;secretRisk=function(s){let p=_sr.apply(this,arguments);try{const r=pressRelOf('dana');if(r<=-30)p*=1.5;else if(r<0)p*=1+(-r)/100*0.5}catch(e){}return clamp(p,0.003,0.35)}}
+{const _ex=exposeSecret;exposeSecret=function(s,how){try{if(s&&!s.out&&!s.warned&&pressRelOf('dana')>=25&&/reporter/i.test(how||'')&&!S.over){s.warned=true;S.danaCall={sid:s.id,due:dayN()+3};try{sfx('crisis')}catch(e){}notify('bad','Corinne Prewitt is calling','She has the story and runs it in 3 days. Because you\'ve been straight with her, she\'s giving you the chance to respond first.',()=>openDanaCall(),{ttl:10});setTimeout(()=>{try{openDanaCall()}catch(e){}},300);return}}catch(e){}return _ex.apply(this,arguments)}}
 function openDanaCall(){const C=S.danaCall;if(!C)return;const s=(S.secrets||[]).find(x=>x.id===C.sid);if(!s||s.out){S.danaCall=null;return}closePanel();
   openModal('The Bluff Ledger · Corinne Prewitt','She has the story',`<div class="dq"><small>Corinne Prewitt</small><p>"I have documents showing ${s.t.replace(/^You /,'you ').replace(/^Your /,'your ')}. It runs Thursday. I wanted you to hear it from me, and I'll print whatever you say."</p></div>
    <div class="choices"><button class="choice" data-dana="clean"><b>Come clean to her, on the record</b><small>About half the damage, no trial · Corinne +10</small></button>
@@ -7340,7 +7341,7 @@ const PRESS_ACT={
 function pressDo(id,a){const P=PRESS[id],st=pressInit()[id];if(a!=='freeze'&&(S.slots<=0||nowM()-st.cd<2))return;let msg;
   if(a==='interview'){S.slots--;st.cd=nowM();if(persuade(P.sk,0.5,[],8)){pressRel(id,12,'A good exclusive interview');try{newsAdd(1,`${P.outlet}: an hour with the ${isCand()?'candidate':'mayor'}`)}catch(e){}msg=`${P.name}'s piece came out fair, even warm. +12.`}else{pressRel(id,3,'An awkward interview');try{newsAdd(-0.6,`${P.outlet}: the ${isCand()?'candidate':'mayor'} dodges hard questions`)}catch(e){}msg=`The interview went badly. ${P.name} wrote that you dodged. +3.`}}
   if(a==='tip'){const D=(S.dossier||[]).findIndex(x=>S.rival&&x.on===S.rival.name);S.slots--;st.cd=nowM();pressRel(id,8,'Gave them a story');
-    if(D>=0&&id!=='keisha'){const X=S.dossier[D];S.dossier.splice(D,1);const rc=S.rival.camp;const traced=Math.random()>(relOf(id)>=20?0.9:0.6);rc.dmg=(rc.dmg||0)+(X.crime?4:2);if(X.crime&&Math.random()<0.55){rc.cash=Math.round(rc.cash*0.4);S.rival.indicted=true;rc.dmg+=3}
+    if(D>=0&&id!=='keisha'){const X=S.dossier[D];S.dossier.splice(D,1);const rc=S.rival.camp;const traced=Math.random()>(pressRelOf(id)>=20?0.9:0.6);rc.dmg=(rc.dmg||0)+(X.crime?4:2);if(X.crime&&Math.random()<0.55){rc.cash=Math.round(rc.cash*0.4);S.rival.indicted=true;rc.dmg+=3}
       try{newsAdd(0.5,`${P.outlet}: ${S.rival.name} ${X.t}`)}catch(e){}if(traced)popHit(-0.6,'Your leak was traced');msg=`${P.name} ran the story about how ${S.rival.name} ${X.t}.${traced?' Another reporter figured out it came from you.':' Nobody knows it came from you.'}`}
     else{try{newsAdd(0.9,`${P.outlet}: inside a city program that's working`)}catch(e){}if(id==='keisha'){groupLift('renters',0.8,'A good story on the Beale Street Wire');groupLift('working',0.6,'A good story on the Beale Street Wire')}msg=`${P.name} ran a story about something going right in Memphis. +8.`}}
   if(a==='freeze'){pressRel(id,-25,'You froze them out');st.cd=nowM();msg=`Your office stopped returning ${P.name}'s calls. ${id==='dana'?'She took it as a sign there\'s something to find.':'They noticed.'}`}
@@ -7364,7 +7365,7 @@ CHAR_TYPES.press={w:0,gen:()=>null,title:ev=>`${PRESS[ev.pid].name} wants a comm
    {l:()=>'Send a written statement',s:()=>'Free · −2 with them',do:ev=>{pressRel(ev.pid,-2,'Sent a statement instead of talking');return'You sent two careful paragraphs.'}},
    {l:()=>'No comment',s:ev=>`Free · −8 with them${ev.sid?' · she keeps digging':''}`,do:ev=>{pressRel(ev.pid,-8,'"No comment"');if(ev.sid){const s=(S.secrets||[]).find(x=>x.id===ev.sid);if(s)s.covered=Math.min(2,s.covered*1.1)}return'"No comment." They printed that, too.'}}],
   ignore:ev=>{pressRel(ev.pid,-6,'Never called back')}};
-{const _cw=charWhoX;charWhoX=function(kind,id){if(kind==='press'&&PRESS[id]){const P=PRESS[id];return{who:P,role:`${P.beat}, ${P.outlet}`,attr:'data-pressopen="1"',o:relOf(id)}}return _cw.apply(this,arguments)}}
+{const _cw=charWhoX;charWhoX=function(kind,id){if(kind==='press'&&PRESS[id]){const P=PRESS[id];return{who:P,role:`${P.beat}, ${P.outlet}`,attr:'data-pressopen="1"',o:pressRelOf(id)}}return _cw.apply(this,arguments)}}
 {const _vo=visitorOf;visitorOf=function(ev){if(ev&&ev.type==='press'&&PRESS[ev.pid]){const P=PRESS[ev.pid];return{ev,who:P,role:`${P.beat}, ${P.outlet}`,title:`${P.name} wants a comment`}}return _vo.apply(this,arguments)}}
 function pressMonth(){if(!S||!S.started||S.over||S.phase==='ai')return;pressInit();if(S.pressNext==null)S.pressNext=nowM()+2;if(nowM()<S.pressNext)return;if((S.events||[]).some(e=>e.type==='press')||(S.queue||[]).some(q=>q.ev.type==='press'))return;S.pressNext=nowM()+2+Math.floor(Math.random()*3);
   const L=liveSecrets();let pid,q,sid=null;
@@ -7376,7 +7377,7 @@ function pressMonth(){if(!S||!S.started||S.over||S.phase==='ai')return;pressInit
 {const _os=openSchemes;openSchemes=function(...a){const r=_os.apply(this,a);try{const b=$('mBody');if(b&&!b.querySelector('.v60wrap')){const w=document.createElement('div');w.className='v60wrap';
   const crimes=(S.council||[]).map((m,k)=>({m,k,N:S.npcSec&&S.npcSec[m.name]})).filter(x=>x.N&&x.N.found&&x.N.sev>=2&&!x.m.indicted&&!x.N.fbi);
   const ind=(S.council||[]).filter(m=>m.indicted).map(m=>m.name);
-  w.innerHTML=`<div class="row"><button class="btn" data-pressopen="1">The press corps: ${PRESS_IDS.map(id=>`${PRESS[id].name.split(' ')[0]} ${relOf(id)>0?'+':''}${Math.round(relOf(id))}`).join(' · ')}</button></div>
+  w.innerHTML=`<div class="row"><button class="btn" data-pressopen="1">The press corps: ${PRESS_IDS.map(id=>`${PRESS[id].name.split(' ')[0]} ${pressRelOf(id)>0?'+':''}${Math.round(pressRelOf(id))}`).join(' · ')}</button></div>
    ${crimes.length?`<h4 class="plh">Crimes you know about</h4>${crimes.map(x=>`<div class="plotcard mine"><b>${x.m.name} ${x.N.t}</b><p class="note">Keep it as a hook, or hand it to the FBI. If they're convicted, they lose their seat.</p><div class="choices"><button class="choice" data-fbi="${x.k}" ${S.slots<=0?'disabled':''}><b>Hand it to the FBI</b><small>1 action · 75% chance they're indicted · reformers and Corinne like it</small></button></div></div>`).join('')}`:''}
    ${ind.length?`<p class="note">Under indictment: ${ind.join(', ')}.</p>`:''}${S.rival&&S.rival.indicted?`<p class="note">${S.rival.name} is under federal investigation.</p>`:''}`;
   const first=b.querySelector('h4.plh');if(first)b.insertBefore(w,first);else b.prepend(w)}}catch(e){console.warn(e)}return r};VIEWS.openSchemes=openSchemes}
@@ -8245,7 +8246,7 @@ function chooseFamLoc(w){const r=resOf();if(!r||r.fam)return;r.fam=w;let m;if(w=
 function sellDC(){const A=S&&S.after;if(!A||!A.res)return;const r=A.res;if(r.own){const back=Math.round(r.own.paid*(1+0.03*Math.max(0,S.y-r.own.y)));S.purse.cash+=back;afterLog(`You sold the D.C. townhouse and got back $${back.toLocaleString()}.`)}if(r.fam==='dc')afterLog('Your family moved back to Memphis.');A.res=null}
 // ---------- flying ----------
 const FLIGHTS=8;
-function flyTo(dest){const A=afterInit(),r=resOf();if(!r||!r.dc||r.where===dest||r.flights>=FLIGHTS)return;r.flights++;r.where=dest;const H=hInit();if(H)H.st=clamp(H.st+3,0,100);
+function cgFlyTo(dest){const A=afterInit(),r=resOf();if(!r||!r.dc||r.where===dest||r.flights>=FLIGHTS)return;r.flights++;r.where=dest;const H=hInit();if(H)H.st=clamp(H.st+3,0,100);
   let m=dest==='dc'?`You flew from Memphis to Washington. ${r.fam==='memphis'?'Your family saw you off at the airport.':''}`:`You flew home to ${homeLabel()}. ${r.fam==='memphis'?'Your family met you at the airport.':''}`;
   if(Math.random()<0.07&&(A.ra||0)<ROLE_ACTS){A.ra=(A.ra||0)+1;m+=' Storms delayed the flight for hours, and you lost a day of work (one move).'}
   if(dest==='home'&&r.fam==='memphis')homeAdd(3);afterLog(m.trim());save();AFTER_MSG=m.trim();openAfter()}
@@ -8307,7 +8308,7 @@ function skipVote(){const A=afterInit(),c=A.cg;if(!c||!c.vote)return;c.party-=4;
   const c=A.cg;if(c&&c.vote&&r.where!=='dc'){const vb=desk.querySelector('[data-cvote]');const card=vb&&vb.closest('.faccard');if(card){card.querySelectorAll('[data-cvote]').forEach(x=>x.disabled=true);card.querySelector('.choices').insertAdjacentHTML('beforeend',`<button class="choice" data-fly="dc" ${r.flights<FLIGHTS?'':'disabled'}><b>✈ Fly back to Washington for the vote</b><small>Stress +3 · then vote</small></button><button class="choice" data-skipvote="1"><b>Miss the vote</b><small>Party −4 · approval back home −2 · your opponent will count missed votes</small></button>`)}}
   }catch(e){console.warn('v75 screen',e)}return out}}
 document.addEventListener('click',e=>{const b=e.target.closest('[data-dist],[data-distx],[data-dch],[data-famloc],[data-fly],[data-skipvote]');if(!b||!S||!S.after)return;e.preventDefault();e.stopImmediatePropagation();const d=b.dataset;
-  if(d.dist){pickDistrict(d.dist);return}if(d.distx){S.after.pickDist=false;save();openAfter();return}if(d.dch){chooseDC(d.dch);return}if(d.famloc){chooseFamLoc(d.famloc);return}if(d.fly){flyTo(d.fly);return}if(d.skipvote)skipVote()},true);
+  if(d.dist){pickDistrict(d.dist);return}if(d.distx){S.after.pickDist=false;save();openAfter();return}if(d.dch){chooseDC(d.dch);return}if(d.famloc){chooseFamLoc(d.famloc);return}if(d.fly){cgFlyTo(d.fly);return}if(d.skipvote)skipVote()},true);
 
 // ======================= v26.76: MEMPHIS'S DELEGATION IN CONGRESS; HOME LIFE AFTER CITY HALL; SENATE WORDING =======================
 // Under the 2026 map Memphis has three members of Congress (the 5th, 8th and 9th districts), and for each of them
@@ -8468,7 +8469,27 @@ function chalAnswer(i){const A=S.after,c=A.cg;if(!A.chalAsk)return;A.chalAsk=fal
   const yr=b.querySelector('[data-ayear]');if(yr){if(K.p<3||blocked)yr.disabled=true;const sm=yr.querySelector('small'),bb=yr.querySelector('b');if(bb)bb.textContent=K.p<3?'Finish the year (after the fall session)':'Finish the year';if(sm&&K.p<3)sm.textContent='Work through each stretch of the year first'}}catch(e){console.warn('cal',e)}return out}}
 document.addEventListener('click',e=>{const b=e.target.closest('[data-cnext],[data-cev],[data-chal]');if(!b||!S||!S.after)return;e.preventDefault();e.stopImmediatePropagation();if(b.dataset.cnext){nextPeriod();return}if(b.dataset.cev){lifeAnswer(+b.dataset.cev);return}chalAnswer(+b.dataset.chal)},true);
 
-function openLedger(){const L=S.log||[];openPanel('Everything that has happened, newest first','Ledger',L.length?`<div class="logl">${L.map(x=>`<div><span>${x.d}</span><p style="margin:0">${x.t}</p></div>`).join('')}</div>`:'<p class="note">Nothing yet. Start the clock with Space or ▶.</p>','ledger')}
+// ======================= v26.78: THE CONTINUE BUTTON =======================
+// No more running clock to babysit. "Continue" moves time forward quickly and stops on its own as soon as something
+// needs you: a visitor, a council vote, a crisis, a deadline, a debate, a check-in, or the start of a new month when
+// your actions refill. Days still pass underneath, so everything that runs day by day keeps working.
+const CONT_RATE=24; // days per second while continuing
+for(let i=1;i<SPEEDS.length;i++)SPEEDS[i]=CONT_RATE;
+function nextStop(){if(!S)return'';try{const q=(S.queue||[]).filter(x=>x.due>S.day).sort((a,b)=>a.due-b.due)[0];if(q)return`${MONTHS[S.m-1]} ${q.due}: someone new wants to see you`;
+  const nm=S.m===12?1:S.m+1;return`${MONTHS[nm-1]} 1: a new month`}catch(e){return''}}
+// every resume is a "continue"; every pause ends it
+{const _sp=setPaused;setPaused=function(p,msg){if(S)S.cont=!p;return _sp.apply(this,arguments)}}
+// a new month is always a stop: your actions just refilled
+{const _eom=endOfMonth;endOfMonth=function(...a){const running=S&&S.started&&!S.paused&&!S.over;const r=_eom.apply(this,a);try{if(running&&S&&!S.paused&&!S.over){setPaused(true)}}catch(e){}return r}}
+// anyone new waiting for you always stops it, even with auto-pause turned off
+{const _rq=releaseQueued;releaseQueued=function(all){const e0=S&&S.events?S.events.length:0;const n=_rq.apply(this,arguments);try{if(S&&!S.paused&&!all&&S.events.length>e0)setPaused(true)}catch(e){}return n}}
+// the controls
+{const _uc=updateClock;updateClock=function(){const r=_uc.apply(this,arguments);try{if(!S)return r;const run=!S.paused;const c=$('cPause');if(c){c.innerHTML=run?IC_PAUSE:IC_PLAY;c.setAttribute('aria-label',run?'Stop':'Continue');c.title=run?'Stop (Space)':'Continue (Space)'}
+  const pb=$('bPlay');if(pb){pb.classList.toggle('contrun',run);pb.innerHTML=run?`<span class="contmain">${IC_PAUSE} Stop</span><small class="contto">moving ahead…</small>`:`<span class="contmain">${IC_PLAY} Continue</span><small class="contto">to ${nextStop()}</small>`}
+  const cl=$('clock');if(cl)cl.classList.toggle('contrun',run)}catch(e){}return r}}
+{const _rh=refreshHUD;refreshHUD=function(...a){const r=_rh.apply(this,a);try{updateClock()}catch(e){}return r}}
+
+function openLedger(){const L=S.log||[];openPanel('Everything that has happened, newest first','Ledger',L.length?`<div class="logl">${L.map(x=>`<div><span>${x.d}</span><p style="margin:0">${x.t}</p></div>`).join('')}</div>`:'<p class="note">Nothing yet. Tap ▶ Continue to move ahead.</p>','ledger')}
 function openPolicies(){const ks=Object.keys(POLICIES);
   openPanel('Ongoing programs you control','Your initiatives',`<p>Mid-year, these are paid from the reserve fund. In April they go into the budget you send the council.</p>
    ${ks.map(k=>`<div class="row"><span class="pill ${S.policies[k]?'on':''}">${S.policies[k]?'Active':'Off'}</span><span style="flex:1;min-width:160px">${POLICIES[k].name} · ${POLICIES[k].rev?'+'+fmtM(POLICIES[k].rev)+'/yr revenue':'−'+fmtM(POLICIES[k].cost)+'/yr'}</span>${S.policies[k]?`<button class="btn" data-act="toggle" data-k="${k}">End it</button>`:['chw','rides','pilot'].includes(k)?`<button class="btn" data-act="toggle" data-k="${k}">${k==='pilot'?'Start it':'Fund it'}</button>`:`<a href="#" data-go="${POLICIES[k].where}">Fund it at ${placeOf(POLICIES[k].where).name}</a>`}</div>`).join('')}

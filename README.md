@@ -4,6 +4,13 @@ A city-management game set in Memphis, Tennessee. You play the mayor. You handle
 
 **Play it:** https://erndae.github.io/Bluff-city-mayor/ (once GitHub Pages is turned on, see below)
 
+## v26.78: The Continue button
+
+- **No more running clock.** Play/pause and the speed buttons are gone. One button, **Continue**, moves time ahead quickly and stops on its own when something needs you: someone new waiting to see you, a council vote, a crisis, a deadline, a debate, a chief-of-staff or campaign-manager check-in, or the start of a new month (when your actions refill). The button says where it's headed ("Continue to Oct 14: someone new wants to see you" or "Continue to Nov 1: a new month"). Tap it again while it runs to stop. Space still works.
+- New visitors always stop time while you're continuing, even with the old auto-pause setting turned off.
+- Tutorial and help text updated.
+- Fixed: two name collisions. The D.C. flight function from v26.75 was overriding the map's fly-to-a-place function, and the press corps' relationship lookup from v26.60 was overriding the council's alliance lookup, so new council alliances could stack on top of existing ones.
+
 ## v26.77: The congressional calendar
 
 - **Four stretches a year.** A year in Congress or the Senate now runs through the winter session (January to March), the spring session (April to July), the August recess, and the fall session (September to December), with one move per stretch. A calendar strip shows where you are.
