@@ -4,6 +4,22 @@ A city-management game set in Memphis, Tennessee. You play the mayor. You handle
 
 **Play it:** https://erndae.github.io/Bluff-city-mayor/ (once GitHub Pages is turned on, see below)
 
+## v26.57: Story chains
+
+Six new storylines play out over months. Each has three chapters, branches on what you choose, and includes skill checks: succeed and the story goes one way, fail and it takes a different turn.
+
+- **The Raleigh plant closing:** 900 jobs leaving for Mexico. Pay to keep them, find a buyer, or retrain the workers.
+- **The General Services contracts scandal:** a reporter's tip, a cover-up or a cleanup, and an indictment.
+- **The Ford Road landfill lawsuit:** Westwood families sue over contamination. Settle, test, or fight in court. Losing at trial costs the city $8M.
+- **MATA's broken buses:** emergency money, a board fight, and a rapid bus line on Union Avenue.
+- **A summer of car break-ins:** a curfew or summer jobs, plus going after the adult theft rings. Starts only in late spring.
+- **The empty tower at 100 North Main:** a court takeover, fines or a buyout, then luxury or mixed-income apartments.
+
+How it works:
+- A new storyline can start every few months while you're in office, one at a time. The neighborhood stories still run alongside them.
+- Story choices can be skill checks (`sk`/`b` plus a `fail` branch), and their odds show on the choice. The receipt says whether it worked.
+- **City → Storylines** shows every open story, the chapters so far, when the next chapter arrives, and how past stories ended and what each ending did to your record.
+
 ## v26.56: Power players
 
 Five organized groups now act on their own: the Memphis Police Association, AFSCME Local 1733 (the city workers' union), the Greater Memphis Chamber, the Shelby County Commission and the Tennessee General Assembly.

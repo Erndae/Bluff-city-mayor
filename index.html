@@ -351,6 +351,7 @@ canvas.confetti{position:fixed;inset:0;z-index:100000;pointer-events:none}
 #hSlots.many .act-p i{width:12px;height:12px;margin-right:2px}#hSlots.many .act-r{display:none}
 nav.actions [data-actsgo]{min-height:44px;padding:9px 17px;border-color:rgba(242,169,59,.55)}@media(max-width:860px){nav.actions{grid-template-columns:repeat(5,minmax(0,1fr))!important}nav.actions [data-flow-hub],nav.actions [data-actsgo]{justify-content:center;text-align:center}nav.actions [data-actsgo]{padding:8px 2px;font-size:12px;min-width:0;min-height:44px}}
 .faccard{border:1px solid var(--line,#2c3e4c);border-radius:12px;padding:12px;margin:10px 0;background:rgba(255,255,255,.02)}.fac-h{display:flex;align-items:center;gap:10px}.fac-h>div{flex:1;min-width:0}.fac-h b{display:block}.fac-h small{color:var(--muted,#9aa7b2)}.fac-ic{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;background:rgba(242,169,59,.15);color:var(--amber);font-size:17px;flex:none}.fac-rel{text-align:right;flex:none}.fac-rel b{font-size:20px}.fac-rel.pos b{color:var(--good)}.fac-rel.neg b{color:var(--bad)}.fac-rel small{display:block}.facbar{position:relative;height:6px;border-radius:3px;background:rgba(255,255,255,.08);margin:8px 0 2px}.facbar i{position:absolute;top:0;bottom:0;border-radius:3px}.facbar i.pos{background:var(--good)}.facbar i.neg{background:var(--bad)}.facbar i:first-child{left:50%;width:1px!important;background:rgba(255,255,255,.4)}.facspark{width:60px;height:18px;color:var(--amber);display:block;margin:2px 0 0 auto}.faccard h5{margin:8px 0 4px}.faccard .qrgrid p{font-size:13px;margin:2px 0 0}.facpend{color:var(--amber);font-weight:600;margin:8px 0 0}.faccard .btn small{opacity:.8}
+.storycard{border:1px solid var(--line,#2c3e4c);border-radius:12px;padding:12px;margin:10px 0}.storycard.done{opacity:.85}.sc-h{display:flex;justify-content:space-between;gap:10px;align-items:baseline}.sc-h span{color:var(--amber);font-size:13px;text-align:right}.storycard.done .sc-h span{color:var(--muted,#9aa7b2)}.sc-steps{margin:8px 0 0;padding-left:20px}.sc-steps li{margin:4px 0}.sc-steps small{color:var(--muted,#9aa7b2);margin-right:6px}.sc-end{margin:8px 0 0}.sc-end small.pos{color:var(--good)}.sc-end small.neg{color:var(--bad)}
 .adgain{display:block;width:100%;text-align:center;font-size:11px;font-weight:600;color:var(--good);margin-top:1px}
 #start{overflow-x:hidden;overflow-y:auto;touch-action:pan-y}.startbox{min-width:0;max-width:min(600px,100%);box-sizing:border-box}.startbox *{min-width:0}.create select,.create input{max-width:100%;width:100%;box-sizing:border-box;text-overflow:ellipsis}.create .tpick,.create .tpick>*{max-width:100%;box-sizing:border-box}
 @media (max-width:640px){.startbox{margin-left:0}#start{padding-left:max(16px,env(safe-area-inset-left,0px))}}
@@ -703,7 +704,7 @@ details.analysis{margin-top:6px}details.analysis summary{cursor:pointer;color:va
     <button class="btn primary" data-act="pause" id="bPlay"><svg class="ico" viewBox="0 0 12 12" aria-hidden="true"><path d="M3.2 1.6v8.8l7.2-4.4z" fill="currentColor"/></svg> Resume <kbd>Space</kbd></button>
   </nav>
   <div class="status" id="status">Loading map…</div>
-  <div class="credit"><span class="ver" id="verTag">v26.56</span></div>
+  <div class="credit"><span class="ver" id="verTag">v26.57</span></div>
   <div class="tip" id="tip" hidden></div>
   <div class="toast" id="toast" role="status"></div>
   <section class="panel" id="panel" hidden aria-live="polite">
@@ -731,7 +732,7 @@ details.analysis{margin-top:6px}details.analysis summary{cursor:pointer;color:va
         <button class="btn" data-music-open>Music &amp; volume</button>
       </div>
       <div id="slotList" hidden></div>
-      <p class="note startv">Version <b class="ver" id="verStart">v26.56</b></p>
+      <p class="note startv">Version <b class="ver" id="verStart">v26.57</b></p>
     </div>
     <div class="startbox create" id="create" hidden>
       <h2>Create your mayor</h2>
@@ -1542,7 +1543,7 @@ function enact(s,p){DIVS.forEach(d=>{s.enacted[d.id]=p.divs[d.id];s.ratio[d.id]=
 // Voter groups. Each has a share of residents, turnout, home districts, concerns and an approval of you.
 // Citywide approval is the turnout-weighted average of the groups; each council district's approval comes from the groups that live there.
 // Shares, district mix and turnout are modeled, loosely grounded in Memphis demographics; they are not survey data.
-const VERSION='v26.56';
+const VERSION='v26.57';
 const GROUPS=[
  {id:'working',sh:'Working families',n:'Working families',ic:'⚒︎',c:'#f2a93b',share:24,turn:.5,start:56,w:{jobs:1,safety:.8,transit:.5},
   d:'Hourly workers in logistics, warehouses, health care and service jobs. The biggest bloc in the city.',dm:{1:1.1,2:.8,3:1.3,4:1.2,5:.6,6:1.2,7:1.1}},
@@ -6789,6 +6790,181 @@ document.addEventListener('click',e=>{const b=e.target.closest('[data-facmeet],[
   if(n==='flow_people'){const g=b.querySelector('.flow-grid');if(g&&!g.querySelector('[data-powers]'))g.insertAdjacentHTML('afterbegin',`<button class="flow-tile" data-powers="1"><b>Power players</b><span>Police union, city workers, the Chamber, the County and the state</span></button>`)}
   if(n==='openActions'&&!b.querySelector('[data-powers]')){const x=b.querySelector('[data-econ]');if(x)x.insertAdjacentHTML('afterend',' <button class="btn" data-powers="1">Power players</button>')}
   if(n==='openEconomy'&&!b.querySelector('[data-powers]'))b.insertAdjacentHTML('beforeend','<div class="row"><button class="btn" data-powers="1">See how unions, the Chamber and the state feel about you</button></div>')}catch(e){}return r}}
+// ======================= v26.57: STORY CHAINS =======================
+// Longer storylines that build over months. Each one branches on what you choose, some choices are skill checks
+// (succeed and the story goes one way, fail and it goes another), and every ending goes on your record.
+// Story choices can now carry sk/b (a skill check) and fail:{...} (what happens instead if the check fails).
+const CHAINS=[
+ {sid:'plant',n:'The Raleigh plant closing',hood:'Raleigh',d:2},
+ {sid:'scan',n:'The General Services contracts scandal',d:null},
+ {sid:'suit',n:'The Ford Road landfill lawsuit',hood:'Westwood',d:7},
+ {sid:'mata',n:'MATA\'s broken buses',d:null},
+ {sid:'teen',n:'A summer of car break-ins',d:null,months:[4,5,6]},
+ {sid:'tower',n:'The empty tower at 100 North Main',d:null}];
+CHAINS.forEach(c=>{STORY_NAMES[c.sid]=c.n;STORY_FIRST[c.sid]=c.sid+'1'});
+const atChain=c=>c&&c.d?'dist:'+c.d:'cityhall';
+const SF=(s,sid)=>((s.stories||{})[sid]||{}).flags||{};
+EVENTS.push(
+// ---------- 1. the plant closing ----------
+ {id:'plant1',story:'plant',scripted:true,title:'A Raleigh plant is closing: 900 jobs',atFn:atChain,tags:['jobs'],
+  body:()=>`Delta Forge, which makes truck parts in Raleigh, says it will close its Memphis plant in six months and move the work to Mexico. That's 900 jobs, most of them paying $24 an hour with benefits. Workers found out from a press release.`,
+  choices:[{label:'Offer a $3M incentive package to keep the plant',cost:3,grp:{working:3,labor:2,business:1,owners:-1},flag:'pay',next:'plant2a',delay:3},
+   {label:'Find a buyer for the plant yourself',sk:'stew',b:0.4,grp:{working:1,business:1},flag:'buyer',next:'plant2b',delay:3,fail:{flag:'nobuyer',next:'plant2a',delay:3,grp:{working:-1}}},
+   {label:'Start retraining the workers now',cost:0.8,grp:{working:2,labor:1},flag:'train',next:'plant2a',delay:3}]},
+ {id:'plant2a',story:'plant',scripted:true,title:'Delta Forge: the last months',atFn:atChain,tags:['jobs'],
+  body:s=>{const f=SF(s,'plant');return f.pay?'Delta Forge took the incentive and kept 400 jobs, not 900. It says the rest are moving anyway, and the union says the company played you.':f.nobuyer?'You called every manufacturer you know. Nobody wanted an old plant with a union contract. The closing date is a month away.':'Three hundred workers have signed up for retraining at Southwest Tennessee Community College. The rest say they need a paycheck now, not a class.'},
+  choices:[{label:'Make Delta Forge pay back the incentive',sk:'intr',b:0.45,grp:{labor:2,working:2,business:-1},flag:'clawback',next:'plant3',delay:3,fail:{flag:'noclaw',next:'plant3',delay:3,grp:{labor:-1}}},
+   {label:'Pay workers a stipend while they train',cost:1.5,grp:{working:3,labor:2,renters:1},flag:'stipend',next:'plant3',delay:3},
+   {label:'Hold a job fair with FedEx and the hospitals',cost:0.2,fx:{jobs:0.3},grp:{working:1,business:2},flag:'fair',next:'plant3',delay:3}]},
+ {id:'plant2b',story:'plant',scripted:true,title:'A buyer for the Raleigh plant',atFn:atChain,tags:['jobs'],
+  body:()=>`You found one. An electric-truck battery maker wants the plant and could hire 700 people within two years. They want the land rezoned, a 10-year PILOT tax break, and a promise that the city will fix the roads around the site.`,
+  choices:[{label:'Give them everything they asked for',fx:{jobs:1.5,revenue:-1},grp:{working:3,business:3,labor:1},flag:'deal',next:'plant3',delay:4},
+   {label:'Negotiate: a shorter tax break tied to local hiring',sk:'dip',b:0.45,fx:{jobs:1.2,revenue:-0.4},grp:{working:3,labor:3,business:1},flag:'gooddeal',next:'plant3',delay:4,fail:{flag:'walked',next:'plant3',delay:3,grp:{working:-2,business:-1}}},
+   {label:'Fix the roads but skip the tax break',cost:1.2,fx:{streets:0.4},grp:{owners:1,business:-1},flag:'roadsonly',next:'plant3',delay:3}]},
+ {id:'plant3',story:'plant',scripted:true,title:'One year after the plant closing',atFn:atChain,tags:['jobs'],
+  body:s=>{const f=SF(s,'plant');return f.deal||f.gooddeal?`The battery plant is hiring. ${f.gooddeal?'Two-thirds of the new hires live in Memphis, as your deal required.':'Most new hires commute in from DeSoto County, and Raleigh residents have noticed.'} The plant wants to expand.`:f.walked?'The battery maker walked away and chose a site in Mississippi. The plant sits empty behind a chain-link fence.':f.roadsonly?'The battery maker chose Mississippi, which offered a tax break. Raleigh got new roads to an empty plant.':`The plant is closed. ${f.stipend?'Most workers who took the stipend have new jobs.':f.clawback?'The city got its incentive money back in court.':f.fair?'About 200 workers found jobs at the job fair.':'Many former workers are still looking.'} The building is empty.`},
+  choices:[{label:'Turn the site into a city-backed industrial park',cost:2,fx:{jobs:0.8,blight:-0.3},grp:{working:2,business:2,owners:1},end:{t:'Brought new jobs to the old Raleigh plant',camp:{d:1.5,t:'Your ad shows workers walking back into the Raleigh plant.'}}},
+   {label:'Help former workers start small businesses',cost:0.6,grp:{working:2,young:1,labor:1},end:{t:'Helped Delta Forge workers start over',camp:{d:1,t:'Former Delta Forge workers vouch for you.'}}},
+   {label:'Move on to other priorities',grp:{working:-2,labor:-2},end:{t:'Moved on from the Raleigh plant',camp:{d:-1,t:'Your opponent holds a rally outside the empty plant.'}}}]},
+// ---------- 2. the scandal ----------
+ {id:'scan1',story:'scan',scripted:true,title:'A reporter has a tip about city contracts',at:'cityhall',tags:['oversight'],
+  body:()=>`A Commercial Appeal reporter calls your press office. She says a deputy director in General Services steered $6 million in building-repair contracts to a company owned by his brother-in-law. She's running the story in two weeks and wants a comment.`,
+  choices:[{label:'Call in the inspector general right away',grp:{young:2,owners:1},fx:{mood:0.2},flag:'ig',next:'scan2a',delay:2},
+   {label:'Run your own quiet internal review first',sk:'learn',b:0.45,flag:'review',next:'scan2a',delay:2,fail:{flag:'leak',next:'scan2b',delay:1}},
+   {label:'Get the story killed',sk:'intr',b:0.35,flag:'killed',next:'scan2b',delay:3,fail:{flag:'coverup',next:'scan2b',delay:1,grp:{young:-2,owners:-1}}}]},
+ {id:'scan2a',story:'scan',scripted:true,title:'The contracts scandal widens',at:'cityhall',tags:['oversight'],
+  body:s=>{const f=SF(s,'scan');return`${f.ig?'The inspector general':'Your review'} found more than the reporter had: the deputy director also took cash from two other contractors. The story ran with your quote saying you acted fast. Now the council wants hearings, and the deputy director's lawyer says his client "didn't act alone."`},
+  choices:[{label:'Fire him and refer it to the district attorney',grp:{young:2,owners:2,faith:1},fx:{mood:0.3},flag:'fired',next:'scan3',delay:3},
+   {label:'Testify at the council hearing yourself',sk:'cha',b:0.5,grp:{young:1,owners:1},flag:'testify',next:'scan3',delay:3,fail:{flag:'badhearing',next:'scan3',delay:3,grp:{owners:-1,young:-1}}},
+   {label:'Overhaul how the city buys things',cost:0.6,grp:{business:2,owners:1,young:1},flag:'reform',next:'scan3',delay:3}]},
+ {id:'scan2b',story:'scan',scripted:true,title:'The contracts story breaks',at:'cityhall',tags:['oversight'],
+  body:s=>{const f=SF(s,'scan');return f.killed?'The paper held the story, but a TV station got the documents anyway. Their report says City Hall "pressured a newspaper," and they have the emails.':f.coverup?'The reporter wrote that City Hall tried to kill the story. Now the scandal is about you, not a deputy director.':'Word of your internal review leaked before you finished it. The headline: "Mayor\'s team investigated quietly while contracts kept flowing."'},
+  choices:[{label:'Apologize and hand everything to the inspector general',grp:{young:1,faith:1},fx:{mood:-0.2},flag:'apology',next:'scan3',delay:3},
+   {label:'Blame the department and fire the director',sk:'intr',b:0.45,grp:{owners:1},flag:'scapegoat',next:'scan3',delay:3,fail:{flag:'backfire',next:'scan3',delay:3,grp:{young:-2,owners:-2,labor:-1}}},
+   {label:'Fight back: call it a political hit job',sk:'cha',b:0.35,grp:{faith:1},flag:'fight',next:'scan3',delay:3,fail:{flag:'backfire',next:'scan3',delay:3,grp:{young:-3,owners:-2}}}]},
+ {id:'scan3',story:'scan',scripted:true,title:'The contracts scandal: the indictment',at:'cityhall',tags:['oversight'],
+  body:s=>{const f=SF(s,'scan');return`A grand jury indicted the deputy director and two contractors. ${f.fired||f.ig||f.apology||f.reform?'Prosecutors thanked the city for its cooperation.':f.backfire||f.coverup?'The indictment mentions "efforts by city officials to limit public disclosure," and reporters want to know who that means.':'Reporters are asking what you knew and when.'} This is the moment that decides how voters remember it.`},
+  choices:[{label:'Create an independent ethics office with real power',cost:0.5,grp:{young:3,owners:2,business:1},end:{t:'Cleaned up city contracting after a scandal',camp:{d:1.5,t:'Your ad: "I found it, I fired him, I fixed it."'}}},
+   {label:'Say the system worked and move on',grp:{owners:-1},end:{t:'Rode out the contracts scandal',camp:{d:-0.5,t:'Your opponent reads the indictment out loud in an ad.'}}},
+   {label:'Release every contract online, all of them',sk:'learn',b:0.5,grp:{young:2,owners:1},end:{t:'Put every city contract online',camp:{d:1,t:'The paper calls your contract database "a model for the South."'}},fail:{grp:{young:-1},end:{t:'Botched the contract cleanup',camp:{d:-1,t:'Reporters found the database missing the contracts that mattered.'}}}}]},
+// ---------- 3. the lawsuit ----------
+ {id:'suit1',story:'suit',scripted:true,title:'Westwood neighbors sue the city',atFn:atChain,tags:['safety'],
+  body:()=>`Three hundred Westwood families have filed a $40 million lawsuit. They say the old Ford Road landfill, closed by the city in 1992, is leaking chemicals into their yards and their children's blood. Their lawyer is holding a press conference on a resident's front lawn.`,
+  choices:[{label:'Offer to settle early',cost:2,grp:{renters:2,faith:2,parents:2,owners:-1},flag:'settle',next:'suit2a',delay:3},
+   {label:'Pay for independent soil and blood testing',cost:0.5,grp:{parents:2,faith:1},flag:'test',next:'suit2a',delay:3},
+   {label:'Fight it in court',sk:'learn',b:0.45,grp:{owners:1},flag:'court',next:'suit2b',delay:4,fail:{flag:'losing',next:'suit2b',delay:3,grp:{parents:-2,faith:-1}}}]},
+ {id:'suit2a',story:'suit',scripted:true,title:'The Ford Road test results',atFn:atChain,tags:['safety'],
+  body:s=>{const f=SF(s,'suit');return`${f.settle?'Settlement talks forced the city to test the site.':'The independent tests came back.'} There is lead and benzene in the soil on 40 lots, at levels high enough to require cleanup. Families want to know who pays to move them, and the state environment department is asking questions.`},
+  choices:[{label:'Buy out the 40 most affected homes',cost:4,fx:{blight:-0.2},grp:{faith:3,parents:3,renters:2,owners:-1},flag:'buyout',next:'suit3',delay:4},
+   {label:'Get federal cleanup money',sk:'dip',b:0.45,grp:{parents:2,faith:1},flag:'epa',next:'suit3',delay:5,fail:{flag:'noepa',next:'suit3',delay:3,grp:{parents:-1}}},
+   {label:'Cap the landfill and promise to monitor it',cost:1,grp:{owners:1,parents:-1},flag:'cap',next:'suit3',delay:3}]},
+ {id:'suit2b',story:'suit',scripted:true,title:'The landfill case goes to court',atFn:atChain,tags:['safety'],
+  body:s=>{const f=SF(s,'suit');return f.court?'Your lawyers got half the claims thrown out: the judge said many families moved in after the city closed the site. The case continues, but it\'s smaller now. Westwood is furious at the city.':'The judge let the whole case go forward, and the plaintiffs found a 1991 memo warning that the landfill liner was failing. The city is likely to lose.'},
+  choices:[{label:'Settle now, on your terms',cost:3,grp:{faith:2,parents:2},flag:'latesettle',next:'suit3',delay:3},
+   {label:'Keep fighting',sk:'learn',b:0.4,grp:{owners:1},flag:'won',next:'suit3',delay:4,fail:{flag:'lost',next:'suit3',delay:4,hit:8,grp:{parents:-2,faith:-2}}},
+   {label:'Fund cleanup without admitting fault',cost:1.5,grp:{parents:2,faith:1},flag:'cleanup',next:'suit3',delay:3}]},
+ {id:'suit3',story:'suit',scripted:true,title:'The Ford Road case ends',atFn:atChain,tags:['safety'],
+  body:s=>{const f=SF(s,'suit');return`${f.lost?'The jury awarded the families $28 million. Insurance covers most of it, but the city owes $8 million, and the verdict leads the evening news.':f.won?'The jury sided with the city. The families lost, but they\'re still living on that soil, and the cameras are still there.':f.buyout?'Forty families have moved into new homes, and the old lots are fenced off.':f.epa?'Federal cleanup crews have started work on the landfill.':'The case is settled, but the soil is still contaminated.'} The question now is what Westwood looks like five years from now.`},
+  choices:[{label:'Turn the cleaned-up land into a park',cost:1.2,fx:{blight:-0.3},grp:{parents:3,faith:2,owners:2},end:{t:'Turned a toxic landfill into a Westwood park',camp:{d:1.5,t:'Westwood families picnic on the old landfill in your ad.'}}},
+   {label:'Set up free health checkups for the families',cost:0.4,grp:{faith:2,parents:2},end:{t:'Stood by the Westwood families',camp:{d:1,t:'A Westwood grandmother thanks you in your ad.'}}},
+   {label:'Close the file',grp:{faith:-2,parents:-2},end:{t:'Closed the book on the Ford Road landfill',camp:{d:-1,t:'Your opponent stands on a fenced-off lot in Westwood.'}}}]},
+// ---------- 4. MATA ----------
+ {id:'mata1',story:'mata',scripted:true,title:'Half of MATA\'s buses are broken',at:'xy:35.1328,-90.0577,MATA Central Station',tags:['transit'],
+  body:()=>`MATA's maintenance chief resigned and told reporters that half the bus fleet is out of service. Riders are waiting an hour or more in the heat. Nurses and warehouse workers are losing shifts because the bus never came.`,
+  choices:[{label:'Give MATA $2M in emergency money for repairs',cost:2,fx:{transit:1},grp:{renters:3,working:2,owners:-1},flag:'cash',next:'mata2a',delay:3},
+   {label:'Replace the MATA board',sk:'intr',b:0.45,grp:{renters:1,young:1},flag:'board',next:'mata2b',delay:3,fail:{flag:'boardfight',next:'mata2b',delay:2,grp:{renters:-1}}},
+   {label:'Lease buses from other cities for the summer',cost:0.7,fx:{transit:0.5},grp:{renters:2,working:1},flag:'lease',next:'mata2a',delay:2}]},
+ {id:'mata2a',story:'mata',scripted:true,title:'MATA: patched, not fixed',at:'xy:35.1328,-90.0577,MATA Central Station',tags:['transit'],
+  body:s=>{const f=SF(s,'mata');return`${f.cash?'The repair money put 40 buses back on the road.':'The leased buses got riders through the summer.'} But MATA's general manager says the agency runs a $10 million deficit every year and the fleet is 15 years old. Without steady money, it will be the same crisis next year.`},
+  choices:[{label:'Commit city money every year',cost:3,fx:{transit:1.2},grp:{renters:3,working:2,young:2,owners:-2},flag:'fund',next:'mata3',delay:4},
+   {label:'Win a federal grant for electric buses',sk:'learn',b:0.45,fx:{transit:1},grp:{young:2,renters:2},flag:'grant',next:'mata3',delay:5,fail:{flag:'nogrant',next:'mata3',delay:3}},
+   {label:'Cut weak routes to save the strong ones',fx:{transit:0.3},grp:{renters:-2,working:-1,owners:1},flag:'cut',next:'mata3',delay:3}]},
+ {id:'mata2b',story:'mata',scripted:true,title:'The fight over the MATA board',at:'cityhall',tags:['transit'],
+  body:s=>{const f=SF(s,'mata');return f.board?'The new board fired the general manager and hired a transit expert from Austin. She says she can fix the fleet in a year, but she needs money and a free hand.':'The old board members refused to resign, and two council members are defending them. The fight is on the front page, and the buses are still broken.'},
+  choices:[{label:'Back the new leadership with $2M',cost:2,fx:{transit:1},grp:{renters:2,young:2},flag:'fund',next:'mata3',delay:4},
+   {label:'Broker a peace deal with the council',sk:'dip',b:0.5,grp:{renters:1},flag:'peace',next:'mata3',delay:3,fail:{flag:'stalemate',next:'mata3',delay:3,grp:{renters:-2}}},
+   {label:'Take your case to the riders at a town hall',sk:'cha',b:0.5,grp:{renters:2,working:1},flag:'riders',next:'mata3',delay:3,fail:{flag:'stalemate',next:'mata3',delay:3,grp:{renters:-1}}}]},
+ {id:'mata3',story:'mata',scripted:true,title:'A year after the MATA crisis',at:'xy:35.1328,-90.0577,MATA Central Station',tags:['transit'],
+  body:s=>{const f=SF(s,'mata');return f.fund||f.grant||f.peace||f.riders?'Buses are mostly on time again, and ridership is up. MATA wants to add a rapid bus line on Union Avenue.':f.cut?'The remaining routes run on time, but riders in Frayser and Whitehaven lost their buses.':'Buses are still late. Riders have started a "Where\'s My Bus" campaign aimed at you.'},
+  choices:[{label:'Back the Union Avenue rapid bus line',cost:1.5,fx:{transit:1.2},grp:{renters:3,young:3,working:1},end:{t:'Rebuilt MATA and started rapid buses on Union',camp:{d:1.5,t:'Your ad rides the new Union Avenue line.'}}},
+   {label:'Add bus shelters and real-time arrival signs',cost:0.6,fx:{transit:0.4},grp:{renters:2,working:1},end:{t:'Made waiting for the bus bearable',camp:{d:0.8,t:'Riders thank you for the new shelters.'}}},
+   {label:'Leave transit to MATA',grp:{renters:-2,working:-1},end:{t:'Left MATA to sink or swim',camp:{d:-1,t:'Your opponent waits at a bus stop for an hour on camera.'}}}]},
+// ---------- 5. car break-ins ----------
+ {id:'teen1',story:'teen',scripted:true,title:'A wave of car break-ins by teenagers',at:'cityhall',tags:['safety'],
+  body:()=>`Car thefts and break-ins are up 60% since school let out, and police say most arrests are of kids 13 to 17. A video of teenagers stealing a car in a Kroger parking lot has a million views. Neighborhood groups want a curfew.`,
+  choices:[{label:'Enforce a 9 p.m. youth curfew',fx:{crime:-0.3},grp:{owners:3,faith:1,young:-2,renters:-1},flag:'curfew',next:'teen2a',delay:2},
+   {label:'Fund 1,000 summer jobs for teens',cost:1.5,grp:{parents:3,renters:2,faith:2,owners:-1},flag:'jobs',next:'teen2b',delay:2},
+   {label:'Meet the kids who were arrested',sk:'cha',b:0.45,grp:{faith:2,parents:1},flag:'listen',next:'teen2b',delay:2,fail:{flag:'stunt',next:'teen2a',delay:2,grp:{owners:-1}}}]},
+ {id:'teen2a',story:'teen',scripted:true,title:'The curfew is in force',at:'cityhall',tags:['safety'],
+  body:s=>{const f=SF(s,'teen');return`${f.curfew?'Officers picked up 300 kids in the first month.':'Your visit with the arrested teens got called a photo op, and neighbors pushed through a curfew anyway.'} Break-ins are down a little, but a 15-year-old walking home from work was handcuffed on video, and parents are angry.`},
+  choices:[{label:'Keep the curfew, add a youth center open until midnight',cost:1,grp:{parents:2,owners:2,faith:1},flag:'center',next:'teen3',delay:3},
+   {label:'End the curfew and try something else',grp:{young:2,renters:1,owners:-2},flag:'ended',next:'teen3',delay:3},
+   {label:'Go after the people buying the stolen cars',sk:'safe',b:0.45,fx:{crime:-0.4},grp:{owners:2,faith:1},flag:'fences',next:'teen3',delay:3,fail:{flag:'nofence',next:'teen3',delay:3}}]},
+ {id:'teen2b',story:'teen',scripted:true,title:'What the kids told you',at:'cityhall',tags:['safety'],
+  body:s=>{const f=SF(s,'teen');return`${f.jobs?'Your summer jobs program filled up in a day, with 3,000 more on the waiting list.':'The teens you met said the same thing: nothing to do, no money, and older guys paying them $200 a car.'} Police say a few adult crews are behind most of the thefts, and the kids are just their hands.`},
+  choices:[{label:'Go after the adult crews',sk:'safe',b:0.5,fx:{crime:-0.5},grp:{owners:2,faith:1},flag:'fences',next:'teen3',delay:3,fail:{flag:'nofence',next:'teen3',delay:3}},
+   {label:'Expand the jobs program to the waiting list',cost:2,grp:{parents:3,renters:2,faith:1},flag:'morejobs',next:'teen3',delay:3},
+   {label:'Pay for steering-wheel locks for every Kia and Hyundai owner',cost:0.4,fx:{crime:-0.2},grp:{owners:2,working:1},flag:'locks',next:'teen3',delay:3}]},
+ {id:'teen3',story:'teen',scripted:true,title:'School starts again',at:'cityhall',tags:['safety','education'],
+  body:s=>{const f=SF(s,'teen');return`${f.fences?'Police broke up two adult theft rings, and break-ins dropped sharply.':f.nofence?'The adult crews are still operating, and break-ins haven\'t dropped much.':f.morejobs||f.center?'Thousands of kids had somewhere to be this summer.':'Break-ins have come down from their peak.'} With school back in session, reporters want to know what you'll do next summer.`},
+  choices:[{label:'Make summer jobs permanent, every year',cost:1.5,grp:{parents:3,renters:2,faith:2},fx:{crime:-0.2},end:{t:'Made summer jobs for teens permanent',camp:{d:1.5,t:'Teens from your jobs program cut an ad for you.'}}},
+   {label:'Put more officers on summer patrols',cost:0.8,fx:{crime:-0.3},grp:{owners:2,faith:1,young:-1},end:{t:'Got tough on summer car thefts',camp:{d:0.8,t:'Your ad: "Break-ins are down."'}}},
+   {label:'Call it a summer problem and move on',grp:{owners:-1,parents:-1},end:{t:'Hoped next summer would be quieter',camp:{d:-0.8,t:'Your opponent stands next to a car with a smashed window.'}}}]},
+// ---------- 6. 100 North Main ----------
+ {id:'tower1',story:'tower',scripted:true,title:'Downtown\'s tallest building is falling apart',at:'xy:35.1478,-90.0510,100 North Main',tags:['blight','jobs'],
+  body:()=>`100 North Main, the tallest building in Memphis, has been empty for years. Chunks of concrete fell on the sidewalk last night. Nobody was hurt, but the street is closed and the out-of-state owner isn't returning calls.`,
+  choices:[{label:'Have the city take it over through the courts',sk:'intr',b:0.45,grp:{business:2,young:1},flag:'seize',next:'tower2a',delay:4,fail:{flag:'courtfight',next:'tower2b',delay:3}},
+   {label:'Fine the owner every day until it\'s fixed',grp:{owners:1,young:1},flag:'fines',next:'tower2b',delay:3},
+   {label:'Pay to make it safe now and bill the owner',cost:0.8,grp:{business:1,owners:1},flag:'shore',next:'tower2b',delay:3}]},
+ {id:'tower2a',story:'tower',scripted:true,title:'The city owns 100 North Main',at:'xy:35.1478,-90.0510,100 North Main',tags:['blight','jobs'],
+  body:()=>`A judge handed the tower to a city-controlled receiver. Two developers want it. One plans luxury apartments and a rooftop bar, with a $20M tax break. The other plans mixed-income apartments and a grocery, but needs $6M from the city.`,
+  choices:[{label:'Pick the luxury plan',fx:{jobs:0.6,revenue:-0.8},grp:{business:3,young:2,renters:-1},flag:'lux',next:'tower3',delay:5},
+   {label:'Pick the mixed-income plan',cost:6,grp:{renters:3,working:2,young:1,business:1,owners:-1},flag:'mixed',next:'tower3',delay:5},
+   {label:'Get both developers to split it',sk:'dip',b:0.4,cost:2,fx:{jobs:0.4},grp:{business:2,renters:2,young:2},flag:'split',next:'tower3',delay:5,fail:{flag:'stalled',next:'tower3',delay:4,grp:{business:-1}}}]},
+ {id:'tower2b',story:'tower',scripted:true,title:'100 North Main: the owner fights back',at:'xy:35.1478,-90.0510,100 North Main',tags:['blight'],
+  body:s=>{const f=SF(s,'tower');return`${f.fines?'The fines are past $2 million, and the owner has sued the city to stop them.':f.shore?'The scaffolding is up and the sidewalk is open, but the owner says he won\'t pay the city\'s bill.':'The owner\'s lawyers tied up your takeover in court.'} Meanwhile, the building is getting worse.`},
+  choices:[{label:'Offer to buy it at a fair price',cost:3,grp:{business:2,young:1},flag:'bought',next:'tower3',delay:4},
+   {label:'Find a buyer who\'ll take it off his hands',sk:'stew',b:0.45,grp:{business:2},flag:'sold',next:'tower3',delay:4,fail:{flag:'stalled',next:'tower3',delay:4}},
+   {label:'Wait him out',grp:{business:-1,owners:-1},flag:'stalled',next:'tower3',delay:5}]},
+ {id:'tower3',story:'tower',scripted:true,title:'The future of 100 North Main',at:'xy:35.1478,-90.0510,100 North Main',tags:['blight','jobs'],
+  body:s=>{const f=SF(s,'tower');return f.stalled?'Two years on, 100 North Main is still empty, with scaffolding on every side. Downtown business owners call it "the mayor\'s monument."':`Cranes are up at 100 North Main. ${f.lux?'The first luxury units are pre-sold.':f.mixed?'The grocery on the ground floor will be the first downtown in decades.':'Construction is underway.'} The building needs one last decision before it opens.`},
+  choices:[{label:'Throw a ribbon-cutting on the roof',cost:0.1,grp:{business:2,young:2},end:{t:'Brought 100 North Main back to life',camp:{d:1.5,t:'Your ad shows the skyline with 100 North Main lit up.'}}},
+   {label:'Require a public observation deck',cost:0.5,grp:{young:2,owners:1,working:1},end:{t:'Opened the top of 100 North Main to every Memphian',camp:{d:1.2,t:'Families on the observation deck appear in your ad.'}}},
+   {label:'Walk away from it',grp:{business:-2,young:-1},end:{t:'Left 100 North Main empty',camp:{d:-1,t:'Your opponent films in front of the empty tower.'}}}]});
+// ---------- skill checks inside story choices ----------
+{const _d=describe;describe=function(c){const s=_d.apply(this,arguments);if(c&&c.sk)return`${oddsTag(c.sk,c.b)}${s?' · '+s:''}`;return s}}
+let STORY_LAST=null;
+{const _rs=resolve;resolve=function(ev,ci){const def=ev&&ev.kind==='event'?evDef(ev):null,c=def&&def.choices&&def.choices[ci];
+  if(!c||!c.sk||!def.story)return _rs.apply(this,arguments);
+  if(c.cost>=APPROP_MIN&&!c.vote&&apropWait&&apropWait('ev:'+(ev.id||def.id)+':'+ci))return _rs.apply(this,arguments);
+  const ok=persuade(c.sk,c.b,[],8);STORY_LAST={ok,sk:c.sk,title:def.title};
+  if(ok||!c.fail){const okc={...c,label:c.label+(ok?' (it worked)':' (it didn\'t work)')};delete okc.sk;delete okc.fail;const keep0=def.choices[ci];def.choices[ci]=okc;let m;try{m=_rs.apply(this,arguments)}finally{def.choices[ci]=keep0}try{toast(`${skillName(c.sk)} check ${ok?'passed':'failed'}. ${m}`)}catch(e){}return m}
+  const alt={...c,...c.fail,label:c.label+' (it didn\'t work)'};delete alt.sk;delete alt.fail;const keep=def.choices[ci];def.choices[ci]=alt;let m;
+  try{m=_rs.apply(this,arguments)}finally{def.choices[ci]=keep}if(alt.hit){S.reserve-=alt.hit;try{notify('bad',`The city lost: ${fmtM(alt.hit)} from the reserve`,def.title,null,{ttl:10})}catch(e){}}try{toast(`${skillName(c.sk)} check failed. The story takes a different turn.`)}catch(e){}return m}}
+// ---------- starting chains ----------
+function chainMonth(){if(!inOffice()||S.over)return;S.stories=S.stories||{};const active=CHAINS.filter(c=>S.stories[c.sid]&&!S.stories[c.sid].ended).length;
+  if(active>=1)return;if(S.chainLast!=null&&nowM()-S.chainLast<4)return;if(nowM()-(S.termStart||0)<2)return;
+  const left=CHAINS.filter(c=>!S.stories[c.sid]&&(!c.months||c.months.includes(S.m)));if(!left.length)return;if(Math.random()>0.4)return;
+  const C=left[Math.floor(Math.random()*left.length)];let d=C.d;try{if(C.hood){const h=HOODS.find(x=>x[0]===C.hood);if(h){const dd=districtAt(h[2],h[1]);if(dd)d=dd}}}catch(e){}
+  S.chainLast=nowM();startStory(C.sid,{d});logIt(`A new storyline begins: ${C.n}.`)}
+{const _eom=endOfMonth;endOfMonth=function(...a){const r=_eom.apply(this,a);try{if(S&&S.started&&S.phase!=='ai')chainMonth()}catch(e){console.warn('chain',e)}return r}}
+// ---------- the storylines screen ----------
+function storyRows(){const st=S.stories||{};const out=[];for(const sid in st){const x=st[sid];if(!STORY_NAMES[sid])continue;out.push({sid,x,n:STORY_NAMES[sid]})}
+  (S.storyHist||[]).forEach(h=>{if(STORY_NAMES[h.sid]&&h.ended)out.push({sid:h.sid,x:{steps:h.steps||[],ended:h.ended},n:STORY_NAMES[h.sid],old:true})});return out}
+function storyWaiting(sid){return(S.events||[]).find(e=>e.sid===sid)||null}
+function openStories(){const R=storyRows();const open=R.filter(r=>!r.x.ended),done=R.filter(r=>r.x.ended);
+  const card=r=>{const w=storyWaiting(r.sid),nx=r.x.next;const steps=(r.x.steps||[]).map(s=>`<li><small>${s.d}</small> ${s.t}</li>`).join('');
+    return`<div class="storycard${r.x.ended?' done':''}"><div class="sc-h"><b>${r.n}</b><span>${r.x.ended?'Ended':w?'Waiting on you':nx?`Next chapter in about ${Math.max(1,nx.due-nowM())} month${nx.due-nowM()===1?'':'s'}`:'Unfolding'}</span></div>
+     ${steps?`<ol class="sc-steps">${steps}</ol>`:'<p class="note">It just started.</p>'}${r.x.ended?`<p class="sc-end"><b>Ending:</b> ${r.x.ended.t}${r.x.ended.camp?` <small class="${r.x.ended.camp.d>0?'pos':'neg'}">(${r.x.ended.camp.d>0?'+':'−'}${Math.abs(r.x.ended.camp.d)} on your record)</small>`:''}</p>`:''}
+     ${w?`<div class="row"><button class="btn primary" data-storygo="${r.sid}">Decide the next chapter</button></div>`:''}</div>`};
+  openModal('Storylines · '+open.length+' open','Your storylines',`<p>Big stories play out over months. What you choose in one chapter changes the next, and every ending goes on your record for the next election.</p>
+   ${open.length?open.map(card).join(''):'<p class="note">No storylines are open right now. New ones start every few months.</p>'}
+   ${done.length?`<h4 class="plh">How past stories ended</h4>${done.map(card).join('')}`:''}<div class="row"><button class="btn primary" data-act="close">Back</button></div>`,true)}
+openStories=navWrap('openStories',openStories);
+document.addEventListener('click',e=>{const b=e.target.closest('[data-storygo],[data-stories]');if(!b||!S)return;e.preventDefault();e.stopImmediatePropagation();if(modalOpen){onClose=null;closeModal()}
+  if(b.dataset.storygo){const ev=storyWaiting(b.dataset.storygo);if(ev)openPlace(evAt(ev));return}openStories()},true);
+{const _om=openModal;openModal=function(...a){const r=_om.apply(this,a);try{const n=NAV.cur?NAV.cur.name:'';if(n==='flow_city'&&inOffice()){const g=$('mBody').querySelector('.flow-grid');if(g&&!g.querySelector('[data-stories]')){const R=storyRows(),o=R.filter(x=>!x.x.ended).length,w=R.filter(x=>!x.x.ended&&storyWaiting(x.sid)).length;
+  g.insertAdjacentHTML('afterbegin',`<button class="flow-tile" data-stories="1"><b>Storylines${w?` · ${w} waiting`:''}</b><span>${o?`${o} open, building over months`:'Big stories that build over months'}</span></button>`)}}}catch(e){}return r}}
 function openLedger(){const L=S.log||[];openPanel('Everything that has happened, newest first','Ledger',L.length?`<div class="logl">${L.map(x=>`<div><span>${x.d}</span><p style="margin:0">${x.t}</p></div>`).join('')}</div>`:'<p class="note">Nothing yet. Start the clock with Space or ▶.</p>','ledger')}
 function openPolicies(){const ks=Object.keys(POLICIES);
   openPanel('Ongoing programs you control','Your initiatives',`<p>Mid-year, these are paid from the reserve fund. In April they go into the budget you send the council.</p>
