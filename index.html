@@ -367,6 +367,7 @@ nav.actions [data-actsgo]{min-height:44px;padding:9px 17px;border-color:rgba(242
 .tnmap{width:100%;max-width:420px;height:auto!important;aspect-ratio:330/96;flex-shrink:0;display:block;margin:8px 0 2px}.homelife .neg{color:var(--bad,#e06060)}.tnmap .tnst{fill:var(--panel2,rgba(127,127,127,.08));stroke:var(--line,rgba(127,127,127,.4));stroke-width:1}.tnmap .tnl{font-size:9px;fill:var(--ink2,currentColor);font-weight:600}.tnmap .tnmem{fill:var(--acc,#e8b04f)}.tnmap .tncity{fill:var(--ink2,#888)}.faccard.homes{border-left:3px solid var(--acc,#e8b04f)}
 .calstrip{display:flex;gap:4px;margin:8px 0 4px}.calstrip span{flex:1;text-align:center;font-size:11px;font-weight:600;padding:5px 2px;border-radius:6px;border:1px solid var(--line,rgba(127,127,127,.35));opacity:.6}.calstrip span.rec{border-style:dashed}.calstrip span.done{opacity:.35}.calstrip span.on{opacity:1;background:var(--acc,#e8b04f);color:#1a1a1a;border-color:transparent}
 .clock .cspeed,.clock .ptag{display:none!important}#bPlay .contto{display:block;font-size:11px;font-weight:600;opacity:.8;letter-spacing:0;text-transform:none;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}#bPlay{flex-direction:column;line-height:1.15}#bPlay.contrun{opacity:.85}#bPlay .contmain{display:inline-flex;align-items:center;gap:6px}
+.flow-tile.unl-locked{opacity:.55;border-style:dashed}.flow-tile.unl-locked b::after{content:' 🔒';font-size:.8em}
 .adgain{display:block;width:100%;text-align:center;font-size:11px;font-weight:600;color:var(--good);margin-top:1px}
 #start{overflow-x:hidden;overflow-y:auto;touch-action:pan-y}.startbox{min-width:0;max-width:min(600px,100%);box-sizing:border-box}.startbox *{min-width:0}.create select,.create input{max-width:100%;width:100%;box-sizing:border-box;text-overflow:ellipsis}.create .tpick,.create .tpick>*{max-width:100%;box-sizing:border-box}
 @media (max-width:640px){.startbox{margin-left:0}#start{padding-left:max(16px,env(safe-area-inset-left,0px))}}
@@ -719,7 +720,7 @@ details.analysis{margin-top:6px}details.analysis summary{cursor:pointer;color:va
     <button class="btn primary" data-act="pause" id="bPlay"><svg class="ico" viewBox="0 0 12 12" aria-hidden="true"><path d="M3.2 1.6v8.8l7.2-4.4z" fill="currentColor"/></svg> Resume <kbd>Space</kbd></button>
   </nav>
   <div class="status" id="status">Loading map…</div>
-  <div class="credit"><span class="ver" id="verTag">v26.84</span></div>
+  <div class="credit"><span class="ver" id="verTag">v26.85</span></div>
   <div class="tip" id="tip" hidden></div>
   <div class="toast" id="toast" role="status"></div>
   <section class="panel" id="panel" hidden aria-live="polite">
@@ -747,7 +748,7 @@ details.analysis{margin-top:6px}details.analysis summary{cursor:pointer;color:va
         <button class="btn" data-music-open>Music &amp; volume</button>
       </div>
       <div id="slotList" hidden></div>
-      <p class="note startv">Version <b class="ver" id="verStart">v26.84</b></p>
+      <p class="note startv">Version <b class="ver" id="verStart">v26.85</b></p>
     </div>
     <div class="startbox create" id="create" hidden>
       <h2>Create your mayor</h2>
@@ -1558,7 +1559,7 @@ function enact(s,p){DIVS.forEach(d=>{s.enacted[d.id]=p.divs[d.id];s.ratio[d.id]=
 // Voter groups. Each has a share of residents, turnout, home districts, concerns and an approval of you.
 // Citywide approval is the turnout-weighted average of the groups; each council district's approval comes from the groups that live there.
 // Shares, district mix and turnout are modeled, loosely grounded in Memphis demographics; they are not survey data.
-const VERSION='v26.84';
+const VERSION='v26.85';
 const GROUPS=[
  {id:'working',sh:'Working families',n:'Working families',ic:'⚒︎',c:'#f2a93b',share:24,turn:.5,start:56,w:{jobs:1,safety:.8,transit:.5},
   d:'Hourly workers in logistics, warehouses, health care and service jobs. The biggest bloc in the city.',dm:{1:1.1,2:.8,3:1.3,4:1.2,5:.6,6:1.2,7:1.1}},
@@ -8765,6 +8766,54 @@ function recordShield(g){const G=S.groups[g.id];const R=resultsSwing()+((G?G.app
 // the results show up where you track the campaign
 function resultsHTML(){const L=resultsParts().sort((a,b)=>Math.abs(b.v)-Math.abs(a.v));const s=resultsSwing();return`<div class="facts resbox"><h4>Your results in office · ${s>=0?'+':'−'}${Math.abs(s).toFixed(1)} points on Election Day</h4>${L.length?`<ul>${L.slice(0,7).map(x=>`<li>${x.t} <span class="note">(${x.v>0?'+':'−'}${Math.abs(x.v).toFixed(1)})</span></li>`).join('')}</ul>`:'<p class="note">Not much has changed yet. Move the city\'s numbers, finish projects and keep the neighborhoods happy.</p>'}<p class="note">Voters judge what changed since this term began. A strong record (results and approval) also blunts your opponent's attack ads.</p></div>`}
 {const _om=openModal;openModal=function(...a){const r=_om.apply(this,a);try{const n=NAV.cur?NAV.cur.name:'';if(S&&inOffice()&&!isCand()&&(n==='openHQ'||n==='openCampaign'||n==='openOpinion')){const b=$('mBody');if(b&&!b.querySelector('.resbox')){const anchor=b.querySelector('.facts');const x=document.createElement('div');x.innerHTML=resultsHTML();if(anchor)anchor.before(x.firstChild);else b.prepend(x.firstChild)}}}catch(e){}return r}}
+
+// ======================= v26.85: EASING NEW PLAYERS IN =======================
+// A new game no longer throws every system at you in the first week. The basics come first: the budget, the
+// council, visitors, the map, your family and health. Then one system opens every month or so, each with a short
+// introduction: power players, the press, neighborhoods, Nashville, stories, the back room, Congress and big city
+// events. Until a system opens it stays quiet in the background. Locked tiles say when they open, and you can
+// open any of them early, or everything at once. Saved games already under way start with everything open.
+const UNL={
+ powers:{m:1,tile:'powers',n:'Power players',open:()=>openPowers(),d:'The police union, the city workers\' union, the Chamber, the County and the state legislature. They make demands, and how you answer shapes what they\'ll do for you.'},
+ press:{m:2,tile:'pressopen',n:'The press corps',open:()=>openPress(),cand:1,d:'Three reporters cover you. Give them interviews and access, and they\'ll treat you fairly when trouble comes.'},
+ hoods:{m:3,tile:'hoods',n:'Neighborhoods',open:()=>openHoods(),d:'Thirteen neighborhoods, each with its own top concern and leader. Their moods move your council districts\' approval, and they sour if City Hall never shows up.'},
+ nash:{m:3,tile:'nash',n:'Nashville vs. Memphis',open:()=>openNash(),d:'The state legislature opens in January, and some bills aim at Memphis. You can fight them, cut deals, or sue.'},
+ stories:{m:4,tile:'stories',n:'Stories',open:()=>openStories(),d:'Some problems play out over months. Your choices carry forward, and the endings go on your record.'},
+ schemes:{m:5,tile:'schemes',n:'The back room',open:()=>openSchemes(),cand:3,d:'Rivals plot against you, and you can play rough too. Some offers are illegal, and secrets can come out.'},
+ deleg:{m:6,tile:'deleg',n:'Memphis in Congress',open:()=>openDeleg(),d:'The city\'s three members of Congress. Work them for federal money, and they\'ll ask favors back.'},
+ big:{m:7,tile:null,n:'Big city events',open:null,d:'Playoff runs, companies scouting the city, headquarters thinking of leaving: big storylines that can happen to any mayor.'}};
+function unlInit(){if(!S)return null;if(!S.unl){const start=isCand()?((S.cand&&S.cand.start)||nowM()):(S.termStart||nowM());const along=nowM()-start>=1||S.term>=2||!!S.after;S.unl=along?{all:true}:{start,got:{},told:{},cand:isCand()}}if(S.unl.cand&&!isCand())S.unl={all:true};return S.unl}
+function unlMonths(){const U=unlInit();return U&&!U.all?nowM()-U.start:99}
+function unlocked(k){if(!S)return true;const U=unlInit();if(!U||U.all)return true;if(U.got[k])return true;const X=UNL[k];if(!X)return true;const need=isCand()?(X.cand!=null?X.cand:99):X.m;return unlMonths()>=need}
+function unlOpenIn(k){const X=UNL[k];const need=isCand()?(X.cand!=null?X.cand:99):X.m;return Math.max(0,need-unlMonths())}
+function unlNow(k){const U=unlInit();if(!U||U.all)return;if(k==='all'){S.unl={all:true}}else{U.got[k]=true;U.told[k]=true}save()}
+// systems stay quiet until they open
+{const _f=facMonth;facMonth=function(){if(!unlocked('powers'))return;return _f.apply(this,arguments)}}
+{const _f=pressMonth;pressMonth=function(){if(!unlocked('press'))return;return _f.apply(this,arguments)}}
+{const _f=hoodMoodMonth;hoodMoodMonth=function(){if(!unlocked('hoods'))return;return _f.apply(this,arguments)}}
+{const _f=legMonth;legMonth=function(){if(!unlocked('nash'))return;return _f.apply(this,arguments)}}
+{const _f=chainMonth;chainMonth=function(){if(!unlocked('stories'))return;return _f.apply(this,arguments)}}
+{const _f=plotMonth;plotMonth=function(){if(!unlocked('schemes'))return;return _f.apply(this,arguments)}}
+{const _f=temptMonth;temptMonth=function(){if(!unlocked('schemes'))return;return _f.apply(this,arguments)}}
+{const _f=networkMonth;networkMonth=function(){if(!unlocked('schemes'))return;return _f.apply(this,arguments)}}
+{const _f=delegMonth;delegMonth=function(){if(!unlocked('deleg'))return;return _f.apply(this,arguments)}}
+{const _f=bigMonth;bigMonth=function(){if(!unlocked('big'))return;return _f.apply(this,arguments)}}
+// each month: introduce whatever just opened
+function unlMonth(){if(!S||S.over||S.after)return;const U=unlInit();if(!U||U.all)return;for(const k in UNL){if(U.told[k]||!unlocked(k))continue;if(isCand()&&UNL[k].cand==null)continue;U.told[k]=true;const X=UNL[k];
+  notify('event',`New: ${X.n}`,X.d,X.open?()=>X.open():null,{ttl:30});try{logIt(`Now open: ${X.n}.`)}catch(e){}}
+  if(Object.keys(UNL).every(k=>U.told[k]||(isCand()&&UNL[k].cand==null)))if(!isCand())S.unl={all:true};save()}
+{const _eom=endOfMonth;endOfMonth=function(...a){const r=_eom.apply(this,a);try{unlMonth()}catch(e){console.warn('unl',e)}return r}}
+// locked tiles say when they open
+const UNL_TILE={};for(const k in UNL)if(UNL[k].tile)UNL_TILE[UNL[k].tile]=k;
+{const _om=openModal;openModal=function(...a){const r=_om.apply(this,a);try{const b=$('mBody');if(!b||!S)return r;const U=unlInit();if(!U||U.all)return r;
+  b.querySelectorAll('.flow-tile').forEach(t=>{for(const attr in UNL_TILE){if(t.hasAttribute('data-'+attr)){const k=UNL_TILE[attr];if(!unlocked(k)){if(isCand()&&UNL[k].cand==null){t.remove();break}t.classList.add('unl-locked');t.dataset.unl=k;const sp=t.querySelector('span');const n=unlOpenIn(k);if(sp)sp.textContent=`Opens in ${n} month${n===1?'':'s'} · tap to learn more`}break}}});
+  if(NAV.cur&&NAV.cur.name==='openPowers'){['deleg','nash'].forEach(k=>{if(!unlocked(k))b.querySelectorAll(`.btn[data-${k}]`).forEach(x=>x.remove())})}}catch(e){console.warn('unl tiles',e)}return r}}
+// tapping a locked tile explains it and offers to open it early
+window.addEventListener('click',e=>{const t=e.target.closest('.unl-locked[data-unl]');if(!t||!S)return;e.preventDefault();e.stopImmediatePropagation();const k=t.dataset.unl,X=UNL[k],n=unlOpenIn(k);
+  openModal(X.n,'Coming up',`<p>${X.d}</p><p class="note">This opens on its own in ${n} month${n===1?'':'s'}, once you've had time to learn the basics. Until then it stays quiet.</p><div class="choices"><button class="choice" data-unlnow="${k}"><b>Open it now</b><small>It starts running right away</small></button><button class="choice" data-unlnow="all"><b>Open everything now</b><small>For players who know the game</small></button><button class="choice" data-act="close"><b>Wait</b><small>Keep things simple for now</small></button></div>`,true)},true);
+document.addEventListener('click',e=>{const b=e.target.closest('[data-unlnow]');if(!b||!S)return;e.preventDefault();e.stopImmediatePropagation();const k=b.dataset.unlnow;unlNow(k);onClose=null;closeModal();toast(k==='all'?'Everything is open.':`${UNL[k].n} is open.`);if(k!=='all'&&UNL[k].open)UNL[k].open()},true);
+// the first-week welcome lays out the plan
+{const _om=openModal;openModal=function(...a){const r=_om.apply(this,a);try{const U=S&&unlInit();if(U&&!U.all&&!U.welcomed&&!isCand()&&inOffice()&&NAV.cur&&NAV.cur.name==='flow_people'){U.welcomed=true;const b=$('mBody');b.insertAdjacentHTML('afterbegin',`<div class="faccard unl-plan"><b>Your first months</b><p class="note">Start with the basics: the budget, the council, the people waiting to see you, and your family. New parts of the job open about once a month, each with a short introduction:</p><ul class="numlist">${Object.values(UNL).map(X=>`<li>${X.n}: month ${X.m}</li>`).join('')}</ul><p class="note">Locked tiles say when they open. Tap one to open it early.</p></div>`);save()}}catch(e){}return r}}
 
 function openLedger(){const L=S.log||[];openPanel('Everything that has happened, newest first','Ledger',L.length?`<div class="logl">${L.map(x=>`<div><span>${x.d}</span><p style="margin:0">${x.t}</p></div>`).join('')}</div>`:'<p class="note">Nothing yet. Tap ▶ Continue to move ahead.</p>','ledger')}
 function openPolicies(){const ks=Object.keys(POLICIES);

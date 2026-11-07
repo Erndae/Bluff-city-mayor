@@ -4,6 +4,15 @@ A city-management game set in Memphis, Tennessee. You play the mayor. You handle
 
 **Play it:** https://erndae.github.io/Bluff-city-mayor/ (once GitHub Pages is turned on, see below)
 
+## v26.85: Easing new players in
+
+- **The basics come first.** A new game starts with the budget, the council, visitors, the map, your family and your health. Other parts of the job open about once a month, each with a short introduction card: Power players (month 1), the press corps (2), Neighborhoods and Nashville vs. Memphis (3, just as the legislature opens in January), Stories (4), the back room (5), Memphis in Congress (6) and big city events (7).
+- **Quiet until they open.** A system that hasn't opened yet doesn't send demands, plots, bills or visitors.
+- **Locked tiles say when they open** ("Opens in 3 months"). Tap one to read what it is and open it early, or open everything at once.
+- **A "Your first months" card** on the People screen lays out the schedule the first time you visit.
+- **As a candidate,** the press corps opens in month 1 and the back room in month 3; systems that only matter to a mayor stay hidden until you win.
+- **Saved games already under way start with everything open.**
+
 ## v26.84: Your governing record counts
 
 - **Results in office are now a vote factor.** Voters judge an incumbent on what changed since the term began: crime, streets, blight, jobs, reading scores, public health, transit, finished projects, the city's savings, population, and how the neighborhoods feel. Good results add up to about +8 points on Election Day; bad results cost as much.
