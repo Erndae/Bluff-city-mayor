@@ -4,6 +4,20 @@ A city-management game set in Memphis, Tennessee. You play the mayor. You handle
 
 **Play it:** https://erndae.github.io/Bluff-city-mayor/ (once GitHub Pages is turned on, see below)
 
+## v26.93: Deeper careers
+
+- **City Council, much more to do:**
+  - **Committees:** pick Public Safety, Budget, Parks and Neighborhoods, or Planning and Zoning. Each adds its own move (a public-safety plan, finding $3M in waste, steering neighborhood money, shaping a big development).
+  - **A council vote every year** on the mayor's agenda: a MATA sales tax, police and fire raises, a hotel tax break, the 911 center, a citizen review board with subpoena power, the mayor's budget, a stormwater fee, payday lenders and more. Each shows what a yes or no does to your district, your bloc and your relationship with the mayor.
+  - **New moves:** district town halls, neighborhood cleanups, raising a re-election war chest (it helps on Election Day) and endorsing in other races. Eleven moves in all, three a year.
+  - **Twelve council events** (was five): illegal dumping caught on camera, a church youth center, vote trading, apartment fights, a donor story, a heat-wave power outage, a seat on a city board.
+- **Private citizens get their own year:** three moves a year outside of work:
+  - one built on your job (a pastor leads a march, a teacher organizes parents, a union electrician runs for local president, an attorney takes a pro bono case, and so on for all 18 jobs)
+  - volunteering, running your neighborhood association, op-eds, networking, a seat on a city board or commission (influence 25+), a leadership course
+
+  Plus six citizen events, like running a council member's campaign, a landfill fight, a Sunday TV show, or your boss telling you to stay out of politics.
+- **More events for every other path:** kingmaker (+3), law firm (+2), university (+2), County mayor (+2) and Congress (+2).
+
 ## v26.92: Super-district council seats
 
 - **Super Districts 8 and 9** are now on the council map. Each covers about half the city (Super District 8: Districts 3, 4, 6 and 7; Super District 9: Districts 1, 2 and 5) and elects three members; you run for one of the three positions against its incumbent.

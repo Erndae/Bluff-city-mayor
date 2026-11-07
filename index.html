@@ -730,7 +730,7 @@ details.analysis{margin-top:6px}details.analysis summary{cursor:pointer;color:va
     <button class="btn primary" data-act="pause" id="bPlay"><svg class="ico" viewBox="0 0 12 12" aria-hidden="true"><path d="M3.2 1.6v8.8l7.2-4.4z" fill="currentColor"/></svg> Resume <kbd>Space</kbd></button>
   </nav>
   <div class="status" id="status">Loading map…</div>
-  <div class="credit"><span class="ver" id="verTag">v26.92</span></div>
+  <div class="credit"><span class="ver" id="verTag">v26.93</span></div>
   <div class="tip" id="tip" hidden></div>
   <div class="toast" id="toast" role="status"></div>
   <section class="panel" id="panel" hidden aria-live="polite">
@@ -758,7 +758,7 @@ details.analysis{margin-top:6px}details.analysis summary{cursor:pointer;color:va
         <button class="btn" data-music-open>Music &amp; volume</button>
       </div>
       <div id="slotList" hidden></div>
-      <p class="note startv">Version <b class="ver" id="verStart">v26.92</b></p>
+      <p class="note startv">Version <b class="ver" id="verStart">v26.93</b></p>
     </div>
     <div class="startbox create" id="create" hidden>
       <h2>Create your mayor</h2>
@@ -1569,7 +1569,7 @@ function enact(s,p){DIVS.forEach(d=>{s.enacted[d.id]=p.divs[d.id];s.ratio[d.id]=
 // Voter groups. Each has a share of residents, turnout, home districts, concerns and an approval of you.
 // Citywide approval is the turnout-weighted average of the groups; each council district's approval comes from the groups that live there.
 // Shares, district mix and turnout are modeled, loosely grounded in Memphis demographics; they are not survey data.
-const VERSION='v26.92';
+const VERSION='v26.93';
 const GROUPS=[
  {id:'working',sh:'Working families',n:'Working families',ic:'⚒︎',c:'#f2a93b',share:24,turn:.5,start:56,w:{jobs:1,safety:.8,transit:.5},
   d:'Hourly workers in logistics, warehouses, health care and service jobs. The biggest bloc in the city.',dm:{1:1.1,2:.8,3:1.3,4:1.2,5:.6,6:1.2,7:1.1}},
@@ -9023,6 +9023,105 @@ document.addEventListener('click',e=>{const b=e.target.closest('[data-cdist],[da
 // head start if you run for mayor.
 {const _ay=afterYear;afterYear=function(...a){const A=S&&S.after;const sup=A&&A.role==='council'&&A.cn&&A.cn.d>7;const r=_ay.apply(this,a);try{if(sup&&S.after&&S.after.role==='council')S.after.inf=clamp(S.after.inf+1.5,0,100)}catch(e){}return r}}
 {const _cb=comebackRun;comebackRun=function(...a){const A=S&&S.after;const sup=A&&A.cn&&A.cn.d>7;const r=_cb.apply(this,a);try{if(sup&&S.cand)S.cand.rec=clamp(S.cand.rec+0.04,0,0.8)}catch(e){}return r}}
+
+// ======================= v26.93: DEEPER CAREERS =======================
+// More to do in every chapter: council members get a committee, yearly council votes, a re-election war chest and
+// more moves and events; private citizens get three moves a year (including one for their own job) and events of
+// their own; and the County, university, Congress, law firm and kingmaker paths get more events.
+// ---------- the City Council ----------
+const CN_CMTE={
+ safety:{n:'Public Safety',d:'MPD, Fire and 911',mv:{n:'Push a public-safety plan through committee',sk:'safe',b:0.5,d:'Works: crime down a little, district approval +3 · fails: approval −1',do:(c,A,ok)=>{if(ok){try{applyFx(S,{crime:-0.2})}catch(e){}c.app+=3;return'Your committee sent the full council a plan for more 911 dispatchers and violence interrupters. It passed.'}c.app-=1;return'The plan stalled. MPD and the police union both had objections.'}}},
+ budget:{n:'Budget',d:'Every dollar the city spends',mv:{n:'Rework the budget in committee',sk:'stew',b:0.5,d:'Works: $3M saved for the city, bloc +4 · fails: bloc −2',do:(c,A,ok)=>{if(ok){S.reserve+=3;c.bloc+=4;return'You found $3 million in waste in the vehicle and consulting budgets.'}c.bloc-=2;return'Every line you tried to cut had a defender.'}}},
+ parks:{n:'Parks and Neighborhoods',d:'Parks, libraries, community centers, blight',mv:{n:'Steer neighborhood money to the places that need it',d:'Blight down a little, district approval +3',do:(c,A)=>{try{applyFx(S,{blight:-0.2})}catch(e){}c.app+=3;return'Two community centers stay open late, and a dozen vacant lots got cleaned up.'}}},
+ planning:{n:'Planning and Zoning',d:'What gets built, and where',mv:{n:'Shape a big development',sk:'dip',b:0.5,d:'Works: jobs up a little, influence +3 · fails: neighbors feel ignored (approval −2)',do:(c,A,ok)=>{if(ok){try{applyFx(S,{jobs:0.2})}catch(e){}A.inf+=3;return'A mixed-use project got approved with affordable units and local hiring.'}c.app-=2;return'Neighbors packed the hearing and said nobody asked them.'}}}};
+Object.assign(CN_ACTS,{
+ cmte:{n:'Committee work',need:c=>!!c.cmte,d:'',do:(c,A,ok)=>CN_CMTE[c.cmte].mv.do(c,A,ok)},
+ townhall:{n:'Host a district town hall',sk:'cha',b:0.55,d:'Works: approval +5, influence +1 · fails: an angry crowd (approval −1)',do:(c,A,ok)=>{if(ok){c.app+=5;A.inf+=1;return'Two hundred people, two hours of questions, and you stayed until the last one.'}c.app-=1;return'The crowd was angry about a shooting, and you didn\'t have answers.'}},
+ cleanup:{n:'Lead a neighborhood cleanup',d:'Approval +3 · blight down a little',do:(c,A)=>{c.app+=3;try{applyFx(S,{blight:-0.1})}catch(e){}return'Three hundred volunteers, forty tons of trash, and a lot of photos with you in gloves.'}},
+ chest:{n:'Raise money for re-election',sk:'stew',b:0.5,d:'Works: war chest +$40K (helps re-election) · fails: +$10K',do:(c,A,ok)=>{c.chest=(c.chest||0)+(ok?40:10);return ok?'A fundraiser at a Midtown restaurant filled your war chest.':'Donors were slow this year.'}},
+ endorse:{n:'Endorse a candidate in another race',d:'Influence +3 · some voters don\'t like it (approval −1)',do:(c,A)=>{A.inf+=3;c.app-=1;return'Your endorsement helped a school board candidate win. Now you have a friend there.'}}});
+// the committee move borrows its committee's text
+Object.defineProperty(CN_ACTS.cmte,'sk',{get(){const c=S&&S.after&&S.after.cn;return c&&c.cmte?CN_CMTE[c.cmte].mv.sk:undefined}});
+Object.defineProperty(CN_ACTS.cmte,'b',{get(){const c=S&&S.after&&S.after.cn;return c&&c.cmte?CN_CMTE[c.cmte].mv.b:0.5}});
+CN_ACTS.cmte.d=()=>{const c=S&&S.after&&S.after.cn;return c&&c.cmte?CN_CMTE[c.cmte].mv.d:''};
+const CN_VOTES=[
+ {t:'A 1% sales-tax increase for MATA buses',yes:{mayor:4,app:-2,bloc:1,fx:{transit:0.3}},no:{mayor:-3,app:1},d:'Riders want it; homeowners and business owners don\'t.'},
+ {t:'Raises for police officers and firefighters',yes:{mayor:3,app:2,fx:{officers:10}},no:{mayor:-2,app:-2},d:'The police and fire unions are watching.'},
+ {t:'A $40 million tax break for a downtown hotel',yes:{mayor:4,app:-3,fx:{jobs:0.1}},no:{mayor:-3,app:2},d:'Jobs and conventions, or a giveaway?'},
+ {t:'Moving the city\'s 911 center under new management',yes:{mayor:3,app:0,fx:{crime:-0.1}},no:{mayor:-2,app:0},d:'Wait times have been bad for years.'},
+ {t:'A ban on new car washes and dollar stores on main corridors',yes:{app:2,bloc:2},no:{app:-1},d:'Neighborhood groups want better businesses.'},
+ {t:'Selling a city golf course to a developer',yes:{mayor:3,app:-2,fx:{revenue:0.5}},no:{mayor:-2,app:2},d:'Money for the city, or green space for good?'},
+ {t:'A citizen review board with subpoena power over MPD',yes:{app:1,bloc:2,mayor:-2},no:{app:-1,mayor:1},d:'Reformers and the police union are on opposite sides.'},
+ {t:'The mayor\'s budget, as written',yes:{mayor:6,bloc:-1},no:{mayor:-6,bloc:3,app:1},d:'A yes keeps you close to the mayor. A no makes you a leader of the opposition.'},
+ {t:'A stormwater fee to fix flooding',yes:{app:-1,mayor:2,fx:{streets:0.1}},no:{app:1,mayor:-1},d:'Everyone hates fees. Everyone hates flooding more.'},
+ {t:'Banning high-interest payday lenders near schools',yes:{app:2,bloc:1},no:{app:-1},d:'Lenders say it kills jobs. Pastors say it saves families.'}];
+function cnVoteNew(c){const used=c.lastVotes||[];const pool=CN_VOTES.map((v,i)=>i).filter(i=>!used.includes(i));const i=pk2(pool.length?pool:CN_VOTES.map((v,i)=>i));c.vote=i;c.lastVotes=[...used,i].slice(-6)}
+function cnCast(yes){const A=S.after,c=A&&A.cn;if(!c||c.vote==null)return;const V=CN_VOTES[c.vote],E=yes?V.yes:V.no;c.mayor+=E.mayor||0;c.app+=E.app||0;c.bloc+=E.bloc||0;if(E.fx)try{applyFx(S,E.fx)}catch(e){}c.vote=null;const m=`You voted ${yes?'yes':'no'} on ${V.t.charAt(0).toLowerCase()+V.t.slice(1)}.`;afterLog(m);save();AFTER_MSG=m;openAfter()}
+function cnPickCmte(k){const c=S.after&&S.after.cn;if(!c||c.cmte||!CN_CMTE[k])return;c.cmte=k;const m=`You joined the ${CN_CMTE[k].n} Committee.`;afterLog(m);save();AFTER_MSG=m;openAfter()}
+CN_EVENTS.push(
+ {t:'A TV station catches a city crew dumping trash in your district',ch:[['Demand an investigation on camera',(c,A)=>{c.app+=4;c.mayor-=3;return'The crew chief was fired. City Hall is annoyed with you.'}],['Handle it quietly with the public works director',(c,A)=>{c.mayor+=3;return'It got fixed, and no one made a scene.'}]]},
+ {t:'A church in your district wants city money for a youth center',ch:[['Find the money in the budget',(c,A)=>{c.app+=4;c.bloc-=2;return'The youth center opens next year. Some colleagues called it a pet project.'}],['Help them apply for a grant instead',(c,A)=>{c.app+=1;return'They got a smaller federal grant.'}]]},
+ {t:'A colleague asks you to trade votes',ch:[['Make the trade',(c,A)=>{c.bloc+=6;return'You\'ll back their parking plan; they\'ll back your blight ordinance.'}],['Vote on the merits',(c,A)=>{c.bloc-=2;c.app+=1;return'You kept your independence. You lost an ally.'}]]},
+ {t:'Residents fight a new apartment complex in your district',ch:[['Side with the neighbors',(c,A)=>{c.app+=4;try{applyFx(S,{jobs:-0.05})}catch(e){}return'The project died. Housing advocates were not happy.'}],['Back the housing with community changes',(c,A)=>{c.app-=2;A.inf+=2;return'It got built with a park and a grocery on the ground floor.'}]]},
+ {t:'A reporter asks about a contractor who gave to your campaign',ch:[['Return the money and explain',(c,A)=>{c.chest=Math.max(0,(c.chest||0)-10);c.app+=2;return'You returned $10,000. The story was one day long.'}],['Say there\'s nothing to see',(c,A)=>{c.app-=3;return'The story ran for a week.'}]]},
+ {t:'MLGW cuts power to a senior high-rise in a heat wave',ch:[['Show up with fans and water and call MLGW\'s CEO',(c,A)=>{c.app+=5;return'Power was back in four hours. Residents won\'t forget.'}],['Send your staff',(c,A)=>{c.app+=1;return'Your staff did good work. Residents wanted you.'}]]},
+ {t:'The mayor offers you a seat on a powerful city board',ch:[['Accept',(c,A)=>{c.mayor+=6;A.inf+=3;return'You\'re on the EDGE board now. More power, closer to the mayor.'}],['Decline and stay independent',(c,A)=>{c.bloc+=3;return'Your colleagues respected it.'}]]});
+// re-election: your war chest helps; a new vote and committee screen
+{const _ay=afterYear;afterYear=function(...a){const A=afterInit();let tmp=0;try{const c=A.cn;if(A.role==='council'&&c&&(S.y-2027)%4===0&&S.y>=2027&&A.cnSince!==S.y){tmp=Math.min(12,(c.chest||0)/8);c.app+=tmp}}catch(e){}const r=_ay.apply(this,a);try{const c=S.after&&S.after.cn;if(c){if(tmp){c.app-=tmp;c.chest=0}if(S.after.role==='council'&&c.vote==null)cnVoteNew(c);save();if(S.after.role==='council')openAfter()}}catch(e){}return r}}
+{const _oa=openAfter;openAfter=function(...a){const out=_oa.apply(this,a);try{const A=S.after,b=$('mBody'),desk=b&&b.querySelector('.roledesk');if(!desk||A.role!=='council'||!A.cn||desk.querySelector('.cnx'))return out;const c=A.cn;if(c.vote==null&&!c.voted0){c.voted0=true;cnVoteNew(c)}
+  let h='<div class="cnx">';
+  if(!c.cmte)h+=`<div class="faccard"><b>Pick a committee</b><p class="note">Every member sits on committees. Yours decides what you can push hardest.</p><div class="choices">${Object.entries(CN_CMTE).map(([k,X])=>`<button class="choice" data-cncmte="${k}"><b>${X.n} Committee</b><small>${X.d} · ${X.mv.n.toLowerCase()}</small></button>`).join('')}</div></div>`;
+  else h+=`<p class="note">You sit on the ${CN_CMTE[c.cmte].n} Committee. War chest: $${Math.round((c.chest||0))}K.</p>`;
+  if(c.vote!=null){const V=CN_VOTES[c.vote];const fx=E=>[E.mayor?`mayor ${E.mayor>0?'+':''}${E.mayor}`:'',E.app?`district ${E.app>0?'+':''}${E.app}`:'',E.bloc?`bloc ${E.bloc>0?'+':''}${E.bloc}`:''].filter(Boolean).join(' · ')||'little effect';h+=`<div class="faccard"><b>Council vote: ${V.t}</b><p class="note">${V.d}</p><div class="choices"><button class="choice" data-cnvote="1"><b>Vote yes</b><small>${fx(V.yes)}</small></button><button class="choice" data-cnvote="0"><b>Vote no</b><small>${fx(V.no)}</small></button></div></div>`}
+  h+='</div>';const st=desk.querySelector('.cnstats');const nt=st&&st.nextElementSibling;const x=document.createElement('div');x.innerHTML=h;(nt||st||desk.firstChild).after(x.firstChild);
+  const yb=b.querySelector('[data-ayear]');if(yb&&(c.vote!=null||!c.cmte)){yb.disabled=true;const sm=yb.querySelector('small');if(sm)sm.textContent=!c.cmte?'Pick a committee first':'Cast your council vote first'}
+  const cm=desk.querySelector('[data-ract="cmte"]');if(cm&&c.cmte){const bb=cm.querySelector('b');if(bb)bb.textContent=CN_CMTE[c.cmte].mv.n}else if(cm)cm.remove()}catch(e){console.warn('cnx',e)}return out}}
+document.addEventListener('click',e=>{const b=e.target.closest('[data-cnvote],[data-cncmte]');if(!b||!S||!S.after)return;e.preventDefault();e.stopImmediatePropagation();if(b.dataset.cncmte){cnPickCmte(b.dataset.cncmte);return}cnCast(b.dataset.cnvote==='1')},true);
+// ---------- private citizens ----------
+const CZ_JOB={pastor:['Lead a community march for safer streets','faith'],owner:['Join the Chamber\'s small-business board','business'],nurse:['Run a free health fair','working'],teacher:['Organize parents for school funding','parents'],union:['Run for president of your union local','labor'],nonprofit:['Launch a citywide renters\' campaign','renters'],officer:['Start a neighborhood watch network','owners'],tech:['Build a civic app that tracks potholes','young'],firefighter:['Lead the firefighters\' political action committee','labor'],musician:['Play a benefit concert on Beale','young'],socialworker:['Expand a family support program','renters'],coach:['Start a citywide youth league','parents'],journalist:['Publish an investigation into a city contract','young'],realtor:['Lead a first-time homebuyer drive','owners'],attorney:['Take a big pro bono case','renters'],barber:['Host barbershop talks on voting','working'],fedex:['Organize your shift for better pay','labor'],veteran:['Start a veterans\' outreach group','owners']};
+function czInit(A){if(!A.cz)A.cz={ra:0,assoc:false,board:false,ops:0};return A.cz}
+const CZ_ACTS={
+ job:{n:()=>{const j=CZ_JOB[S.mayor.occ];return j?j[0]:'Do something big through your work'},sk:'cha',b:0.5,d:'Your work, in public · works: influence +4, the people you serve notice · fails: influence +1',do:(z,A,ok)=>{const j=CZ_JOB[S.mayor.occ]||['',null];if(ok){A.inf+=4;if(j[1])try{groupLift(j[1],1,'Your work in the community')}catch(e){}return`${j[0]}: it worked. People are starting to know your name.`}A.inf+=1;return`${j[0]}: a slow start, but you learned a lot.`}},
+ volunteer:{n:'Volunteer across the city',d:'Food banks, tutoring, cleanups · influence +2',do:(z,A)=>{A.inf+=2;return'Saturdays at the Mid-South Food Bank and Tuesdays tutoring in Frayser.'}},
+ assoc:{n:'Run for president of your neighborhood association',sk:'dip',b:0.6,need:z=>!z.assoc,d:'Works: you lead it (influence +3 now, +1 every year)',do:(z,A,ok)=>{if(ok){z.assoc=true;A.inf+=3;return'You won the neighborhood association presidency, 41–12.'}return'You lost to a retired teacher who\'d run it for years.'}},
+ oped:{n:'Write an op-ed in the Commercial Appeal',sk:'learn',b:0.5,d:'Works: influence +3 · fails: it gets roasted online (−1)',do:(z,A,ok)=>{z.ops++;if(ok){A.inf+=3;return'Your op-ed on blight got shared all over the city.'}A.inf-=1;return'The comments section was brutal.'}},
+ network:{n:'Network at Chamber and church events',sk:'dip',b:0.5,d:'Works: influence +2 and a donor who\'ll back you someday · fails: +1',do:(z,A,ok)=>{A.inf+=ok?2:1;if(ok)z.donor=(z.donor||0)+1;return ok?'A business owner said, "If you ever run, call me."':'Lots of business cards, not many friends.'}},
+ board:{n:'Apply for a seat on a city board or commission',sk:'dip',b:0.45,need:z=>!z.board&&(S.after.inf>=25),d:'Needs influence 25 · works: you\'re appointed (influence +2 every year)',do:(z,A,ok)=>{if(ok){z.board=pk2(['the Land Use Control Board','the Memphis Housing Authority board','the Beale Street Tourism Development Authority','the Library Board']);A.inf+=2;return`The mayor appointed you to ${z.board}.`}return'The mayor picked someone with more connections.'}},
+ learn:{n:'Take a leadership course',d:'Grow a skill (Education experience)',do:(z,A)=>{try{gainXP('learn',12)}catch(e){}try{gainXP('cha',6)}catch(e){}return'A semester at the University of Memphis leadership program.'}}};
+const CZ_EVENTS=[
+ {t:'A council member asks you to run their re-election campaign',ch:[['Do it',A=>{A.inf+=4;S.purse.cash-=5000;return'You ran a winning campaign. Now you know how it\'s done.'}],['Say no: you have a job',A=>'Maybe next time.']]},
+ {t:'Your neighborhood is fighting a landfill expansion',ch:[['Lead the fight',A=>{A.inf+=5;return'You packed the hearing. The expansion was denied.'}],['Sign the petition and stay out of it',A=>{A.inf+=1;return'The fight went on without you.'}]]},
+ {t:'A local TV station wants you as a regular guest on a Sunday politics show',ch:[['Accept',A=>{A.inf+=4;return'Every other Sunday, you\'re on TV. People recognize you at Kroger.'}],['Decline',A=>'You kept your weekends.']]},
+ {t:'Your boss tells you to stay out of politics or find another job',ch:[['Keep going: this matters',A=>{A.inf+=2;S.purse.cash-=10000;return'You took a pay cut and a smaller job. You kept your voice.'}],['Lay low for a year',A=>{A.inf-=2;return'You stayed quiet. The momentum faded a little.'}]]},
+ {t:'A pastor asks you to help after a teenager is shot in your neighborhood',ch:[['Organize a vigil and a youth night',A=>{A.inf+=3;return'Hundreds came. A summer youth program started from it.'}],['Send a donation',A=>{S.purse.cash-=1000;return'Your check helped the family with funeral costs.'}]]},
+ {t:'A party official asks you to consider running for office',ch:[['Ask what they\'d offer',A=>{A.inf+=2;return'They offered help with money and volunteers if you run for council or the legislature.'}],['Not yet',A=>'They said the door stays open.']]}];
+function czAct(k){const A=S.after;if(!A||!A.fresh||A.role)return;const z=czInit(A),X=CZ_ACTS[k];if(!X||z.ra>=3||(X.need&&!X.need(z)))return;z.ra++;const ok=X.sk?persuade(X.sk,X.b,[],8):true;const m=X.do(z,A,ok);A.inf=clamp(A.inf,0,100);afterLog(m);try{sfx(ok?'good':'bad')}catch(e){}save();AFTER_MSG=m;openAfter()}
+function czEvent(i){const A=S.after;if(!A||!A.czev)return;const E=CZ_EVENTS[A.czev.i];A.czev=null;const m=E.ch[i][1](A);A.inf=clamp(A.inf,0,100);afterLog(m);save();AFTER_MSG=m;openAfter()}
+{const _cy=careerYear;careerYear=function(){const A=S.after;const z=czInit(A);if(A.czev)return;const r=_cy.apply(this,arguments);try{z.ra=0;if(z.assoc)A.inf+=1;if(z.board)A.inf+=2;A.inf=clamp(A.inf,0,100);if(Math.random()<0.55){const pool=CZ_EVENTS.map((e,i)=>i).filter(i=>i!==A.czLast);const i=pk2(pool);A.czev={i};A.czLast=i}save();openAfter()}catch(e){console.warn('cz',e)}return r}}
+{const _oa=openAfter;openAfter=function(...a){const out=_oa.apply(this,a);try{const A=S.after,b=$('mBody');if(!A||!A.fresh||A.role||A.pickCD||A.pickDist||!b||b.querySelector('.czdesk'))return out;const z=czInit(A);
+  let h=`<div class="faccard czdesk"><b>This year, outside of work · ${3-z.ra} of 3 moves left</b><p class="note">Build your name and influence before you run. ${z.assoc?'You lead your neighborhood association. ':''}${z.board?`You serve on ${z.board}. `:''}</p>`;
+  if(A.czev){const E=CZ_EVENTS[A.czev.i];h+=`<div class="faccard"><b>${E.t}</b><div class="choices">${E.ch.map((c,i)=>`<button class="choice" data-czev="${i}"><b>${c[0]}</b></button>`).join('')}</div></div>`}
+  h+=`<div class="choices">${Object.entries(CZ_ACTS).map(([k,X])=>{const can=z.ra<3&&(!X.need||X.need(z))&&!A.czev;const n=typeof X.n==='function'?X.n():X.n;return`<button class="choice" data-czact="${k}" ${can?'':'disabled'}><b>${n}</b><small>${X.sk?oddsTag(X.sk,X.b)+' · ':''}${X.d}</small></button>`}).join('')}</div></div>`;
+  const ch=b.querySelector('.choices');const x=document.createElement('div');x.innerHTML=h;if(ch)ch.after(x.firstChild);else b.appendChild(x.firstChild);
+  const yb=b.querySelector('[data-ayear]');if(yb&&A.czev){yb.disabled=true;const sm=yb.querySelector('small');if(sm)sm.textContent='Deal with what\'s in front of you first'}}catch(e){console.warn('czdesk',e)}return out}}
+document.addEventListener('click',e=>{const b=e.target.closest('[data-czact],[data-czev]');if(!b||!S||!S.after)return;e.preventDefault();e.stopImmediatePropagation();if(b.dataset.czact){czAct(b.dataset.czact);return}czEvent(+b.dataset.czev)},true);
+// ---------- more events for the other paths ----------
+KM_EVENTS.push(
+ {t:'A candidate you didn\'t back asks for your endorsement',ch:[['Endorse them for a price: a seat on their transition team',k=>{k.favors=(k.favors||0)+1;S.after.inf+=2;return'They agreed. You have someone on the inside.'}],['Stay loyal to your slate',k=>{k.slate.forEach(c=>c.str+=2);return'Your slate noticed.'}]]},
+ {t:'A wealthy donor wants to bankroll your operation',ch:[['Take the money',k=>{S.purse.cash+=80000;S.after.inf+=2;return'$80,000 for your slate. The donor will want something someday.'}],['Turn it down',k=>{S.after.inf+=1;return'You stayed your own boss.'}]]},
+ {t:'A reporter is writing a profile of "the most powerful person in Memphis without a title"',ch:[['Give an interview',k=>{S.after.inf+=4;return'The profile made you famous, and a little notorious.'}],['Refuse to comment',k=>'The profile ran anyway, with more mystery.']]});
+LW_EVENTS.push(
+ {t:'A tech company wants the firm to fight a city regulation',ch:[['Take the case',l=>{S.purse.cash+=200000;l.rep-=2;return'You won, and some old allies at City Hall stopped returning calls.'}],['Pass',l=>{l.rep+=2;return'You kept your public-interest reputation.'}]]},
+ {t:'Your firm\'s managing partner retires',ch:[['Run for managing partner',l=>{l.rep+=4;S.purse.cash+=100000;return'You run the firm now.'}],['Stay focused on your clients',l=>{l.clients=(l.clients||0)+1;return'One more big client.'}]]});
+UNI_EVENTS.push(
+ {t:'The state legislature threatens to cut the university\'s funding',ch:[['Lobby Nashville in person',(u,A)=>{u.rep+=2;A.inf+=2;return'You saved most of the money.'}],['Raise tuition to cover it',(u,A)=>{u.end+=8;u.mood-=8;return'Students paid the price.'}]]},
+ {t:'A professor goes viral for something said in class',ch:[['Defend academic freedom',(u,A)=>{u.mood+=4;u.rep+=1;return'The faculty rallied behind you.'}],['Put the professor on leave',(u,A)=>{u.mood-=6;return'Some donors were relieved. The faculty were not.'}]]});
+CO_EVENTS.push(
+ {t:'The County Commission wants to cut your budget for the Health Department',ch:[['Fight it in public',(c,A)=>{c.app+=2;c.ph+=2;return'You won the vote, 7–6.'}],['Take a smaller cut',(c,A)=>{c.bud+=3;c.ph-=3;return'A compromise nobody loved.'}]]},
+ {t:'A suburban town wants to leave the County\'s school funding formula',ch:[['Negotiate a deal',(c,A)=>{c.sch-=2;c.app+=1;return'They stayed, for a price.'}],['Take them to court',(c,A)=>{c.bud-=2;c.sch+=2;return'The court sided with the County.'}]]});
+CG_EVENTS.push(
+ {t:'A district office caseworker uncovers a VA scandal at the Memphis VA hospital',ch:[['Go public and demand a hearing',(c,A)=>{c.app+=4;c.clout=(c.clout||0)+2;return'The VA promised changes after your hearing.'}],['Work it out quietly with the VA',(c,A)=>{c.app+=1;return'Veterans got help faster. Few people heard about it.'}]]},
+ {t:'Your party\'s leadership asks you to take a tough vote for them',ch:[['Take the vote',(c,A)=>{c.party=(c.party||50)+6;c.app-=2;return'Leadership owes you one.'}],['Vote your district',(c,A)=>{c.party=(c.party||50)-5;c.app+=2;return'Back home, people respected it.'}]]});
 
 function openLedger(){const L=S.log||[];openPanel('Everything that has happened, newest first','Ledger',L.length?`<div class="logl">${L.map(x=>`<div><span>${x.d}</span><p style="margin:0">${x.t}</p></div>`).join('')}</div>`:'<p class="note">Nothing yet. Tap ▶ Continue to move ahead.</p>','ledger')}
 function openPolicies(){const ks=Object.keys(POLICIES);
