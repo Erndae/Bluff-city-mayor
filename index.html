@@ -719,7 +719,7 @@ details.analysis{margin-top:6px}details.analysis summary{cursor:pointer;color:va
     <button class="btn primary" data-act="pause" id="bPlay"><svg class="ico" viewBox="0 0 12 12" aria-hidden="true"><path d="M3.2 1.6v8.8l7.2-4.4z" fill="currentColor"/></svg> Resume <kbd>Space</kbd></button>
   </nav>
   <div class="status" id="status">Loading map…</div>
-  <div class="credit"><span class="ver" id="verTag">v26.82</span></div>
+  <div class="credit"><span class="ver" id="verTag">v26.83</span></div>
   <div class="tip" id="tip" hidden></div>
   <div class="toast" id="toast" role="status"></div>
   <section class="panel" id="panel" hidden aria-live="polite">
@@ -747,7 +747,7 @@ details.analysis{margin-top:6px}details.analysis summary{cursor:pointer;color:va
         <button class="btn" data-music-open>Music &amp; volume</button>
       </div>
       <div id="slotList" hidden></div>
-      <p class="note startv">Version <b class="ver" id="verStart">v26.82</b></p>
+      <p class="note startv">Version <b class="ver" id="verStart">v26.83</b></p>
     </div>
     <div class="startbox create" id="create" hidden>
       <h2>Create your mayor</h2>
@@ -1558,7 +1558,7 @@ function enact(s,p){DIVS.forEach(d=>{s.enacted[d.id]=p.divs[d.id];s.ratio[d.id]=
 // Voter groups. Each has a share of residents, turnout, home districts, concerns and an approval of you.
 // Citywide approval is the turnout-weighted average of the groups; each council district's approval comes from the groups that live there.
 // Shares, district mix and turnout are modeled, loosely grounded in Memphis demographics; they are not survey data.
-const VERSION='v26.82';
+const VERSION='v26.83';
 const GROUPS=[
  {id:'working',sh:'Working families',n:'Working families',ic:'⚒︎',c:'#f2a93b',share:24,turn:.5,start:56,w:{jobs:1,safety:.8,transit:.5},
   d:'Hourly workers in logistics, warehouses, health care and service jobs. The biggest bloc in the city.',dm:{1:1.1,2:.8,3:1.3,4:1.2,5:.6,6:1.2,7:1.1}},
@@ -7409,7 +7409,7 @@ function teen(){const F=famInit();return F.kids.find(k=>k.age>=14)}
 function spouseJob(){const F=famInit();return F.spouse&&!F.spouse.gone?SPOUSE_JOBS[F.spouse.job]:null}
 // ---------- the monthly rhythm ----------
 function famMonth(){if(!S||!S.started||S.over||S.phase==='ai')return;const F=famInit();if(!F.spouse&&!F.kids.length)return;
-  const busy=(S.lastSlotsUsed!=null?S.lastSlotsUsed:3);let d=3-busy*1.6;if(S.camp&&!S.camp.voted&&(isCand()||monthsToElection()<=4))d-=4;if(F.spouse&&!F.spouse.gone&&F.spouse.pol==='hates')d-=1.5;homeAdd(d);
+  const busy=(S.lastSlotsUsed!=null?S.lastSlotsUsed:3);let d=2-busy*0.9;if(S.camp&&!S.camp.voted&&(isCand()||monthsToElection()<=4))d-=2;if(F.spouse&&!F.spouse.gone&&F.spouse.pol==='hates')d-=1.5;homeAdd(d);
   if(S.m===1)F.kids.forEach(k=>{k.age++});
   if(F.home<25){F.tired=nowM();famLog('Home life is strained. You\'re exhausted and distracted.')}
   // stories, one at a time, every 3–6 months
@@ -7775,7 +7775,7 @@ function hInit(){if(!S||!S.mayor)return null;if(!S.hl){const a=S.mayor.age||45;S
 function hLog(t){const H=hInit();H.log.unshift({t,d:dateStr()});if(H.log.length>10)H.log.length=10}
 function hTier(v){return v>=75?['Strong','pos']:v>=55?['Fair','']:v>=35?['Poor','neg']:['Failing','neg']}
 function hMonth(){if(!S||!S.started||S.over||S.phase==='ai')return;const H=hInit();if(!H)return;const a=S.mayor.age||45;const used=S.lastSlotsUsed!=null?S.lastSlotsUsed:3;
-  let st=used*3-8;if(S.camp&&!S.camp.voted&&(isCand()||monthsToElection()<=4))st+=5;if(S.exposed||(S.trial))st+=12;if((S.plots||[]).some(p=>!p.done&&p.seen))st+=4;if(S.crisis&&S.crisis.ci==null)st+=6;
+  let st=used*2.2-8;if(S.camp&&!S.camp.voted&&(isCand()||monthsToElection()<=4))st+=3;if(S.exposed||(S.trial))st+=12;if((S.plots||[]).some(p=>!p.done&&p.seen))st+=4;if(S.crisis&&S.crisis.ci==null)st+=6;
   const F=S.fam;if(F&&(F.spouse&&!F.spouse.gone||F.kids.length))st+=F.home>=60?-4:F.home<30?4:0;H.st=clamp(H.st+st,0,100);
   let dh=-Math.max(0,(H.st-45)/12)-(a>=60?(a-55)*0.06:0)+(H.st<30?0.6:0);H.hp=clamp(H.hp+dh,1,100);
   if(H.hp<40&&nowM()-(H.warn||-99)>=4){H.warn=nowM();notify('bad','Your health is slipping',`Health ${Math.round(H.hp)}, stress ${Math.round(H.st)}. Exercise is free, a checkup catches problems early, and a vacation resets stress.`,()=>openHealth(),{ttl:16})}
@@ -8314,8 +8314,8 @@ document.addEventListener('click',e=>{const b=e.target.closest('[data-dist],[dat
 // Under the 2026 map Memphis has three members of Congress (the 5th, 8th and 9th districts), and for each of them
 // Memphis is only part of the district. As mayor you work them for federal money: meetings, a lobbying trip to
 // Washington, sharing credit, and favors they ask of you. The people in this game are fictional.
-const DELEG_FIRST={m:['Wade','Curtis','Darnell','Harlan','Russell','Marcus','Glenn','Trent'],f:['Lorna','Renee','Dana','Carolyn','Tasha','Meredith','Joanne','Celeste']};
-const DELEG_LAST=['Pruitt','Haskins','Odom','Whitfield','Bramlett','Coker','Tillman','Sowell','Gaither','Ashby','Duckett','Rainey'];
+const DELEG_FIRST={m:['Wade','Curtis','Dwight','Harlan','Russell','Marcus','Glenn','Trent'],f:['Lorna','Renee','Dana','Carolyn','Tasha','Meredith','Joanne','Celeste']};
+const DELEG_LAST=['Haskins','Fenwick','Bramlett','Coker','Tillman','Sowell','Gaither','Ashby','Duckett','Rainey','Kincaid','Lyle'];
 // how much each member's politics turn on Memphis (a game value), and the chance their seat is held by a Republican
 const DELEG_SEAT={'5':{focus:0.3,pR:0.9,home:'Middle Tennessee'},'8':{focus:0.25,pR:0.95,home:'Jackson and West Tennessee'},'9':{focus:0.4,pR:0.6,home:'the counties east toward Nashville'}};
 function delegNew(d){const g=Math.random()<0.5?'m':'f';const P=DELEG_SEAT[d];return{d,name:`${pk2(DELEG_FIRST[g])} ${pk2(DELEG_LAST)}`,g,age:44+Math.floor(Math.random()*20),frame:'#6a5f8a',party:Math.random()<P.pR?'R':'D',rel:0,ask:-99,fav:-99,log:[]}}
@@ -8507,6 +8507,7 @@ function nextStop(){if(!S)return'';try{const q=(S.queue||[]).filter(x=>x.due>S.d
 // committee to the House, the Senate and the governor's desk between February and April. You can work the committee
 // chair, rally the Memphis-area legislators, take it to the public, or cut a deal. If a bill becomes law, you can sue.
 // How the legislature feels about you (the state power player) decides how many bills come and how strong they are.
+function lcFirst(t){return t?t.charAt(0).toLowerCase()+t.slice(1):t}
 const LEG_STAGES=['Filed','Passed committee','Passed the House','Passed the Senate','Signed into law'];
 const LEG_BILLS={
  mpd:{t:'A state oversight board for MPD',d:'Lawmakers want a state-appointed board to review Memphis police policy and discipline.',why:'Some lawmakers say Memphis can\'t manage its own police department.',
@@ -8524,8 +8525,8 @@ function legLog(t){const L=legInit();L.log.unshift({d:dateStr(),t});L.log=L.log.
 function legNeed(){return 50}
 function legMonth(){if(!S||!inOffice()||S.over)return;const L=legInit(),rel=facRel('state');
   if(S.m===1&&L.y!==S.y){L.y=S.y;L.bills=[];const n=rel<=-15?2:rel>=25?(Math.random()<0.5?0:1):1;const pool=Object.keys(LEG_BILLS).filter(k=>!L.laws[k]);for(let i=0;i<n&&pool.length;i++){const k=pool.splice(Math.floor(Math.random()*pool.length),1)[0];L.bills.push({id:k,st:0,str:Math.round(clamp(56-rel/3+Math.random()*12,35,85)),acted:-99,dead:false})}
-    if(L.bills.length){legLog(`The General Assembly opened in Nashville. ${L.bills.length} bill${L.bills.length>1?'s':''} aimed at Memphis: ${L.bills.map(b=>LEG_BILLS[b.id].t.toLowerCase()).join('; ')}.`);notify('event','Nashville vs. Memphis',`The legislature is back in session, and ${L.bills.length===1?'a bill':'two bills'} would take power from the city.`,()=>openNash(),{ttl:16})}return}
-  if(S.m>=2&&S.m<=4&&L.y===S.y){L.bills.forEach(b=>{for(let roll=0;roll<2;roll++){if(b.dead||b.st>=4)return;if(b.str+(Math.random()*40-20)>=legNeed()){b.st++;if(b.st===4){L.laws[b.id]=S.y;try{LEG_BILLS[b.id].fx()}catch(e){}legLog(`The governor signed it: ${LEG_BILLS[b.id].t.toLowerCase()}.`);try{newsAdd(-1,`Governor signs ${LEG_BILLS[b.id].t.toLowerCase()}`)}catch(e){}try{addRecord({t:`State law: ${LEG_BILLS[b.id].t}`,kind:'law',bad:['young','renters'],good:[]})}catch(e){}notify('bad','A state law hits Memphis',LEG_BILLS[b.id].t+'. You can sue to block it.',()=>openNash(),{ttl:16})}else legLog(`${LEG_BILLS[b.id].t}: ${LEG_STAGES[b.st].toLowerCase()}.`)}}})}
+    if(L.bills.length){legLog(`The General Assembly opened in Nashville. ${L.bills.length} bill${L.bills.length>1?'s':''} aimed at Memphis: ${L.bills.map(b=>lcFirst(LEG_BILLS[b.id].t)).join('; ')}.`);notify('event','Nashville vs. Memphis',`The legislature is back in session, and ${L.bills.length===1?'a bill':'two bills'} would take power from the city.`,()=>openNash(),{ttl:16})}return}
+  if(S.m>=2&&S.m<=4&&L.y===S.y){L.bills.forEach(b=>{for(let roll=0;roll<2;roll++){if(b.dead||b.st>=4)return;if(b.str+(Math.random()*40-20)>=legNeed()){b.st++;if(b.st===4){L.laws[b.id]=S.y;try{LEG_BILLS[b.id].fx()}catch(e){}legLog(`The governor signed it: ${lcFirst(LEG_BILLS[b.id].t)}.`);try{newsAdd(-1,`Governor signs ${lcFirst(LEG_BILLS[b.id].t)}`)}catch(e){}try{addRecord({t:`State law: ${LEG_BILLS[b.id].t}`,kind:'law',bad:['young','renters'],good:[]})}catch(e){}notify('bad','A state law hits Memphis',LEG_BILLS[b.id].t+'. You can sue to block it.',()=>openNash(),{ttl:16})}else legLog(`${LEG_BILLS[b.id].t}: ${LEG_STAGES[b.st].toLowerCase()}.`)}}})}
   if(S.m===5&&L.y===S.y){L.bills.forEach(b=>{if(!b.dead&&b.st<4){b.dead=true;legLog(`The session ended. ${LEG_BILLS[b.id].t} died.`)}})}}
 {const _eom=endOfMonth;endOfMonth=function(...a){const r=_eom.apply(this,a);try{legMonth()}catch(e){console.warn('leg',e)}return r}}
 const LEG_MOVES={
@@ -8535,8 +8536,8 @@ const LEG_MOVES={
 function legAct(i,k){const L=legInit(),b=L.bills[i],X=LEG_MOVES[k];if(!b||!X||b.dead||b.st>=4||S.slots<=0||b.acted===nowM())return;S.slots--;b.acted=nowM();const ok=persuade(X.sk,X.b,[],7);const m=`${LEG_BILLS[b.id].t}: ${X.do(b,ok)}`;b.str=clamp(b.str,0,100);legLog(m);try{sfx(ok?'good':'bad')}catch(e){}save();refreshHUD();NASH_MSG=m;openNash()}
 function legDeal(i){const L=legInit(),b=L.bills[i];if(!b||b.dead||b.st>=4)return;const D=LEG_BILLS[b.id].deal;if(D.cost&&S.reserve<D.cost)return;if(D.cost)S.reserve-=D.cost;for(const g in D.grp||{})groupLift(g,D.grp[g],'Your deal with Nashville');for(const f in D.fac||{})facMod(f,'Your deal with Nashville',D.fac[f]);facMod('state','The mayor cut a deal',6);b.dead=true;const m=`You cut a deal: ${D.t.charAt(0).toLowerCase()+D.t.slice(1)}. The bill is dead.`;legLog(m);save();refreshHUD();NASH_MSG=m;openNash()}
 function legSue(k){const L=legInit();if(!L.laws[k]||S.reserve<0.6||(L.sued||{})[k])return;S.reserve-=0.6;L.sued=L.sued||{};L.sued[k]=S.y;const ok=Math.random()<clamp(LEG_BILLS[k].sue+(mskill('learn')-8)/50,0.1,0.7);let m;
-  if(ok){delete L.laws[k];try{LEG_BILLS[k].undo()}catch(e){}facMod('state','The city beat us in court',-5);m=`A court blocked the state law: ${LEG_BILLS[k].t.toLowerCase()}.`;try{newsAdd(1.2,`Court blocks ${LEG_BILLS[k].t.toLowerCase()}`)}catch(e){}}
-  else m=`The court upheld the state law: ${LEG_BILLS[k].t.toLowerCase()}. The city spent $600,000 on the case.`;legLog(m);save();refreshHUD();NASH_MSG=m;openNash()}
+  if(ok){delete L.laws[k];try{LEG_BILLS[k].undo()}catch(e){}facMod('state','The city beat us in court',-5);m=`A court blocked the state law: ${lcFirst(LEG_BILLS[k].t)}.`;try{newsAdd(1.2,`Court blocks ${lcFirst(LEG_BILLS[k].t)}`)}catch(e){}}
+  else m=`The court upheld the state law: ${lcFirst(LEG_BILLS[k].t)}. The city spent $600,000 on the case.`;legLog(m);save();refreshHUD();NASH_MSG=m;openNash()}
 let NASH_MSG=null;
 function openNash(){const L=legInit(),m=NASH_MSG;NASH_MSG=null;const rel=facRel('state'),[tn]=facTier(rel);const live=L.bills.filter(b=>L.y===S.y);const inSess=S.m>=1&&S.m<=4&&L.y===S.y;
   const card=(b,i)=>{const B=LEG_BILLS[b.id];const st=b.dead?'Dead':LEG_STAGES[b.st];const canAct=inOffice()&&!b.dead&&b.st<4&&S.m<=4;const cd=b.acted===nowM();
@@ -8696,13 +8697,14 @@ const HOODX={
   ev:{t:'Cordova talks about leaving Memphis',b:'"Some of our neighbors want to try to break away and form their own town. They say Memphis ignores us."',ch:[['Promise Cordova its own capital projects','−$0.5M · mood +12',h=>{S.reserve-=0.5;hoodMod(h,12,'Invested in Cordova');return'New sidewalks and a park upgrade. The breakaway talk faded.'}],['Remind them what the city provides','Mood −5 · owners −1',h=>{hoodMod(h,-5,'Brushed off Cordova');groupLift('owners',-1,'Brushed off Cordova');return'The breakaway petition gained signatures.'}]]}}};
 const HOOD_W={streets:2,transit:2,jobs:3,health:3,reading:2,blight:-2,crime:-1.5};
 const HOOD_CN={streets:'Streets',transit:'Transit',jobs:'Jobs',health:'Health',reading:'Schools',blight:'Vacant and blighted property',crime:'Crime'};
-function hoodsInit(){if(!S)return null;if(!S.hoods){S.hoods={};for(const n in HOODX)S.hoods[n]={mods:[],visit:-99,asked:false,ev:-99};S.hoodBase={...S.met}}return S.hoods}
+function hoodsInit(){if(!S)return null;if(!S.hoods){S.hoods={};for(const n in HOODX)S.hoods[n]={mods:[],visit:-99,asked:false,ev:-99,att:nowM()};S.hoodBase={...S.met}}for(const n in S.hoods)if(S.hoods[n].att==null)S.hoods[n].att=nowM();return S.hoods}
+function hoodNeglect(n){const H=S.hoods[n];const gap=nowM()-(H.att!=null?H.att:nowM());return gap>9?-Math.min(12,(gap-9)*0.75):0}
 function hoodLL(n){const h=HOODS.find(x=>x[0]===n)||(n==='South Memphis'?HOODS.find(x=>x[0]==='Soulsville'):null);return h?{lat:h[1],lon:h[2]}:null}
 function hoodDist(n){const p=hoodLL(n);if(!p)return null;try{return districtAt(p.lon,p.lat)}catch(e){return null}}
-function hoodMod(n,v,t){const H=hoodsInit()[n];if(!H)return;H.mods.unshift({t,v,m:nowM()});if(H.mods.length>8)H.mods.length=8}
+function hoodMod(n,v,t){const H=hoodsInit()[n];if(!H)return;if(v>0)H.att=nowM();H.mods.unshift({t,v,m:nowM()});if(H.mods.length>8)H.mods.length=8}
 function hoodMetric(n){const X=HOODX[n],B=S.hoodBase||S.met;const k=X.c;return clamp(((S.met[k]||0)-(B[k]||0))*HOOD_W[k],-25,25)}
-function hoodMood(n){const H=hoodsInit()[n];const mods=(H.mods||[]).reduce((a,x)=>a+x.v*Math.pow(0.93,Math.max(0,nowM()-x.m)),0);return clamp(Math.round(50+hoodMetric(n)+mods),0,100)}
-function hoodParts(n){const H=hoodsInit()[n];const L=[];const mv=hoodMetric(n);if(Math.abs(mv)>=1)L.push({t:`${HOOD_CN[HOODX[n].c]} since you took office`,v:mv});(H.mods||[]).forEach(x=>{const v=x.v*Math.pow(0.93,Math.max(0,nowM()-x.m));if(Math.abs(v)>=1)L.push({t:x.t,v})});return L}
+function hoodMood(n){const H=hoodsInit()[n];const mods=(H.mods||[]).reduce((a,x)=>a+x.v*Math.pow(0.93,Math.max(0,nowM()-x.m)),0);return clamp(Math.round(50+hoodMetric(n)+mods+hoodNeglect(n)),0,100)}
+function hoodParts(n){const H=hoodsInit()[n];const L=[];const mv=hoodMetric(n);if(Math.abs(mv)>=1)L.push({t:`${HOOD_CN[HOODX[n].c]} since you took office`,v:mv});(H.mods||[]).forEach(x=>{const v=x.v*Math.pow(0.93,Math.max(0,nowM()-x.m));if(Math.abs(v)>=1)L.push({t:x.t,v})});const ng=hoodNeglect(n);if(ng<=-1)L.push({t:'Nobody from City Hall has been here in a while',v:ng});return L}
 // every month: neighborhood moods pull their district's approval; now and then a leader comes to see you
 function hoodMoodMonth(){if(!S||!inOffice()||S.over)return;const HS=hoodsInit();for(const n in HOODX){const d=hoodDist(n);if(d&&S.pop&&S.pop.d){const v=(hoodMood(n)-50)/220;S.pop.d[d]=clamp((S.pop.d[d]||0)+v,-20,20)}}
   if(nowM()>=(S.hoodNext||0)&&!(S.events||[]).some(e=>e.type==='hood')&&!(S.queue||[]).some(q=>q.ev&&q.ev.type==='hood')){S.hoodNext=nowM()+3+Math.floor(Math.random()*3);const pool=Object.keys(HOODX).filter(n=>nowM()-HS[n].ev>=18);if(!pool.length)return;pool.sort((a,b)=>hoodMood(a)-hoodMood(b));const n=Math.random()<0.6?pool[0]:pk2(pool);HS[n].ev=nowM();queueChar({type:'hood',hood:n,at:'cityhall'})}}
@@ -8715,8 +8717,8 @@ CHAR_TYPES.hood={w:0,gen:()=>null,title:ev=>HOODX[ev.hood].ev.t,who:ev=>[['hoodl
 // what you can do
 function hoodVisit(n){const H=hoodsInit()[n];if(!H||S.slots<=0||nowM()-H.visit<3)return;S.slots--;H.visit=nowM();const ok=persuade('cha',0.5,[],6);hoodMod(n,ok?10:3,ok?'You came and listened':'A rushed visit');const d=hoodDist(n);if(d)try{bumpPlace('dist:'+d,ok?2:0)}catch(e){}
   const m=ok?`You walked ${n} with ${HOODX[n].L.name} and stayed for supper. People noticed.`:`Your visit to ${n} felt rushed. People wanted more time.`;try{sfx(ok?'good':'bad')}catch(e){}save();refreshHUD();HOOD_MSG=m;openHoods()}
-function hoodFund(n){const H=hoodsInit()[n],A=HOODX[n].ask;if(!H||H.asked)return;if(S.reserve<A.cost)return;if(A.cost>=APPROP_MIN&&!approp(A.cost,`${n}: ${A.t.toLowerCase()}`,{key:'hood:'+n})){HOOD_MSG='The council voted down the money. You can ask again later.';openHoods();return}
-  S.reserve-=A.cost;applyFx(S,A.fx);H.asked=true;hoodMod(n,25,`You delivered: ${A.t.charAt(0).toLowerCase()+A.t.slice(1)}`);const d=hoodDist(n);if(d)try{bumpPlace('dist:'+d,4)}catch(e){}try{addRecord({t:`${n}: ${A.t}`,kind:'project',good:[],bad:[]})}catch(e){}try{newsAdd(0.8,`Mayor delivers for ${n}: ${A.t.toLowerCase()}`)}catch(e){}
+function hoodFund(n){const H=hoodsInit()[n],A=HOODX[n].ask;if(!H||H.asked)return;if(S.reserve<A.cost)return;if(A.cost>=APPROP_MIN&&!approp(A.cost,`${n}: ${lcFirst(A.t)}`,{key:'hood:'+n})){HOOD_MSG='The council voted down the money. You can ask again later.';openHoods();return}
+  S.reserve-=A.cost;applyFx(S,A.fx);H.asked=true;hoodMod(n,25,`You delivered: ${A.t.charAt(0).toLowerCase()+A.t.slice(1)}`);const d=hoodDist(n);if(d)try{bumpPlace('dist:'+d,4)}catch(e){}try{addRecord({t:`${n}: ${A.t}`,kind:'project',good:[],bad:[]})}catch(e){}try{newsAdd(0.8,`Mayor delivers for ${n}: ${lcFirst(A.t)}`)}catch(e){}
   const m=`You delivered for ${n}: ${A.t.charAt(0).toLowerCase()+A.t.slice(1)}. ${HOODX[n].L.name} called it a promise kept.`;save();refreshHUD();HOOD_MSG=m;openHoods()}
 // the screen
 let HOOD_MSG=null;
@@ -8726,7 +8728,7 @@ function openHoods(focusD){hoodsInit();const m=HOOD_MSG;HOOD_MSG=null;const can=
     <div class="facbar"><i style="left:0;width:0"></i><i class="${tone||'pos'}" style="left:0;width:${v}%;${tone?'':'background:var(--warn,#e8b04f)'}"></i></div>
     <p class="note">${X.d} Leader: ${X.L.name}, ${X.L.role}.</p>${parts.length?`<ul class="numlist">${parts.map(x=>`<li>${x.t}: <b class="${x.v>0?'pos':'neg'}">${x.v>0?'+':'−'}${Math.abs(Math.round(x.v))}</b></li>`).join('')}</ul>`:''}
     ${can?`<div class="row"><button class="btn" data-hvisit="${n}" ${S.slots<=0||cd?'disabled':''}>Visit ${n}<small> · ${cd?`again in ${cd} mo`:`1 action · ${oddsTag('cha',0.5)}`}</small></button>${H.asked?`<small class="note">✓ You delivered their big ask</small>`:`<button class="btn" data-hfund="${n}" ${S.reserve<X.ask.cost?'disabled':''}>Their big ask: ${X.ask.t}<small> · −${fmtM(X.ask.cost)}${X.ask.cost>=APPROP_MIN?' · needs council approval':''} · mood +25</small></button>`}</div>`:''}</div>`};
-  openModal(focusD?`Neighborhoods in District ${focusD}`:'Neighborhoods','The neighborhoods of Memphis',`${m?`<p class="scnreply">${m}</p>`:''}<p>Every neighborhood has its own character and its own top concern. Its mood follows the city numbers it cares about and what you do for it, and every month it pulls its council district's approval up or down. Unhappiest first. <small class="note">Neighborhood leaders are fictional.</small></p>${names.map(card).join('')||'<p class="note">None of the featured neighborhoods are in this district.</p>'}<div class="row">${focusD?'<button class="btn" data-hoods="1">All neighborhoods</button>':''}<button class="btn" data-act="close">Back</button></div>`,true)}
+  openModal(focusD?`Neighborhoods in District ${focusD}`:'Neighborhoods','The neighborhoods of Memphis',`${m?`<p class="scnreply">${m}</p>`:''}<p>Every neighborhood has its own character and its own top concern. Its mood follows the city numbers it cares about and what you do for it (go too long without showing up, and it sours), and every month it pulls its council district's approval up or down. Unhappiest first. <small class="note">Neighborhood leaders are fictional.</small></p>${names.map(card).join('')||'<p class="note">None of the featured neighborhoods are in this district.</p>'}<div class="row">${focusD?'<button class="btn" data-hoods="1">All neighborhoods</button>':''}<button class="btn" data-act="close">Back</button></div>`,true)}
 openHoods=navWrap('openHoods',openHoods);
 document.addEventListener('click',e=>{const b=e.target.closest('[data-hoods],[data-hvisit],[data-hfund],[data-hoodd]');if(!b||!S||S.after)return;e.preventDefault();e.stopImmediatePropagation();const d=b.dataset;
   if(d.hvisit){hoodVisit(d.hvisit);return}if(d.hfund){hoodFund(d.hfund);return}if(modalOpen&&!(NAV.cur&&NAV.cur.name==='flow_people')){onClose=null;closeModal()}if(d.hoodd){closePanel();openHoods(+d.hoodd);return}openHoods()},true);

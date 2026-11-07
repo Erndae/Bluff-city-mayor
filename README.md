@@ -4,6 +4,16 @@ A city-management game set in Memphis, Tennessee. You play the mayor. You handle
 
 **Play it:** https://erndae.github.io/Bluff-city-mayor/ (once GitHub Pages is turned on, see below)
 
+## v26.83: Full-game balance check
+
+Ten full bot runs: eight full first terms as mayor (October 2026 through the October 2027 election), two of them with all of this session's new systems switched off for comparison, plus two campaigns as a challenger.
+
+- **The new systems aren't tipping elections.** With neighborhoods, Nashville bills, big events and the congressional delegation switched off, the bot mayor followed the same path: approval in the low-to-mid 50s most of the year, a slide in September as the opponent's ads and plots ramp up, and a loss when approval was about 50 on Election Day. The bot never spends its campaign money ($300K–$560K left over), so this matches the existing design: a mayor near 50% has to campaign. The bot mayors that reached about 55% won.
+- **Home life and stress were too punishing for anyone who uses all their actions.** A challenger who used every action saw home life fall from 65 to 22 and stress climb to 70 in seven months. Now: using all 5 actions costs about 2.5 home life a month (was 5), campaign season about 2 more (was 4), and stress builds more slowly. A full-effort challenger now ends the campaign around 40 home life and 33 stress, still worth tending to.
+- **Neighborhoods now sour when ignored.** Moods barely moved in 14 months unless you engaged. Now a neighborhood nobody from City Hall has visited or helped in 9 months loses up to 12 points over time; any visit or help resets it.
+- Fixed: news headlines and logs lowercased proper names from state bills and neighborhood asks ("lowest-performing memphis schools", "broad and tillman").
+- Fixed: a member of Congress could share a name with a council member (Whitfield) or the Bartlett mayor (Wade Pruitt).
+
 ## v26.82: Neighborhoods
 
 - **Thirteen neighborhoods with their own character:** Downtown, Midtown, Cooper-Young, Orange Mound, Binghampton, Frayser, Raleigh, North Memphis, South Memphis, Whitehaven, Hickory Hill, East Memphis and Cordova. Each has a description, a top concern (crime, streets, transit, jobs, health or blight), a local leader (fictional), one big ask and a story of its own.
