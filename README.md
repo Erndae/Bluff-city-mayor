@@ -4,6 +4,14 @@ A city-management game set in Memphis, Tennessee. You play the mayor. You handle
 
 **Play it:** https://erndae.github.io/Bluff-city-mayor/ (once GitHub Pages is turned on, see below)
 
+## Maintenance check (after v26.86): old saves and phone speed
+
+No game changes were needed.
+
+- **Old saves.** Saves made in v26.55, v26.60, v26.65 and v26.80 (as mayor), and v26.74 and v26.80 (after City Hall, in Congress), all load in the current version, open every major screen and keep playing for two more months (or seven more years in Congress) with no errors. Saves already under way open with every system unlocked.
+- **Phone speed** (Chrome with the CPU slowed 4×, roughly a mid-range phone): the page is 1.5MB (about 490KB compressed) and parses in about 1.9 seconds; a game day takes about 19ms on average (42ms for 9 in 10 days, about 190ms at worst at month's end), so Continue gets through an empty month in well under a second; the heaviest screen (Campaign HQ) opens in about 90ms; a save is about 55KB and takes under 10ms; the game uses about 60MB of memory.
+- New tools: `tools/save-compat-check.py <commit> [mayor|after]` builds a save in an old version and plays it in the current one; `tools/phone-perf-check.py [cpu-slowdown]` measures load, day, screen and save times.
+
 ## v26.86: "This week" points to what just opened; a smarter test bot
 
 - **New systems get a concrete first step.** When a part of the job opens, your chief of staff's weekly note and the next-move chip suggest one thing to try there ("New: Meet a power player", "New: Visit Frayser", "New: Fight the bill in Nashville") until you've looked at it, then move on to the next new thing.

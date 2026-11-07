@@ -7,7 +7,7 @@ async def main():
     old=subprocess.run(['git','show',f'{OLD}:index.html'],cwd=REPO,capture_output=True,text=True).stdout
     open(REPO+'/_old.html','w').write(fix(old))
     open(REPO+'/_new.html','w').write(fix(open(REPO+'/index.html').read()))
-    import shutil;shutil.copy('/home/claude/bcm/_ml.js',REPO+'/_ml.js') if __import__('os').path.exists('/home/claude/bcm/_ml.js') else None
+    # serve a local MapLibre build at /_ml.js if the CDN is blocked in your environment
     srv=subprocess.Popen(['python3','-m','http.server','8773'],cwd=REPO,stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL)
     await asyncio.sleep(1)
     async with async_playwright() as p:
