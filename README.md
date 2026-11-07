@@ -4,6 +4,12 @@ A city-management game set in Memphis, Tennessee. You play the mayor. You handle
 
 **Play it:** https://erndae.github.io/Bluff-city-mayor/ (once GitHub Pages is turned on, see below)
 
+## v26.92: Super-district council seats
+
+- **Super Districts 8 and 9** are now on the council map. Each covers about half the city (Super District 8: Districts 3, 4, 6 and 7; Super District 9: Districts 1, 2 and 5) and elects three members; you run for one of the three positions against its incumbent.
+- **A bigger race:** you start about 7 points lower than in a single district (around 36–37% for a newcomer), and your job's fit is judged across the whole super district.
+- **A bigger profile:** a super-district seat adds extra influence every year and a bigger head start in name recognition if you run for mayor.
+
 ## v26.91: Run for City Council
 
 - **A new path: Memphis City Council.** From "Choose your own path" (or after City Hall), pick one of the seven district seats. Each shows its neighborhoods, the incumbent and your odds, which depend on your influence, Star Power and how well your job fits the district. Then campaign until the next city election, in October alongside the mayor's race; council races are nonpartisan.
