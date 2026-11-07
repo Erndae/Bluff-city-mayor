@@ -374,6 +374,7 @@ body.mopen #notes,body.seeon #notes{display:none}body:has(#panel:not([hidden])) 
 @media (max-width:760px){.note-card:nth-child(n+2){display:none!important}}
 #bSee{grid-column:1/-1;display:flex;flex-direction:column;align-items:flex-start;text-align:left;gap:1px;border-color:var(--amber);background:rgba(242,169,59,.14);line-height:1.2;padding:8px 12px;min-width:0}#bSee[hidden]{display:none}#bSee .seelbl{font:600 10px/1.2 var(--f-label);letter-spacing:.08em;text-transform:uppercase;color:var(--amber)}#bSee b{font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}#bSee .seego{font-size:12px;color:var(--amber);font-weight:600}
 @media (max-width:860px){nav.actions{background:rgba(13,24,34,.9);border-radius:12px;padding:4px}}
+@media (max-width:860px){.hud-top{background:#0d1822!important;box-shadow:0 2px 10px rgba(0,0,0,.45)}#hFY{display:none!important}.hud-top .stat{cursor:pointer}#hCouncil .hof{font-size:.6em;opacity:.75;letter-spacing:0}}
 .adgain{display:block;width:100%;text-align:center;font-size:11px;font-weight:600;color:var(--good);margin-top:1px}
 #start{overflow-x:hidden;overflow-y:auto;touch-action:pan-y}.startbox{min-width:0;max-width:min(600px,100%);box-sizing:border-box}.startbox *{min-width:0}.create select,.create input{max-width:100%;width:100%;box-sizing:border-box;text-overflow:ellipsis}.create .tpick,.create .tpick>*{max-width:100%;box-sizing:border-box}
 @media (max-width:640px){.startbox{margin-left:0}#start{padding-left:max(16px,env(safe-area-inset-left,0px))}}
@@ -726,7 +727,7 @@ details.analysis{margin-top:6px}details.analysis summary{cursor:pointer;color:va
     <button class="btn primary" data-act="pause" id="bPlay"><svg class="ico" viewBox="0 0 12 12" aria-hidden="true"><path d="M3.2 1.6v8.8l7.2-4.4z" fill="currentColor"/></svg> Resume <kbd>Space</kbd></button>
   </nav>
   <div class="status" id="status">Loading map…</div>
-  <div class="credit"><span class="ver" id="verTag">v26.87</span></div>
+  <div class="credit"><span class="ver" id="verTag">v26.88</span></div>
   <div class="tip" id="tip" hidden></div>
   <div class="toast" id="toast" role="status"></div>
   <section class="panel" id="panel" hidden aria-live="polite">
@@ -754,7 +755,7 @@ details.analysis{margin-top:6px}details.analysis summary{cursor:pointer;color:va
         <button class="btn" data-music-open>Music &amp; volume</button>
       </div>
       <div id="slotList" hidden></div>
-      <p class="note startv">Version <b class="ver" id="verStart">v26.87</b></p>
+      <p class="note startv">Version <b class="ver" id="verStart">v26.88</b></p>
     </div>
     <div class="startbox create" id="create" hidden>
       <h2>Create your mayor</h2>
@@ -1565,7 +1566,7 @@ function enact(s,p){DIVS.forEach(d=>{s.enacted[d.id]=p.divs[d.id];s.ratio[d.id]=
 // Voter groups. Each has a share of residents, turnout, home districts, concerns and an approval of you.
 // Citywide approval is the turnout-weighted average of the groups; each council district's approval comes from the groups that live there.
 // Shares, district mix and turnout are modeled, loosely grounded in Memphis demographics; they are not survey data.
-const VERSION='v26.87';
+const VERSION='v26.88';
 const GROUPS=[
  {id:'working',sh:'Working families',n:'Working families',ic:'⚒︎',c:'#f2a93b',share:24,turn:.5,start:56,w:{jobs:1,safety:.8,transit:.5},
   d:'Hourly workers in logistics, warehouses, health care and service jobs. The biggest bloc in the city.',dm:{1:1.1,2:.8,3:1.3,4:1.2,5:.6,6:1.2,7:1.1}},
@@ -8873,6 +8874,23 @@ function layoutBottom(){try{if(window.innerWidth>860)return;const nav=document.q
   const mt=md&&md.offsetParent?md.getBoundingClientRect().top:top;if(nt)nt.style.bottom=Math.round(vh-mt+8)+'px'}catch(e){}}
 {const _rs2=renderSeeNow;renderSeeNow=function(){const r=_rs2.apply(this,arguments);layoutBottom();return r}}
 window.addEventListener('resize',()=>setTimeout(layoutBottom,50));
+
+// ======================= v26.88: A CLEANER TOP BAR =======================
+// Phones get a solid header (map labels no longer show through), no fiscal-year line, and plain labels:
+// "Clout 29" instead of "clout 29 · limited", "5 of 13" council members on your side. Every number in the
+// header explains itself when you tap it, with a button to the screen that goes deeper.
+const HUD_INFO={
+ res:()=>({t:'Reserve fund',b:`<p>The city's savings: <b>${fmtM(S.reserve)}</b>. Memphis keeps a reserve for emergencies and bad years; finance officials like to see it near 10% of the budget or more.</p><p>It goes down when you pay for projects or requests out of savings, and when costs grow faster than revenue. Council members who care about the budget watch it closely, and a shrinking reserve hurts your record with voters.</p>`,go:['See where the money went',()=>{try{openBudget()}catch(e){}}]}),
+ app:()=>({t:'Approval',b:`<p><b>${Math.round(S.approval)}%</b> of Memphians approve of the job you're doing. It moves with the city's numbers, your decisions and the news.</p><p>Approval is the base of your vote on Election Day. Your results in office, your campaign and your opponent's ads move the vote from there.</p>`,go:['See public opinion',()=>{try{openOpinion()}catch(e){}}]}),
+ clout:()=>{const c=Math.round(clout());return{t:'Clout',b:`<p>Your clout is <b>${c}</b> (${cloutTier(c).toLowerCase()}). It's your pull beyond City Hall: with the school district, the County, the state and big institutions you don't control.</p><p>It rises with approval, wins and allies, and falls with losses and scandals. Higher clout makes your asks of outside groups more likely to work.</p>`,go:['See what clout can do',()=>{try{openPlatform()}catch(e){}}]}},
+ council:()=>{const n=favorable(S);return{t:'Council support',b:`<p><b>${n} of 13</b> council members lean your way right now. Most things need 7 votes: the budget, appointments, and spending of $1 million or more from the reserve. Overriding your veto takes 7 too.</p><p>Members have their own priorities. Meet with them, trade favors and deliver for their districts to win them over.</p>`,go:['See the council',()=>{try{openCouncil()}catch(e){}}]}}};
+function hudInfo(k){const I=HUD_INFO[k]();openModal('What this means',I.t,`${I.b}<div class="choices"><button class="choice" data-hudgo="${k}"><b>${I.go[0]}</b></button><button class="choice" data-act="close"><b>Got it</b></button></div>`,true)}
+window.addEventListener('click',e=>{const g=e.target.closest('[data-hudgo]');if(g&&S){e.preventDefault();e.stopImmediatePropagation();const k=g.dataset.hudgo;onClose=null;closeModal();HUD_INFO[k]().go[1]();return}
+  if(!S||!S.started||isCand()||window.innerWidth>860)return;const t=e.target;if(!t.closest('.hud-top'))return;let k=null;
+  if(t.closest('#hClout'))k='clout';else if(t.closest('#hRes')||t.closest('.stat')&&t.closest('.stat').contains($('hRes')))k='res';else if(t.closest('.stat')&&t.closest('.stat').contains($('hCouncil')))k='council';else if(t.closest('.stat')&&t.closest('.stat').contains($('hApp'))&&!t.closest('#hVote'))k='app';
+  if(!k)return;e.preventDefault();e.stopImmediatePropagation();hudInfo(k)},true);
+{const _rh=refreshHUD;refreshHUD=function(...a){const r=_rh.apply(this,a);try{if(!S||isCand()||S.phase==='ai')return r;const mob=window.innerWidth<=860;const hc=$('hClout');if(hc&&mob&&hc.textContent){const c=clout();hc.innerHTML=`Clout <b style="color:${cloutColor(c)}">${Math.round(c)}</b>`}
+  const cn=$('hCouncil');if(cn&&mob){const n=favorable(S);const h=`${n} <span class="hof">of 13</span>`;if(cn.innerHTML!==h)cn.innerHTML=h;const st=cn.closest('.stat');const lb=st&&st.querySelector('label');if(lb&&lb.textContent!=='On your side')lb.textContent='On your side'}}catch(e){}return r}}
 
 function openLedger(){const L=S.log||[];openPanel('Everything that has happened, newest first','Ledger',L.length?`<div class="logl">${L.map(x=>`<div><span>${x.d}</span><p style="margin:0">${x.t}</p></div>`).join('')}</div>`:'<p class="note">Nothing yet. Tap ▶ Continue to move ahead.</p>','ledger')}
 function openPolicies(){const ks=Object.keys(POLICIES);

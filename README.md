@@ -4,6 +4,12 @@ A city-management game set in Memphis, Tennessee. You play the mayor. You handle
 
 **Play it:** https://erndae.github.io/Bluff-city-mayor/ (once GitHub Pages is turned on, see below)
 
+## v26.88: A cleaner top bar
+
+- **Solid header on phones.** Map labels no longer show through the top bar.
+- **Plainer labels.** The fiscal-year line is gone from the phone header; "clout 29 · limited" is now "Clout 29"; the council count reads "On your side: 4 of 13".
+- **Every number explains itself.** Tap the reserve fund, approval, clout or council count for a short plain-language explanation of what it means and what moves it, with a button to the screen that goes deeper (the budget, public opinion, your platform, the council chamber).
+
 ## v26.87: A cleaner screen
 
 - **One guide at a time.** While "Getting started" is running, it replaces the "This week" chip instead of stacking under it with the same advice. "Goal complete" messages are now a quick toast instead of cards, and trivial ones ("Goal complete: Continue") are gone.
