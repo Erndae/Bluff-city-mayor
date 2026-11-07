@@ -4,6 +4,12 @@ A city-management game set in Memphis, Tennessee. You play the mayor. You handle
 
 **Play it:** https://erndae.github.io/Bluff-city-mayor/ (once GitHub Pages is turned on, see below)
 
+## v26.89: Month in review; easier-to-read decisions
+
+- **One month-in-review card.** When a month closes, a single card replaces the separate "month closed" and "where the money went" notifications. It shows approval, the reserve fund, council support and population with their changes; any of the city's numbers that moved; what happened; and what's coming (deadlines, Election Day, decisions waiting, the suggested next step). It also notes unused actions. Buttons open the money breakdown or the full ledger. It waits until you've closed whatever else is open. Candidates get it too.
+- **Effects as colored chips.** Each choice's effects now show as chips: green for what helps, red for what costs, gray for neutral ("−$0.3M reserves", "Jobs ▲", "Millington relations +15").
+- **Shorter text.** Long descriptions break into two paragraphs, and background facts fold behind a "▸ Background" toggle.
+
 ## v26.88: A cleaner top bar
 
 - **Solid header on phones.** Map labels no longer show through the top bar.

@@ -375,6 +375,9 @@ body.mopen #notes,body.seeon #notes{display:none}body:has(#panel:not([hidden])) 
 #bSee{grid-column:1/-1;display:flex;flex-direction:column;align-items:flex-start;text-align:left;gap:1px;border-color:var(--amber);background:rgba(242,169,59,.14);line-height:1.2;padding:8px 12px;min-width:0}#bSee[hidden]{display:none}#bSee .seelbl{font:600 10px/1.2 var(--f-label);letter-spacing:.08em;text-transform:uppercase;color:var(--amber)}#bSee b{font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}#bSee .seego{font-size:12px;color:var(--amber);font-weight:600}
 @media (max-width:860px){nav.actions{background:rgba(13,24,34,.9);border-radius:12px;padding:4px}}
 @media (max-width:860px){.hud-top{background:#0d1822!important;box-shadow:0 2px 10px rgba(0,0,0,.45)}#hFY{display:none!important}.hud-top .stat{cursor:pointer}#hCouncil .hof{font-size:.6em;opacity:.75;letter-spacing:0}}
+.fxchips{display:flex!important;flex-wrap:wrap;gap:4px;margin-top:5px;font-family:var(--f-body)!important}.fxc{font:600 12.5px/1.25 var(--f-body);padding:2px 7px;border-radius:9px;background:rgba(255,255,255,.06);color:var(--muted);letter-spacing:0}.fxc.pos{background:rgba(92,184,112,.16);color:#8fd6a0}.fxc.neg{background:rgba(224,96,96,.16);color:#f0a0a0}
+details.bgfold{margin:6px 0 10px}details.bgfold summary{cursor:pointer;color:var(--amber);font:600 13px var(--f-body);list-style:none}details.bgfold summary::before{content:'▸ ';}details.bgfold[open] summary::before{content:'▾ '}details.bgfold .note{margin-top:4px}
+.mcgrid span.pos,.mcmets b.pos{color:var(--good,#5cb870)}.mcgrid span.neg,.mcmets b.neg{color:var(--bad,#e06060)}.mcgrid span{font-size:13px;font-weight:600}
 .adgain{display:block;width:100%;text-align:center;font-size:11px;font-weight:600;color:var(--good);margin-top:1px}
 #start{overflow-x:hidden;overflow-y:auto;touch-action:pan-y}.startbox{min-width:0;max-width:min(600px,100%);box-sizing:border-box}.startbox *{min-width:0}.create select,.create input{max-width:100%;width:100%;box-sizing:border-box;text-overflow:ellipsis}.create .tpick,.create .tpick>*{max-width:100%;box-sizing:border-box}
 @media (max-width:640px){.startbox{margin-left:0}#start{padding-left:max(16px,env(safe-area-inset-left,0px))}}
@@ -727,7 +730,7 @@ details.analysis{margin-top:6px}details.analysis summary{cursor:pointer;color:va
     <button class="btn primary" data-act="pause" id="bPlay"><svg class="ico" viewBox="0 0 12 12" aria-hidden="true"><path d="M3.2 1.6v8.8l7.2-4.4z" fill="currentColor"/></svg> Resume <kbd>Space</kbd></button>
   </nav>
   <div class="status" id="status">Loading map…</div>
-  <div class="credit"><span class="ver" id="verTag">v26.88</span></div>
+  <div class="credit"><span class="ver" id="verTag">v26.89</span></div>
   <div class="tip" id="tip" hidden></div>
   <div class="toast" id="toast" role="status"></div>
   <section class="panel" id="panel" hidden aria-live="polite">
@@ -755,7 +758,7 @@ details.analysis{margin-top:6px}details.analysis summary{cursor:pointer;color:va
         <button class="btn" data-music-open>Music &amp; volume</button>
       </div>
       <div id="slotList" hidden></div>
-      <p class="note startv">Version <b class="ver" id="verStart">v26.88</b></p>
+      <p class="note startv">Version <b class="ver" id="verStart">v26.89</b></p>
     </div>
     <div class="startbox create" id="create" hidden>
       <h2>Create your mayor</h2>
@@ -1566,7 +1569,7 @@ function enact(s,p){DIVS.forEach(d=>{s.enacted[d.id]=p.divs[d.id];s.ratio[d.id]=
 // Voter groups. Each has a share of residents, turnout, home districts, concerns and an approval of you.
 // Citywide approval is the turnout-weighted average of the groups; each council district's approval comes from the groups that live there.
 // Shares, district mix and turnout are modeled, loosely grounded in Memphis demographics; they are not survey data.
-const VERSION='v26.88';
+const VERSION='v26.89';
 const GROUPS=[
  {id:'working',sh:'Working families',n:'Working families',ic:'⚒︎',c:'#f2a93b',share:24,turn:.5,start:56,w:{jobs:1,safety:.8,transit:.5},
   d:'Hourly workers in logistics, warehouses, health care and service jobs. The biggest bloc in the city.',dm:{1:1.1,2:.8,3:1.3,4:1.2,5:.6,6:1.2,7:1.1}},
@@ -8891,6 +8894,46 @@ window.addEventListener('click',e=>{const g=e.target.closest('[data-hudgo]');if(
   if(!k)return;e.preventDefault();e.stopImmediatePropagation();hudInfo(k)},true);
 {const _rh=refreshHUD;refreshHUD=function(...a){const r=_rh.apply(this,a);try{if(!S||isCand()||S.phase==='ai')return r;const mob=window.innerWidth<=860;const hc=$('hClout');if(hc&&mob&&hc.textContent){const c=clout();hc.innerHTML=`Clout <b style="color:${cloutColor(c)}">${Math.round(c)}</b>`}
   const cn=$('hCouncil');if(cn&&mob){const n=favorable(S);const h=`${n} <span class="hof">of 13</span>`;if(cn.innerHTML!==h)cn.innerHTML=h;const st=cn.closest('.stat');const lb=st&&st.querySelector('label');if(lb&&lb.textContent!=='On your side')lb.textContent='On your side'}}catch(e){}return r}}
+
+// ======================= v26.89: MONTH IN REVIEW; EASIER-TO-READ DECISIONS =======================
+// 1. When a month closes you get one "month in review" card (approval, money, the city's numbers, what happened,
+//    what's coming) instead of a pile of separate notifications.
+// 2. Decisions are easier to scan: each choice's effects become colored chips (green helps, red costs), long
+//    descriptions break into shorter paragraphs, and background facts fold behind a "Background" toggle.
+// ---------- 1. month in review ----------
+let MONTH_SNAP=null;
+{const _eom=endOfMonth;endOfMonth=function(...a){try{if(S&&S.started&&!S.over&&!S.after)MONTH_SNAP={y:S.y,m:S.m,app:S.approval,res:S.reserve,popn:S.popn,met:{...S.met},log:(S.log||[])[0],fav:isCand()?null:favorable(S),slotsLeft:S.slots}}catch(e){MONTH_SNAP=null}
+  const r=_eom.apply(this,a);try{if(MONTH_SNAP&&S&&!S.over&&!S.after){S.monthCard={...MONTH_SNAP,shown:false};monthCardWhenFree()}}catch(e){}return r}}
+// the separate month-close notes fold into the card
+{const _nt=notify;notify=function(kind,title,text,act,opts){try{if(S&&!S.after&&typeof title==='string'&&((kind==='month'&&/ closed$/.test(title))||/^Where the money went in /.test(title))){window.__monthActs=window.__monthActs||{};window.__monthActs[kind==='month'?'month':'money']=act;if(kind==='month')window.__monthLine=text;return}}catch(e){}return _nt.apply(this,arguments)}}
+let MC_TIMER=null;
+function monthCardWhenFree(){clearInterval(MC_TIMER);let n=0;MC_TIMER=setInterval(()=>{n++;if(!S||!S.monthCard||S.monthCard.shown||n>200){clearInterval(MC_TIMER);return}if(modalOpen||!$('panel').hidden||document.querySelector('dialog[open]')||(window.BCInterior&&BCInterior.isOpen))return;clearInterval(MC_TIMER);openMonthCard()},400)}
+const MC_MET={crime:['Violent crime',-1],streets:['Streets',1],blight:['Blight',-1],jobs:['Jobs',1],reading:['Reading scores',1],health:['Public health',1],transit:['Transit',1],officers:['Police officers',1]};
+function openMonthCard(){const C=S.monthCard;if(!C)return;C.shown=true;const mname=MONTHS_L[(C.m-1+12)%12]||'Last month';const fmtD=(v,dp)=>(v>=0?'+':'−')+Math.abs(v).toFixed(dp);
+  const dApp=S.approval-C.app,dRes=S.reserve-C.res,dPop=S.popn-C.popn;const col=(v,good)=>v===0?'':((v>0)===good?'pos':'neg');
+  const mets=Object.keys(MC_MET).map(k=>{const d=(S.met[k]||0)-(C.met[k]||0);if(Math.abs(d)<(k==='officers'?5:0.3))return null;return`<li>${MC_MET[k][0]} <b class="${col(d,MC_MET[k][1]>0)}">${fmtD(d,k==='officers'?0:1)}</b></li>`}).filter(Boolean);
+  const L=S.log||[];const idx=C.log?L.indexOf(C.log):-1;const fresh=(idx>0?L.slice(0,idx):L.slice(0,0)).filter(x=>!/^(Skill up|You met|Decision made|Money for|Campaign fund:)/.test(x.t)).slice(0,5);
+  const coming=[];try{const dl=nextDeadline();if(dl&&dl!=='–')coming.push(dl)}catch(e){}try{const me=monthsToElection();if(me<=12&&!S.camp?.voted)coming.push(me<=1?'Election Day is this month':`Election Day in ${Math.round(me)} months`)}catch(e){}try{const w=(S.events||[]).length;if(w)coming.push(`${w} decision${w===1?'':'s'} waiting for you`)}catch(e){}try{const st=nextSteps()[0];if(st)coming.push(`Suggested: ${st.t}`)}catch(e){}
+  const fav=isCand()?null:favorable(S);
+  openModal(`${mname} ${C.y} in review`,`A new month: your actions refilled (${S.slots})`,`
+   <div class="qrgrid mcgrid"><div><small>${isCand()?'Favorable':'Approval'}</small><p><b>${Math.round(S.approval)}%</b> <span class="${col(dApp,true)}">${fmtD(dApp,1)}</span></p></div>
+   <div><small>Reserve fund</small><p><b>${fmtM(S.reserve)}</b> <span class="${col(dRes,true)}">${dRes>=0?'+':'−'}${fmtM(Math.abs(dRes))}</span></p></div>
+   ${fav!=null?`<div><small>Council on your side</small><p><b>${fav} of 13</b>${C.fav!=null&&fav!==C.fav?` <span class="${col(fav-C.fav,true)}">${fmtD(fav-C.fav,0)}</span>`:''}</p></div>`:''}
+   <div><small>Population</small><p><b>${S.popn.toLocaleString()}</b> <span class="${col(dPop,true)}">${dPop>=0?'+':'−'}${Math.abs(dPop).toLocaleString()}</span></p></div></div>
+   ${mets.length?`<h4 class="plh">The city's numbers</h4><ul class="numlist mcmets">${mets.join('')}</ul>`:''}
+   ${fresh.length?`<h4 class="plh">What happened</h4><ul class="numlist">${fresh.map(x=>`<li>${x.t}</li>`).join('')}</ul>`:''}
+   ${coming.length?`<h4 class="plh">Coming up</h4><ul class="numlist">${coming.map(x=>`<li>${x}</li>`).join('')}</ul>`:''}
+   ${C.slotsLeft>1?`<p class="note">You left ${C.slotsLeft} action${C.slotsLeft===1?'':'s'} unused last month. Only one carries over.</p>`:''}
+   <div class="choices"><button class="choice" data-mcgo="money"><b>Where the money went</b><small>Every dollar in and out last month</small></button><button class="choice" data-mcgo="log"><b>Everything that happened</b><small>The full ledger</small></button><button class="choice primaryish" data-act="close"><b>Start ${MONTHS_L[(S.m-1+12)%12]}</b></button></div>`,true);S.monthCard=null}
+document.addEventListener('click',e=>{const b=e.target.closest('[data-mcgo]');if(!b||!S)return;e.preventDefault();e.stopImmediatePropagation();onClose=null;closeModal();if(b.dataset.mcgo==='money'){try{openMoneyMonth()}catch(err){}}else{try{openLedger()}catch(err){}}},true);
+// ---------- 2. easier-to-read decisions ----------
+function fxClass(t){t=t.trim();if(/^(matters to|Override vote|You hold a hook|Projected)/i.test(t))return'neu';if(/(^−|^-\$|−\$|▼|\s−\d|−\d|Annoys|costs|resent|backfire|dislike|leaks?|hurts|angr|lose|loses)/i.test(t))return'neg';if(/(\+\d|\+\$|▲|owe you|approve|helps|gains?)/i.test(t))return'pos';return'neu'}
+function polishCards(root){if(!root)return;
+  root.querySelectorAll('.card .choice small:not([data-fx])').forEach(sm=>{sm.dataset.fx='1';if(sm.children.length&&sm.querySelector('button,a,input'))return;const txt=sm.textContent;if(!txt||txt.length<3)return;const parts=txt.split(/\s·\s/).map(s=>s.trim()).filter(Boolean);if(parts.length<1)return;sm.innerHTML=parts.map(p=>`<span class="fxc ${fxClass(p)}">${p.replace(/</g,'&lt;')}</span>`).join('');sm.classList.add('fxchips')});
+  root.querySelectorAll('.card > .note:not([data-bg])').forEach(n=>{n.dataset.bg='1';const b=n.querySelector('b');if(b&&/^Background:?$/.test(b.textContent.trim())){const rest=n.innerHTML.replace(/<b>\s*Background:?\s*<\/b>\s*/,'');n.outerHTML=`<details class="bgfold" data-bg="1"><summary>Background</summary><div class="note">${rest}</div></details>`}});
+  root.querySelectorAll('.card > p:not([data-split])').forEach(p=>{p.dataset.split='1';if(p.children.length>2)return;const t=p.innerHTML;if(t.length<300||/<(button|div|ul|table)/.test(t))return;const mid=t.length/2;let best=-1,bd=1e9;const re=/[.!?]["”']?\s+(?=[A-Z"“])/g;let m;while((m=re.exec(t))){const at=m.index+m[0].length;const d=Math.abs(at-mid);if(d<bd){bd=d;best=at}}if(best<80||best>t.length-60)return;p.insertAdjacentHTML('afterend',`<p data-split="1">${t.slice(best)}</p>`);p.innerHTML=t.slice(0,best)})}
+{const _op=openPanel;openPanel=function(...a){const r=_op.apply(this,a);try{polishCards($('pBody'))}catch(e){}return r}}
+{const _om=openModal;openModal=function(...a){const r=_om.apply(this,a);try{polishCards($('mBody'))}catch(e){}return r}}
 
 function openLedger(){const L=S.log||[];openPanel('Everything that has happened, newest first','Ledger',L.length?`<div class="logl">${L.map(x=>`<div><span>${x.d}</span><p style="margin:0">${x.t}</p></div>`).join('')}</div>`:'<p class="note">Nothing yet. Tap ▶ Continue to move ahead.</p>','ledger')}
 function openPolicies(){const ks=Object.keys(POLICIES);
