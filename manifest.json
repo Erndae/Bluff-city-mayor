@@ -1,7 +1,7 @@
 {
-  "name": "Bluff City Mayor",
+  "name": "Bluff City Rising",
   "short_name": "Bluff City",
-  "description": "Run Memphis: budgets, council votes, campaigns and the whole city on a real map.",
+  "description": "A Memphis political life: start as mayor, run for it, or rise from citizen to the council, the County, Congress and beyond, on a real map of the city.",
   "start_url": ".",
   "display": "standalone",
   "orientation": "any",

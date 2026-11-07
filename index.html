@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="description" content="Create your mayor and govern Memphis in real time on a real map of the city.">
-<title>Bluff City Mayor</title>
+<title>Bluff City Rising</title>
 <link rel="icon" type="image/svg+xml" href="icon.svg">
 <link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
@@ -672,7 +672,7 @@ details.analysis{margin-top:6px}details.analysis summary{cursor:pointer;color:va
 <div id="splash" role="status" aria-live="polite">
   <div class="sp-in">
     <img class="sp-icon" src="icon.svg" alt="" width="128" height="128">
-    <h1 class="sp-title">Bluff City<span>MAYOR</span></h1>
+    <h1 class="sp-title">Bluff City<span>RISING</span></h1>
     <p class="sp-tag">Run Memphis. Budgets, council votes, campaigns and the whole city on one map.</p>
     <div class="sp-bar"><i id="spBar"></i></div>
     <p class="sp-msg" id="spMsg">Starting the map engine…</p>
@@ -684,7 +684,7 @@ details.analysis{margin-top:6px}details.analysis summary{cursor:pointer;color:va
 <div id="app">
   <div id="map" aria-label="Map of Memphis"></div>
   <div class="hud-top">
-    <button class="brand" id="bMenu" aria-label="Menu" title="Menu (Esc)"><span class="bm-ic" aria-hidden="true"><svg viewBox="0 0 16 16" width="16" height="16"><path d="M2 4h12M2 8h12M2 12h12" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></span><span class="bm-t">BLUFF CITY<span>MAYOR</span></span></button><button class="hudphone" id="bPhone" aria-label="Your phone: set up meetings" title="Your phone"><svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><rect x="4.2" y="1.2" width="7.6" height="13.6" rx="1.6" fill="none" stroke="currentColor" stroke-width="1.6"/><circle cx="8" cy="12.2" r=".9" fill="currentColor"/></svg></button>
+    <button class="brand" id="bMenu" aria-label="Menu" title="Menu (Esc)"><span class="bm-ic" aria-hidden="true"><svg viewBox="0 0 16 16" width="16" height="16"><path d="M2 4h12M2 8h12M2 12h12" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></span><span class="bm-t">BLUFF CITY<span>RISING</span></span></button><button class="hudphone" id="bPhone" aria-label="Your phone: set up meetings" title="Your phone"><svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><rect x="4.2" y="1.2" width="7.6" height="13.6" rx="1.6" fill="none" stroke="currentColor" stroke-width="1.6"/><circle cx="8" cy="12.2" r=".9" fill="currentColor"/></svg></button>
     <button class="mchip" id="mchip" data-act="mayor" aria-label="Your character"><span id="mchipPt"></span><span class="mname"><b id="mchipName">Mayor</b><small id="mchipSk"></small></span></button>
     <div class="clock paused" id="clock"><button id="cPause" data-act="pause" aria-label="Resume time"><svg class="ico" viewBox="0 0 12 12" aria-hidden="true"><path d="M3.2 1.6v8.8l7.2-4.4z" fill="currentColor"/></svg></button><div class="cdate"><b id="hDate">1 Oct 2026</b><small id="hFY">FY2027</small><small id="hSlots" role="button" title="What you can do now"></small></div>
       <div class="cspeed"><button data-act="slower" aria-label="Slower" title="Slower (−)">−</button><div class="speeds" id="speeds"></div><button data-act="faster" aria-label="Faster" title="Faster (+)">+</button></div><span class="ptag">PAUSED</span></div>
@@ -730,7 +730,7 @@ details.analysis{margin-top:6px}details.analysis summary{cursor:pointer;color:va
     <button class="btn primary" data-act="pause" id="bPlay"><svg class="ico" viewBox="0 0 12 12" aria-hidden="true"><path d="M3.2 1.6v8.8l7.2-4.4z" fill="currentColor"/></svg> Resume <kbd>Space</kbd></button>
   </nav>
   <div class="status" id="status">Loading map…</div>
-  <div class="credit"><span class="ver" id="verTag">v26.93</span></div>
+  <div class="credit"><span class="ver" id="verTag">v26.94</span></div>
   <div class="tip" id="tip" hidden></div>
   <div class="toast" id="toast" role="status"></div>
   <section class="panel" id="panel" hidden aria-live="polite">
@@ -747,8 +747,8 @@ details.analysis{margin-top:6px}details.analysis summary{cursor:pointer;color:va
   </div>
   <div id="start">
     <div class="startbox" id="intro">
-      <h1>Bluff City<span>MAYOR</span></h1>
-      <p class="lede">Run Memphis, or run for it. The map is the real city: every street, district and station.</p>
+      <h1>Bluff City<span>RISING</span></h1>
+      <p class="lede">A Memphis political life. Start as mayor, run for it, or begin as a citizen and rise through the council, the County, Congress or the back rooms. The map is the real city: every street, district and station.</p>
       <div class="paths">
         <button class="path primary" id="bRun"><b>Run for mayor</b><small>Start in March 2027 as a candidate, seven months before Election Day. Hire a campaign manager, win voters and beat the incumbent.</small></button>
         <button class="path" id="bNew"><b>Start as mayor</b><small>You were just sworn in. Pass a budget, work the council and win re-election.</small></button>
@@ -758,7 +758,7 @@ details.analysis{margin-top:6px}details.analysis summary{cursor:pointer;color:va
         <button class="btn" data-music-open>Music &amp; volume</button>
       </div>
       <div id="slotList" hidden></div>
-      <p class="note startv">Version <b class="ver" id="verStart">v26.93</b></p>
+      <p class="note startv">Version <b class="ver" id="verStart">v26.94</b></p>
     </div>
     <div class="startbox create" id="create" hidden>
       <h2>Create your mayor</h2>
@@ -1569,7 +1569,7 @@ function enact(s,p){DIVS.forEach(d=>{s.enacted[d.id]=p.divs[d.id];s.ratio[d.id]=
 // Voter groups. Each has a share of residents, turnout, home districts, concerns and an approval of you.
 // Citywide approval is the turnout-weighted average of the groups; each council district's approval comes from the groups that live there.
 // Shares, district mix and turnout are modeled, loosely grounded in Memphis demographics; they are not survey data.
-const VERSION='v26.93';
+const VERSION='v26.94';
 const GROUPS=[
  {id:'working',sh:'Working families',n:'Working families',ic:'⚒︎',c:'#f2a93b',share:24,turn:.5,start:56,w:{jobs:1,safety:.8,transit:.5},
   d:'Hourly workers in logistics, warehouses, health care and service jobs. The biggest bloc in the city.',dm:{1:1.1,2:.8,3:1.3,4:1.2,5:.6,6:1.2,7:1.1}},

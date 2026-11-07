@@ -1,8 +1,13 @@
-# Bluff City Mayor
+# Bluff City Rising
 
-A city-management game set in Memphis, Tennessee. You play the mayor. You handle problems at real places on a real map of the city, write the city budget, win votes from the 13-member City Council, and run for re-election.
+*Formerly Bluff City Mayor.*
 
-**Play it:** https://erndae.github.io/Bluff-city-mayor/ (once GitHub Pages is turned on, see below)
+A Memphis political life on a real map of the city. Start as the mayor, run for mayor, or begin as a private citizen with a job and rise from there: the City Council, Shelby County mayor, Congress and the Senate, a law firm, a university presidency, or the back rooms as a kingmaker. As mayor you handle problems at real places, write the city budget, win votes from the 13-member City Council and run for re-election. Your family, health, party, rivals and record follow you through every chapter.
+
+## v26.94: Bluff City Rising
+
+- **The game has a new name: Bluff City Rising.** With so many careers to play, "Mayor" no longer fit. The start screen, the menu button, the page title and the home-screen app name all use the new name, and the start screen describes every way to play.
+- Saved games are unaffected.
 
 ## v26.93: Deeper careers
 

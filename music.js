@@ -1,4 +1,4 @@
-/* Bluff City Mayor soundtrack. Audio preferences deliberately live outside game saves. */
+/* Bluff City Rising soundtrack. Audio preferences deliberately live outside game saves. */
 (() => {
   'use strict';
   const tracks = {
