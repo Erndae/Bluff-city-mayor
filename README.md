@@ -4,6 +4,10 @@
 
 A Memphis political life on a real map of the city. Start as the mayor, run for mayor, or begin as a private citizen with a job and rise from there: the City Council, Shelby County mayor, Congress and the Senate, a law firm, a university presidency, or the back rooms as a kingmaker. As mayor you handle problems at real places, write the city budget, win votes from the 13-member City Council and run for re-election. Your family, health, party, rivals and record follow you through every chapter.
 
+## v26.95: The new name everywhere
+
+- **Every leftover mention of the old name is gone.** The loading screen now reads "Rise in Memphis politics. Council seats, City Hall, campaigns, Congress and the whole city on one map." instead of the mayor-only line, the soundtrack's info file names Bluff City Rising, and the guide in this README points to the Bluff City Rising logo.
+
 ## v26.94: Bluff City Rising
 
 - **The game has a new name: Bluff City Rising.** With so many careers to play, "Mayor" no longer fit. The start screen, the menu button, the page title and the home-screen app name all use the new name, and the start screen describes every way to play.
@@ -756,7 +760,7 @@ Meetings and campaign stops are now just **actions**, everywhere. Under the date
 
 ## v26.12: A living city and its population
 
-**Menu.** The ☰ button beside the Bluff City Mayor logo (or Esc) opens a menu: back to the game, save, save and load, guide, music, and save and quit to the title screen.
+**Menu.** The ☰ button beside the Bluff City Rising logo (or Esc) opens a menu: back to the game, save, save and load, guide, music, and save and quit to the title screen.
 
 **Park names.** The 234 city parks and two state parks are labeled with their names from the City of Memphis GIS layer. Big parks show from further out, small ones as you zoom in.
 

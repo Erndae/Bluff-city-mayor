@@ -673,7 +673,7 @@ details.analysis{margin-top:6px}details.analysis summary{cursor:pointer;color:va
   <div class="sp-in">
     <img class="sp-icon" src="icon.svg" alt="" width="128" height="128">
     <h1 class="sp-title">Bluff City<span>RISING</span></h1>
-    <p class="sp-tag">Run Memphis. Budgets, council votes, campaigns and the whole city on one map.</p>
+    <p class="sp-tag">Rise in Memphis politics. Council seats, City Hall, campaigns, Congress and the whole city on one map.</p>
     <div class="sp-bar"><i id="spBar"></i></div>
     <p class="sp-msg" id="spMsg">Starting the map engine…</p>
     <p class="sp-tip" id="spTip"></p>
@@ -730,7 +730,7 @@ details.analysis{margin-top:6px}details.analysis summary{cursor:pointer;color:va
     <button class="btn primary" data-act="pause" id="bPlay"><svg class="ico" viewBox="0 0 12 12" aria-hidden="true"><path d="M3.2 1.6v8.8l7.2-4.4z" fill="currentColor"/></svg> Resume <kbd>Space</kbd></button>
   </nav>
   <div class="status" id="status">Loading map…</div>
-  <div class="credit"><span class="ver" id="verTag">v26.94</span></div>
+  <div class="credit"><span class="ver" id="verTag">v26.95</span></div>
   <div class="tip" id="tip" hidden></div>
   <div class="toast" id="toast" role="status"></div>
   <section class="panel" id="panel" hidden aria-live="polite">
@@ -758,7 +758,7 @@ details.analysis{margin-top:6px}details.analysis summary{cursor:pointer;color:va
         <button class="btn" data-music-open>Music &amp; volume</button>
       </div>
       <div id="slotList" hidden></div>
-      <p class="note startv">Version <b class="ver" id="verStart">v26.94</b></p>
+      <p class="note startv">Version <b class="ver" id="verStart">v26.95</b></p>
     </div>
     <div class="startbox create" id="create" hidden>
       <h2>Create your mayor</h2>
@@ -1569,7 +1569,7 @@ function enact(s,p){DIVS.forEach(d=>{s.enacted[d.id]=p.divs[d.id];s.ratio[d.id]=
 // Voter groups. Each has a share of residents, turnout, home districts, concerns and an approval of you.
 // Citywide approval is the turnout-weighted average of the groups; each council district's approval comes from the groups that live there.
 // Shares, district mix and turnout are modeled, loosely grounded in Memphis demographics; they are not survey data.
-const VERSION='v26.94';
+const VERSION='v26.95';
 const GROUPS=[
  {id:'working',sh:'Working families',n:'Working families',ic:'⚒︎',c:'#f2a93b',share:24,turn:.5,start:56,w:{jobs:1,safety:.8,transit:.5},
   d:'Hourly workers in logistics, warehouses, health care and service jobs. The biggest bloc in the city.',dm:{1:1.1,2:.8,3:1.3,4:1.2,5:.6,6:1.2,7:1.1}},
