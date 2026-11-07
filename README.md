@@ -4,6 +4,13 @@ A city-management game set in Memphis, Tennessee. You play the mayor. You handle
 
 **Play it:** https://erndae.github.io/Bluff-city-mayor/ (once GitHub Pages is turned on, see below)
 
+## v26.84: Your governing record counts
+
+- **Results in office are now a vote factor.** Voters judge an incumbent on what changed since the term began: crime, streets, blight, jobs, reading scores, public health, transit, finished projects, the city's savings, population, and how the neighborhoods feel. Good results add up to about +8 points on Election Day; bad results cost as much.
+- **A strong record blunts attack ads.** Your results, your approval and your campaign-trail record now shield you from the opponent's ads: a strong record cuts their effect up to half; a weak one makes them hit up to 20% harder.
+- **Where to see it:** a "Your results in office" box on the Campaign tab lists what's helping and hurting, and the vote breakdown shows both new factors.
+- **Test results:** in a test term where crime fell 4 points, streets and jobs improved, blight fell and savings grew, the mayor gained about 5 points, and heavy opposition ads cost about 2 points instead of about 4.5. Bot mayors that let the city slip (crime up, savings down, broken promises) still lose.
+
 ## v26.83: Full-game balance check
 
 Ten full bot runs: eight full first terms as mayor (October 2026 through the October 2027 election), two of them with all of this session's new systems switched off for comparison, plus two campaigns as a challenger.

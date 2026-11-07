@@ -719,7 +719,7 @@ details.analysis{margin-top:6px}details.analysis summary{cursor:pointer;color:va
     <button class="btn primary" data-act="pause" id="bPlay"><svg class="ico" viewBox="0 0 12 12" aria-hidden="true"><path d="M3.2 1.6v8.8l7.2-4.4z" fill="currentColor"/></svg> Resume <kbd>Space</kbd></button>
   </nav>
   <div class="status" id="status">Loading map…</div>
-  <div class="credit"><span class="ver" id="verTag">v26.83</span></div>
+  <div class="credit"><span class="ver" id="verTag">v26.84</span></div>
   <div class="tip" id="tip" hidden></div>
   <div class="toast" id="toast" role="status"></div>
   <section class="panel" id="panel" hidden aria-live="polite">
@@ -747,7 +747,7 @@ details.analysis{margin-top:6px}details.analysis summary{cursor:pointer;color:va
         <button class="btn" data-music-open>Music &amp; volume</button>
       </div>
       <div id="slotList" hidden></div>
-      <p class="note startv">Version <b class="ver" id="verStart">v26.83</b></p>
+      <p class="note startv">Version <b class="ver" id="verStart">v26.84</b></p>
     </div>
     <div class="startbox create" id="create" hidden>
       <h2>Create your mayor</h2>
@@ -1558,7 +1558,7 @@ function enact(s,p){DIVS.forEach(d=>{s.enacted[d.id]=p.divs[d.id];s.ratio[d.id]=
 // Voter groups. Each has a share of residents, turnout, home districts, concerns and an approval of you.
 // Citywide approval is the turnout-weighted average of the groups; each council district's approval comes from the groups that live there.
 // Shares, district mix and turnout are modeled, loosely grounded in Memphis demographics; they are not survey data.
-const VERSION='v26.83';
+const VERSION='v26.84';
 const GROUPS=[
  {id:'working',sh:'Working families',n:'Working families',ic:'⚒︎',c:'#f2a93b',share:24,turn:.5,start:56,w:{jobs:1,safety:.8,transit:.5},
   d:'Hourly workers in logistics, warehouses, health care and service jobs. The biggest bloc in the city.',dm:{1:1.1,2:.8,3:1.3,4:1.2,5:.6,6:1.2,7:1.1}},
@@ -8736,6 +8736,35 @@ document.addEventListener('click',e=>{const b=e.target.closest('[data-hoods],[da
   if(n==='flow_people'&&!b.querySelector('[data-hoods]')){hoodsInit();const low=Object.keys(HOODX).filter(x=>hoodMood(x)<35).length;const t=`<button class="flow-tile" data-hoods="1"><b>Neighborhoods</b><span>${low?`${low} neighborhood${low>1?'s are':' is'} unhappy`:'Thirteen neighborhoods, each with its own concerns'}</span></button>`;const anchor=b.querySelector('.ph-sec .flow-grid')||b.querySelector('.flow-grid');if(anchor)anchor.insertAdjacentHTML('afterbegin',t)}}catch(e){}return r}}
 // the district panel lists its neighborhoods
 {const _od=openDistrict;openDistrict=function(d,isSuper){const r=_od.apply(this,arguments);try{if(!isSuper&&S&&inOffice()){const names=Object.keys(HOODX).filter(n=>hoodDist(n)===d);if(names.length){const P=$('panel');const body=P&&(P.querySelector('.pbody')||P.querySelector('.sbody')||P);if(body&&!body.querySelector('.hoodlist'))body.insertAdjacentHTML('beforeend',`<div class="facts hoodlist"><h4>Neighborhoods here</h4>${names.map(n=>`<p style="margin:2px 0">${n}: mood <b>${hoodMood(n)}</b> · ${HOOD_CN[HOODX[n].c].toLowerCase()}</p>`).join('')}<div class="row"><button class="btn" data-hoodd="${d}">See these neighborhoods</button></div></div>`)}}}catch(e){console.warn('hoodd',e)}return r}}
+
+// ======================= v26.84: YOUR GOVERNING RECORD COUNTS =======================
+// Voters now judge an incumbent on results: how crime, streets, blight, jobs, schools, health and transit moved
+// since the term began, plus finished projects, the city's finances and how the neighborhoods feel. Good results
+// add up to about 8 points on Election Day, bad ones cost as much, and a strong record (results plus approval)
+// blunts the opponent's attack ads. Ads still matter; they just can't erase a good record.
+const RES_W={crime:-0.55,streets:0.45,blight:-0.45,jobs:0.6,reading:0.7,health:0.35,transit:0.35};
+function resBase(){if(!S||!inOffice())return null;if(!S.resBase||S.resBase.term!==S.term){S.resBase={term:S.term,met:{...S.met},popn:S.popn,reserve:S.reserve,proj:doneProjects(),m:nowM()}}return S.resBase}
+function doneProjects(){return(S.projects||[]).filter(p=>p.stage==='done').length}
+function resultsParts(){const B=resBase();if(!B)return[];const L=[];const nm={crime:'Violent crime',streets:'Streets',blight:'Blight',jobs:'Jobs',reading:'Reading scores',health:'Public health',transit:'Transit'};
+  for(const k in RES_W){const d=(S.met[k]||0)-(B.met[k]||0);const v=d*RES_W[k];if(Math.abs(v)>=0.1)L.push({t:`${nm[k]} ${(k==='crime'||k==='blight')?(d<0?'down':'up'):(d>0?'up':'down')} ${Math.abs(d).toFixed(1)}`,v})}
+  const pr=doneProjects()-B.proj;if(pr>0)L.push({t:`${pr} project${pr>1?'s':''} finished`,v:Math.min(3,pr*0.6)});
+  const rv=clamp((S.reserve-B.reserve)/12,-2,1);if(Math.abs(rv)>=0.1)L.push({t:S.reserve>=B.reserve?'The city\'s savings grew':'The city\'s savings shrank',v:rv});
+  const pp=clamp((S.popn-B.popn)/2500,-1.5,1.5);if(Math.abs(pp)>=0.1)L.push({t:S.popn>=B.popn?'More people living in Memphis':'People leaving Memphis',v:pp});
+  try{if(S.hoods){const ms=Object.keys(HOODX).map(n=>hoodMood(n));const avg=ms.reduce((a,b)=>a+b,0)/ms.length;const hv=clamp((avg-50)/5,-2,2);if(Math.abs(hv)>=0.1)L.push({t:avg>=50?'Neighborhoods feel heard':'Neighborhoods feel ignored',v:hv})}}catch(e){}
+  return L}
+function resultsSwing(){if(!S||isCand()||!inOffice())return 0;const raw=resultsParts().reduce((a,x)=>a+x.v,0);return 8*Math.tanh(raw/8)}
+// how well your record shields you from attack ads
+function recordShield(g){const G=S.groups[g.id];const R=resultsSwing()+((G?G.app:50)-50)*0.3+recordSwing()*0.5;return clamp(1-R/12,0.5,1.2)}
+{const _gs=groupSupport;groupSupport=function(g,o){o=o||{};let b=_gs.call(this,g,{...o,noRivalAds:true});try{const R=S.rival||{},rc=R.camp||{};const champ=(R.champs||[]).includes(g.id);
+  if(!o.noRivalAds){const hit=rc.adBy?(rc.adBy[g.id]||0):(rc.adPts||0)*(champ?1:0.5);b-=hit*(o.noShield||isCand()?1:recordShield(g))/100}
+  if(!o.noResults)b+=resultsSwing()/100}catch(e){console.warn('res',e)}return clamp(b,0.05,0.95)}}
+// the vote breakdown shows both
+{const _vb=voteBreakdown;voteBreakdown=function(){const r=_vb.apply(this,arguments);try{if(!isCand()&&inOffice()){const full=headToHead();const d=k=>(full-headToHead(null,{[k]:true}))*100;
+  r.rows.splice(0,0,{k:'Your results in office (crime, streets, jobs, schools, finances, neighborhoods)',v:d('noResults')});const sh=d('noShield');if(Math.abs(sh)>=0.05)r.rows.push({k:'Your record blunting the opponent\'s ads',v:-sh});r.rows=r.rows.filter(x=>Math.abs(x.v)>=0.05)}}catch(e){console.warn('vb',e)}return r}}
+{const _eom=endOfMonth;endOfMonth=function(...a){const r=_eom.apply(this,a);try{resBase()}catch(e){}return r}}
+// the results show up where you track the campaign
+function resultsHTML(){const L=resultsParts().sort((a,b)=>Math.abs(b.v)-Math.abs(a.v));const s=resultsSwing();return`<div class="facts resbox"><h4>Your results in office · ${s>=0?'+':'−'}${Math.abs(s).toFixed(1)} points on Election Day</h4>${L.length?`<ul>${L.slice(0,7).map(x=>`<li>${x.t} <span class="note">(${x.v>0?'+':'−'}${Math.abs(x.v).toFixed(1)})</span></li>`).join('')}</ul>`:'<p class="note">Not much has changed yet. Move the city\'s numbers, finish projects and keep the neighborhoods happy.</p>'}<p class="note">Voters judge what changed since this term began. A strong record (results and approval) also blunts your opponent's attack ads.</p></div>`}
+{const _om=openModal;openModal=function(...a){const r=_om.apply(this,a);try{const n=NAV.cur?NAV.cur.name:'';if(S&&inOffice()&&!isCand()&&(n==='openHQ'||n==='openCampaign'||n==='openOpinion')){const b=$('mBody');if(b&&!b.querySelector('.resbox')){const anchor=b.querySelector('.facts');const x=document.createElement('div');x.innerHTML=resultsHTML();if(anchor)anchor.before(x.firstChild);else b.prepend(x.firstChild)}}}catch(e){}return r}}
 
 function openLedger(){const L=S.log||[];openPanel('Everything that has happened, newest first','Ledger',L.length?`<div class="logl">${L.map(x=>`<div><span>${x.d}</span><p style="margin:0">${x.t}</p></div>`).join('')}</div>`:'<p class="note">Nothing yet. Tap ▶ Continue to move ahead.</p>','ledger')}
 function openPolicies(){const ks=Object.keys(POLICIES);
