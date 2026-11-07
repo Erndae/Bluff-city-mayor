@@ -4,6 +4,13 @@ A city-management game set in Memphis, Tennessee. You play the mayor. You handle
 
 **Play it:** https://erndae.github.io/Bluff-city-mayor/ (once GitHub Pages is turned on, see below)
 
+## v26.86: "This week" points to what just opened; a smarter test bot
+
+- **New systems get a concrete first step.** When a part of the job opens, your chief of staff's weekly note and the next-move chip suggest one thing to try there ("New: Meet a power player", "New: Visit Frayser", "New: Fight the bill in Nashville") until you've looked at it, then move on to the next new thing.
+- **A governor test bot** (`tools/gov-bot.js`, injected into the existing bot harness) plays like a mayor who cares about results: it answers decisions with the choice that does the city the most good, keeps three projects going in the weakest districts, visits the unhappiest neighborhood, delivers small neighborhood asks, fights Nashville bills, asks Congress for money, and in the last four months hires a campaign manager and runs ads.
+- **Result:** both governor runs won a second term (about 59–41 and 70–30 going into Election Day), with approval at 56 and 61 and "Your results in office" worth +3 and +6 points. The passive bot, which lets the city slip, still loses near 50% approval. The governing record now decides elections the way it should.
+- Fixed: the vote breakdown showed "Your record blunting the opponent's ads" with the wrong sign.
+
 ## v26.85: Easing new players in
 
 - **The basics come first.** A new game starts with the budget, the council, visitors, the map, your family and your health. Other parts of the job open about once a month, each with a short introduction card: Power players (month 1), the press corps (2), Neighborhoods and Nashville vs. Memphis (3, just as the legislature opens in January), Stories (4), the back room (5), Memphis in Congress (6) and big city events (7).

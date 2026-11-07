@@ -720,7 +720,7 @@ details.analysis{margin-top:6px}details.analysis summary{cursor:pointer;color:va
     <button class="btn primary" data-act="pause" id="bPlay"><svg class="ico" viewBox="0 0 12 12" aria-hidden="true"><path d="M3.2 1.6v8.8l7.2-4.4z" fill="currentColor"/></svg> Resume <kbd>Space</kbd></button>
   </nav>
   <div class="status" id="status">Loading map…</div>
-  <div class="credit"><span class="ver" id="verTag">v26.85</span></div>
+  <div class="credit"><span class="ver" id="verTag">v26.86</span></div>
   <div class="tip" id="tip" hidden></div>
   <div class="toast" id="toast" role="status"></div>
   <section class="panel" id="panel" hidden aria-live="polite">
@@ -748,7 +748,7 @@ details.analysis{margin-top:6px}details.analysis summary{cursor:pointer;color:va
         <button class="btn" data-music-open>Music &amp; volume</button>
       </div>
       <div id="slotList" hidden></div>
-      <p class="note startv">Version <b class="ver" id="verStart">v26.85</b></p>
+      <p class="note startv">Version <b class="ver" id="verStart">v26.86</b></p>
     </div>
     <div class="startbox create" id="create" hidden>
       <h2>Create your mayor</h2>
@@ -1559,7 +1559,7 @@ function enact(s,p){DIVS.forEach(d=>{s.enacted[d.id]=p.divs[d.id];s.ratio[d.id]=
 // Voter groups. Each has a share of residents, turnout, home districts, concerns and an approval of you.
 // Citywide approval is the turnout-weighted average of the groups; each council district's approval comes from the groups that live there.
 // Shares, district mix and turnout are modeled, loosely grounded in Memphis demographics; they are not survey data.
-const VERSION='v26.85';
+const VERSION='v26.86';
 const GROUPS=[
  {id:'working',sh:'Working families',n:'Working families',ic:'⚒︎',c:'#f2a93b',share:24,turn:.5,start:56,w:{jobs:1,safety:.8,transit:.5},
   d:'Hourly workers in logistics, warehouses, health care and service jobs. The biggest bloc in the city.',dm:{1:1.1,2:.8,3:1.3,4:1.2,5:.6,6:1.2,7:1.1}},
@@ -8761,7 +8761,7 @@ function recordShield(g){const G=S.groups[g.id];const R=resultsSwing()+((G?G.app
   if(!o.noResults)b+=resultsSwing()/100}catch(e){console.warn('res',e)}return clamp(b,0.05,0.95)}}
 // the vote breakdown shows both
 {const _vb=voteBreakdown;voteBreakdown=function(){const r=_vb.apply(this,arguments);try{if(!isCand()&&inOffice()){const full=headToHead();const d=k=>(full-headToHead(null,{[k]:true}))*100;
-  r.rows.splice(0,0,{k:'Your results in office (crime, streets, jobs, schools, finances, neighborhoods)',v:d('noResults')});const sh=d('noShield');if(Math.abs(sh)>=0.05)r.rows.push({k:'Your record blunting the opponent\'s ads',v:-sh});r.rows=r.rows.filter(x=>Math.abs(x.v)>=0.05)}}catch(e){console.warn('vb',e)}return r}}
+  r.rows.splice(0,0,{k:'Your results in office (crime, streets, jobs, schools, finances, neighborhoods)',v:d('noResults')});const sh=d('noShield');if(Math.abs(sh)>=0.05)r.rows.push({k:'Your record blunting the opponent\'s ads',v:sh});r.rows=r.rows.filter(x=>Math.abs(x.v)>=0.05)}}catch(e){console.warn('vb',e)}return r}}
 {const _eom=endOfMonth;endOfMonth=function(...a){const r=_eom.apply(this,a);try{resBase()}catch(e){}return r}}
 // the results show up where you track the campaign
 function resultsHTML(){const L=resultsParts().sort((a,b)=>Math.abs(b.v)-Math.abs(a.v));const s=resultsSwing();return`<div class="facts resbox"><h4>Your results in office · ${s>=0?'+':'−'}${Math.abs(s).toFixed(1)} points on Election Day</h4>${L.length?`<ul>${L.slice(0,7).map(x=>`<li>${x.t} <span class="note">(${x.v>0?'+':'−'}${Math.abs(x.v).toFixed(1)})</span></li>`).join('')}</ul>`:'<p class="note">Not much has changed yet. Move the city\'s numbers, finish projects and keep the neighborhoods happy.</p>'}<p class="note">Voters judge what changed since this term began. A strong record (results and approval) also blunts your opponent's attack ads.</p></div>`}
@@ -8814,6 +8814,23 @@ window.addEventListener('click',e=>{const t=e.target.closest('.unl-locked[data-u
 document.addEventListener('click',e=>{const b=e.target.closest('[data-unlnow]');if(!b||!S)return;e.preventDefault();e.stopImmediatePropagation();const k=b.dataset.unlnow;unlNow(k);onClose=null;closeModal();toast(k==='all'?'Everything is open.':`${UNL[k].n} is open.`);if(k!=='all'&&UNL[k].open)UNL[k].open()},true);
 // the first-week welcome lays out the plan
 {const _om=openModal;openModal=function(...a){const r=_om.apply(this,a);try{const U=S&&unlInit();if(U&&!U.all&&!U.welcomed&&!isCand()&&inOffice()&&NAV.cur&&NAV.cur.name==='flow_people'){U.welcomed=true;const b=$('mBody');b.insertAdjacentHTML('afterbegin',`<div class="faccard unl-plan"><b>Your first months</b><p class="note">Start with the basics: the budget, the council, the people waiting to see you, and your family. New parts of the job open about once a month, each with a short introduction:</p><ul class="numlist">${Object.values(UNL).map(X=>`<li>${X.n}: month ${X.m}</li>`).join('')}</ul><p class="note">Locked tiles say when they open. Tap one to open it early.</p></div>`);save()}}catch(e){}return r}}
+
+// ======================= v26.86: "THIS WEEK" POINTS TO WHAT JUST OPENED =======================
+// When a part of the job opens, your chief of staff's weekly note and the next-move chip suggest one concrete
+// thing to try there, until you've looked at it.
+const UNL_NAV={powers:'openPowers',press:'openPress',hoods:'openHoods',nash:'openNash',stories:'openStories',schemes:'openSchemes',deleg:'openDeleg'};
+function unlSeen(k){const U=S&&S.unl;return!U||U.all&&!U.seen?true:!!(U.seen&&U.seen[k])}
+const UNL_TRY={
+ powers:()=>['Meet a power player','The police union, the Chamber and the County each want something. Hear one of them out.',()=>openPowers()],
+ press:()=>['Give a reporter an interview','Reporters who know you treat you fairly when trouble comes.',()=>openPress()],
+ hoods:()=>{const n=Object.keys(HOODX).sort((a,b)=>hoodMood(a)-hoodMood(b))[0];return[`Visit ${n}`,`It's the unhappiest neighborhood right now (${hoodMood(n)}). A visit costs 1 action.`,()=>openHoods()]},
+ nash:()=>{const L=legInit();const live=L.bills.filter(b=>L.y===S.y&&!b.dead&&b.st<4);return live.length?[`Fight the bill in Nashville`,`${LEG_BILLS[live[0].id].t}. Work the committee chair or rally Memphis lawmakers.`,()=>openNash()]:['See what Nashville is planning','The legislature opens in January. Warm up the state before bills are filed.',()=>openNash()]},
+ stories:()=>['Check your open stories','Some problems play out over months. See where each one stands.',()=>openStories()],
+ schemes:()=>['Look at the back room','See who might be plotting against you, and what you can do about it.',()=>openSchemes()],
+ deleg:()=>['Ask a member of Congress for money','Friendlier members bring home more. 1 action.',()=>openDeleg()]};
+{const _ns=nextSteps;nextSteps=function(){const out=_ns.apply(this,arguments);try{const U=S&&S.unl;if(!U||U.all||isCand()&&false)return out;U.seen=U.seen||{};for(const k in UNL_TRY){if(!U.told||!U.told[k]||U.seen[k])continue;const [t,h,go]=UNL_TRY[k]();out.push({pri:88,t:`New: ${t}`,h,go});break}out.sort((a,b)=>b.pri-a.pri)}catch(e){console.warn('unl steps',e)}return out}}
+// opening a screen counts as having looked at it
+{const _om=openModal;openModal=function(...a){const r=_om.apply(this,a);try{const U=S&&S.unl;if(U&&!U.all&&NAV.cur){for(const k in UNL_NAV)if(UNL_NAV[k]===NAV.cur.name){U.seen=U.seen||{};U.seen[k]=true}}}catch(e){}return r}}
 
 function openLedger(){const L=S.log||[];openPanel('Everything that has happened, newest first','Ledger',L.length?`<div class="logl">${L.map(x=>`<div><span>${x.d}</span><p style="margin:0">${x.t}</p></div>`).join('')}</div>`:'<p class="note">Nothing yet. Tap ▶ Continue to move ahead.</p>','ledger')}
 function openPolicies(){const ks=Object.keys(POLICIES);
