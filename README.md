@@ -4,6 +4,14 @@ A city-management game set in Memphis, Tennessee. You play the mayor. You handle
 
 **Play it:** https://erndae.github.io/Bluff-city-mayor/ (once GitHub Pages is turned on, see below)
 
+## v26.90: Choose your own path
+
+- **A third way to start.** Next to "Run for mayor" and "Start as mayor", the start screen now offers **Choose your own path**: start as a private citizen with the job you pick, its savings, and a little influence (more for jobs with a public profile, like pastor or attorney).
+- **Paths open from day one:** run for Shelby County mayor, the U.S. House (pick your district) or the Senate; go to law school, or join a law firm right away if you're an attorney; become a kingmaker; or run for mayor in the next election. University president opens once your influence reaches 45.
+- **Keep working for now:** let a year go by at your job, earning its pay and a bit of influence, while Mayor Russell Hargrove runs the city.
+- **Running for mayor from scratch** starts you less known than a former mayor would be (name recognition around 30%, more with influence), and your job carries into the campaign.
+- Everything from life after City Hall applies: family, health, party, campaigns, Congress, the map lawsuit.
+
 ## v26.89: Month in review; easier-to-read decisions
 
 - **One month-in-review card.** When a month closes, a single card replaces the separate "month closed" and "where the money went" notifications. It shows approval, the reserve fund, council support and population with their changes; any of the city's numbers that moved; what happened; and what's coming (deadlines, Election Day, decisions waiting, the suggested next step). It also notes unused actions. Buttons open the money breakdown or the full ledger. It waits until you've closed whatever else is open. Candidates get it too.

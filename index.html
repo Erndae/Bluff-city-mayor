@@ -730,7 +730,7 @@ details.analysis{margin-top:6px}details.analysis summary{cursor:pointer;color:va
     <button class="btn primary" data-act="pause" id="bPlay"><svg class="ico" viewBox="0 0 12 12" aria-hidden="true"><path d="M3.2 1.6v8.8l7.2-4.4z" fill="currentColor"/></svg> Resume <kbd>Space</kbd></button>
   </nav>
   <div class="status" id="status">Loading map…</div>
-  <div class="credit"><span class="ver" id="verTag">v26.89</span></div>
+  <div class="credit"><span class="ver" id="verTag">v26.90</span></div>
   <div class="tip" id="tip" hidden></div>
   <div class="toast" id="toast" role="status"></div>
   <section class="panel" id="panel" hidden aria-live="polite">
@@ -758,7 +758,7 @@ details.analysis{margin-top:6px}details.analysis summary{cursor:pointer;color:va
         <button class="btn" data-music-open>Music &amp; volume</button>
       </div>
       <div id="slotList" hidden></div>
-      <p class="note startv">Version <b class="ver" id="verStart">v26.89</b></p>
+      <p class="note startv">Version <b class="ver" id="verStart">v26.90</b></p>
     </div>
     <div class="startbox create" id="create" hidden>
       <h2>Create your mayor</h2>
@@ -1569,7 +1569,7 @@ function enact(s,p){DIVS.forEach(d=>{s.enacted[d.id]=p.divs[d.id];s.ratio[d.id]=
 // Voter groups. Each has a share of residents, turnout, home districts, concerns and an approval of you.
 // Citywide approval is the turnout-weighted average of the groups; each council district's approval comes from the groups that live there.
 // Shares, district mix and turnout are modeled, loosely grounded in Memphis demographics; they are not survey data.
-const VERSION='v26.89';
+const VERSION='v26.90';
 const GROUPS=[
  {id:'working',sh:'Working families',n:'Working families',ic:'⚒︎',c:'#f2a93b',share:24,turn:.5,start:56,w:{jobs:1,safety:.8,transit:.5},
   d:'Hourly workers in logistics, warehouses, health care and service jobs. The biggest bloc in the city.',dm:{1:1.1,2:.8,3:1.3,4:1.2,5:.6,6:1.2,7:1.1}},
@@ -8934,6 +8934,40 @@ function polishCards(root){if(!root)return;
   root.querySelectorAll('.card > p:not([data-split])').forEach(p=>{p.dataset.split='1';if(p.children.length>2)return;const t=p.innerHTML;if(t.length<300||/<(button|div|ul|table)/.test(t))return;const mid=t.length/2;let best=-1,bd=1e9;const re=/[.!?]["”']?\s+(?=[A-Z"“])/g;let m;while((m=re.exec(t))){const at=m.index+m[0].length;const d=Math.abs(at-mid);if(d<bd){bd=d;best=at}}if(best<80||best>t.length-60)return;p.insertAdjacentHTML('afterend',`<p data-split="1">${t.slice(best)}</p>`);p.innerHTML=t.slice(0,best)})}
 {const _op=openPanel;openPanel=function(...a){const r=_op.apply(this,a);try{polishCards($('pBody'))}catch(e){}return r}}
 {const _om=openModal;openModal=function(...a){const r=_om.apply(this,a);try{polishCards($('mBody'))}catch(e){}return r}}
+
+// ======================= v26.90: CHOOSE YOUR OWN PATH =======================
+// A third way to start: as a private citizen with a job, savings and a little influence, free to choose a path.
+// Run for County mayor or Congress, go to law school, join a law firm (if you're an attorney), work behind the
+// scenes as a kingmaker, or run for mayor when the next election comes. The city runs without you in the meantime.
+const OCC_INF={pastor:22,owner:16,nurse:12,teacher:12,union:18,nonprofit:18,officer:16,tech:12,firefighter:15,musician:12,socialworker:12,coach:15,journalist:18,realtor:15,attorney:20,barber:16,fedex:10,veteran:14};
+(function(){try{const box=document.querySelector('#intro .paths');if(box&&!$('bCareer')){box.insertAdjacentHTML('beforeend',`<button class="path" id="bCareer"><b>Choose your own path</b><small>Start as a private citizen with a job and a little influence. Run for County mayor or Congress, go to law school, become a kingmaker, or run for mayor when the time is right.</small></button>`)}}catch(e){}})();
+window.__career=false;
+document.addEventListener('click',e=>{if(e.target.closest('#bNew,#bRun'))window.__career=false;if(e.target.closest('#bCareer')){e.preventDefault();window.__career=true;pendingSlot=null;startNew(true)}},true);
+{const _oc=openCreate;openCreate=function(){const r=_oc.apply(this,arguments);try{CR.career=!!window.__career;const h=document.querySelector('#create h2');if(h)h.textContent=CR.career?'Create your character':(CR.run?'Create your candidate':'Create your mayor');const g=$('cGo');if(g&&CR.career)g.textContent='Start your career'}catch(e){}return r}}
+{const _rc=renderCreate;renderCreate=function(){const r=_rc.apply(this,arguments);try{if(CR&&CR.career){const h=document.querySelector('#create h2');if(h)h.textContent='Create your character';const g=$('cGo');if(g)g.textContent='Start your career'}}catch(e){}return r}}
+window.addEventListener('click',e=>{if(!e.target.closest('#cGo')||!CR||!CR.career)return;e.preventDefault();e.stopImmediatePropagation();if((CR.name||'').trim().length<2){$('cName').focus();return}startCareer(CR)},true);
+function startCareer(cr){window.__noGuide=true;beginTerm(cr,true);const occ=cr.occ||'nonprofit';
+  S.events=[];S.queue=[];S.rival=null;S.camp=null;S.incumb={...FIRST_INC};S.reign=null;try{reignStart(S.incumb,true)}catch(e){}
+  S.mayor.occ=occ;if(cr.party)S.mayor.party=cr.party;S.term=0;S.phase='ai';S.over=true;S.promises=null;S.record=[];S.deals=[];
+  S.purse.cash=(OCCS[occ]||{}).sav||10000;S.unl={all:true};
+  S.after={inf:OCC_INF[occ]||14,role:null,yrs:0,log:[],app:45,start:S.y,fresh:true,incumb:{name:FIRST_INC.name,g:FIRST_INC.g,age:FIRST_INC.age}};
+  afterLog(`You started out as ${/^[aeiou]/i.test((OCCS[occ]||{n:'citizen'}).n)?'an':'a'} ${((OCCS[occ]||{n:'citizen'}).n).toLowerCase()} in Memphis. Mayor ${FIRST_INC.name} runs the city.`);
+  try{$('start').hidden=true}catch(e){}save();refreshHUD();openAfter()}
+// a year at your job, with no office or campaign yet
+function careerYear(){const A=S.after;for(let i=0;i<12;i++){try{aiMonth()}catch(e){console.warn(e)}try{const F=S.fam;if(F){F.kids.forEach(k=>{kidInit(k);kidGrow(k,1)});if(S.m===1){F.kids.forEach(k=>k.age++);if(F.spouse&&!F.spouse.gone)F.spouse.age++;try{adultYear()}catch(e){}}}}catch(e){}}
+  S.mayor.age++;const o=OCCS[S.mayor.occ]||{n:'citizen',pay:40000};S.purse.cash+=o.pay;A.inf=clamp(A.inf+2,0,100);A.tried={};const H=hInit();if(H){H.st=clamp(H.st-10,0,100)}
+  const m=`${S.y-1}: another year as ${/^[aeiou]/i.test(o.n)?'an':'a'} ${o.n.toLowerCase()}. +$${o.pay.toLocaleString()} · influence ${Math.round(A.inf)}.`;afterLog(m);save();AFTER_MSG=m;openAfter()}
+{const _ay=afterYear;afterYear=function(...a){const A=S&&S.after;if(A&&A.fresh&&!A.role&&!A.prison&&!A.dead){careerYear();return}return _ay.apply(this,a)}}
+// running for mayor from a fresh start: you're not a former mayor, so you start less known
+{const _cb=comebackRun;comebackRun=function(...a){const A=S&&S.after;const fresh=A&&A.fresh,inf=A?A.inf:0,occ=S.mayor.occ;const r=_cb.apply(this,a);try{if(fresh&&S.cand){S.cand.rec=Math.min(S.cand.rec,clamp(0.22+inf/250,0.2,0.6));if(occ&&OCCS[occ]){S.cand.occ=occ;S.mayor.occ=occ}}}catch(e){}return r}}
+// the screen speaks to someone who hasn't been mayor
+{const _oa=openAfter;openAfter=function(...a){const r=_oa.apply(this,a);try{const A=S.after;if(!A||!A.fresh)return r;const b=$('mBody'),t=$('mTitle'),ey=$('mEyebrow')||document.querySelector('#modal .eyebrow');
+  const swap=(el,from,to)=>{if(!el)return;const w=document.createTreeWalker(el,NodeFilter.SHOW_TEXT);let n;while((n=w.nextNode()))if(n.nodeValue.includes(from))n.nodeValue=n.nodeValue.split(from).join(to)};
+  [b,t,ey,document.querySelector('#modal')].forEach(el=>{swap(el,'Your time at City Hall is over. What\'s next?','Where do you want to take your career?');swap(el,'After City Hall','Your career');swap(el,'Your years since City Hall','Your career so far');swap(el,'Run for mayor again in','Run for mayor in');swap(el,'A comeback: you start known','You start out less known than a former mayor')});
+  if(!A.role&&b&&!b.querySelector('[data-acome]')){const ch=b.querySelector('.choices');const y=nextElYear();if(ch)ch.insertAdjacentHTML('afterbegin',`<button class="choice" data-acome="1"><b>Run for mayor in ${y}</b><small>Take on Mayor ${(A.incumb||{}).name||'the incumbent'}. You start with name recognition around ${Math.round(clamp(0.22+A.inf/250,0.2,0.6)*100)}%${y-S.y>1?` · skips ahead to March ${y}`:''}</small></button>`)}
+  if(!A.role&&b){const u=b.querySelector('[data-role="uni"]');if(u&&A.inf<45){u.disabled=true;const sm=u.querySelector('small');if(sm)sm.textContent='Universities pick leaders with a big public profile. Build your influence to 45 first.'}
+    const o=OCCS[S.mayor.occ];if(o&&!b.querySelector('.careerjob'))b.querySelector('.choices')?.insertAdjacentHTML('beforebegin',`<p class="note careerjob">You work as ${/^[aeiou]/i.test(o.n)?'an':'a'} ${o.n.toLowerCase()} ($${o.pay.toLocaleString()} a year): ${o.d.charAt(0).toLowerCase()+o.d.slice(1)}. Pick a path below, or keep working and let a year go by.</p>`)}
+  if(!A.role&&b&&!b.querySelector('[data-ayear]')){const ch=b.querySelector('.choices');if(ch)ch.insertAdjacentHTML('beforeend',`<button class="choice" data-ayear="1"><b>Keep working for now</b><small>A year goes by · +$${((OCCS[S.mayor.occ]||{}).pay||0).toLocaleString()} · influence grows a little</small></button>`)}}catch(e){console.warn('career',e)}return r}}
 
 function openLedger(){const L=S.log||[];openPanel('Everything that has happened, newest first','Ledger',L.length?`<div class="logl">${L.map(x=>`<div><span>${x.d}</span><p style="margin:0">${x.t}</p></div>`).join('')}</div>`:'<p class="note">Nothing yet. Tap ▶ Continue to move ahead.</p>','ledger')}
 function openPolicies(){const ks=Object.keys(POLICIES);
