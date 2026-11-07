@@ -4,6 +4,15 @@ A city-management game set in Memphis, Tennessee. You play the mayor. You handle
 
 **Play it:** https://erndae.github.io/Bluff-city-mayor/ (once GitHub Pages is turned on, see below)
 
+## v26.82: Neighborhoods
+
+- **Thirteen neighborhoods with their own character:** Downtown, Midtown, Cooper-Young, Orange Mound, Binghampton, Frayser, Raleigh, North Memphis, South Memphis, Whitehaven, Hickory Hill, East Memphis and Cordova. Each has a description, a top concern (crime, streets, transit, jobs, health or blight), a local leader (fictional), one big ask and a story of its own.
+- **Mood.** Each neighborhood's mood follows the city number it cares about since you took office, plus what you've done for it (fading over time). Every month, happy neighborhoods lift their council district's approval and unhappy ones drag it down.
+- **What you can do:** visit (1 action, Star Power, every 3 months) or deliver their big ask (asks of $1M or more need council approval).
+- **Neighborhood leaders come to see you** every few months, usually from the unhappiest neighborhood, with a problem of their own: Cooper-Young renters priced out, out-of-town landlords in Frayser, a flooding block in North Memphis, Cordova talking about breaking away, and more.
+- Find it in People → The city's people. Each district panel now lists its neighborhoods.
+- Fixed: the new neighborhood code briefly reused the name of the v26.41 neighborhood-stories function, which would have switched those stories off. Renamed before release.
+
 ## v26.81: Big city events
 
 Three new multi-month storylines, run through the story system (they show up at City Hall, FedExForum or Beale Street, some choices are skill checks, and endings go on your record):
