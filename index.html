@@ -730,7 +730,7 @@ details.analysis{margin-top:6px}details.analysis summary{cursor:pointer;color:va
     <button class="btn primary" data-act="pause" id="bPlay"><svg class="ico" viewBox="0 0 12 12" aria-hidden="true"><path d="M3.2 1.6v8.8l7.2-4.4z" fill="currentColor"/></svg> Resume <kbd>Space</kbd></button>
   </nav>
   <div class="status" id="status">Loading map…</div>
-  <div class="credit"><span class="ver" id="verTag">v26.90</span></div>
+  <div class="credit"><span class="ver" id="verTag">v26.91</span></div>
   <div class="tip" id="tip" hidden></div>
   <div class="toast" id="toast" role="status"></div>
   <section class="panel" id="panel" hidden aria-live="polite">
@@ -758,7 +758,7 @@ details.analysis{margin-top:6px}details.analysis summary{cursor:pointer;color:va
         <button class="btn" data-music-open>Music &amp; volume</button>
       </div>
       <div id="slotList" hidden></div>
-      <p class="note startv">Version <b class="ver" id="verStart">v26.90</b></p>
+      <p class="note startv">Version <b class="ver" id="verStart">v26.91</b></p>
     </div>
     <div class="startbox create" id="create" hidden>
       <h2>Create your mayor</h2>
@@ -1569,7 +1569,7 @@ function enact(s,p){DIVS.forEach(d=>{s.enacted[d.id]=p.divs[d.id];s.ratio[d.id]=
 // Voter groups. Each has a share of residents, turnout, home districts, concerns and an approval of you.
 // Citywide approval is the turnout-weighted average of the groups; each council district's approval comes from the groups that live there.
 // Shares, district mix and turnout are modeled, loosely grounded in Memphis demographics; they are not survey data.
-const VERSION='v26.90';
+const VERSION='v26.91';
 const GROUPS=[
  {id:'working',sh:'Working families',n:'Working families',ic:'⚒︎',c:'#f2a93b',share:24,turn:.5,start:56,w:{jobs:1,safety:.8,transit:.5},
   d:'Hourly workers in logistics, warehouses, health care and service jobs. The biggest bloc in the city.',dm:{1:1.1,2:.8,3:1.3,4:1.2,5:.6,6:1.2,7:1.1}},
@@ -8968,6 +8968,53 @@ function careerYear(){const A=S.after;for(let i=0;i<12;i++){try{aiMonth()}catch(
   if(!A.role&&b){const u=b.querySelector('[data-role="uni"]');if(u&&A.inf<45){u.disabled=true;const sm=u.querySelector('small');if(sm)sm.textContent='Universities pick leaders with a big public profile. Build your influence to 45 first.'}
     const o=OCCS[S.mayor.occ];if(o&&!b.querySelector('.careerjob'))b.querySelector('.choices')?.insertAdjacentHTML('beforebegin',`<p class="note careerjob">You work as ${/^[aeiou]/i.test(o.n)?'an':'a'} ${o.n.toLowerCase()} ($${o.pay.toLocaleString()} a year): ${o.d.charAt(0).toLowerCase()+o.d.slice(1)}. Pick a path below, or keep working and let a year go by.</p>`)}
   if(!A.role&&b&&!b.querySelector('[data-ayear]')){const ch=b.querySelector('.choices');if(ch)ch.insertAdjacentHTML('beforeend',`<button class="choice" data-ayear="1"><b>Keep working for now</b><small>A year goes by · +$${((OCCS[S.mayor.occ]||{}).pay||0).toLocaleString()} · influence grows a little</small></button>`)}}catch(e){console.warn('career',e)}return r}}
+
+// ======================= v26.91: RUN FOR CITY COUNCIL =======================
+// The natural first step: a seat on the Memphis City Council. Pick one of the seven district seats and run in the
+// next city election (the same October as the mayor's race; council races are nonpartisan). Win, and you serve a
+// four-year term: constituent service, ordinances, budget fights for your district, a voting bloc, hearings, and
+// a working relationship (or a rivalry) with the mayor. A strong council record makes a mayoral run much easier.
+Object.assign(ROLES,{council:{n:'Memphis City Council',as:'a member of the Memphis City Council',d:'Represent one of seven districts. Win, and you vote on the budget, sponsor ordinances and fight for your neighborhoods.',inc:29000,inf:5,
+  run:()=>{const A=S.after||{};const d=A.cdist||1;let fit=0;try{const o=(OCCS[S.mayor.occ]||{}).g||{},c=dComp(d);for(const k in o)fit+=o[k]*(c[k]||0)}catch(e){}return clamp(0.2+(A.inf||15)/160+mskill('cha')/60+fit/25,0.12,0.85)},lose:'You lost the council race.'}});
+{const _oy=officeYear;officeYear=function(k){if(k==='council')return nextElYear();return _oy.apply(this,arguments)}}
+function councilIncumbent(d){try{const m=(S.council||[]).find(m=>m.seat==='District '+d);return m?m.name:'the incumbent'}catch(e){return'the incumbent'}}
+// picking the council asks which district first
+{const _cr=chooseRole;chooseRole=function(k){const A=afterInit();if(k==='council'&&!A.role){if(!A.cdist){A.pickCD=true;save();openAfter();return}
+  const R=ROLES.council;A.role='campaign';A.camp={office:'council',odds:R.run(),y:officeYear('council'),moves:0};A.ra=0;const m=`You're running for the City Council in District ${A.cdist} against ${councilIncumbent(A.cdist)}. Election Day is in October ${A.camp.y}. Starting odds: about ${Math.round(A.camp.odds*100)}%.`;afterLog(m);save();AFTER_MSG=m;openAfter();return}return _cr.apply(this,arguments)}}
+function pickCouncilDist(d){const A=afterInit();A.cdist=d;A.pickCD=false;chooseRole('council')}
+// ---------- serving on the council ----------
+function cnInit(A){if(!A.cn)A.cn={d:A.cdist||1,app:55,bloc:20,wins:0,mayor:0,svc:0};return A.cn}
+const CN_ORDS=[['A 30-day body-camera footage release law',{young:2,renters:1,labor:-1},{}],['Limits on short-term rentals in residential streets',{owners:2,young:-1},{blight:-0.1}],['A tree canopy and heat-island ordinance',{young:1,parents:1},{health:0.1}],['A blight-fighting fine on absentee landlords',{renters:2,owners:1,business:-1},{blight:-0.3}],['Funding for violence interrupters',{faith:2,parents:1,owners:-1},{crime:-0.2}],['Late-night youth programs in every district',{parents:2,young:1},{crime:-0.1}]];
+const CN_ACTS={
+ service:{n:'Hold office hours and fix district problems',sk:'cha',b:0.55,d:'Potholes, streetlights, code complaints · works: district approval +6 · fails: +2',do:(c,A,ok)=>{c.app+=ok?6:2;c.svc++;return ok?'Thirty potholes filled and a dark park lit up. People in your district noticed.':'You took a lot of complaints. Not all of them got fixed.'}},
+ ordinance:{n:'Sponsor an ordinance',sk:'dip',b:0.45,d:'Works: it passes, influence +3 · fails: it dies in committee (bloc −3)',do:(c,A,ok)=>{const O=CN_ORDS[(c.wins+c.svc)%CN_ORDS.length];if(ok){c.wins++;A.inf+=3;for(const g in O[1])try{groupLift(g,O[1][g]*0.5,'Council ordinance')}catch(e){}try{applyFx(S,O[2])}catch(e){}return`${O[0]} passed 8–5. Your name is on it.`}c.bloc-=3;return`${O[0]} died in committee.`}},
+ budget:{n:'Fight for your district in the budget',sk:'intr',b:0.5,d:'Works: a paving and parks package for your district, approval +5 · fails: nothing extra',do:(c,A,ok)=>{if(ok){c.app+=5;try{applyFx(S,{streets:0.15})}catch(e){}return`You traded your budget vote for $4 million in paving and park upgrades in District ${c.d}.`}return'Other members got their projects first this year.'}},
+ bloc:{n:'Build a voting bloc',sk:'dip',b:0.5,d:'Works: bloc +10 (more say on every vote) · fails: +3',do:(c,A,ok)=>{c.bloc+=ok?10:3;return ok?'Four colleagues now vote with you on most big questions.':'Lunch went well. Votes didn\'t move much.'}},
+ hearing:{n:'Hold an oversight hearing',sk:'learn',b:0.5,d:'MPD, MLGW or MATA under the microscope · works: influence +4, approval +3 · fails: approval −2',do:(c,A,ok)=>{const t=pk2(['MPD overtime','MLGW outage response','MATA\'s broken buses']);if(ok){A.inf+=4;c.app+=3;return`Your hearing on ${t} made the news. Real answers, real changes.`}c.app-=2;return`The hearing on ${t} turned into political theater.`}},
+ mayor:{n:'Work with the mayor',d:'Mayor relationship +8, bloc +3 · some voters think you\'re too close (approval −1)',do:(c,A)=>{c.mayor+=8;c.bloc+=3;c.app-=1;return`You and ${cityMayor()} cut a deal on your district's priorities.`}}};
+const CN_EVENTS=[
+ {t:()=>`Mayor ${cityMayor()} needs your vote for a property tax increase`,ch:[['Vote yes: the city needs the money',(c,A)=>{c.mayor+=8;c.bloc+=2;c.app-=5;return'It passed 7–6. Your vote decided it. Homeowners in your district are angry.'}],['Vote no',(c,A)=>{c.mayor-=6;c.app+=3;return'It failed 6–7. The mayor won\'t forget.'}]]},
+ {t:'A developer offers a big campaign donation before a rezoning vote in your district',ch:[['Take the donation and back the rezoning',(c,A)=>{S.purse.cash+=20000;c.app-=3;A.inf+=1;return'The apartments got approved. So did a story about who paid for your campaign.'}],['Turn down the money and hold a community meeting',(c,A)=>{c.app+=4;return'Neighbors packed the meeting. The developer cut the building to half the size.'}]]},
+ {t:'A shooting outside a corner store in your district',ch:[['Push for a violence-interruption team in the district',(c,A)=>{c.app+=3;try{applyFx(S,{crime:-0.1})}catch(e){}return'The team started work within a month. The block got calmer.'}],['Call for more police patrols',(c,A)=>{c.app+=1;c.mayor+=2;return'Patrols went up. Some neighbors felt safer; others felt watched.'}]]},
+ {t:'Your colleagues want you to run for council chair',ch:[['Run for chair',(c,A)=>{if(c.bloc>=35){c.bloc+=10;A.inf+=5;c.chair=true;return'You won the chair, 9–4. You run the meetings now.'}c.bloc-=4;return'You came up two votes short.'}],['Stay out of it',(c,A)=>{c.bloc+=2;return'You kept your friends on both sides.'}]]},
+ {t:'Flooding swamps a neighborhood in your district',ch:[['Demand emergency drainage money',(c,A)=>{c.app+=4;c.mayor-=2;return'You got $1.5 million for drainage. The mayor didn\'t love the press conference.'}],['Organize volunteers and supplies',(c,A)=>{c.app+=3;return'Church vans, sandbags and hot meals. People will remember who showed up.'}]]}];
+{const _rk=roleKit;roleKit=function(){const A=afterInit();if(A.role==='council')return{st:cnInit(A),acts:CN_ACTS,evs:CN_EVENTS};return _rk.apply(this,arguments)}}
+// a council term: re-election with the mayor's race, and a big boost if you run for mayor
+{const _ay=afterYear;afterYear=function(...a){const A=afterInit();const role=A.role;const yB=S.y;const r=_ay.apply(this,a);try{if(role==='council'&&A.role==='council'&&A.cn){const c=A.cn;c.app=clamp(c.app+(55-c.app)*0.15,0,100);c.bloc=clamp(c.bloc,0,100);c.mayor=clamp(c.mayor,-50,50);
+    if((yB-2027)%4===0&&yB>=2027&&A.cnSince!==yB){const p=clamp(0.35+c.app/140+c.svc*0.01,0.15,0.95);if(Math.random()<p){afterLog(`You won re-election to the council in District ${c.d} (${Math.round(p*100)}% going in).`);AFTER_MSG=`You won re-election to the council in District ${c.d}.`}else{A.role=null;A.cn=null;A.tried={};afterLog(`You lost your council seat in District ${c.d}.`);AFTER_MSG=`You lost your council seat in District ${c.d}. What's next?`}}
+    save();openAfter()}}catch(e){console.warn('cn',e)}return r}}
+{const _v=afterYear;afterYear=function(...a){const A=afterInit();const wasCamp=A.role==='campaign'&&A.camp&&A.camp.office==='council';const r=_v.apply(this,a);try{if(wasCamp&&A.role==='council'){A.cnSince=S.y-1;cnInit(A);afterLog(`You defeated ${councilIncumbent(A.cdist)} for the District ${A.cdist} seat.`)}}catch(e){}return r}}
+{const _cb=comebackRun;comebackRun=function(...a){const A=S&&S.after;const cn=A&&A.cn;const r=_cb.apply(this,a);try{if(cn&&S.cand){S.cand.rec=Math.max(S.cand.rec,clamp(0.32+cn.wins*0.03+cn.app/400,0.3,0.7));const d='District '+cn.d;logIt(`You're running for mayor as a council member from ${d}. People know your name.`)}}catch(e){}return r}}
+// the screen: pick a district; council stats
+{const _oa=openAfter;openAfter=function(...a){const out=_oa.apply(this,a);try{const A=afterInit(),b=$('mBody');if(!b)return out;
+  if(!A.role&&A.pickCD&&!b.querySelector('.cdpick')){const h=`<div class="faccard cdpick"><b>Which council district will you run in?</b><p class="note">Memphis has seven district seats and two super-district seats. Council races are nonpartisan and happen with the mayor's race every four years.</p><div class="choices">${[1,2,3,4,5,6,7].map(d=>{const was=A.cdist;A.cdist=d;let p=0;try{p=Math.round(ROLES.council.run()*100)}catch(e){}A.cdist=was;let hood='';try{hood=(HOODS.filter(h=>districtAt(h[2],h[1])===d).map(h=>h[0]).slice(0,3)).join(', ')}catch(e){}return`<button class="choice" data-cdist="${d}"><b>District ${d}</b><small>${hood?hood+' · ':''}incumbent ${councilIncumbent(d)} · you'd start around ${p}%</small></button>`}).join('')}<button class="choice" data-cdistx="1"><b>Never mind</b></button></div></div>`;const g=b.querySelector('.qrgrid');const x=document.createElement('div');x.innerHTML=h;if(g)g.after(x.firstChild);else b.prepend(x.firstChild)}
+  const desk=b.querySelector('.roledesk');
+  if(desk&&A.role==='council'&&A.cn&&!desk.querySelector('.cnstats')){const c=A.cn;desk.insertAdjacentHTML('afterbegin',`<h4 class="plh">District ${c.d}, Memphis City Council</h4><div class="qrgrid agrid cnstats"><div><small>District approval</small><p><b>${Math.round(c.app)}</b></p></div><div><small>Your voting bloc</small><p><b>${Math.round(c.bloc)}</b></p></div><div><small>Ordinances passed</small><p><b>${c.wins}</b></p></div><div><small>With Mayor ${cityMayor().split(' ').pop()}</small><p><b>${c.mayor>0?'+':''}${Math.round(c.mayor)}</b></p></div></div><p class="note">Next city election: October ${nextElYear()}. Council members are often the strongest mayoral candidates: your ordinances and district approval give a mayoral run a head start.</p>`)}
+  if(A.role==='campaign'&&A.camp&&A.camp.office==='council'&&desk){desk.querySelectorAll('h4.plh').forEach(h=>{if(/^Running for/.test(h.textContent))h.textContent=`Running for City Council, District ${A.cdist}`});desk.querySelectorAll('.campstats p b').forEach(bb=>{if(/^November /.test(bb.textContent))bb.textContent=bb.textContent.replace('November','October')})}
+  const cb=b.querySelector('[data-role="council"] small');if(cb&&!A.role&&!A.tried?.council)cb.textContent=`Represent one of seven districts. The next council election is in October ${officeYear('council')}. Pick a district to see your odds. $29,000 a year (it's a part-time job: you keep your other work).`}catch(e){console.warn('cn screen',e)}return out}}
+document.addEventListener('click',e=>{const b=e.target.closest('[data-cdist],[data-cdistx]');if(!b||!S||!S.after)return;e.preventDefault();e.stopImmediatePropagation();if(b.dataset.cdist){pickCouncilDist(+b.dataset.cdist);return}S.after.pickCD=false;save();openAfter()},true);
+// a council seat is part-time: you keep earning from your job
+{const _ay2=afterYear;afterYear=function(...a){const A=afterInit();const on=A.role==='council'&&A.fresh;const r=_ay2.apply(this,a);try{if(on&&S.after&&S.after.role==='council'){const o=OCCS[S.mayor.occ];if(o){S.purse.cash+=o.pay*0.6}}}catch(e){}return r}}
 
 function openLedger(){const L=S.log||[];openPanel('Everything that has happened, newest first','Ledger',L.length?`<div class="logl">${L.map(x=>`<div><span>${x.d}</span><p style="margin:0">${x.t}</p></div>`).join('')}</div>`:'<p class="note">Nothing yet. Tap ▶ Continue to move ahead.</p>','ledger')}
 function openPolicies(){const ks=Object.keys(POLICIES);

@@ -4,6 +4,21 @@ A city-management game set in Memphis, Tennessee. You play the mayor. You handle
 
 **Play it:** https://erndae.github.io/Bluff-city-mayor/ (once GitHub Pages is turned on, see below)
 
+## v26.91: Run for City Council
+
+- **A new path: Memphis City Council.** From "Choose your own path" (or after City Hall), pick one of the seven district seats. Each shows its neighborhoods, the incumbent and your odds, which depend on your influence, Star Power and how well your job fits the district. Then campaign until the next city election, in October alongside the mayor's race; council races are nonpartisan.
+- **Serving on the council (four-year terms):** three moves a year:
+  - hold office hours and fix district problems
+  - sponsor an ordinance (body-camera footage, short-term rentals, tree canopy, absentee landlords, violence interrupters, youth programs)
+  - fight for your district in the budget
+  - build a voting bloc
+  - hold oversight hearings on MPD, MLGW or MATA
+  - work with the mayor
+- **Council events:** the mayor needs your vote on a tax increase, a developer offers a donation before a rezoning, a shooting in your district, a run for council chair, flooding.
+- **Stats:** district approval, voting bloc, ordinances passed and your relationship with the mayor. Re-election comes with each city election.
+- **The council is part-time,** so you keep most of your job's pay.
+- **A springboard to mayor:** running for mayor as a council member starts you better known, more so with ordinances passed and strong district approval.
+
 ## v26.90: Choose your own path
 
 - **A third way to start.** Next to "Run for mayor" and "Start as mayor", the start screen now offers **Choose your own path**: start as a private citizen with the job you pick, its savings, and a little influence (more for jobs with a public profile, like pastor or attorney).
