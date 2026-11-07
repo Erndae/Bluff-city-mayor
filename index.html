@@ -368,6 +368,12 @@ nav.actions [data-actsgo]{min-height:44px;padding:9px 17px;border-color:rgba(242
 .calstrip{display:flex;gap:4px;margin:8px 0 4px}.calstrip span{flex:1;text-align:center;font-size:11px;font-weight:600;padding:5px 2px;border-radius:6px;border:1px solid var(--line,rgba(127,127,127,.35));opacity:.6}.calstrip span.rec{border-style:dashed}.calstrip span.done{opacity:.35}.calstrip span.on{opacity:1;background:var(--acc,#e8b04f);color:#1a1a1a;border-color:transparent}
 .clock .cspeed,.clock .ptag{display:none!important}#bPlay .contto{display:block;font-size:11px;font-weight:600;opacity:.8;letter-spacing:0;text-transform:none;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}#bPlay{flex-direction:column;line-height:1.15}#bPlay.contrun{opacity:.85}#bPlay .contmain{display:inline-flex;align-items:center;gap:6px}
 .flow-tile.unl-locked{opacity:.55;border-style:dashed}.flow-tile.unl-locked b::after{content:' 🔒';font-size:.8em}
+#nextchip.merged{display:none!important}
+#modes.collapsed button:not(.on){display:none}#modes .modelbl{display:none}#modes.collapsed .modelbl{display:inline;margin-left:6px;font:600 12px/1 var(--f-label);letter-spacing:.06em;color:var(--amber);text-transform:uppercase;white-space:nowrap}#modes.collapsed .modename{display:none!important}#modes.collapsed button.on kbd{display:none}#modes.collapsed button.on{width:auto!important;padding:0 12px 0 8px}
+body.mopen #notes,body.seeon #notes{display:none}body:has(#panel:not([hidden])) #notes{display:none}
+@media (max-width:760px){.note-card:nth-child(n+2){display:none!important}}
+#bSee{grid-column:1/-1;display:flex;flex-direction:column;align-items:flex-start;text-align:left;gap:1px;border-color:var(--amber);background:rgba(242,169,59,.14);line-height:1.2;padding:8px 12px;min-width:0}#bSee[hidden]{display:none}#bSee .seelbl{font:600 10px/1.2 var(--f-label);letter-spacing:.08em;text-transform:uppercase;color:var(--amber)}#bSee b{font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}#bSee .seego{font-size:12px;color:var(--amber);font-weight:600}
+@media (max-width:860px){nav.actions{background:rgba(13,24,34,.9);border-radius:12px;padding:4px}}
 .adgain{display:block;width:100%;text-align:center;font-size:11px;font-weight:600;color:var(--good);margin-top:1px}
 #start{overflow-x:hidden;overflow-y:auto;touch-action:pan-y}.startbox{min-width:0;max-width:min(600px,100%);box-sizing:border-box}.startbox *{min-width:0}.create select,.create input{max-width:100%;width:100%;box-sizing:border-box;text-overflow:ellipsis}.create .tpick,.create .tpick>*{max-width:100%;box-sizing:border-box}
 @media (max-width:640px){.startbox{margin-left:0}#start{padding-left:max(16px,env(safe-area-inset-left,0px))}}
@@ -720,7 +726,7 @@ details.analysis{margin-top:6px}details.analysis summary{cursor:pointer;color:va
     <button class="btn primary" data-act="pause" id="bPlay"><svg class="ico" viewBox="0 0 12 12" aria-hidden="true"><path d="M3.2 1.6v8.8l7.2-4.4z" fill="currentColor"/></svg> Resume <kbd>Space</kbd></button>
   </nav>
   <div class="status" id="status">Loading map…</div>
-  <div class="credit"><span class="ver" id="verTag">v26.86</span></div>
+  <div class="credit"><span class="ver" id="verTag">v26.87</span></div>
   <div class="tip" id="tip" hidden></div>
   <div class="toast" id="toast" role="status"></div>
   <section class="panel" id="panel" hidden aria-live="polite">
@@ -748,7 +754,7 @@ details.analysis{margin-top:6px}details.analysis summary{cursor:pointer;color:va
         <button class="btn" data-music-open>Music &amp; volume</button>
       </div>
       <div id="slotList" hidden></div>
-      <p class="note startv">Version <b class="ver" id="verStart">v26.86</b></p>
+      <p class="note startv">Version <b class="ver" id="verStart">v26.87</b></p>
     </div>
     <div class="startbox create" id="create" hidden>
       <h2>Create your mayor</h2>
@@ -1559,7 +1565,7 @@ function enact(s,p){DIVS.forEach(d=>{s.enacted[d.id]=p.divs[d.id];s.ratio[d.id]=
 // Voter groups. Each has a share of residents, turnout, home districts, concerns and an approval of you.
 // Citywide approval is the turnout-weighted average of the groups; each council district's approval comes from the groups that live there.
 // Shares, district mix and turnout are modeled, loosely grounded in Memphis demographics; they are not survey data.
-const VERSION='v26.86';
+const VERSION='v26.87';
 const GROUPS=[
  {id:'working',sh:'Working families',n:'Working families',ic:'⚒︎',c:'#f2a93b',share:24,turn:.5,start:56,w:{jobs:1,safety:.8,transit:.5},
   d:'Hourly workers in logistics, warehouses, health care and service jobs. The biggest bloc in the city.',dm:{1:1.1,2:.8,3:1.3,4:1.2,5:.6,6:1.2,7:1.1}},
@@ -8831,6 +8837,42 @@ const UNL_TRY={
 {const _ns=nextSteps;nextSteps=function(){const out=_ns.apply(this,arguments);try{const U=S&&S.unl;if(!U||U.all||isCand()&&false)return out;U.seen=U.seen||{};for(const k in UNL_TRY){if(!U.told||!U.told[k]||U.seen[k])continue;const [t,h,go]=UNL_TRY[k]();out.push({pri:88,t:`New: ${t}`,h,go});break}out.sort((a,b)=>b.pri-a.pri)}catch(e){console.warn('unl steps',e)}return out}}
 // opening a screen counts as having looked at it
 {const _om=openModal;openModal=function(...a){const r=_om.apply(this,a);try{const U=S&&S.unl;if(U&&!U.all&&NAV.cur){for(const k in UNL_NAV)if(UNL_NAV[k]===NAV.cur.name){U.seen=U.seen||{};U.seen[k]=true}}}catch(e){}return r}}
+
+// ======================= v26.87: A CLEANER SCREEN =======================
+// 1. One guide at a time: while "Getting started" is running it replaces the "This week" chip instead of stacking
+//    under it. "Goal complete" messages become a quick toast, and the trivial ones are dropped. On phones, only
+//    one notification card shows at a time, it sits above the menus, and it hides while a screen is open.
+// 2. One play button and one menu: the clock's own play button hides when the Continue bar is on screen, and the
+//    unlabeled map-view icons fold into a single labeled button that opens when you tap it.
+// 3. One tap to what needs you: when Continue stops because someone new is waiting, a "See them now" button
+//    takes you straight to them.
+// ---------- 1. one guide at a time ----------
+{const _rs=renderStartChip;renderStartChip=function(){const r=_rs.apply(this,arguments);try{const c=$('startchip'),nc=$('nextchip');if(!c||!nc)return r;const on=!c.hidden;nc.classList.toggle('merged',on);
+  if(on){const t=nc._top!=null?nc._top:null;if(t!=null&&c._t!==t){c.style.top=t+'px';c._t=t}}else{nc._top=nc.offsetTop||nc._top}}catch(e){}return r}}
+{const _rn=renderNextChip;renderNextChip=function(){const r=_rn.apply(this,arguments);try{const nc=$('nextchip');if(nc&&!nc.classList.contains('merged')&&nc.offsetTop)nc._top=nc.offsetTop}catch(e){}return r}}
+{const _nt=notify;notify=function(kind,title,text,act,opts){try{if(typeof title==='string'&&/^Goal complete: /.test(title)){if(/^Goal complete: (Continue|Start the clock)$/.test(title))return;toast(`✓ ${title.replace('Goal complete: ','')}${text&&/^Next:/.test(text)?' · '+text:''}`);return}}catch(e){}return _nt.apply(this,arguments)}}
+// ---------- 2. one play button, one map-view button ----------
+{const _uc=updateClock;updateClock=function(){const r=_uc.apply(this,arguments);try{const c=$('cPause'),pb=$('bPlay');if(c&&pb)c.style.display=pb.offsetParent?'none':''}catch(e){}return r}}
+function modesCollapse(on){const el=$('modes');if(el)el.classList.toggle('collapsed',on!==false)}
+{const _rm=renderModes;renderModes=function(){const r=_rm.apply(this,arguments);try{const el=$('modes');if(el&&!el.dataset.cinit){el.dataset.cinit='1';el.classList.add('collapsed')}const on=el&&el.querySelector('button.on');if(on&&!on.querySelector('.modelbl')){on.insertAdjacentHTML('beforeend',`<span class="modelbl">${(MODES.find(m=>m.id===S.mode)||{}).n||''} ▾</span>`)}}catch(e){}return r}}
+window.addEventListener('click',e=>{const el=$('modes');if(!el)return;const b=e.target.closest('#modes button');if(!b){if(!el.classList.contains('collapsed')&&!e.target.closest('#modes'))modesCollapse(true);return}
+  if(el.classList.contains('collapsed')&&b.classList.contains('on')){e.preventDefault();e.stopImmediatePropagation();modesCollapse(false);return}setTimeout(()=>modesCollapse(true),50)},true);
+// ---------- 3. one tap to whoever is waiting ----------
+function seeNowEvent(){if(!S||!S.started||S.over||S.after)return null;const id=S.seeNow;if(!id)return null;const ev=(S.events||[]).find(e=>(e.id+':'+(e.born||'')+':'+(e.rid||e.hood||e.pid||e.type||''))===id);return ev||null}
+function seeKey(e){return e.id+':'+(e.born||'')+':'+(e.rid||e.hood||e.pid||e.type||'')}
+function seeTitle(ev){try{const v=visitorOf(ev);if(v&&v.title)return(v.who&&v.who.name?v.who.name+': ':'')+v.title}catch(e){}try{const d=EVENTS.find(x=>x.id===ev.id);if(d)return typeof d.title==='function'?d.title(S):d.title}catch(e){}return'Someone is waiting'}
+function seeNow(){const ev=seeNowEvent();S.seeNow=null;renderSeeNow();if(!ev)return;try{const isOffice=officeVisitors().some(v=>v.ev===ev);if(isOffice){const v=officeVisitors().find(v=>v.ev===ev);DEV.app=true;window.__audOpening=Date.now();while(modalOpen)closeModal();const i=S.events.indexOf(ev);openPanel(`Office hours · ${v.role}`,`Audience with ${v.who.name}`,meetingScene(v.who,v.who.name,v.role,'office','Ready to talk')+eventCard(ev,i),'aud');try{devFrame(true)}catch(e){}return}}catch(e){console.warn('seeNow',e)}
+  try{openPlace(evAt(ev))}catch(e){try{openPlace('cityhall')}catch(e2){}}}
+{const _rq=releaseQueued;releaseQueued=function(all){const before=new Set((S&&S.events||[]).map(seeKey));const n=_rq.apply(this,arguments);try{if(S&&!all){const fresh=(S.events||[]).filter(e=>!before.has(seeKey(e)));if(fresh.length){S.seeNow=seeKey(fresh[fresh.length-1]);renderSeeNow()}}}catch(e){}return n}}
+function renderSeeNow(){let b=$('bSee');const nav=document.querySelector('nav.actions');if(!nav)return;if(!b){b=document.createElement('button');b.id='bSee';b.className='btn';const pb=$('bPlay');if(pb)nav.insertBefore(b,pb);else nav.appendChild(b);b.addEventListener('click',e=>{e.preventDefault();e.stopPropagation();seeNow()})}
+  const ev=S&&S.paused?seeNowEvent():null;b.hidden=!ev;document.body.classList.toggle('seeon',!!ev);if(ev){const h=`<span class="seelbl">Waiting for you</span><b>${seeTitle(ev)}</b><span class="seego">See now ›</span>`;if(b._h!==h){b.innerHTML=h;b._h=h}}}
+{const _sp=setPaused;setPaused=function(p){const r=_sp.apply(this,arguments);try{if(!p&&S)S.seeNow=null;renderSeeNow()}catch(e){}return r}}
+{const _rh=refreshHUD;refreshHUD=function(...a){const r=_rh.apply(this,a);try{renderSeeNow()}catch(e){}return r}}
+// keep the map-view button and notifications clear of the bottom menu as it grows
+function layoutBottom(){try{if(window.innerWidth>860)return;const nav=document.querySelector('nav.actions'),md=$('modes'),nt=$('notes');if(!nav)return;const top=nav.getBoundingClientRect().top;const vh=window.innerHeight;if(md){md.style.bottom=Math.round(vh-top+8)+'px'}
+  const mt=md&&md.offsetParent?md.getBoundingClientRect().top:top;if(nt)nt.style.bottom=Math.round(vh-mt+8)+'px'}catch(e){}}
+{const _rs2=renderSeeNow;renderSeeNow=function(){const r=_rs2.apply(this,arguments);layoutBottom();return r}}
+window.addEventListener('resize',()=>setTimeout(layoutBottom,50));
 
 function openLedger(){const L=S.log||[];openPanel('Everything that has happened, newest first','Ledger',L.length?`<div class="logl">${L.map(x=>`<div><span>${x.d}</span><p style="margin:0">${x.t}</p></div>`).join('')}</div>`:'<p class="note">Nothing yet. Tap ▶ Continue to move ahead.</p>','ledger')}
 function openPolicies(){const ks=Object.keys(POLICIES);

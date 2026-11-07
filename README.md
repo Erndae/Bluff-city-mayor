@@ -4,6 +4,15 @@ A city-management game set in Memphis, Tennessee. You play the mayor. You handle
 
 **Play it:** https://erndae.github.io/Bluff-city-mayor/ (once GitHub Pages is turned on, see below)
 
+## v26.87: A cleaner screen
+
+- **One guide at a time.** While "Getting started" is running, it replaces the "This week" chip instead of stacking under it with the same advice. "Goal complete" messages are now a quick toast instead of cards, and trivial ones ("Goal complete: Continue") are gone.
+- **Notifications stay out of the way on phones.** Only one card shows at a time, it sits above the menus instead of on top of them, and cards hide while a screen is open or while the "Waiting for you" bar is showing. Everything is still in the bell.
+- **One play button.** The clock's own play button hides whenever the Continue bar is on screen.
+- **One labeled map-view button.** The seven unlabeled map-view icons fold into a single button that shows the current view ("City ▾"); tap it to choose another.
+- **One tap to whoever is waiting.** When Continue stops because someone new is waiting, a "Waiting for you: [who and what] · See now" bar appears above Continue and takes you straight to them (office visitors open as an audience; other requests open where they happen).
+- The bottom menu now has a solid background, so map labels don't show through between the buttons.
+
 ## Maintenance check (after v26.86): old saves and phone speed
 
 No game changes were needed.
