@@ -482,7 +482,8 @@ body.deskon #endBanner{display:none!important}
 .act-time{display:flex;gap:10px;align-items:center;background:#13212d;border:1px solid #24394b;border-radius:10px;padding:10px 12px;margin-bottom:10px}.act-time>span{font-size:22px}.act-time b{display:block}.act-time small{color:var(--muted);font-size:13px}.act-lines p{margin:0 0 8px}.act-ch{display:flex;flex-wrap:wrap;gap:6px;margin:4px 0 10px}.act-ch span{font-size:13px;padding:3px 8px;border-radius:999px;background:#13212d}.act-wrap{margin-bottom:6px}
 @keyframes actFlash{0%{color:var(--amber);transform:scale(1.15)}100%{transform:none}}#hDate.act-flash{animation:actFlash 1.2s ease-out}
 #actCard{position:fixed;inset:0;z-index:100003;background:rgba(6,10,14,.5);display:flex;align-items:center;justify-content:center;padding:16px}#actCard .ac-box{background:#0f1b25;color:#eef2f5;border:1px solid #2c4356;border-radius:14px;padding:18px;max-width:420px;width:100%;max-height:85vh;overflow:auto;box-shadow:0 20px 60px #0008}#actCard .ac-box>small{letter-spacing:2px;font-size:11px;color:var(--amber,#f0a83a)}#actCard h3{margin:4px 0 12px;font-size:20px}#actCard .ac-ok{width:100%;min-height:48px;margin-top:6px;border:none;border-radius:10px;background:var(--amber,#f0a83a);color:#0d1822;font:inherit;font-weight:700;cursor:pointer}#actCard .facts{background:#13212d;border-radius:10px;padding:8px 12px;margin:8px 0}#actCard .pos{color:var(--good,#5fd08a)}#actCard .neg{color:var(--bad,#ef6b5b)}
-body.panel-over #panel{z-index:30}
+body.panel-over #panel,body.deskon #panel{z-index:30}
+.act-jump{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 10px}.act-jump a{font-size:13px;padding:8px 10px;min-height:36px;display:inline-flex;align-items:center;border-radius:999px;background:#13212d;border:1px solid #24394b;color:var(--amber);text-decoration:none}.act-more{font-size:13px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin:14px 0 6px}
 .adgain{display:block;width:100%;text-align:center;font-size:11px;font-weight:600;color:var(--good);margin-top:1px}
 #start{overflow-x:hidden;overflow-y:auto;touch-action:pan-y}.startbox{min-width:0;max-width:min(600px,100%);box-sizing:border-box}.startbox *{min-width:0}.create select,.create input{max-width:100%;width:100%;box-sizing:border-box;text-overflow:ellipsis}.create .tpick,.create .tpick>*{max-width:100%;box-sizing:border-box}
 @media (max-width:640px){.startbox{margin-left:0}#start{padding-left:max(16px,env(safe-area-inset-left,0px))}}
@@ -841,7 +842,7 @@ details.analysis{margin-top:6px}details.analysis summary{cursor:pointer;color:va
     <button class="btn primary" data-act="pause" id="bPlay"><svg class="ico" viewBox="0 0 12 12" aria-hidden="true"><path d="M3.2 1.6v8.8l7.2-4.4z" fill="currentColor"/></svg> Resume <kbd>Space</kbd></button>
   </nav>
   <div class="status" id="status">Loading map…</div>
-  <div class="credit"><span class="ver" id="verTag">v27.12</span></div>
+  <div class="credit"><span class="ver" id="verTag">v27.13</span></div>
   <div class="tip" id="tip" hidden></div>
   <div class="toast" id="toast" role="status"></div>
   <section class="panel" id="panel" hidden aria-live="polite">
@@ -869,7 +870,7 @@ details.analysis{margin-top:6px}details.analysis summary{cursor:pointer;color:va
         <button class="btn" data-music-open>Music &amp; volume</button>
       </div>
       <div id="slotList" hidden></div>
-      <p class="note startv">Version <b class="ver" id="verStart">v27.12</b></p>
+      <p class="note startv">Version <b class="ver" id="verStart">v27.13</b></p>
     </div>
     <div class="startbox create" id="create" hidden>
       <h2>Create your mayor</h2>
@@ -1680,7 +1681,7 @@ function enact(s,p){DIVS.forEach(d=>{s.enacted[d.id]=p.divs[d.id];s.ratio[d.id]=
 // Voter groups. Each has a share of residents, turnout, home districts, concerns and an approval of you.
 // Citywide approval is the turnout-weighted average of the groups; each council district's approval comes from the groups that live there.
 // Shares, district mix and turnout are modeled, loosely grounded in Memphis demographics; they are not survey data.
-const VERSION='v27.12';
+const VERSION='v27.13';
 const GROUPS=[
  {id:'working',sh:'Working families',n:'Working families',ic:'⚒︎',c:'#f2a93b',share:24,turn:.5,start:56,w:{jobs:1,safety:.8,transit:.5},
   d:'Hourly workers in logistics, warehouses, health care and service jobs. The biggest bloc in the city.',dm:{1:1.1,2:.8,3:1.3,4:1.2,5:.6,6:1.2,7:1.1}},
@@ -10163,14 +10164,11 @@ function afterActionsHTML(){const A=afterInit();const R=A.role&&ROLES[A.role];co
     const other=box?[...box.querySelectorAll('button')].filter(b=>!b.closest('.hd-absorb-close')&&![...'ract,rev,aev,cvote,bill,cmte,mapside,kmspend,kmmspend,kmfav,ayear,cnext,acome,aheir,role,act,hdact,party'.split(',')].some(k=>b.dataset[k]!=null)&&!seen.has(b.outerHTML)).map(b=>{seen.add(b.outerHTML);return b.outerHTML}):[];
     if(other.length)h+=`<div class="facts"><h4>More for ${R?R.as:'you'}</h4><div class="choices">${other.join('')}</div></div>`}
   // your life
-  let fam='';try{const F=famInit();fam=Object.keys(FAM_ACT).filter(k=>k!=='trail').map(k=>{const X=FAM_ACT[k];let ok=false;try{ok=X.ok(F)}catch(e){}let d='';try{d=typeof X.d==='function'?X.d():X.d}catch(e){}return`<button class="choice" data-famact="${k}" ${ok?'':'disabled'}><b>${X.n}</b><small>${d||''}</small></button>`}).join('')}catch(e){}
-  h+=`<div class="facts"><h4>Your life</h4><div class="choices">${fam}<button class="choice" data-act="actgo" data-go="family"><b>Your family</b><small>See everyone and how they're doing</small></button><button class="choice" data-act="actgo" data-go="home"><b>Go home</b><small>Walk around your house, furnish it, spend time there</small></button><button class="choice" data-act="actgo" data-go="party"><b>Political affiliation</b><small>Your party, or none</small></button></div></div>`;
+  h+=`<div class="facts"><h4>Your life</h4><div class="choices">${actFamilyHTML()}<button class="choice" data-act="actgo" data-go="home"><b>Go home</b><small>Walk around your house, furnish it, spend time there</small></button><button class="choice" data-act="actgo" data-go="party"><b>Political affiliation</b><small>Your party, or none</small></button></div></div>`;
   // big decisions
   const big=take('[data-acome],[data-aheir]');const yr=take('[data-ayear],[data-cnext]');
   h+=`<div class="facts"><h4>Big decisions</h4><div class="choices">${yr.join('')}${big.join('')}<button class="choice" data-act="legacy"><b>Retire for good</b><small>See how the Mayors of Memphis will remember you</small></button></div></div>`;
   return h}
-document.addEventListener('click',e=>{const b=e.target.closest('[data-act="actgo"]');if(!b||!S)return;e.preventDefault();e.stopImmediatePropagation();const g=b.dataset.go;try{closeModal()}catch(err){}
-  if(g==='family')openFamily();else if(g==='home')enterHome();else if(g==='party')hdAct('party')},true);
 {const _oa=openActions;openActions=function(...a){if(S&&S.after&&!inOffice()){const A=S.after;const R=A.role&&ROLES[A.role];
     openModal(R?`${R.n} · ${S.y}`:'Your next chapter','Everything you can do',afterActionsHTML()+`<div class="choices"><button class="choice" data-act="close"><b>Back</b></button></div>`,true);return}
   return _oa.apply(this,a)}}
@@ -10189,6 +10187,35 @@ function hdClickNext(nb){if(nb.isConnected){nb.click();return}const box=HD.after
 {const _re=hdRoomEnd;hdRoomEnd=function(...a){const n=(S&&S.deskFeed||[]).length;const r=_re.apply(this,a);try{const F=S.deskFeed||[];if(F.length>n&&F[0].items.length===1&&/^You spent some time (at home|at your desk)/.test(F[0].items[0]))F.shift()}catch(e){}return r}}
 function actCleanFeed(){try{if(S&&S.deskFeed)S.deskFeed=S.deskFeed.filter(x=>!(x.items.length===1&&/^You spent some time (at home|at your desk)/.test(x.items[0])))}catch(e){}}
 {const _rd=renderHomeDesk;renderHomeDesk=function(...a){actCleanFeed();return _rd.apply(this,a)}}
+
+// ======================= v27.13: ACTIONS SHOWS EVERYTHING; NO FAMILY TIME WITHOUT A FAMILY =======================
+// The mayor's Actions screen now starts with everything that's waiting on you (decisions, votes, projects, people in
+// your office), the rest of City Hall (budget, council, schools, tourism, neighborhoods, rankings, Nashville), your
+// life, and a jump list to every kind of move below. Family dinners and outings need a family first.
+function famHas(){try{return famMembers().length>0}catch(e){return false}}
+Object.keys(FAM_ACT).forEach(k=>{const A=FAM_ACT[k],ok=A.ok;A.ok=function(F){return famHas()&&ok.apply(this,arguments)}});
+function actFamilyHTML(){if(!famHas())return`<button class="choice" data-act="actgo" data-go="family"><b>Start a family</b><small>You don't have a family yet. Choose married with kids, married, or single and looking.</small></button>`;
+  let F=null;try{F=famInit()}catch(e){}return Object.keys(FAM_ACT).filter(k=>k!=='trail'||(S.camp&&!S.camp.voted&&(isCand()||monthsToElection()<=12))).map(k=>{const X=FAM_ACT[k];let ok=false,d='';try{ok=X.ok(F)}catch(e){}try{d=typeof X.d==='function'?X.d():X.d}catch(e){}return`<button class="choice" data-famact="${k}" ${ok?'':'disabled'}><b>${X.n}</b><small>${ok?'':'<b class="neg">Not right now</b> · '}${d||''}</small></button>`}).join('')+`<button class="choice" data-act="actgo" data-go="family"><b>Your family</b><small>See everyone and how they're doing</small></button>`}
+const ACT_GO={family:()=>openFamily(),home:()=>enterHome(),office:()=>enterOffice(),party:()=>hdAct('party'),budget:()=>openBudget(),council:()=>openCouncil(),schools:()=>openSchools(),tourism:()=>openTourism(),hoods:()=>openHoods(),ranks:()=>openRankings(),nash:()=>openNash(),opinion:()=>openOpinion(),news:()=>openNews(),hq:()=>openHQ()};
+function actWaitingHTML(){let items=[];try{items=deskItems().filter(x=>['urgent','decide','votes','projects'].includes(x.cat))}catch(e){}
+  let V=[];try{V=officeVisitors()}catch(e){}
+  const rows=items.slice(0,12).map(x=>`<button class="choice" data-act="actgo" data-go="desk:${x.go}"><b>${x.ic||''} ${x.t}</b><small>${x.cat==='urgent'?'<b class="neg">Due this month</b> · ':''}${x.s||''}</small></button>`).join('');
+  return(V.length?`<button class="choice" data-act="actgo" data-go="office"><b>${V.length} ${V.length===1?'person is':'people are'} waiting in your office</b><small>Take the meetings on the 7th floor</small></button>`:'')+rows}
+function actCityHTML(){const L=[['budget','The budget','Where the money goes this year'],['council','The council','Who\'s with you, and who you need'],['schools','Schools','Reading, graduation, and what you can do'],['tourism','Tourism and the riverfront','Visitors, festivals and the city\'s image'],['hoods','Neighborhood leaders','What each neighborhood is asking for'],['ranks','How Memphis ranks','Against peer cities, Tennessee and the nation'],['opinion','Public opinion','How every group feels about you'],['news','The news','What the papers and TV are saying']];
+  try{if(typeof hdSessionOn==='function'&&hdSessionOn())L.unshift(['nash','Go to Nashville','The legislature is in session'])}catch(e){}
+  return L.map(([g,n,d])=>`<button class="choice" data-act="actgo" data-go="${g}"><b>${n}</b><small>${d}</small></button>`).join('')}
+{const _oa=openActions;openActions=function(...a){const r=_oa.apply(this,a);try{if(!S||S.after||!inOffice()||isCand())return r;const mb=$('mBody');if(!mb||mb.querySelector('.act-hub'))return r;
+    const hs=[...mb.querySelectorAll('.facts > h4')];hs.forEach((h,i)=>{h.closest('.facts').id='actsec'+i});
+    const w=actWaitingHTML();const x=document.createElement('div');x.className='act-hub';
+    x.innerHTML=`<div class="act-jump"><a href="#actwait">Waiting on you</a><a href="#actcity">City Hall</a><a href="#actlife">Your life</a>${hs.map((h,i)=>`<a href="#actsec${i}">${h.textContent}</a>`).join('')}</div>
+      <div class="facts" id="actwait"><h4>Waiting on you</h4>${w?`<div class="choices">${w}</div>`:'<p class="note">Nothing is waiting on you right now.</p>'}</div>
+      <div class="facts" id="actcity"><h4>Around City Hall</h4><div class="choices">${actCityHTML()}</div></div>
+      <div class="facts" id="actlife"><h4>Your life</h4><div class="choices">${actFamilyHTML()}<button class="choice" data-act="actgo" data-go="home"><b>Go home</b><small>Walk around your house, spend time there</small></button></div></div>
+      <h3 class="act-more">Your moves as mayor</h3>`;
+    const first=mb.querySelector('.note');if(first)first.after(x);else mb.prepend(x)}catch(e){console.warn('act hub',e)}return r}}
+document.addEventListener('click',e=>{const a=e.target.closest('.act-jump a');if(a){e.preventDefault();const t=document.querySelector(a.getAttribute('href'));if(t)t.scrollIntoView({behavior:'smooth',block:'start'});return}
+  const b=e.target.closest('[data-act="actgo"]');if(!b||!S)return;e.preventDefault();e.stopImmediatePropagation();const g=b.dataset.go;try{closeModal()}catch(err){}
+  try{if(g.startsWith('desk:'))deskGo(g.slice(5));else if(ACT_GO[g])ACT_GO[g]()}catch(err){console.warn('actgo',err)}},true);
 
 function openLedger(){const L=S.log||[];openPanel('Everything that has happened, newest first','Ledger',L.length?`<div class="logl">${L.map(x=>`<div><span>${x.d}</span><p style="margin:0">${x.t}</p></div>`).join('')}</div>`:'<p class="note">Nothing yet. Tap ▶ Continue to move ahead.</p>','ledger')}
 function openPolicies(){const ks=Object.keys(POLICIES);

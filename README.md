@@ -4,6 +4,16 @@
 
 A Memphis political life on a real map of the city. Start as the mayor, run for mayor, or begin as a private citizen with a job and rise from there: the City Council, Shelby County mayor, Congress and the Senate, a law firm, a university presidency, or the back rooms as a kingmaker. As mayor you handle problems at real places, write the city budget, win votes from the 13-member City Council and run for re-election. Your family, health, party, rivals and record follow you through every chapter.
 
+## v27.13
+
+- **Actions shows everything you can act on.** The mayor's Actions screen now opens with:
+  - **Waiting on you**: people waiting in your office, every decision, council vote and project on your desk, with what's due this month marked.
+  - **Around City Hall**: the budget, the council, schools, tourism, neighborhood leaders, rankings, public opinion, the news, and Nashville when the legislature is in session.
+  - **Your life**: family time and going home.
+  - **A jump list** at the top to every section, including all the mayor's moves below (platform, police and schools, projects, ordinances, executive orders, town halls, meetings, press, campaign).
+- **No family time without a family.** Family dinners and outings need a family first. Until then, Actions offers "Start a family" (married with kids, married, or single and looking). Same out of office.
+- Things you open from the desk or Actions (like a desk decision at City Hall) now show on top of the desk instead of behind it.
+
 ## v27.12
 
 - **Actions sits right next to Desk.** The bottom bar is now Desk · Actions · Continue (or Next year) · Districts · More, in office and out. Family moved into More out of office (it's also still in the header). While campaigning for mayor, Campaign takes the Districts spot and Districts is in More.
