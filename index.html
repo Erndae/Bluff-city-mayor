@@ -464,6 +464,7 @@ body.deskon #endBanner{display:none!important}
 .hd-pi{width:34px;height:34px;border-radius:50%;background:rgba(242,169,59,.14);color:var(--amber);display:grid;place-items:center;flex-shrink:0}
 @media (max-width:860px){body.deskon #notes{bottom:calc(96px + env(safe-area-inset-bottom,0px))!important}}
 .hd-feed{display:flex;gap:10px;padding:8px 10px;border-radius:12px;background:#101c26;border-left:3px solid var(--amber)}.hd-feed>div{flex:1;min-width:0}.hd-feed p{margin:2px 0 0;font-size:14px;line-height:1.35}
+.edu-bar{display:grid;grid-template-columns:76px 1fr 40px;align-items:center;gap:8px;font-size:13px;margin:4px 0}.edu-bar i{height:8px;border-radius:4px;background:#22323f;overflow:hidden;display:block}.edu-bar i b{display:block;height:100%;background:var(--amber)}.edu-bar em{font-style:normal;font-family:var(--f-mono);text-align:right}
 .adgain{display:block;width:100%;text-align:center;font-size:11px;font-weight:600;color:var(--good);margin-top:1px}
 #start{overflow-x:hidden;overflow-y:auto;touch-action:pan-y}.startbox{min-width:0;max-width:min(600px,100%);box-sizing:border-box}.startbox *{min-width:0}.create select,.create input{max-width:100%;width:100%;box-sizing:border-box;text-overflow:ellipsis}.create .tpick,.create .tpick>*{max-width:100%;box-sizing:border-box}
 @media (max-width:640px){.startbox{margin-left:0}#start{padding-left:max(16px,env(safe-area-inset-left,0px))}}
@@ -816,7 +817,7 @@ details.analysis{margin-top:6px}details.analysis summary{cursor:pointer;color:va
     <button class="btn primary" data-act="pause" id="bPlay"><svg class="ico" viewBox="0 0 12 12" aria-hidden="true"><path d="M3.2 1.6v8.8l7.2-4.4z" fill="currentColor"/></svg> Resume <kbd>Space</kbd></button>
   </nav>
   <div class="status" id="status">Loading map…</div>
-  <div class="credit"><span class="ver" id="verTag">v27.03</span></div>
+  <div class="credit"><span class="ver" id="verTag">v27.04</span></div>
   <div class="tip" id="tip" hidden></div>
   <div class="toast" id="toast" role="status"></div>
   <section class="panel" id="panel" hidden aria-live="polite">
@@ -844,7 +845,7 @@ details.analysis{margin-top:6px}details.analysis summary{cursor:pointer;color:va
         <button class="btn" data-music-open>Music &amp; volume</button>
       </div>
       <div id="slotList" hidden></div>
-      <p class="note startv">Version <b class="ver" id="verStart">v27.03</b></p>
+      <p class="note startv">Version <b class="ver" id="verStart">v27.04</b></p>
     </div>
     <div class="startbox create" id="create" hidden>
       <h2>Create your mayor</h2>
@@ -1655,7 +1656,7 @@ function enact(s,p){DIVS.forEach(d=>{s.enacted[d.id]=p.divs[d.id];s.ratio[d.id]=
 // Voter groups. Each has a share of residents, turnout, home districts, concerns and an approval of you.
 // Citywide approval is the turnout-weighted average of the groups; each council district's approval comes from the groups that live there.
 // Shares, district mix and turnout are modeled, loosely grounded in Memphis demographics; they are not survey data.
-const VERSION='v27.03';
+const VERSION='v27.04';
 const GROUPS=[
  {id:'working',sh:'Working families',n:'Working families',ic:'⚒︎',c:'#f2a93b',share:24,turn:.5,start:56,w:{jobs:1,safety:.8,transit:.5},
   d:'Hourly workers in logistics, warehouses, health care and service jobs. The biggest bloc in the city.',dm:{1:1.1,2:.8,3:1.3,4:1.2,5:.6,6:1.2,7:1.1}},
@@ -9862,6 +9863,66 @@ function openTourism(){const T=tourInit();const img=Math.round(T.img);const w=im
 // on the desk's More menu
 {const _h=hdHTML;hdHTML=function(){let h=_h.apply(this,arguments);if(S&&inOffice()&&HD.more)h=h.replace('<button role="menuitem" data-hdact="council">','<button role="menuitem" data-hdact="schools">The schools</button><button role="menuitem" data-hdact="tourism">Tourism and the riverfront</button><button role="menuitem" data-hdact="council">');return h}}
 window.addEventListener('click',e=>{const t=e.target.closest('#homeDesk [data-hdact="schools"],#homeDesk [data-hdact="tourism"]');if(!t||!S)return;e.preventDefault();e.stopImmediatePropagation();HD.more=false;renderHomeDesk(true);if(t.dataset.hdact==='schools')openSchools();else openTourism()},true);
+
+// ======================= v27.04: EDUCATION THAT FOLLOWS THE CITY =======================
+// Reading scores now follow what kids live with: jobs, blight, violent crime, public health and transit (which
+// decides whether they can get to school), averaged over the past year, so changes take time to show. Programs
+// (libraries, tutoring, summer reading, after-school, pre-K, County school money) add on top, and your relationship
+// with the school district only decides how well those programs work inside the schools. New statistics:
+// chronic absenteeism, graduation, college or career readiness, pre-K seats and reading by district. A better
+// educated city earns more: young adults' earnings rise over the years, and that brings in tax revenue, helps
+// job growth and keeps people from leaving.
+const EDU_K={owners:6,business:6,young:4,parents:0,faith:-2,working:-4,renters:-7,labor:-2};
+function eduInit(){if(!S)return null;if(!S.edu){const M=S.met;S.edu={base:{jobs:M.jobs,blight:M.blight,crime:M.crime,health:M.health,transit:M.transit},samp:[],att:30,grad:79,ready:45,prek:0,earn:34000,earn0:34000,read0:M.reading,hist:[],last:null}}return S.edu}
+function eduCond(){const E=eduInit();const sm=E.samp.length?E.samp:[{jobs:S.met.jobs,blight:S.met.blight,crime:S.met.crime,health:S.met.health,transit:S.met.transit}];const avg=k=>sm.reduce((a,x)=>a+x[k],0)/sm.length;const b=E.base;
+  return{jobs:avg('jobs')-b.jobs,blight:avg('blight')-b.blight,crime:avg('crime')-b.crime,health:avg('health')-b.health,transit:avg('transit')-b.transit}}
+function eduRelMult(){let r=0;try{r=facRel('mscs')}catch(e){}return clamp(0.85+r/330,0.5,1.15)}
+function eduAtt(c){const E=eduInit();return clamp(30-c.transit*0.25-c.health*0.3+c.crime*0.08+c.blight*0.1-E.prek*1.2-((S.schProg||[]).length)*0.4,10,50)}
+function eduParts(){const s=S,E=eduInit(),c=eduCond(),P=s.policies||{},r=id=>(s.ratio&&s.ratio[id])||1;const att=eduAtt(c);const mult=eduRelMult();
+  const life=[['Jobs in the city',c.jobs*0.06],['Blight and vacant buildings',-c.blight*0.04],['Violent crime',-c.crime*0.03],['Public health',c.health*0.05],['Chronic absences',-(att-30)*0.05]];
+  const prog=[['Library spending',(r('lib')-1)*10],['Tutoring program',P.tutors?1.2:0],['Longer library hours',P.libHours?0.6:0],['Summer youth jobs',P.mploy?0.3:0],['County school money',(s.county||0)/100*1.2],['Pre-K seats',E.prek*0.25],['City programs in the schools',Math.min(0.6,((s.schProg||[]).length)*0.1)],['Meetings and visits',s.eduBoost||0],['Your Education skill',s.mayor?(mskill('learn')-8)*0.07:0]];
+  return{life:life.filter(x=>Math.abs(x[1])>=0.02),prog:prog.filter(x=>Math.abs(x[1])>=0.02).map(x=>[x[0],x[1]*mult]),mult,att,base:0,pull:-(s.met.reading-E.read0)*0.15}}
+function eduSample(){const E=eduInit();E.samp.push({jobs:S.met.jobs,blight:S.met.blight,crime:S.met.crime,health:S.met.health,transit:S.met.transit});if(E.samp.length>12)E.samp.shift()}
+// the June results replace the old formula
+readingUpdate=function(s){if(s!==S){return{before:s.met.reading,after:s.met.reading}}const E=eduInit(),p=eduParts(),c=eduCond();
+  const d=p.base+p.pull+p.life.reduce((a,x)=>a+x[1],0)+p.prog.reduce((a,x)=>a+x[1],0)+rnd(-0.4,0.4);s.eduBoost=0;const before=s.met.reading;s.met.reading=clamp(s.met.reading+d,10,60);
+  E.att=+p.att.toFixed(1);E.grad=+clamp(79+(s.met.reading-E.read0)*0.7-(E.att-30)*0.25+c.jobs*0.05+E.prek*0.3,50,98).toFixed(1);
+  E.ready=+clamp(45+(E.grad-79)*0.8+((s.policies||{}).mploy?2:0)+c.jobs*0.1+((s.schProg||[]).includes('Graduate scholarship fund')?2:0),20,85).toFixed(1);
+  const tgt=34000*(1+(E.grad-79)*0.01+(E.ready-45)*0.006+(s.met.reading-E.read0)*0.006+c.jobs*0.004);const e0=E.earn;E.earn=Math.round((E.earn+(tgt-E.earn)*0.25)/50)*50;
+  E.hist.push({y:s.y,read:+s.met.reading.toFixed(1),att:E.att,grad:E.grad,ready:E.ready,earn:E.earn});if(E.hist.length>12)E.hist.shift();
+  E.last={before:+before.toFixed(1),after:+s.met.reading.toFixed(1),earnD:E.earn-e0};
+  if(inOffice())try{notify(s.met.reading>=before?'good':'bad','School year results',`Reading on grade level ${s.met.reading.toFixed(1)}% (${s.met.reading>=before?'+':'−'}${Math.abs(s.met.reading-before).toFixed(1)}). Graduation ${E.grad}%. Chronically absent ${E.att}%. Young adults earn about $${E.earn.toLocaleString()}.`,()=>openSchools(),{ttl:16})}catch(e){}
+  if(inOffice())try{logIt(`School year results: reading ${s.met.reading.toFixed(1)}%, graduation ${E.grad}%, young adults earn about $${E.earn.toLocaleString()}.`)}catch(e){}
+  return{before,after:s.met.reading}};
+// the old monthly drift from the relationship is gone; each month records the conditions kids live with
+schMonth=function(){if(!inOffice())return;eduSample();const E=eduInit();
+  if(E.prek)S.reserve-=E.prek*0.125;
+  const k=E.earn/E.earn0-1;if(Math.abs(k)>0.001){S.reserve+=k*15;S.met.jobs=clamp(S.met.jobs+k*0.6,0,100)}};
+{const _pr=popRate;popRate=function(s){const r=_pr.apply(this,arguments);try{if(s===S&&S.edu)return r+(S.edu.earn/S.edu.earn0-1)*4}catch(e){}return r}}
+// reading by district: neighborhoods with more poverty read lower
+function eduDist(d){try{const c=dComp(d);let k=0,kc=0;GROUPS.forEach(g=>{k+=(c[g.id]||0)*(EDU_K[g.id]||0);kc+=(g.share/100)*(EDU_K[g.id]||0)});const off=k-kc;return{read:clamp(S.met.reading+off*3.5,5,90),earn:Math.round(eduInit().earn*(1+off*0.03)/100)*100}}catch(e){return{read:S.met.reading,earn:eduInit().earn}}}
+// ---------- the schools screen, rebuilt around the numbers ----------
+openSchools=function(){facInit();const E=eduInit(),p=eduParts(),v=schRel(),[tn,tc]=facTier(v),L=FACS.mscs.lead;const d=S.met.reading-E.read0;const ed=E.earn-E.earn0;
+  const proj=p.base+p.pull+p.life.reduce((a,x)=>a+x[1],0)+p.prog.reduce((a,x)=>a+x[1],0);const row=([t,x])=>`<li>${t} <b class="${x>=0?'pos':'neg'}">${x>=0?'+':'−'}${Math.abs(x).toFixed(2)}</b></li>`;
+  const dists=[1,2,3,4,5,6,7].map(k=>({k,...eduDist(k)}));const mx=Math.max(...dists.map(x=>x.read));
+  openModal('Memphis-Shelby County Schools','Education in Memphis',`<p>City Hall doesn't run the schools, but what kids live with does more than anything a school can: whether their parents have work, whether their block is safe and healthy, whether they can get to class. Changes take a year or more to show up.</p>
+   <div class="qrgrid"><div><small>Reading on grade level</small><p><b>${S.met.reading.toFixed(1)}%</b> <span class="${d>=0?'pos':'neg'}">${d>=0?'+':'−'}${Math.abs(d).toFixed(1)}</span></p></div>
+    <div><small>Chronically absent</small><p><b class="${p.att<=30?'pos':'neg'}">${p.att.toFixed(1)}%</b></p></div>
+    <div><small>Graduation rate</small><p><b>${E.grad}%</b></p></div><div><small>College or career ready</small><p><b>${E.ready}%</b></p></div>
+    <div><small>Pre-K seats the city pays for</small><p><b>${E.prek*500}</b></p></div><div><small>Young adults' median earnings</small><p><b>$${E.earn.toLocaleString()}</b> <span class="${ed>=0?'pos':'neg'}">${ed>=0?'+':'−'}$${Math.abs(ed).toLocaleString()}</span></p></div></div>
+   <div class="facts"><h4>What's moving reading scores (projected for June: ${proj>=0?'+':'−'}${Math.abs(proj).toFixed(1)} points)</h4>
+    <p class="note">What kids live with, over the past year:</p><ul>${p.life.map(row).join('')||'<li>No big changes yet.</li>'}</ul>
+    <p class="note">Programs, working at ${Math.round(p.mult*100)}% because your relationship with the district is <b class="${tc}">${tn.toLowerCase()}</b>:</p><ul>${p.prog.map(row).join('')||'<li>None yet.</li>'}</ul>
+    ${Math.abs(p.pull)>=0.05?`<p class="note">Gains are hard to hold without steady support (${p.pull>=0?'+':'−'}${Math.abs(p.pull).toFixed(1)}).</p>`:''}</div>
+   <div class="facts"><h4>Why it matters: earnings</h4><p class="note">Graduates who read well and finish school earn more. Over the years that raises the city's tax revenue (about ${fmtM(Math.abs((E.earn/E.earn0-1)*15*12))} a year ${E.earn>=E.earn0?'more':'less'} right now), helps job growth and keeps families from leaving Memphis.</p></div>
+   <div class="facts"><h4>Reading by district</h4>${dists.map(x=>`<div class="edu-bar"><span>District ${x.k}</span><i><b style="width:${Math.round(x.read/mx*100)}%"></b></i><em>${x.read.toFixed(0)}%</em></div>`).join('')}<p class="note">Districts with more poverty read lower. Jobs and safety money there moves these bars.</p></div>
+   <div class="facts"><h4>The district</h4><p class="note">Superintendent ${L.name} · your relationship: <b class="${tc}">${tn} (${v>0?'+':''}${v})</b>. Good relations let the city run its programs in the schools at full strength.</p></div>
+   <div class="choices"><button class="choice" data-sch="prek" ${E.prek<3?'':'disabled'}><b>Pay for 500 more pre-K seats</b><small>${E.prek<3?`$1.5M a year from now on · reading +0.25 a year · fewer absences`:'You fund all 1,500 seats the city can add'}</small></button>
+    <button class="choice" data-sch="meet" ${S.slots>0?'':'disabled'}><b>Meet with ${L.name}</b><small>1 action · relationship +8</small></button><button class="choice" data-sch="visit" ${S.slots>0?'':'disabled'}><b>Visit a school and read to a class</b><small>1 action · ${oddsTag('cha',0.6)} · parents +2, relationship +5</small></button><button class="choice" data-act="close"><b>Back</b></button></div>`,true)};
+window.addEventListener('click',e=>{const b=e.target.closest('[data-sch="prek"]');if(!b||!S)return;e.preventDefault();e.stopImmediatePropagation();const E=eduInit();if(E.prek>=3)return;
+  if(!approp(1.5,'500 pre-K seats',{key:'prek'+E.prek})){toast('The council voted down the pre-K money.');return}E.prek++;groupLift('parents',2,'More pre-K seats');try{facMod('mscs','The city paid for pre-K',5)}catch(err){}const m=`The city now pays for ${E.prek*500} pre-K seats ($${(E.prek*1.5).toFixed(1)}M a year).`;logIt(m);save();toast(m);openSchools()},true);
+// the district screen shows its schools and earnings
+{const _d=hdDist;hdDist=function(d){let h=_d.apply(this,arguments);try{if(d<=7){const x=eduDist(d);h=h.replace('<div class="hd-facts">',`<div class="hd-facts"><div><small>Reading on grade level</small><b>${x.read.toFixed(0)}%</b></div><div><small>Young adults earn</small><b>$${Math.round(x.earn/1000)}K</b></div><div><small>City average</small><b>${S.met.reading.toFixed(0)}%</b></div></div><div class="hd-facts">`)}}catch(e){}return h}}
 
 function openLedger(){const L=S.log||[];openPanel('Everything that has happened, newest first','Ledger',L.length?`<div class="logl">${L.map(x=>`<div><span>${x.d}</span><p style="margin:0">${x.t}</p></div>`).join('')}</div>`:'<p class="note">Nothing yet. Tap ▶ Continue to move ahead.</p>','ledger')}
 function openPolicies(){const ks=Object.keys(POLICIES);

@@ -4,6 +4,22 @@
 
 A Memphis political life on a real map of the city. Start as the mayor, run for mayor, or begin as a private citizen with a job and rise from there: the City Council, Shelby County mayor, Congress and the Senate, a law firm, a university presidency, or the back rooms as a kingmaker. As mayor you handle problems at real places, write the city budget, win votes from the 13-member City Council and run for re-election. Your family, health, party, rivals and record follow you through every chapter.
 
+## v27.04: Education that follows the city
+
+- **Reading scores now follow what kids live with**, not your relationship with the school district. Five conditions matter, averaged over the past year so changes take time to show:
+  - jobs in the city
+  - blight and vacant buildings
+  - violent crime
+  - public health
+  - transit, which decides whether kids can get to school
+- **Programs add on top:** library spending, tutoring, longer library hours, summer youth jobs, County school money, city programs in the schools, and new **pre-K seats** the city can pay for ($1.5M a year per 500 seats, up to 1,500).
+- **The school district relationship** now only decides how well those programs work inside the schools: from half strength when relations are hostile to a little over full strength when you're allies. It no longer moves scores by itself.
+- **New education statistics:** chronic absenteeism, graduation rate, college or career readiness, pre-K seats, and reading by council district. Poorer districts read lower, so jobs and safety money there shows up in their scores.
+- **Education pays.** Better graduation, readiness and reading raise young adults' median earnings, slowly, over years. Higher earnings bring in more tax revenue every month, help job growth and keep people from leaving Memphis. Falling earnings do the opposite. In testing, three years of improving conditions versus worsening ones put earnings about 6% apart and the budget about $8M apart, and the gap keeps growing.
+- **The schools screen** (More → The schools) now shows every statistic, and a projected change to June's reading results broken down piece by piece. It also has reading bars for each district, earnings, and what they're doing to the budget. Each district's screen shows its reading level and what its young adults earn.
+- **June brings a school year report** with the new numbers.
+- Without any change in conditions, scores now hold steady. The old built-in upward drift is gone.
+
 ## v27.03: The schools, and the riverfront
 
 - **Memphis-Shelby County Schools is now a power player**, led by Superintendent Dr. Alan Pierce. City Hall doesn't run the schools, but how well you work with the district moves reading scores a little every month. Its demands arrive like the unions' and the County's: crossing guards, after-school programs, summer reading at the libraries, fixing heat in old buildings, officers in high schools. You can agree, bargain or say no.
