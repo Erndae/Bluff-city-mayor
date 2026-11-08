@@ -4,6 +4,34 @@
 
 A Memphis political life on a real map of the city. Start as the mayor, run for mayor, or begin as a private citizen with a job and rise from there: the City Council, Shelby County mayor, Congress and the Senate, a law firm, a university presidency, or the back rooms as a kingmaker. As mayor you handle problems at real places, write the city budget, win votes from the 13-member City Council and run for re-election. Your family, health, party, rivals and record follow you through every chapter.
 
+## v27.05: How Memphis ranks
+
+- **Memphis now ranks against 15 peer cities**, Victoria 3 style: Nashville, Louisville, Birmingham, New Orleans, St. Louis, Kansas City, Atlanta, Little Rock, Jackson, Oklahoma City, Charlotte, Indianapolis, Baltimore, Detroit and Cleveland.
+- **Eight categories:**
+  - safety (violent crimes per 100,000)
+  - jobs (unemployment)
+  - income (median household income)
+  - graduation
+  - reading
+  - health (life expectancy)
+  - growth (population change)
+  - transit
+- **Memphis's numbers come live from your city.** The other cities start near their recent public figures and keep moving on their own every year, so standing still means falling behind.
+- **A standing score** adds up all eight categories, and the league table ranks all 16 cities by it, in four tiers:
+  - **Great cities:** the top 3
+  - **Major cities:** the next 4
+  - **Minor cities:** the next 5
+  - **Struggling cities:** the rest
+
+  Memphis starts at No. 11, a Minor city: last in safety, near the bottom in jobs, middle of the pack in graduation and reading.
+- **New rankings come out every January** with a headline and a news story. Moving up helps your approval with every group, and falling back hurts. Crossing into a new tier is a big moment, with a bigger effect, the national papers taking notice, and confetti when you rise.
+- **The rankings screen** (a line on the desk, or More → How Memphis ranks) shows:
+  - your tier and standing
+  - the full league table
+  - each category with Memphis's value, its rank and its change since you started (tap one to see all 16 cities)
+  - your rank year by year
+- The other cities' numbers are game estimates loosely based on public data, not official statistics.
+
 ## v27.04: Education that follows the city
 
 - **Reading scores now follow what kids live with**, not your relationship with the school district. Five conditions matter, averaged over the past year so changes take time to show:

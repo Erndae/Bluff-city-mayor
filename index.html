@@ -465,6 +465,17 @@ body.deskon #endBanner{display:none!important}
 @media (max-width:860px){body.deskon #notes{bottom:calc(96px + env(safe-area-inset-bottom,0px))!important}}
 .hd-feed{display:flex;gap:10px;padding:8px 10px;border-radius:12px;background:#101c26;border-left:3px solid var(--amber)}.hd-feed>div{flex:1;min-width:0}.hd-feed p{margin:2px 0 0;font-size:14px;line-height:1.35}
 .edu-bar{display:grid;grid-template-columns:76px 1fr 40px;align-items:center;gap:8px;font-size:13px;margin:4px 0}.edu-bar i{height:8px;border-radius:4px;background:#22323f;overflow:hidden;display:block}.edu-bar i b{display:block;height:100%;background:var(--amber)}.edu-bar em{font-style:normal;font-family:var(--f-mono);text-align:right}
+.hd-rank{display:flex;align-items:center;gap:10px;text-align:left;padding:8px 10px;border-radius:12px;border:1px solid #2a4052;background:#13212d;font-size:14px;min-height:52px}.hd-rank>span:nth-child(2){flex:1}.hd-rank small{display:block;font-family:var(--f-label);font-size:11px;letter-spacing:2px;color:var(--amber)}.hd-rank>b{color:var(--amber);font-size:18px}.hd-rank .hd-pi{font-family:var(--f-mono);font-size:13px;font-weight:700}
+.rk-head{display:flex;align-items:center;gap:12px;margin:6px 0 10px}.rk-head b{font-family:var(--f-mono);font-size:24px;display:block}.rk-head small{color:var(--muted);font-size:13px}
+.rk-badge{padding:6px 12px;border-radius:999px;font-family:var(--f-label);font-weight:700;letter-spacing:1px;font-size:14px;white-space:nowrap}
+.rk-t1{background:#d9b44a;color:#1b1406}.rk-t2{background:#4f8fd6;color:#08121d}.rk-t3{background:#6b7a88;color:#fff}.rk-t4{background:#a8562a;color:#fff}
+.rk-league{display:flex;flex-direction:column;gap:2px}.rk-lg{display:grid;grid-template-columns:28px 12px 1fr auto;align-items:center;gap:8px;padding:5px 8px;border-radius:8px;font-size:14px}.rk-lg.me{background:rgba(242,169,59,.16);outline:1px solid var(--amber);font-weight:700}
+.rk-pos{font-family:var(--f-mono);color:var(--muted);text-align:right}.rk-dot{width:12px;height:12px;border-radius:50%;display:block}.rk-sc{font-family:var(--f-mono)}
+.rk-sep{font-family:var(--f-label);font-size:11px;letter-spacing:2px;color:var(--muted);padding:4px 8px 2px;border-top:1px dashed #2a4052;margin-top:2px;text-transform:uppercase}
+.rk-rows{display:flex;flex-direction:column;gap:4px;margin:8px 0}.rk-row{display:grid;grid-template-columns:1fr auto 52px 40px;align-items:center;gap:8px;padding:8px 10px;border-radius:10px;border:1px solid var(--line,#2a4052);background:rgba(255,255,255,.02);text-align:left;color:inherit;font:inherit;cursor:pointer}.rk-row.on{border-color:var(--amber)}
+.rk-n b{display:block;font-size:14px}.rk-n small{font-size:12px;color:var(--muted)}.rk-v{font-family:var(--f-mono);font-size:13px}.rk-r{font-family:var(--f-mono);font-size:13px;text-align:right}.rk-c{text-align:right;font-size:13px}
+.rk-bar{display:grid;grid-template-columns:120px 1fr 74px;align-items:center;gap:8px;font-size:13px;margin:3px 0}.rk-bar i{height:8px;border-radius:4px;background:#22323f;overflow:hidden;display:block}.rk-bar i b{display:block;height:100%;background:#6b7a88}.rk-bar.me{font-weight:700}.rk-bar.me i b{background:var(--amber)}.rk-bar em{font-style:normal;font-family:var(--f-mono);text-align:right}
+.rk-hist{display:flex;gap:6px;flex-wrap:wrap}.rk-hist span{display:flex;flex-direction:column;align-items:center;padding:4px 8px;border-radius:8px;min-width:42px}.rk-hist small{font-size:10px;opacity:.85}.rk-hist b{font-family:var(--f-mono)}.rk-hist .now{outline:1px solid var(--amber)}
 .adgain{display:block;width:100%;text-align:center;font-size:11px;font-weight:600;color:var(--good);margin-top:1px}
 #start{overflow-x:hidden;overflow-y:auto;touch-action:pan-y}.startbox{min-width:0;max-width:min(600px,100%);box-sizing:border-box}.startbox *{min-width:0}.create select,.create input{max-width:100%;width:100%;box-sizing:border-box;text-overflow:ellipsis}.create .tpick,.create .tpick>*{max-width:100%;box-sizing:border-box}
 @media (max-width:640px){.startbox{margin-left:0}#start{padding-left:max(16px,env(safe-area-inset-left,0px))}}
@@ -817,7 +828,7 @@ details.analysis{margin-top:6px}details.analysis summary{cursor:pointer;color:va
     <button class="btn primary" data-act="pause" id="bPlay"><svg class="ico" viewBox="0 0 12 12" aria-hidden="true"><path d="M3.2 1.6v8.8l7.2-4.4z" fill="currentColor"/></svg> Resume <kbd>Space</kbd></button>
   </nav>
   <div class="status" id="status">Loading map…</div>
-  <div class="credit"><span class="ver" id="verTag">v27.04</span></div>
+  <div class="credit"><span class="ver" id="verTag">v27.05</span></div>
   <div class="tip" id="tip" hidden></div>
   <div class="toast" id="toast" role="status"></div>
   <section class="panel" id="panel" hidden aria-live="polite">
@@ -845,7 +856,7 @@ details.analysis{margin-top:6px}details.analysis summary{cursor:pointer;color:va
         <button class="btn" data-music-open>Music &amp; volume</button>
       </div>
       <div id="slotList" hidden></div>
-      <p class="note startv">Version <b class="ver" id="verStart">v27.04</b></p>
+      <p class="note startv">Version <b class="ver" id="verStart">v27.05</b></p>
     </div>
     <div class="startbox create" id="create" hidden>
       <h2>Create your mayor</h2>
@@ -1656,7 +1667,7 @@ function enact(s,p){DIVS.forEach(d=>{s.enacted[d.id]=p.divs[d.id];s.ratio[d.id]=
 // Voter groups. Each has a share of residents, turnout, home districts, concerns and an approval of you.
 // Citywide approval is the turnout-weighted average of the groups; each council district's approval comes from the groups that live there.
 // Shares, district mix and turnout are modeled, loosely grounded in Memphis demographics; they are not survey data.
-const VERSION='v27.04';
+const VERSION='v27.05';
 const GROUPS=[
  {id:'working',sh:'Working families',n:'Working families',ic:'⚒︎',c:'#f2a93b',share:24,turn:.5,start:56,w:{jobs:1,safety:.8,transit:.5},
   d:'Hourly workers in logistics, warehouses, health care and service jobs. The biggest bloc in the city.',dm:{1:1.1,2:.8,3:1.3,4:1.2,5:.6,6:1.2,7:1.1}},
@@ -9923,6 +9934,69 @@ window.addEventListener('click',e=>{const b=e.target.closest('[data-sch="prek"]'
   if(!approp(1.5,'500 pre-K seats',{key:'prek'+E.prek})){toast('The council voted down the pre-K money.');return}E.prek++;groupLift('parents',2,'More pre-K seats');try{facMod('mscs','The city paid for pre-K',5)}catch(err){}const m=`The city now pays for ${E.prek*500} pre-K seats ($${(E.prek*1.5).toFixed(1)}M a year).`;logIt(m);save();toast(m);openSchools()},true);
 // the district screen shows its schools and earnings
 {const _d=hdDist;hdDist=function(d){let h=_d.apply(this,arguments);try{if(d<=7){const x=eduDist(d);h=h.replace('<div class="hd-facts">',`<div class="hd-facts"><div><small>Reading on grade level</small><b>${x.read.toFixed(0)}%</b></div><div><small>Young adults earn</small><b>$${Math.round(x.earn/1000)}K</b></div><div><small>City average</small><b>${S.met.reading.toFixed(0)}%</b></div></div><div class="hd-facts">`)}}catch(e){}return h}}
+
+// ======================= v27.05: HOW MEMPHIS RANKS =======================
+// Memphis against 15 peer cities in eight categories: violent crime, jobs, household income, graduation, reading,
+// life expectancy, population growth and transit. Memphis's numbers come from your city; the other cities start
+// near their recent public figures and keep changing on their own, so you can fall behind by standing still.
+// Every January the new rankings come out: moving up helps your approval, falling back hurts.
+const RK_CATS=[
+ {id:'crime',n:'Safety',u:'violent crimes per 100,000',low:true,fmt:v=>Math.round(v).toLocaleString()},
+ {id:'unemp',n:'Jobs',u:'unemployment rate',low:true,fmt:v=>v.toFixed(1)+'%'},
+ {id:'income',n:'Income',u:'median household income',fmt:v=>'$'+(Math.round(v/100)*100).toLocaleString()},
+ {id:'grad',n:'Graduation',u:'high school graduation rate',fmt:v=>v.toFixed(0)+'%'},
+ {id:'read',n:'Reading',u:'students reading on grade level',fmt:v=>v.toFixed(0)+'%'},
+ {id:'life',n:'Health',u:'life expectancy',fmt:v=>v.toFixed(1)+' yrs'},
+ {id:'growth',n:'Growth',u:'population change per year',fmt:v=>(v>=0?'+':'−')+Math.abs(v).toFixed(1)+'%'},
+ {id:'transit',n:'Transit',u:'transit score (0–100)',fmt:v=>Math.round(v)+''}];
+// [crime, unemployment, income, graduation, reading, life expectancy, growth, transit]
+const RK_PEERS={'Nashville':[1100,2.8,73000,83,30,76,0.8,27],'Louisville':[900,4.2,64000,82,30,74.5,-0.2,33],'Birmingham':[1800,3.4,42000,85,20,73,-0.5,21],'New Orleans':[1250,4.0,55000,77,30,74,-1.0,44],'St. Louis':[2000,4.5,53000,72,20,72,-1.5,42],'Kansas City':[1600,3.8,65000,75,22,75,0.3,32],'Atlanta':[900,3.8,77000,79,30,76,0.6,44],'Little Rock':[1600,3.5,59000,82,30,74,0,20],'Jackson':[1350,4.5,42000,79,23,71,-2.0,15],'Oklahoma City':[800,3.3,64000,72,20,74,1.2,17],'Charlotte':[700,3.6,75000,85,40,78,1.5,30],'Indianapolis':[1200,3.6,60000,78,25,74,0,25],'Baltimore':[1800,4.5,58000,70,17,72,-1.0,57],'Detroit':[2000,8.0,37000,77,12,71,-0.3,38],'Cleveland':[1600,5.5,37000,79,18,73,-0.8,46]};
+const RK_KEYS=['crime','unemp','income','grad','read','life','growth','transit'];
+function rkInit(){if(!S)return null;if(!S.rank){const tr={};Object.keys(RK_PEERS).forEach(c=>{tr[c]=RK_KEYS.map(k=>{const r=Math.random()-0.5;return k==='crime'?r*0.06:k==='unemp'?r*0.3:k==='income'?0.005+r*0.02:k==='grad'?r*0.8:k==='read'?r*0.8:k==='life'?r*0.15:k==='growth'?r*0.3:r*1.2})});
+  S.rank={peers:JSON.parse(JSON.stringify(RK_PEERS)),tr,hist:[],y:S.y}}return S.rank}
+function rkMemphis(){const M=S.met;let E=null;try{E=eduInit()}catch(e){}let g=0;try{g=popRate(S)}catch(e){}
+  return[2500*M.crime/88,clamp(4.6-(M.jobs-55)*0.08,1.5,14),51000*(E?E.earn/E.earn0:1)*(1+(M.jobs-55)*0.003),E?E.grad+1:80,M.reading,73.5+(M.health-42)*0.08,g,31+(M.transit-40)*0.8]}
+function rkTable(){const R=rkInit();const all={Memphis:rkMemphis(),...R.peers};const cities=Object.keys(all);const ranks={};cities.forEach(c=>ranks[c]=[]);
+  RK_CATS.forEach((C,i)=>{const ord=cities.slice().sort((a,b)=>C.low?all[a][i]-all[b][i]:all[b][i]-all[a][i]);ord.forEach((c,j)=>ranks[c][i]=j+1)});
+  const score={};cities.forEach(c=>score[c]=0);RK_CATS.forEach((C,i)=>{const v=cities.map(c=>all[c][i]);const lo=Math.min(...v),hi=Math.max(...v);cities.forEach(c=>{let t=(all[c][i]-lo)/((hi-lo)||1);if(C.low)t=1-t;score[c]+=t*125})});cities.forEach(c=>score[c]=Math.round(score[c]));
+  const overall=cities.slice().sort((a,b)=>score[b]-score[a]);
+  return{all,ranks,score,overall,pos:overall.indexOf('Memphis')+1,n:cities.length}}
+const RK_TIERS=[[3,'Great city','rk-t1'],[7,'Major city','rk-t2'],[12,'Minor city','rk-t3'],[99,'Struggling city','rk-t4']];
+function rkTier(pos){return RK_TIERS.find(t=>pos<=t[0])}
+function rkSnap(){const T=rkTable();return{y:S.y,m:S.m,pos:T.pos,score:T.score.Memphis,cats:T.ranks.Memphis.slice()}}
+// the other cities keep moving, once a year
+function rkYear(){const R=rkInit();Object.keys(R.peers).forEach(c=>{const v=R.peers[c],t=R.tr[c];v[0]=Math.max(200,v[0]*(1+t[0]+(Math.random()-.5)*0.04));v[1]=clamp(v[1]+t[1]+(Math.random()-.5)*0.4,1.5,14);v[2]=v[2]*(1+t[2]+(Math.random()-.5)*0.01);v[3]=clamp(v[3]+t[3]+(Math.random()-.5)*0.8,55,97);v[4]=clamp(v[4]+t[4]+(Math.random()-.5)*0.8,5,70);v[5]=clamp(v[5]+t[5]+(Math.random()-.5)*0.1,65,82);v[6]=clamp(v[6]+t[6]*0.3+(Math.random()-.5)*0.3,-3,3);v[7]=clamp(v[7]+t[7]+(Math.random()-.5)*1,5,90)})}
+function rkJanuary(){if(!inOffice())return;const R=rkInit();if(R.y===S.y&&R.hist.length)return;R.y=S.y;rkYear();const now=rkSnap();const prev=R.hist[R.hist.length-1];R.hist.push(now);if(R.hist.length>20)R.hist.shift();
+  if(!prev)return;const d=prev.pos-now.pos;const T=rkTable();
+  const head=d>0?`Memphis climbs to No. ${now.pos} among peer cities`:d<0?`Memphis slips to No. ${now.pos} among peer cities`:`Memphis holds at No. ${now.pos} among peer cities`;
+  const moved=RK_CATS.map((C,i)=>({C,d:prev.cats[i]-now.cats[i]})).filter(x=>x.d!==0).sort((a,b)=>Math.abs(b.d)-Math.abs(a.d)).slice(0,2).map(x=>`${x.C.n} ${x.d>0?'up':'down'} ${Math.abs(x.d)}`).join(', ');
+  try{notify(d>=0?'good':'bad','The new city rankings',`${head}.${moved?' '+moved+'.':''}`,()=>openRankings(),{ttl:16})}catch(e){}
+  try{newsAdd(d>0?0.8:d<0?-0.8:0.1,head,{tag:'jobs',w:1.3,dek:moved?`Biggest moves: ${moved.toLowerCase()}.`:'Little changed from last year.'})}catch(e){}
+  if(d)try{GROUPS.forEach(g=>groupLift(g.id,clamp(d*0.4,-1.5,1.5),d>0?'Memphis moved up in the rankings':'Memphis fell in the rankings'))}catch(e){}
+  const t0=rkTier(prev.pos),t1=rkTier(now.pos);if(t0[1]!==t1[1]){const up=now.pos<prev.pos;try{notify(up?'good':'bad',up?`Memphis is now a ${t1[1]}`:`Memphis has fallen to a ${t1[1]}`,up?'For the first time in years, the country is talking about Memphis as one of the cities on the rise.':'National papers are writing Memphis off. Businesses and families are noticing.',()=>openRankings(),{ttl:18})}catch(e){}try{GROUPS.forEach(g=>groupLift(g.id,up?2:-2,up?`Memphis became a ${t1[1]}`:`Memphis fell to a ${t1[1]}`))}catch(e){}try{newsAdd(up?1.4:-1.4,up?`Memphis joins the ranks of ${t1[1].toLowerCase()}s`:`Memphis falls to ${t1[1].toLowerCase()} status`,{tag:'jobs',w:1.6})}catch(e){}if(up)try{celebrate(true)}catch(e){}}
+  logIt(`${head} (${T.n} cities).`)}
+{const _eom=endOfMonth;endOfMonth=function(...a){const r=_eom.apply(this,a);try{if(S&&S.started&&inOffice()){const R=rkInit();if(!R.hist.length)R.hist.push(rkSnap());if(S.m===1)rkJanuary()}}catch(e){console.warn('rank',e)}return r}}
+// ---------- the screen ----------
+let RK_SEL=null;
+function openRankings(sel){RK_SEL=sel==null?RK_SEL:sel;const R=rkInit();if(!R.hist.length)R.hist.push(rkSnap());const T=rkTable();const first=R.hist[0],last=R.hist.length>1?R.hist[R.hist.length-1]:null;
+  const ch=(a,b)=>{const d=a-b;return d>0?`<span class="pos">▲${d}</span>`:d<0?`<span class="neg">▼${-d}</span>`:'<span class="note">–</span>'};
+  const me=T.ranks.Memphis;let h=`<p>Memphis against ${T.n-1} cities its size and in its region. Memphis's numbers come from your city right now. The other cities keep changing too, so standing still means falling behind. New rankings come out every January.</p>
+   <div class="rk-head"><span class="rk-badge ${rkTier(T.pos)[2]}">${rkTier(T.pos)[1]}</span><div><b>No. ${T.pos} of ${T.n}</b><small>Standing ${T.score.Memphis} · since ${first.y} ${ch(first.pos,T.pos)}${last&&last!==first?` · since last January ${ch(last.pos,T.pos)}`:''}</small></div></div>
+   <div class="facts"><h4>The standings</h4><div class="rk-league">${T.overall.map((c,j)=>{const t=rkTier(j+1);const nx=T.overall[j+1];const brk=nx&&rkTier(j+2)[1]!==t[1];return`<div class="rk-lg${c==='Memphis'?' me':''}"><span class="rk-pos">${j+1}</span><span class="rk-dot ${t[2]}"></span><span class="rk-city">${c}</span><span class="rk-sc">${T.score[c]}</span></div>${brk?`<div class="rk-sep">${rkTier(j+2)[1].replace('city','cities')}</div>`:''}`}).join('')}</div><p class="note">Great cities are the top 3, major cities the next 4, minor cities the next 5, and struggling cities the rest. Standing adds up all eight categories.</p></div>
+   <div class="rk-rows">${RK_CATS.map((C,i)=>{const best=T.overall.slice().sort((a,b)=>T.ranks[a][i]-T.ranks[b][i])[0];return`<button class="rk-row${RK_SEL===i?' on':''}" data-rk="${i}"><span class="rk-n"><b>${C.n}</b><small>${C.u}</small></span><span class="rk-v">${C.fmt(T.all.Memphis[i])}</span><span class="rk-r">No. ${me[i]}</span><span class="rk-c">${ch(first.cats[i],me[i])}</span></button>`}).join('')}</div>`;
+  if(RK_SEL!=null){const i=RK_SEL,C=RK_CATS[i];const ord=Object.keys(T.all).sort((a,b)=>T.ranks[a][i]-T.ranks[b][i]);const vals=ord.map(c=>T.all[c][i]);const mx=Math.max(...vals.map(Math.abs)),mn=Math.min(...vals);
+    h+=`<div class="facts"><h4>${C.n}: ${C.u}${C.low?' (lower is better)':''}</h4>${ord.map((c,j)=>{const v=T.all[c][i];const w=C.id==='growth'?Math.round((v-mn)/(Math.max(...vals)-mn||1)*100):Math.round(Math.abs(v)/mx*100);return`<div class="rk-bar${c==='Memphis'?' me':''}"><span>${j+1}. ${c}</span><i><b style="width:${Math.max(3,w)}%"></b></i><em>${C.fmt(v)}</em></div>`}).join('')}</div>`}
+  else h+=`<p class="note">Tap a category to see every city.</p>`;
+  h+=`<div class="facts"><h4>Over the years</h4>${R.hist.length>1?`<p class="rk-hist">${R.hist.map(x=>`<span class="${rkTier(x.pos)[2]}"><small>${x.y}</small><b>${x.pos}</b></span>`).join('')}<span class="now"><small>now</small><b>${T.pos}</b></span></p>`:'<p class="note">Your first rankings come out in January.</p>'}</div>
+   <p class="note">The other cities' numbers are game estimates, loosely based on recent public data, and they change as the game goes on. They aren't official statistics, and test scores from different states don't compare perfectly.</p>
+   <div class="choices"><button class="choice" data-act="close"><b>Back</b></button></div>`;
+  openModal('How Memphis ranks','Memphis and its peer cities',h,true)}
+document.addEventListener('click',e=>{const b=e.target.closest('[data-rk]');if(!b||!S)return;e.preventDefault();e.stopImmediatePropagation();const i=+b.dataset.rk;openRankings(RK_SEL===i?-1:i);if(RK_SEL===-1)RK_SEL=null},true);
+// on the desk: one line, and in the More menu
+function rkDeskRow(){if(!S||!(inOffice()||isCand()))return'';try{const R=rkInit();if(!R.hist.length)R.hist.push(rkSnap());const T=rkTable();const d=R.hist[0].pos-T.pos;return`<button class="hd-rank" data-hdact="ranks"><span class="hd-pi">#${T.pos}</span><span><small>HOW MEMPHIS RANKS · ${rkTier(T.pos)[1].toUpperCase()}</small>No. ${T.pos} of ${T.n} peer cities${d?` · <b class="${d>0?'pos':'neg'}">${d>0?'▲':'▼'}${Math.abs(d)} since ${R.hist[0].y}</b>`:''}</span><b aria-hidden="true">›</b></button>`}catch(e){return''}}
+{const _b=hdBodyFor;hdBodyFor=function(){const h=_b.apply(this,arguments);if(HD.view!=='desk')return h;return h.replace('<h3>WAITING FOR YOU</h3>',rkDeskRow()+'<h3>WAITING FOR YOU</h3>')}}
+{const _h=hdHTML;hdHTML=function(){let h=_h.apply(this,arguments);if(S&&(inOffice()||isCand())&&HD.more)h=h.replace('<button role="menuitem" data-hdact="council">','<button role="menuitem" data-hdact="ranks">How Memphis ranks</button><button role="menuitem" data-hdact="council">');return h}}
+window.addEventListener('click',e=>{const t=e.target.closest('#homeDesk [data-hdact="ranks"]');if(!t||!S)return;e.preventDefault();e.stopImmediatePropagation();HD.more=false;renderHomeDesk(true);RK_SEL=null;openRankings()},true);
 
 function openLedger(){const L=S.log||[];openPanel('Everything that has happened, newest first','Ledger',L.length?`<div class="logl">${L.map(x=>`<div><span>${x.d}</span><p style="margin:0">${x.t}</p></div>`).join('')}</div>`:'<p class="note">Nothing yet. Tap ▶ Continue to move ahead.</p>','ledger')}
 function openPolicies(){const ks=Object.keys(POLICIES);
