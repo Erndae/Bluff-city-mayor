@@ -19,3 +19,15 @@ window.__buttons=(root)=>{const R=typeof root==='string'?document.querySelector(
 window.__label=b=>{if(!b||b.nodeType!==1)return"?";const t=(String(b.innerText||b.getAttribute('aria-label')||b.getAttribute('title')||'')).replace(/\s+/g,' ').trim().slice(0,50);const d=Object.entries(b.dataset).map(([k,v])=>k+'='+v).join(',');return(t||'(no text)')+(d?' ['+d+']':'')+(b.tagName==='SELECT'?' <select>':'')};
 
 window.__where=()=>{const g=id=>document.getElementById(id);if(window.BCInterior&&BCInterior.isOpen)return'room';if(document.querySelector('dialog[open]'))return'dialog:'+(document.querySelector('dialog[open] h2')||{}).textContent;if(document.body.classList.contains('dev-on'))return'device';if(modalOpen)return'modal:'+(g('mTitle')||{}).textContent;if(g('panel')&&!g('panel').hidden)return'panel:'+(g('pTitle')||{}).textContent;if(g('actCard'))return'card';return typeof HD!=='undefined'&&HD.on?'desk:'+HD.view:'map'};
+window.__state=()=>{const A=S.after;return{slots:S.slots,res:+(S.reserve||0).toFixed(3),cash:Math.round(S.purse?S.purse.cash:0),app:+(S.approval||0).toFixed(2),d:S.day,m:S.m,y:S.y,inf:A?Math.round(A.inf):null,ra:A?A.ra||0:null,odds:A&&A.camp?Math.round(A.camp.odds*100):null,home:S.fam?Math.round(S.fam.home):null,ccash:S.camp?Math.round(S.camp.cash||0):null}};
+window.__dest=()=>{const g=id=>document.getElementById(id);const T=el=>el?String(el.innerText||'').replace(/\s+/g,' ').trim():'';let kind='map',title='',sub='',body='',root=null;
+  if(window.BCInterior&&BCInterior.isOpen){kind='room';root=g('home-interior');title=T(root&&root.querySelector('h2'));}
+  else if(document.querySelector('dialog[open]')){root=document.querySelector('dialog[open]');kind='dialog';title=T(root.querySelector('h2'));}
+  else if(document.body.classList.contains('dev-on')&&!modalOpen){kind='device';root=document.querySelector('.dev,.device,#device')||document.body}
+  else if(g('actCard')){kind='card';root=g('actCard');title=T(root.querySelector('h3'))}
+  else if(modalOpen){kind='modal';title=T(g('mTitle'));sub=T(g('mSub'));root=g('mBody')}
+  else if(g('panel')&&!g('panel').hidden){kind='panel';title=T(g('pTitle'));sub=T(g('pSub'));root=g('pBody')}
+  else if(typeof HD!=='undefined'&&HD.on){kind='desk:'+HD.view;root=document.querySelector('#homeDesk .hd-body');title=T(document.querySelector('#homeDesk .hd-where'))}
+  body=T(root).slice(0,600);const btns=root?[...root.querySelectorAll('button')].filter(b=>b.offsetParent).length:0;
+  const exit=kind==='modal'?!!document.querySelector('#modal .x, #modal [data-act=close], #modal button[aria-label*=Close i]'):true;
+  return{kind,title,sub,body,btns,exit}};

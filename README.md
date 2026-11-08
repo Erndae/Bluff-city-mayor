@@ -4,6 +4,20 @@
 
 A Memphis political life on a real map of the city. Start as the mayor, run for mayor, or begin as a private citizen with a job and rise from there: the City Council, Shelby County mayor, Congress and the Senate, a law firm, a university presidency, or the back rooms as a kingmaker. As mayor you handle problems at real places, write the city budget, win votes from the 13-member City Council and run for re-election. Your family, health, party, rivals and record follow you through every chapter.
 
+## v27.17
+
+- **The button test now checks that each screen makes sense.** For every press it records what the destination actually shows and what changed (actions, money, date, approval), then flags empty results, screens with no way out, mayor wording when you're not mayor, destinations that don't match the button, and costs that don't match the label (`tools/judge.py`). Every flagged press, and every press overall, was then read by hand.
+- **Fixed what didn't make sense:**
+  - A neighborhood visit used an action and showed an empty "Done" popup. It now says how the visit went, and popups are titled after what you did.
+  - A district's "Hold a town hall" opened the whole Actions menu. It now holds the town hall in that district (or says why you can't yet).
+  - "Council opinion map" and "Public opinion map" changed the map hidden behind the desk. They now switch to the street map.
+  - "Town halls" and "Executive orders" in your actions breakdown open Actions at that section; "Wardrobe" opens at the wardrobe.
+  - While campaigning, your character page said "Mayor of Memphis" and your money page quoted the mayor's salary. They now say "Candidate for mayor" and show your job's pay. Out of office, the money page shows your role's income.
+  - Out of office, your phone no longer has a Cabinet tab or counts mayor actions (meetings are free), and the street map's Campaign button opens what you can do now instead of the mayor's re-election headquarters.
+  - Buying things in the shop no longer takes a day.
+  - Campaign moves before you hire a manager now explain why you landed on the hiring screen.
+  - Wording: "The The Bluff City Ledger", "a designer frames", "mscs parents" and "Reserve −$0.0M" are fixed. Phone meetings say they use 1 action, training says its cost, and meeting a suburban mayor tells you the result.
+
 ## v27.16
 
 - **"Done" on Change your look works.** It used to reopen your character page behind the look screen, so nothing seemed to happen. Now any side panel (your character, City Hall, a district, the desk) closes the window that was covering it when it opens.

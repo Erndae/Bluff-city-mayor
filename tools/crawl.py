@@ -118,7 +118,7 @@ async def main():
                     elif i<len(cur): idx=i;lab=cur[i]
                     else: continue
                 else: idx=i
-                s0=await pg.evaluate("__sig()");e0=len(errs)
+                s0=await pg.evaluate("__sig()");e0=len(errs);st0=await pg.evaluate('__state()');d0=await pg.evaluate('__dest()')
                 try:
                     kind=await pg.evaluate(f"(()=>{{const b=__buttons({json.dumps(root)})[{idx}];if(b.tagName==='SELECT'){{const o=b.options;if(o.length>1){{b.selectedIndex=(b.selectedIndex+1)%o.length;b.dispatchEvent(new Event('change',{{bubbles:true}}));b.dispatchEvent(new Event('input',{{bubbles:true}}))}}return 'select'}}b.click();return 'click'}})()")
                 except Exception as ex:
@@ -127,7 +127,7 @@ async def main():
                 s1=await pg.evaluate("__sig()")
                 if len(errs)>e0: res['errors'].append([lab,errs[e0:]])
                 if s0==s1: res['dead'].append(lab)
-                res['go'].append([lab,await pg.evaluate('__where()')])
+                res['go'].append({'label':lab,'from':d0['title'] or d0['kind'],'dest':await pg.evaluate('__dest()'),'st0':st0,'st1':await pg.evaluate('__state()'),'dead':s0==s1})
             out.append(res)
             print(f"{name}: {res['n']} buttons, dead {len(res['dead'])}, errors {len(res['errors'])}, mismatch {res['mismatch']}",flush=True)
         await b.close()

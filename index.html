@@ -844,7 +844,7 @@ details.analysis{margin-top:6px}details.analysis summary{cursor:pointer;color:va
     <button class="btn primary" data-act="pause" id="bPlay"><svg class="ico" viewBox="0 0 12 12" aria-hidden="true"><path d="M3.2 1.6v8.8l7.2-4.4z" fill="currentColor"/></svg> Resume <kbd>Space</kbd></button>
   </nav>
   <div class="status" id="status">Loading map…</div>
-  <div class="credit"><span class="ver" id="verTag">v27.16</span></div>
+  <div class="credit"><span class="ver" id="verTag">v27.17</span></div>
   <div class="tip" id="tip" hidden></div>
   <div class="toast" id="toast" role="status"></div>
   <section class="panel" id="panel" hidden aria-live="polite">
@@ -872,7 +872,7 @@ details.analysis{margin-top:6px}details.analysis summary{cursor:pointer;color:va
         <button class="btn" data-music-open>Music &amp; volume</button>
       </div>
       <div id="slotList" hidden></div>
-      <p class="note startv">Version <b class="ver" id="verStart">v27.16</b></p>
+      <p class="note startv">Version <b class="ver" id="verStart">v27.17</b></p>
     </div>
     <div class="startbox create" id="create" hidden>
       <h2>Create your mayor</h2>
@@ -1683,7 +1683,7 @@ function enact(s,p){DIVS.forEach(d=>{s.enacted[d.id]=p.divs[d.id];s.ratio[d.id]=
 // Voter groups. Each has a share of residents, turnout, home districts, concerns and an approval of you.
 // Citywide approval is the turnout-weighted average of the groups; each council district's approval comes from the groups that live there.
 // Shares, district mix and turnout are modeled, loosely grounded in Memphis demographics; they are not survey data.
-const VERSION='v27.16';
+const VERSION='v27.17';
 const GROUPS=[
  {id:'working',sh:'Working families',n:'Working families',ic:'⚒︎',c:'#f2a93b',share:24,turn:.5,start:56,w:{jobs:1,safety:.8,transit:.5},
   d:'Hourly workers in logistics, warehouses, health care and service jobs. The biggest bloc in the city.',dm:{1:1.1,2:.8,3:1.3,4:1.2,5:.6,6:1.2,7:1.1}},
@@ -2072,7 +2072,7 @@ function openNeighbor(id){const n=S.nb[id],N=NEIGHBORS[id];if(!n)return;recomput
 function mTraitChips(traits){return(traits||S.mayor.traits).map(t=>`<span class="trait" style="--tc:${MTRAITS[t].c}" title="${MTRAITS[t].n}: ${MTRAITS[t].d}">${MTRAITS[t].bg?'⌂ ':''}${MTRAITS[t].n}</span>`).join('')||'<span class="note">No traits</span>'}
 function openMayor(){const M=S.mayor;if(!M)return;const now=S.y*12+S.m;const cd=now-(M.trained??-99);const canTrain=cd>=2&&S.slots>0&&S.reserve>=0.05;
   openPanel(isCand()?'Your character · candidate':`Your character · term ${S.term}`,isCand()?M.name:`Mayor ${M.name}`,`<div class="row" style="margin-bottom:6px"><button class="btn" data-act="legacy">Your legacy and past mayors (Y)</button><button class="btn" data-act="platform">Your platform and clout (P)</button><button class="btn" data-act="news">The news (R)</button><button class="btn" data-act="sotc">State of the City (T)</button></div>
-   <div class="char"><div>${portrait(M,104)}</div><div class="charinfo"><div class="note">Age ${M.age+(S.y-2026)} · Mayor of Memphis</div><div class="traits">${mTraitChips()}</div>
+   <div class="char"><div>${portrait(M,104)}</div><div class="charinfo"><div class="note">Age ${M.age+(S.y-2026)} · ${isCand()?'Candidate for mayor':'Mayor of Memphis'}</div><div class="traits">${mTraitChips()}</div>
      <div class="note">Your lane: <b style="color:var(--amber)">${skillName(M.focus)}</b></div>
      <div class="row"><input id="mRename" maxlength="40" value="${M.name.replace(/"/g,'&quot;')}" aria-label="Your name" style="font:inherit;background:var(--panel2);border:1px solid var(--line);border-radius:4px;padding:4px 7px;color:var(--text);min-width:0;flex:1"><button class="btn" data-act="rename" style="padding:5px 10px">Rename</button></div><div class="row"><button class="btn" data-act="look">Change your look</button><button class="btn" data-act="promises">Your promises</button><button class="btn" data-act="household">Household${S.home?` · ${LMAP[S.home.id].n}`:''}</button><button class="btn" data-act="shop">Wardrobe${S.purse?` · $${Math.round(S.purse.cash).toLocaleString()}`:''}</button></div></div></div>
    <div class="facts"><h4>Skills</h4><div class="skills">${SKILLS.map(sk=>{const tb=traitSkill(sk.k,M.traits);return`<div class="skrow"><span class="skn">${sk.ic} ${sk.n}${M.focus===sk.k?' <span class="pill on">focus</span>':''}</span><b>${mskill(sk.k)}</b>
@@ -2080,7 +2080,7 @@ function openMayor(){const M=S.mayor;if(!M)return;const now=S.y*12+S.m;const cd=
      <small>${sk.d} Base ${M.skills[sk.k]}${tb?`, ${tb>0?'+':''}${tb} from traits`:''} · ${Math.floor(M.xp[sk.k]||0)}/100 experience</small></div>`}).join('')}</div></div>
    <div class="facts"><h4>How skills grow</h4><p class="note">You learn by doing. Each skill rises one point per 100 experience, up to ${SKILL_MAX} base. Meetings and requests build Dealmaking; safety calls build Safe Streets; schools build Education; budgets, streets and jobs build Money Smarts; hooks and vetoes build Inside Game; public decisions build Star Power. Your lane earns 12 experience a month and 50% more from everything else.${mHas('diligent')?' Diligent: +30% experience on everything.':''}</p>
      <div class="row">${SKILLS.map(sk=>`<button class="btn ${M.focus===sk.k?'on':''}" data-act="focus" data-k="${sk.k}" style="padding:5px 10px;font-size:13.5px">${sk.n}</button>`).join('')}</div></div>
-   <div class="choices"><button class="choice" data-act="train" ${canTrain?'':'disabled'}><b>Training: ${TRAINING[M.focus]}</b><small>${cd<2?`Available again in ${2-cd} month${2-cd===1?'':'s'}`:S.slots<=0?'No actions left this month':`−$50K · uses 1 action · +35 ${skillName(M.focus)} experience (before bonuses)`}</small></button></div>`,'mayor')}
+   <div class="choices"><button class="choice" data-act="train" ${canTrain?'':'disabled'}><b>Training: ${TRAINING[M.focus]}</b><small>1 action · $50K · ${cd<2?`Available again in ${2-cd} month${2-cd===1?'':'s'}`:S.slots<=0?'No actions left this month':`−$50K · uses 1 action · +35 ${skillName(M.focus)} experience (before bonuses)`}</small></button></div>`,'mayor')}
 function updateMayorChip(){const M=S&&S.mayor;const el=$('mchip');if(!el)return;el.hidden=!M||!S.started;if(!M)return;$('mchipPt').innerHTML=portrait(M,30);$('mchipName').textContent=M.name;
   $('mchipSk').textContent=SKILLS.map(sk=>({n:sk.n.slice(0,3).toUpperCase(),v:mskill(sk.k)})).sort((a,b)=>b.v-a.v).slice(0,3).map(x=>x.n+' '+x.v).join(' · ')}
 // ======================= PUBLIC OPINION VIEWS =======================
@@ -2283,7 +2283,7 @@ function doTownHall(d){if(cdLeft('th'+d,ACT_CD.townhall)||S.slots<=0)return;S.sl
   else{S.pop.d[d]=clamp(S.pop.d[d]+4+Math.max(0,cha-8)*0.3,-20,20);if(m)addMod(m,'Held a town hall in my district',has(m,'wardboss')?10:6);S.council.forEach(o=>{if(o!==m&&o.d>7&&homeOf(o)===d)addMod(o,`Town hall in District ${d}`,3)});toast(`Packed house in District ${d}. Approval there is now ${Math.round(dApp(d))}%.`);logIt(`Town hall in District ${d}.`)}
   gainXP('cha',8);recomputeAll(S);save();refreshHUD()}
 function doMeetGroup(id){const g=GMAP[id];if(!g||cdLeft('g'+id,ACT_CD.group)||S.slots<=0)return;S.slots--;markAct('g'+id);const v=4+Math.max(0,mskill('dip')-6)*0.3;addGroupMod(S.groups[id],'Met with their leaders',v);S.groups[id].app=clamp(S.groups[id].app+1.5,5,95);S.approval=cityApproval(S);
-  gainXP('dip',6);logIt(`Met with ${g.n.toLowerCase()} leaders.`);save();refreshHUD();toast(`You met with leaders of ${g.n.toLowerCase()}.`)}
+  gainXP('dip',6);logIt(`Met with ${g.n.replace(/^(?!MSCS)\S/,c=>c.toLowerCase())} leaders.`);save();refreshHUD();toast(`You met with leaders of ${g.n.replace(/^(?!MSCS)\S/,c=>c.toLowerCase())}.`)}
 function doPresser(p){if(cdLeft('presser',1))return;markAct('presser');const cha=mskill('cha');GROUPS.forEach(g=>{if(g.w[p])addGroupMod(S.groups[g.id],`Spoke up on ${PRIO_LABEL[p].toLowerCase()}`,g.w[p]*(2+Math.max(0,cha-6)*0.25))});S.approval=cityApproval(S);
   gainXP('cha',5);logIt(`Press conference on ${PRIO_LABEL[p].toLowerCase()}.`);save();refreshHUD();toast(`Press conference on ${PRIO_LABEL[p].toLowerCase()}. ${GROUPS.filter(g=>g.w[p]).map(g=>g.n).join(', ')} took note.`)}
 function doRally(){if(cdLeft('rally',ACT_CD.rally)||S.slots<=0||!inCampaign()||(S.camp&&S.camp.cash<10))return;if(S.camp){S.camp.cash-=10;S.camp.spent+=10;flowC('rally',10);clog('Campaign rally ($10K).')}S.slots--;markAct('rally');GROUPS.forEach(g=>{if(S.groups[g.id].app>=45)addGroupMod(S.groups[g.id],'Fired up at your rally',3)});S.approval=cityApproval(S);gainXP('cha',8);logIt('Campaign rally.');save();refreshHUD();toast('Your supporters are fired up.')}
@@ -2961,7 +2961,7 @@ function openDonor(){const o=S.camp.offer;if(!o){openHQ();return}const D=DONORS[
    <div class="choices"><button class="choice" data-act="donoryes"><b>Accept the +${fmtK(o.amt)}</b><small>Campaign cash now; expectations tracked in Campaign HQ</small></button><button class="choice" data-act="donorno"><b>Politely decline</b><small>No strings, no money</small></button></div>`)}
 openDonor=navWrap('openDonor',openDonor);
 function openShop(){const P=S.purse;closePanel();
-  openModal(`Personal account · ${'$'+Math.round(P.cash).toLocaleString()}`,'Your personal money',`<p>The Mayor of Memphis earns $${SALARY.toLocaleString()} a year. That's $14,234.75 a month before deductions; about ${$$(payStub().net)} lands in your account after deductions (see the Money tab). This is your own money, not the city's and not the campaign's.</p>
+  openModal(`Personal account · ${'$'+Math.round(P.cash).toLocaleString()}`,'Your personal money',`<p>${S.after?(()=>{const R=S.after.role&&ROLES[S.after.role];return R?(R.inc>0?`As ${R.as.replace(/^in /,'a member of ')}, you earn $${R.inc.toLocaleString()} a year.`:R.inc<0?`As ${R.as}, you pay about $${(-R.inc).toLocaleString()} a year in tuition and living costs.`:`As ${R.as}, you have no salary. You live on your savings.`):'You left City Hall. Until you choose what\'s next, you live on your savings.'})():isCand()?(()=>{const O=OCCS[S.cand&&S.cand.occ];return O?`You work as a ${O.n.toLowerCase()} while you campaign, earning $${O.pay.toLocaleString()} a year.`:'You live on your savings while you campaign.'})():`The Mayor of Memphis earns $${SALARY.toLocaleString()} a year. That's $14,234.75 a month before deductions; about ${$$(payStub().net)} lands in your account after deductions (see the Money tab).`} This is your own money, not the city's and not the campaign's.</p>
    <div class="opl"><div><span>Balance</span><b>${'$'+Math.round(P.cash).toLocaleString()}</b></div><div><span>Paid to you so far</span><b>${'$'+P.paid.toLocaleString()}</b></div><div><span>Given to your campaign</span><b>${'$'+(S.camp?S.camp.personal:0).toLocaleString()}</b></div></div>
    <div class="facts"><h4>Optional wardrobe</h4><p class="note">Basic looks are always free. These extras show on your portrait once you buy them; choose them under Change your look.</p>
     <div class="choices">${SHOP.map(it=>`<button class="choice" data-act="buy" data-id="${it.id}" ${P.owned[it.id]||P.cash<it.p?'disabled':''}><b>${it.n} · −$${it.p.toLocaleString()}</b><small>${P.owned[it.id]?'Owned':it.d}</small></button>`).join('')}</div></div>
@@ -4611,7 +4611,7 @@ function doPressConf(){if(canPress())return;S.slots--;S.pressConf=nowM();S.spin=
 function canInterview(){if(isCand())return'Only the mayor';if(S.slots<=0)return'No actions left this month';const t=S.interview;if(t!=null&&nowM()-t<3)return`Again in ${3-(nowM()-t)} mo`;return''}
 function doInterview(oid){if(canInterview())return;const o=OUTMAP[oid];S.slots--;S.interview=nowM();const ok=Math.random()<clamp(0.45+(mskill('cha')-8)*0.04+(S.approval-50)/100,0.15,0.9);gainXP('cha',5);
   newsAdd(ok?1.4:-1.2,ok?`Mayor makes the case for the city in a wide-ranging interview`:`Mayor stumbles over tough questions in interview`,{tag:Object.keys(o.tags)[0],w:2.2});
-  logIt(`Sit-down interview with ${o.n}: ${ok?'it went well':'it went badly'}.`);save();refreshHUD();toast(ok?`The ${o.n} interview went well. It runs this month.`:`The ${o.n} interview went badly. It runs this month.`);openNews()}
+  logIt(`Sit-down interview with ${o.n}: ${ok?'it went well':'it went badly'}.`);save();refreshHUD();toast(ok?`${/^The /.test(o.n)?'':'The '}${o.n} interview went well. It runs this month.`:`${/^The /.test(o.n)?'':'The '}${o.n} interview went badly. It runs this month.`);openNews()}
 function toneCol(t){return t>=0.3?'var(--good)':t<=-0.3?'var(--bad)':'var(--muted)'}
 function openNews(){closePanel();S.seen=S.seen||{};S.seen.news=1;const N=S.news||[],p=Math.round(S.press||0);const why=canPress(),wi=canInterview();
   const pc=p>=5?'var(--good)':p<=-5?'var(--bad)':'var(--warn)';
@@ -5466,18 +5466,18 @@ function phWhere(kind,id){let lon,lat,label;
     else if(kind==='vip'){const v=VMAP[id];if(v.xy){lon=v.xy[0];lat=v.xy[1];label=v.xy[2]}else{const p=placeOf(v.at);lon=p.lon;lat=p.lat;label=p.name}}}catch(e){}
   if(lon==null){lon=LM.cityhall.lon;lat=LM.cityhall.lat;label='City Hall'}return{lon,lat,label}}
 function phCallLeft(key){return cdLeft('call_'+key,1)}
-function phMeetWhy(kind,id){if(S.slots<=0)return'No actions left this month';const now=nowM();
+function phMeetWhy(kind,id){if(S.slots<=0&&!S.after)return'No actions left this month';const now=nowM();
   if(kind==='council'){const m=S.council[+id];return m.met===now?'You already met this month':''}
   if(kind==='staff'){const s=staffOf(id);return s.met===now?'You already met this month':''}
   if(kind==='nb'){return S.nb[id].met===now?'You already met this month':''}
   if(kind==='group'){if(isCand())return cdLeft('cg'+id,3)?`Again in ${cdLeft('cg'+id,3)} mo`:'';return cdLeft('g'+id,ACT_CD.group)?`Again in ${cdLeft('g'+id,ACT_CD.group)} mo`:''}
   if(kind==='vip'){const v=VMAP[id],c=cdLeft('vip_'+id,v.cd);return c?`Again in ${c} mo`:''}return''}
 function phMeet(kind,id){if(phMeetWhy(kind,id))return;const W=phWhere(kind,id);let msg='';
-  if(kind==='council'){const m=S.council[+id];m.met=nowM();S.slots--;addMod(m,'Private meeting',meetGain(m));gainXP('dip',6);recompute(m);msg=`You met ${m.name} at ${W.label}. Opinion of you is now ${fmtOp(m.opinion)}.`}
-  else if(kind==='staff'){const s=staffOf(id);S.slots--;s.met=nowM();addMod(s,'Met with you privately',has(s,'gregarious')?12:8);gainXP('dip',4);msg=`You met ${s.name} at ${W.label}.`}
-  else if(kind==='nb'){const n=S.nb[id];n.met=nowM();S.slots--;addMod(n,'Met with the Memphis mayor',meetGain(n,8));gainXP('dip',6);recompute(n);msg=`You met Mayor ${n.name} at ${W.label}.`}
+  if(kind==='council'){const m=S.council[+id];m.met=nowM();if(!S.after)S.slots--;addMod(m,'Private meeting',meetGain(m));gainXP('dip',6);recompute(m);msg=`You met ${m.name} at ${W.label}. Opinion of you is now ${fmtOp(m.opinion)}.`}
+  else if(kind==='staff'){const s=staffOf(id);if(!S.after)S.slots--;s.met=nowM();addMod(s,'Met with you privately',has(s,'gregarious')?12:8);gainXP('dip',4);msg=`You met ${s.name} at ${W.label}.`}
+  else if(kind==='nb'){const n=S.nb[id];n.met=nowM();if(!S.after)S.slots--;addMod(n,'Met with the Memphis mayor',meetGain(n,8));gainXP('dip',6);recompute(n);msg=`You met Mayor ${n.name} at ${W.label}.${n.opinion!=null?` Opinion of you is now ${fmtOp(n.opinion)}.`:''} Suburban mayors can help or block you on schools, MLGW and regional deals.`}
   else if(kind==='group'){if(isCand())candMeet(id);else doMeetGroup(id);msg=`You met ${GMAP[id].n.toLowerCase()} leaders at ${W.label}.`}
-  else if(kind==='vip'){const v=VMAP[id];S.slots--;markAct('vip_'+id);gainXP('dip',6);msg=`You met ${v.name} at ${W.label}. `+v.win()}
+  else if(kind==='vip'){const v=VMAP[id];if(!S.after)S.slots--;markAct('vip_'+id);gainXP('dip',6);msg=`You met ${v.name} at ${W.label}. `+v.win()}
   goTo(W.lon,W.lat,W.label,2);try{S.approval=cityApproval(S)}catch(e){}logIt(msg);save();refreshHUD();try{sfx('good')}catch(e){}phRefresh(PH_TAB)}
 function phCall(kind,id){const key=kind+'_'+id;if(phCallLeft(key))return;markAct('call_'+key);let who='';
   if(kind==='council'){const m=S.council[+id];addMod(m,'Called to check in',2);recompute(m);who=m.name}
@@ -5487,9 +5487,9 @@ function phCall(kind,id){const key=kind+'_'+id;if(phCallLeft(key))return;markAct
   save();toast(`Quick call with ${who}. They appreciated hearing from you.`);phRefresh(PH_TAB)}
 function phRefresh(tab){NAV.busy=true;try{openPhone(tab)}finally{NAV.busy=false}}
 function phRow(kind,id,face,name,role){const why=phMeetWhy(kind,id),W=phWhere(kind,id),canCall=kind!=='group'&&!phCallLeft(kind+'_'+id);
-  return`<div class="phrow">${face}<div class="phwho"><b>${name}</b><small>${role}</small></div><div class="phbtns"><button class="btn primary" data-phmeet="${kind}:${id}" ${why?'disabled':''} title="${why||'Meet at '+W.label}">${S.slots<=0?'No actions':why&&/met|Again/.test(why)?'Met':'Meet'}</button>${kind==='group'?'':`<button class="btn" data-phcall="${kind}:${id}" ${canCall?'':'disabled'} title="${canCall?'Free, once a month':'You called this month'}">Call</button>`}</div><small class="phwhere">${why?why:`Uses 1 action · at ${W.label}`}</small></div>`}
+  return`<div class="phrow">${face}<div class="phwho"><b>${name}</b><small>${role}</small></div><div class="phbtns"><button class="btn primary" data-phmeet="${kind}:${id}" ${why?'disabled':''} title="${why||'Meet at '+W.label}">${S.slots<=0&&!S.after?'No actions':why&&/met|Again/.test(why)?'Met':S.after?'Meet':'Meet · 1 action'}</button>${kind==='group'?'':`<button class="btn" data-phcall="${kind}:${id}" ${canCall?'':'disabled'} title="${canCall?'Free, once a month':'You called this month'}">Call</button>`}</div><small class="phwhere">${why?why:`Uses 1 action · at ${W.label}`}</small></div>`}
 function openPhone(tab){if(!S||!S.started)return;closePanel();const cand=isCand();
-  const tabs=cand?[['camp','Campaign'],['grp','Community']]:[['vip','Power players'],['council','Council'],['staff','Cabinet'],['grp','Community'],['nb','Suburbs']];
+  const tabs=cand?[['camp','Campaign'],['grp','Community']]:S.after?[['vip','Power players'],['council','Council'],['grp','Community'],['nb','Suburbs']]:[['vip','Power players'],['council','Council'],['staff','Cabinet'],['grp','Community'],['nb','Suburbs']];if(S.after&&tab==='staff')tab='vip';
   if(!tabs.some(t=>t[0]===tab))tab=tabs.some(t=>t[0]===PH_TAB)?PH_TAB:tabs[0][0];PH_TAB=tab;let body='';
   if(tab==='vip')body=VIPS.map(v=>phRow('vip',v.id,portrait(v,40),v.name,`${v.role}. ${v.d}`)).join('');
   else if(tab==='council')body=S.council.map((m,k)=>phRow('council',k,portrait(m,40),m.name,`${m.seat} · opinion ${fmtOp(m.opinion)}`)).join('');
@@ -5498,7 +5498,7 @@ function openPhone(tab){if(!S||!S.started)return;closePanel();const cand=isCand(
   else if(tab==='grp')body=GROUPS.map(g=>phRow('group',g.id,`<span class="phic" style="background:${g.c}">${g.ic}</span>`,g.n,`Support ${Math.round(S.groups[g.id].app)}%`)).join('');
   else if(tab==='camp'){const m=curMgr();body=`<div class="phrow"><span class="phic" style="background:var(--amber)">☎</span><div class="phwho"><b>${m?m.name:'Hire a campaign manager'}</b><small>${m?'Your campaign manager. Ask for the plan.':'Your campaign starts when you hire one.'}</small></div><div class="phbtns"><button class="btn primary" data-phgo="mgr">${m?'Ask':'Hire'}</button></div></div>
     <div class="phrow"><span class="phic" style="background:var(--good)">$</span><div class="phwho"><b>Donors</b><small>Fundraisers and major-donor dinners are in Campaign HQ.</small></div><div class="phbtns"><button class="btn" data-phgo="hq">Open</button></div></div>`}
-  openModal(`${S.slots} ${slotWord(S.slots)} left · meeting someone uses 1 and takes you to them`,'Your phone',`${S.slots<=0?`<div class="phout"><b>You're out of actions until ${refillDate()}.</b> Meetings need an action. ${cand?'Your campaign manager and Campaign HQ are still open.':'Calls are still free, once a month per person.'}</div>`:''}<div class="lsel" style="margin-bottom:8px">${tabs.map(([k,n])=>`<button data-phtab="${k}" class="${tab===k?'on':''}">${n}</button>`).join('')}</div><div class="phlist">${body}</div>
+  openModal(S.after?'Meet people around Memphis · no moves needed':`${S.slots} ${slotWord(S.slots)} left · meeting someone uses 1 and takes you to them`,'Your phone',`${S.slots<=0&&!S.after?`<div class="phout"><b>You're out of actions until ${refillDate()}.</b> Meetings need an action. ${cand?'Your campaign manager and Campaign HQ are still open.':'Calls are still free, once a month per person.'}</div>`:''}<div class="lsel" style="margin-bottom:8px">${tabs.map(([k,n])=>`<button data-phtab="${k}" class="${tab===k?'on':''}">${n}</button>`).join('')}</div><div class="phlist">${body}</div>
    <p class="note">Meet: you travel to them and it uses 1 action. Call: free, once a month per person, a small boost.</p>`,true)}
 openPhone=navWrap('openPhone',openPhone);
 document.addEventListener('click',e=>{const b=e.target.closest('[data-phtab],[data-phmeet],[data-phcall],[data-phgo],#bPhone');if(!b||!S)return;e.preventDefault();e.stopImmediatePropagation();
@@ -10077,7 +10077,7 @@ function actSnap(){let fam=null;try{const F=famInit();fam=F&&F.log?F.log[0]||nul
 function actDaysFor(used,keys){if(keys.some(k=>/^(th\d|rally|ord_|plan|proj)/.test(k)))return 2;if(used)return 2;return 1}
 const ACT_MET=[['crime','Crime',true],['jobs','Jobs'],['reading','Reading'],['streets','Streets'],['blight','Blight',true],['transit','Transit'],['health','Health']];
 function actChanges(b){const out=[];const da=S.approval-b.app;if(Math.abs(da)>=0.1)out.push(`<span class="${da>0?'pos':'neg'}">Approval ${da>0?'+':'−'}${Math.abs(da).toFixed(1)}</span>`);
-  const dr=S.reserve-b.res;if(Math.abs(dr)>=0.01)out.push(`<span class="${dr>0?'pos':'neg'}">Reserve ${dr>0?'+':'−'}${fmtM(Math.abs(dr))}</span>`);
+  const dr=S.reserve-b.res;if(Math.abs(dr)>=0.01)out.push(`<span class="${dr>0?'pos':'neg'}">Reserve ${dr>0?'+':'−'}${Math.abs(dr)<0.1?'$'+Math.round(Math.abs(dr)*1000)+'K':fmtM(Math.abs(dr))}</span>`);
   ACT_MET.forEach(([k,n,low])=>{const d=(S.met[k]||0)-(b.met[k]||0);if(Math.abs(d)>=0.1){const good=low?d<0:d>0;out.push(`<span class="${good?'pos':'neg'}">${n} ${d>0?'+':'−'}${Math.abs(d).toFixed(1)}</span>`)}});
   return out}
 function actSince(arr,top){if(!arr)return[];const i=top?arr.indexOf(top):arr.length;return i<0?arr.slice(0,5):arr.slice(0,i)}
@@ -10092,15 +10092,17 @@ function actFinish(b){ACT.on=false;const toasts=ACT.toasts.splice(0),keys=ACT.ke
   let famNew=[];try{const F=famInit();if(F&&F.log)famNew=actSince(F.log,b.fam).filter(x=>x&&x.t)}catch(e){}
   const acted=used>0||keys.length||res.length||newLog.length||famNew.length;
   if(!acted||b.d!==S.day||b.m!==S.m){toasts.forEach(m=>ACT.rawToast(m));return}
-  const want=actDaysFor(used,keys);const logTop=(S.log||[])[0]||null;const adv=actAdvance(want);
+  const want=(b.target&&b.target.closest&&b.target.closest('[data-act="buy"],[data-store],[data-shop]'))?0:actDaysFor(used,keys);const logTop=(S.log||[])[0]||null;const adv=actAdvance(want);
   const arrived=actSince(S.log,logTop).filter(x=>x&&/^New: /.test(x.t)).map(x=>x.t.replace(/^New: /,''));
-  const lines=[...new Set([...msgs,...toasts,...famNew.map(x=>x.t),...newLog.map(x=>x.t)])].filter(t=>t&&!/^✓|^Next:|\d+ actions? left$|^Skill up/.test(String(t).trim())).slice(0,6);
+  let reply='';try{const rp=modalOpen&&$('mBody')&&$('mBody').querySelector('.scnreply');if(rp)reply=rp.textContent.trim()}catch(e){}
+  const lines=[...new Set([reply,...msgs,...toasts,...famNew.map(x=>x.t),...newLog.map(x=>x.t)])].filter(t=>t&&!/^✓|^Next:|\d+ actions? left$|^Skill up/.test(String(t).trim())).slice(0,6);
   const ch=actChanges(b);
   const when=adv.passed?`${adv.passed} day${adv.passed===1?'':'s'} later · ${dateStr()}`:`${dateStr()} · the last day of the month`;
   actFlash();try{save()}catch(e){}try{refreshHUD()}catch(e){}try{if(typeof renderHomeDesk==='function')renderHomeDesk(true)}catch(e){}
   if(adv.interrupted){notify('info','What happened',`${lines[0]||'Done.'} ${when}.`,null,{ttl:10});return}
-  const head=res[0]||(newLog[0]&&newLog[0].t)||(famNew[0]&&famNew[0].t)||'Done';const lines2=lines.filter(t=>t!==head);if(lines2.length)lines.splice(0,lines.length,...lines2);
-  const timeLine=`<div class="act-time"><span aria-hidden="true">⏱</span><div><b>${adv.passed?`${adv.passed} day${adv.passed===1?'':'s'} pass${adv.passed===1?'es':''}`:'No time left this month'}</b><small>${adv.passed?`${b.d} ${MONTHS[b.m-1]} → ${dateStr()}`:'Press Continue to start next month'}${S.slots!=null&&inOffice()?` · ${Math.max(0,S.slots)} action${S.slots===1?'':'s'} left this month`:''}</small></div></div>`;
+  const btnName=(()=>{try{const x=b.target;if(!x)return'';const bb=x.querySelector&&x.querySelector('b');return(bb?bb.textContent:x.textContent||'').replace(/\s+/g,' ').trim().replace(/ · .*$/,'')}catch(e){return''}})();
+  const head=res[0]||(newLog[0]&&newLog[0].t)||(famNew[0]&&famNew[0].t)||btnName||'What happened';const lines2=lines.filter(t=>t!==head);if(lines2.length)lines.splice(0,lines.length,...lines2);
+  const timeLine=`<div class="act-time"><span aria-hidden="true">⏱</span><div><b>${adv.passed?`${adv.passed} day${adv.passed===1?'':'s'} pass${adv.passed===1?'es':''}`:want===0?'Done':'No time left this month'}</b><small>${adv.passed?`${b.d} ${MONTHS[b.m-1]} → ${dateStr()}`:want===0?dateStr():'Press Continue to start next month'}${S.slots!=null&&inOffice()?` · ${Math.max(0,S.slots)} action${S.slots===1?'':'s'} left this month`:''}</small></div></div>`;
   const body=`${timeLine}${lines.length?`<div class="act-lines">${lines.map(t=>`<p>${t}</p>`).join('')}</div>`:''}${ch.length?`<div class="act-ch">${ch.join('')}</div>`:''}${arrived.length?`<div class="facts"><h4>While you were busy</h4>${arrived.slice(0,4).map(t=>`<p class="note">New on your desk: ${t}</p>`).join('')}</div>`:''}`;
   // If the action opened its own result screen, put the time and changes at the top of it
   if(modalOpen&&(!b.open||($('mTitle')||{}).textContent!==b.title)){try{const mb=$('mBody');if(mb&&!mb.querySelector('.act-time')){const w=document.createElement('div');w.className='act-wrap';w.innerHTML=timeLine+(ch.length?`<div class="act-ch">${ch.join('')}</div>`:'')+(arrived.length?`<p class="note">New on your desk: ${arrived.slice(0,3).join(' · ')}</p>`:'');mb.prepend(w)}}catch(e){}return}
@@ -10113,7 +10115,7 @@ function actCard(head,body){let el=document.getElementById('actCard');if(el)el.r
 window.addEventListener('click',e=>{if(ACT.on||!S||!S.started||S.over)return;try{if(!$('start').hidden)return}catch(err){}
   const t=e.target.closest('button,a,[data-act],[data-ev],[data-ci],.choice');if(!t)return;
   if(t.closest('#clock,#speeds,[data-speed],#bPlay,#cPause,.hd-nav,[data-hdview]'))return;
-  const b=actSnap();ACT.on=true;ACT._t=Date.now();setTimeout(()=>{try{actFinish(b)}catch(err){ACT.on=false;console.warn('act',err)}},120)},true);
+  const b=actSnap();b.target=t;ACT.on=true;ACT._t=Date.now();setTimeout(()=>{try{actFinish(b)}catch(err){ACT.on=false;console.warn('act',err)}},120)},true);
 // keys too (Enter/Space on a focused choice fire click anyway); safety: never leave capture on
 setInterval(()=>{if(ACT.on&&ACT._t&&Date.now()-ACT._t>2000)ACT.on=false},1000);
 {const _a=openActions;openActions=function(...a){const r=_a.apply(this,a);try{const n=$('mBody').querySelector('.note');if(n&&!/take time/.test(n.textContent))n.insertAdjacentHTML('beforeend',' Every action takes time: most take 2 days, a quick one takes 1. The date moves forward as you work.')}catch(e){}return r}}
@@ -10255,6 +10257,22 @@ function hudAfter(){if(!hudAfterOn()){if(document.body.classList.contains('hud-a
 {const _om=openMayor;openMayor=function(...a){const r=_om.apply(this,a);try{if(S&&S.after&&S.mayor){const A=S.after,R=A.role&&ROLES[A.role];const t=$('pTitle'),sb=$('pSub');if(t)t.textContent=S.mayor.name;if(sb)sb.textContent=`Your character · ${R?R.n.replace(/ \(.*\)/,''):'after City Hall'}`;
   const pb=$('pBody');if(pb)pb.querySelectorAll('.charinfo .note').forEach(n=>{n.innerHTML=n.innerHTML.replace('Mayor of Memphis',R?`${R.n.replace(/ \(.*\)/,'')} · former mayor of Memphis`:'Former mayor of Memphis')})}}catch(e){}return r}}
 {const _t=toast;toast=function(m,...r){if(S&&S.after&&typeof m==='string')m=m.replace(/^You are now Mayor /,'You are now ');return _t.call(this,m,...r)}}
+// map things show the map: opinion and council maps switch off the desk first
+window.addEventListener('click',e=>{const b=e.target.closest('[data-act="showDistricts"],[data-act="popmap"],[data-act="popmapg"]');if(!b||!S)return;try{if(HD.on)hdSetView(false)}catch(err){}},true);
+// buttons that point at one kind of move open Actions right at that section
+let ACT_SECTION=null;
+window.addEventListener('click',e=>{const b=e.target.closest('[data-bank]');if(!b||!S)return;const t=(b.textContent||'').toLowerCase();ACT_SECTION=/town hall/.test(t)?'Hold a town hall':/executive/.test(t)?'Executive orders':/press/.test(t)?'Press conference':/project/.test(t)?'Start a capital project':null},true);
+{const _oa=openActions;openActions=function(...a){const want=ACT_SECTION;ACT_SECTION=null;const r=_oa.apply(this,a);if(want)setTimeout(()=>{try{const h=[...document.querySelectorAll('#mBody .facts > h4')].find(x=>x.textContent.trim().startsWith(want));if(h)h.closest('.facts').scrollIntoView({block:'start'})}catch(e){}},30);return r}}
+// the wardrobe button lands on the wardrobe
+window.addEventListener('click',e=>{const b=e.target.closest('[data-act="shop"]');if(!b||!S||!/wardrobe/i.test(b.textContent||''))return;setTimeout(()=>{try{const h=[...document.querySelectorAll('#mBody h4')].find(x=>/wardrobe/i.test(x.textContent));if(h)(h.closest('.facts')||h).scrollIntoView({block:'start'})}catch(err){}},60)},true);
+// a district's town hall button holds the town hall in that district
+{const _ha3=hdAct;hdAct=function(a,dd){if(a==='townhall'&&S&&inOffice()&&!isCand()&&HD.view==='dist'&&HD.dist){const d=+HD.dist;if(d>=1&&d<=7){try{if(S.slots<=0){toast('No actions left this month. They refill on the 1st.');return}const cd=cdLeft('th'+d,ACT_CD.townhall);if(cd){toast(`You held a town hall in District ${d} recently. You can hold another in ${cd} month${cd===1?'':'s'}.`);return}doTownHall(d);return}catch(e){}}}return _ha3.apply(this,arguments)}}
+// out of office, the street map's Campaign button opens what you can do now, not the mayor's re-election HQ
+window.addEventListener('click',e=>{const b=e.target.closest('[data-flow-hub="campaign"]');if(!b||!S||!S.after)return;e.preventDefault();e.stopImmediatePropagation();openActions()},true);
+// when a campaign move needs a manager first, the hiring screen says so
+let MGR_NOTE=false;
+{const _t=toast;toast=function(m,...r){if(typeof m==='string'&&/^Hire a campaign manager first/.test(m))MGR_NOTE=true;return _t.call(this,m,...r)}}
+{const _om=openMgr;openMgr=function(...a){const r=_om.apply(this,a);try{if(MGR_NOTE){MGR_NOTE=false;const mb=$('mBody');if(mb&&!mb.querySelector('.mgr-first'))mb.insertAdjacentHTML('afterbegin','<p class="scnreply mgr-first">You need a campaign manager before you can hold events, meet groups or speak out. Pick one below, then try again.</p>')}}catch(e){}return r}}
 window.addEventListener('click',e=>{if(!hudAfterOn())return;const t=e.target.closest('#bPlay,#cPause');if(!t)return;e.preventDefault();e.stopImmediatePropagation();
   try{const nb=hdNextBtn();if(nb&&!nb.disabled){hdClickNext(nb);return}if(nb&&nb.disabled){toast('Deal with what\'s on your desk first.');hdSetView(true);return}openAfter()}catch(err){console.warn('next year',err)}},true);
 
@@ -10674,7 +10692,7 @@ document.addEventListener('click',e=>{
   else if(a==='office'){const d=+b.dataset.d;if(S.camp.offices[d])delete S.camp.offices[d];else S.camp.offices[d]=nowM();clog(`${S.camp.offices[d]?'Opened':'Closed'} a field office in District ${d}.`);save();openHQ()}
   else if(a==='seek'){if(S.slots>0){S.slots--;S.camp.seek[b.dataset.id]=true;clog(`You asked the ${ENDORSERS.find(x=>x.id===b.dataset.id).n} for their endorsement.`);gainXP('dip',4);save()}openHQ()}
   else if(a==='debate')debatePick(+b.dataset.n,b.dataset.c);
-  else if(a==='buy'){const it=SHOP.find(x=>x.id===b.dataset.id);if(it&&!S.purse.owned[it.id]&&S.purse.cash>=it.p){S.purse.cash-=it.p;flowP('buy',it.p);S.purse.owned[it.id]=true;logIt(`You bought a ${it.n.toLowerCase()} with your own money ($${it.p.toLocaleString()}).`);save();toast(`Bought: ${it.n}. Wear it under Change your look.`)}openShop()}
+  else if(a==='buy'){const it=SHOP.find(x=>x.id===b.dataset.id);if(it&&!S.purse.owned[it.id]&&S.purse.cash>=it.p){S.purse.cash-=it.p;flowP('buy',it.p);S.purse.owned[it.id]=true;logIt(`You bought ${/s$/.test(it.n)?'':/^[aeiou]/i.test(it.n)?'an ':'a '}${it.n.toLowerCase()} with your own money ($${it.p.toLocaleString()}).`);save();toast(`Bought: ${it.n}. Wear it under Change your look.`)}openShop()}
   else if(a==='promises')openPromises();
   else if(a==='pickpromise'){S._pp=S._pp||[];const id=b.dataset.id;if(S._pp.includes(id))S._pp=S._pp.filter(x=>x!==id);else if(S._pp.length<3)S._pp.push(id);openPromises()}
   else if(a==='savepromises'){if((S._pp||[]).length===3){choosePromises(S._pp);delete S._pp;save();refreshHUD();navReset();closeModal();toast(isCand()?'Your platform is public. Track it on your desk.':'Your promises are public. Track them under City, Your desk.');let skip=false;try{skip=localStorage.getItem('bcm-nomoneyintro')==='1'}catch(e){}if(!skip&&!S.seenMoneyIntro)openMoneyIntro()}}
