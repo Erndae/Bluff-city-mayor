@@ -485,6 +485,7 @@ body.deskon #endBanner{display:none!important}
 body.panel-over #panel,body.deskon #panel{z-index:30}
 .act-jump{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 10px}.act-jump a{font-size:13px;padding:8px 10px;min-height:36px;display:inline-flex;align-items:center;border-radius:999px;background:#13212d;border:1px solid #24394b;color:var(--amber);text-decoration:none}.act-more{font-size:13px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin:14px 0 6px}
 body.aftermode #endBanner,body.mopen #endBanner,body:has(#panel:not([hidden])) #endBanner,body.inside-home #endBanner,body:has(#actCard) #endBanner{display:none!important}
+.hud-after #hSlots .sdot{display:inline-block;width:12px;height:12px;border-radius:50%;background:#2a3a48;margin:0 2px;vertical-align:middle}.hud-after #hSlots .sdot.on{background:var(--amber)}.hud-after #hSlots .slabel{letter-spacing:.12em;text-transform:uppercase;color:var(--amber);font-size:12px}
 .adgain{display:block;width:100%;text-align:center;font-size:11px;font-weight:600;color:var(--good);margin-top:1px}
 #start{overflow-x:hidden;overflow-y:auto;touch-action:pan-y}.startbox{min-width:0;max-width:min(600px,100%);box-sizing:border-box}.startbox *{min-width:0}.create select,.create input{max-width:100%;width:100%;box-sizing:border-box;text-overflow:ellipsis}.create .tpick,.create .tpick>*{max-width:100%;box-sizing:border-box}
 @media (max-width:640px){.startbox{margin-left:0}#start{padding-left:max(16px,env(safe-area-inset-left,0px))}}
@@ -843,7 +844,7 @@ details.analysis{margin-top:6px}details.analysis summary{cursor:pointer;color:va
     <button class="btn primary" data-act="pause" id="bPlay"><svg class="ico" viewBox="0 0 12 12" aria-hidden="true"><path d="M3.2 1.6v8.8l7.2-4.4z" fill="currentColor"/></svg> Resume <kbd>Space</kbd></button>
   </nav>
   <div class="status" id="status">Loading map…</div>
-  <div class="credit"><span class="ver" id="verTag">v27.14</span></div>
+  <div class="credit"><span class="ver" id="verTag">v27.15</span></div>
   <div class="tip" id="tip" hidden></div>
   <div class="toast" id="toast" role="status"></div>
   <section class="panel" id="panel" hidden aria-live="polite">
@@ -871,7 +872,7 @@ details.analysis{margin-top:6px}details.analysis summary{cursor:pointer;color:va
         <button class="btn" data-music-open>Music &amp; volume</button>
       </div>
       <div id="slotList" hidden></div>
-      <p class="note startv">Version <b class="ver" id="verStart">v27.14</b></p>
+      <p class="note startv">Version <b class="ver" id="verStart">v27.15</b></p>
     </div>
     <div class="startbox create" id="create" hidden>
       <h2>Create your mayor</h2>
@@ -1682,7 +1683,7 @@ function enact(s,p){DIVS.forEach(d=>{s.enacted[d.id]=p.divs[d.id];s.ratio[d.id]=
 // Voter groups. Each has a share of residents, turnout, home districts, concerns and an approval of you.
 // Citywide approval is the turnout-weighted average of the groups; each council district's approval comes from the groups that live there.
 // Shares, district mix and turnout are modeled, loosely grounded in Memphis demographics; they are not survey data.
-const VERSION='v27.14';
+const VERSION='v27.15';
 const GROUPS=[
  {id:'working',sh:'Working families',n:'Working families',ic:'⚒︎',c:'#f2a93b',share:24,turn:.5,start:56,w:{jobs:1,safety:.8,transit:.5},
   d:'Hourly workers in logistics, warehouses, health care and service jobs. The biggest bloc in the city.',dm:{1:1.1,2:.8,3:1.3,4:1.2,5:.6,6:1.2,7:1.1}},
@@ -10218,6 +10219,37 @@ function actCityHTML(){const L=[['budget','The budget','Where the money goes thi
 document.addEventListener('click',e=>{const a=e.target.closest('.act-jump a');if(a){e.preventDefault();const t=document.querySelector(a.getAttribute('href'));if(t)t.scrollIntoView({behavior:'smooth',block:'start'});return}
   const b=e.target.closest('[data-act="actgo"]');if(!b||!S)return;e.preventDefault();e.stopImmediatePropagation();const g=b.dataset.go;try{closeModal()}catch(err){}
   try{if(g.startsWith('desk:'))deskGo(g.slice(5));else if(ACT_GO[g])ACT_GO[g]()}catch(err){console.warn('actgo',err)}},true);
+
+// ======================= v27.15: THE STREET MAP'S TOP BAR AFTER CITY HALL =======================
+// Out of office, the bar at the top of the street map shows your numbers instead of the mayor's: the month,
+// your moves left this year, influence, savings, your chance of winning (or your job), and the next election.
+// The big button says Next year and plays out the rest of the year, same as on the desk.
+function hudAfterOn(){return!!(S&&S.after&&!S.after.dead&&!S.after.prison&&!S.died)}
+function hudSet(stat,label,val,small){if(!stat)return;const l=stat.querySelector('label');if(l){if(stat.dataset.olabel==null)stat.dataset.olabel=l.textContent;l.textContent=label}
+  const b=stat.querySelector('b');if(b){b.textContent=val;b.style.color=''}const sm=stat.querySelector(':scope > small, :scope small[id$="S"], :scope small[id$="Pct"]');if(sm&&small!=null){sm.textContent=small;sm.style.color=''}
+  if(stat.dataset.act){stat.dataset.oact=stat.dataset.act;stat.removeAttribute('data-act');stat.classList.remove('click')}}
+function hudRestore(){document.querySelectorAll('.hud-top .stat').forEach(st=>{const l=st.querySelector('label');if(st.dataset.olabel!=null&&l){l.textContent=st.dataset.olabel;delete st.dataset.olabel}if(st.dataset.oact){st.dataset.act=st.dataset.oact;delete st.dataset.oact;st.classList.add('click')}st.querySelectorAll('[data-hud-hide]').forEach(x=>{x.style.display='';x.removeAttribute('data-hud-hide')})});
+  document.body.classList.remove('hud-after')}
+function hudAfterNext(){try{const nb=hdNextBtn();if(nb){const b=nb.querySelector('b'),s=nb.querySelector('small');return{main:/^Live the next year/.test(b?b.textContent:'')?'Next year':(b?b.textContent:'Next year'),sub:s?s.textContent:'',dis:nb.disabled}}}catch(e){}return{main:'Next year',sub:'',dis:false}}
+function hudAfter(){if(!hudAfterOn()){if(document.body.classList.contains('hud-after'))hudRestore();return}
+  document.body.classList.add('hud-after');const A=S.after,R=A.role&&ROLES[A.role];
+  const d=$('hDate');if(d)d.textContent=`${MONTHS[S.m-1]} ${S.y}`;const fy=$('hFY');if(fy)fy.textContent=R?R.n:'After City Hall';
+  const sl=$('hSlots');if(sl){let h='';if(A.role&&A.role!=='king'){const left=Math.max(0,ROLE_ACTS-(A.ra||0));h=`<span class="slabel">Moves</span> ${Array.from({length:ROLE_ACTS},(_,i)=>`<i class="sdot${i<left?' on':''}"></i>`).join('')} <b>${left} left</b>`}else if(!A.role)h='<b>Choose your next chapter</b>';sl.innerHTML=h}
+  const st=[...document.querySelectorAll('.hud-top .stat')];
+  hudSet(st[0],'Influence',String(Math.round(A.inf)),'');
+  hudSet(st[1],'Savings','$'+Math.round(S.purse?S.purse.cash:0).toLocaleString(),null);
+  if(st[1])st[1].querySelectorAll('.meter,#hClout').forEach(x=>{x.style.display='none';x.setAttribute('data-hud-hide','1')});
+  const nextY=(()=>{try{return nextElYear()}catch(e){return S.y+1}})();
+  if(A.camp){const off=ROLES[A.camp.office];hudSet(st[2],'Chance to win',Math.round(A.camp.odds*100)+'%',`${off?off.n.replace(/ \(.*\)/,''):'Election'} · ${A.camp.y}`);hudSet(st[3],'Next on the calendar',`Election Day ${A.camp.y}`,null)}
+  else{hudSet(st[2],R?'Your job':'Your next chapter',R?R.n.replace(/ \(.*\)/,''):'Not chosen',R?`Year ${A.yrs+1}`:'Pick one on your desk');hudSet(st[3],'Next on the calendar',`Mayor's race ${nextY}`,null)}
+  const nx=hudAfterNext();const pb=$('bPlay');if(pb){pb.classList.remove('contrun');pb.innerHTML=`<span class="contmain">${nx.dis?'⏸':IC_PLAY} ${hdEsc(nx.main)}</span><small class="contto">${hdEsc(nx.dis?'Deal with what\'s on your desk first':nx.sub)}</small>`}
+  const c=$('cPause');if(c){c.innerHTML=IC_PLAY;c.setAttribute('aria-label',nx.main);c.title=nx.main}}
+{const _rh=refreshHUD;refreshHUD=function(...a){const r=_rh.apply(this,a);try{hudAfter()}catch(e){console.warn('hud after',e)}return r}}
+{const _uc=updateClock;updateClock=function(...a){const r=_uc.apply(this,a);try{if(hudAfterOn())hudAfter()}catch(e){}return r}}
+{const _oa=openAfter;openAfter=function(...a){const r=_oa.apply(this,a);try{hudAfter()}catch(e){}return r}}
+{const _as=afterStart;afterStart=function(...a){try{closePanel()}catch(e){}return _as.apply(this,a)}}
+window.addEventListener('click',e=>{if(!hudAfterOn())return;const t=e.target.closest('#bPlay,#cPause');if(!t)return;e.preventDefault();e.stopImmediatePropagation();
+  try{const nb=hdNextBtn();if(nb&&!nb.disabled){hdClickNext(nb);return}if(nb&&nb.disabled){toast('Deal with what\'s on your desk first.');hdSetView(true);return}openAfter()}catch(err){console.warn('next year',err)}},true);
 
 function openLedger(){const L=S.log||[];openPanel('Everything that has happened, newest first','Ledger',L.length?`<div class="logl">${L.map(x=>`<div><span>${x.d}</span><p style="margin:0">${x.t}</p></div>`).join('')}</div>`:'<p class="note">Nothing yet. Tap ▶ Continue to move ahead.</p>','ledger')}
 function openPolicies(){const ks=Object.keys(POLICIES);
