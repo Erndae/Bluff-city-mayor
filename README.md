@@ -4,6 +4,14 @@
 
 A Memphis political life on a real map of the city. Start as the mayor, run for mayor, or begin as a private citizen with a job and rise from there: the City Council, Shelby County mayor, Congress and the Senate, a law firm, a university presidency, or the back rooms as a kingmaker. As mayor you handle problems at real places, write the city budget, win votes from the 13-member City Council and run for re-election. Your family, health, party, rivals and record follow you through every chapter.
 
+## v27.07
+
+- **Rankings are now scored by place, not by distance.** In each of the eight categories, first place earns 125 points, last place earns 0, and every place in between is spaced evenly. The eight categories add up to a top score of 1,000.
+  - Memphis's own numbers still come from your city; they're compared against the other cities to find its place in each category.
+  - One extreme city (like Detroit on crime) no longer squeezes everyone else's scores together.
+- Ties in a category share the same place; ties in the overall standing go to the city with the better places overall.
+- Existing saves have their latest ranking re-scored once, so the switch doesn't count as a move up or down in January.
+
 ## v27.06
 
 - **State and national rankings.** The rankings screen now has three tabs: Peer cities, Tennessee, and National.
