@@ -4,6 +4,10 @@
 
 A Memphis political life on a real map of the city. Start as the mayor, run for mayor, or begin as a private citizen with a job and rise from there: the City Council, Shelby County mayor, Congress and the Senate, a law firm, a university presidency, or the back rooms as a kingmaker. As mayor you handle problems at real places, write the city budget, win votes from the 13-member City Council and run for re-election. Your family, health, party, rivals and record follow you through every chapter.
 
+## v26.98: Storm timing
+
+- **Each step of the ice storm now arrives two days after the last**, so the storm hits two days after the forecast instead of sometimes a month later.
+
 ## v26.97: The ice storm
 
 - **Some winters, an ice storm hits Memphis.** As mayor it's a crisis in five steps. First, a forecast three days out: pre-treat the roads, call in out-of-state line crews early, open warming centers, or wait and see. Then the night it hits, with up to 390,000 homes dark: run the emergency center and brief the city, open 24-hour warming centers with free MATA rides, or ask the governor for the National Guard. Then day four, when MLGW says some homes will wait a week: put MLGW's president in front of the public, pay crews to clear fallen trees, or send firefighters and nurses door to door. In a bad storm, burst pipes bring a citywide boil-water notice. Finally, the aftermath: bury power lines, shake up MLGW, or move on.

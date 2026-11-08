@@ -732,7 +732,7 @@ details.analysis{margin-top:6px}details.analysis summary{cursor:pointer;color:va
     <button class="btn primary" data-act="pause" id="bPlay"><svg class="ico" viewBox="0 0 12 12" aria-hidden="true"><path d="M3.2 1.6v8.8l7.2-4.4z" fill="currentColor"/></svg> Resume <kbd>Space</kbd></button>
   </nav>
   <div class="status" id="status">Loading map…</div>
-  <div class="credit"><span class="ver" id="verTag">v26.97</span></div>
+  <div class="credit"><span class="ver" id="verTag">v26.98</span></div>
   <div class="tip" id="tip" hidden></div>
   <div class="toast" id="toast" role="status"></div>
   <section class="panel" id="panel" hidden aria-live="polite">
@@ -760,7 +760,7 @@ details.analysis{margin-top:6px}details.analysis summary{cursor:pointer;color:va
         <button class="btn" data-music-open>Music &amp; volume</button>
       </div>
       <div id="slotList" hidden></div>
-      <p class="note startv">Version <b class="ver" id="verStart">v26.97</b></p>
+      <p class="note startv">Version <b class="ver" id="verStart">v26.98</b></p>
     </div>
     <div class="startbox create" id="create" hidden>
       <h2>Create your mayor</h2>
@@ -1571,7 +1571,7 @@ function enact(s,p){DIVS.forEach(d=>{s.enacted[d.id]=p.divs[d.id];s.ratio[d.id]=
 // Voter groups. Each has a share of residents, turnout, home districts, concerns and an approval of you.
 // Citywide approval is the turnout-weighted average of the groups; each council district's approval comes from the groups that live there.
 // Shares, district mix and turnout are modeled, loosely grounded in Memphis demographics; they are not survey data.
-const VERSION='v26.97';
+const VERSION='v26.98';
 const GROUPS=[
  {id:'working',sh:'Working families',n:'Working families',ic:'⚒︎',c:'#f2a93b',share:24,turn:.5,start:56,w:{jobs:1,safety:.8,transit:.5},
   d:'Hourly workers in logistics, warehouses, health care and service jobs. The biggest bloc in the city.',dm:{1:1.1,2:.8,3:1.3,4:1.2,5:.6,6:1.2,7:1.1}},
@@ -9317,6 +9317,7 @@ EVENTS.push(
   if(step==='ice5'){const sc=iceScore(f,c.sev);c.score=sc;c.dead=Math.max(0,Math.round(c.sev*2-(f.checks?2:0)-(f.centers?1.5:0)-(f.warm?1:0)+rnd(-1,1)));
     const lift=clamp((sc-2.5)*0.6,-3,3);try{GROUPS.forEach(g=>groupLift(g.id,lift,'Your ice storm response'))}catch(e){}try{newsAdd(sc>=3?0.4:-0.5,sc>=3?'City\'s ice storm response wins praise':'Memphians fault City Hall\'s ice storm response',{tag:'streets',w:1.4,dek:`Power was out for up to ${c.total||9} days.`})}catch(e){}}}}catch(e){console.warn('iceq',e)}return _qs.call(this,sid,step,delay)}}
 {const _rq=releaseQueued;releaseQueued=function(...a){const n=_rq.apply(this,a);try{const st=S&&S.stories&&S.stories.ice;if(st&&!st.ended&&!st.ctx.hit&&(S.events||[]).some(e=>e.id==='ice2')){const c=st.ctx;c.hit=true;applyFx(S,{streets:-0.3-0.15*(c.sev||1),health:-0.2,mood:-1});refreshHUD()}}catch(e){}return n}}
+{const _rl=releaseStory;releaseStory=function(sid){const r=_rl.apply(this,arguments);try{if(sid==='ice'&&S.queue){const q=[...S.queue].reverse().find(x=>x.ev&&/^ice/.test(x.ev.id));if(q)q.due=Math.min(daysIn(S.y,S.m),S.day+2)}}catch(e){}return r}}
 // when it comes: December through February, not every winter
 function iceMonth(){if(!S||!inOffice()||S.over)return;S.stories=S.stories||{};if(S.stories.ice&&!S.stories.ice.ended)return;if(![12,1,2].includes(S.m))return;
   const wk=S.m===12?S.y:S.y-1;if(S.iceW===wk)return;if(nowM()-(S.termStart||0)<3)return;if(Math.random()>0.12)return;S.iceW=wk;
