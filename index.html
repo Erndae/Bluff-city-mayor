@@ -478,6 +478,9 @@ body.deskon #endBanner{display:none!important}
 .rk-hist{display:flex;gap:6px;flex-wrap:wrap}.rk-hist span{display:flex;flex-direction:column;align-items:center;padding:4px 8px;border-radius:8px;min-width:42px}.rk-hist small{font-size:10px;opacity:.85}.rk-hist b{font-family:var(--f-mono)}.rk-hist .now{outline:1px solid var(--amber)}
 .rk-tabs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:4px;background:#13212d;border-radius:10px;padding:4px;margin-bottom:8px}.rk-tabs button{min-height:44px;border:none;border-radius:8px;background:none;color:inherit;font:inherit;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer}.rk-tabs button.on{background:var(--amber);color:#0d1822}.rk-tabs small{font-size:11px;opacity:.85}
 .hd-rk2{display:block;font-style:normal;font-size:12px;color:var(--muted)}
+.act-time{display:flex;gap:10px;align-items:center;background:#13212d;border:1px solid #24394b;border-radius:10px;padding:10px 12px;margin-bottom:10px}.act-time>span{font-size:22px}.act-time b{display:block}.act-time small{color:var(--muted);font-size:13px}.act-lines p{margin:0 0 8px}.act-ch{display:flex;flex-wrap:wrap;gap:6px;margin:4px 0 10px}.act-ch span{font-size:13px;padding:3px 8px;border-radius:999px;background:#13212d}.act-wrap{margin-bottom:6px}
+@keyframes actFlash{0%{color:var(--amber);transform:scale(1.15)}100%{transform:none}}#hDate.act-flash{animation:actFlash 1.2s ease-out}
+#actCard{position:fixed;inset:0;z-index:100003;background:rgba(6,10,14,.5);display:flex;align-items:center;justify-content:center;padding:16px}#actCard .ac-box{background:#0f1b25;color:#eef2f5;border:1px solid #2c4356;border-radius:14px;padding:18px;max-width:420px;width:100%;max-height:85vh;overflow:auto;box-shadow:0 20px 60px #0008}#actCard .ac-box>small{letter-spacing:2px;font-size:11px;color:var(--amber,#f0a83a)}#actCard h3{margin:4px 0 12px;font-size:20px}#actCard .ac-ok{width:100%;min-height:48px;margin-top:6px;border:none;border-radius:10px;background:var(--amber,#f0a83a);color:#0d1822;font:inherit;font-weight:700;cursor:pointer}#actCard .facts{background:#13212d;border-radius:10px;padding:8px 12px;margin:8px 0}#actCard .pos{color:var(--good,#5fd08a)}#actCard .neg{color:var(--bad,#ef6b5b)}
 .adgain{display:block;width:100%;text-align:center;font-size:11px;font-weight:600;color:var(--good);margin-top:1px}
 #start{overflow-x:hidden;overflow-y:auto;touch-action:pan-y}.startbox{min-width:0;max-width:min(600px,100%);box-sizing:border-box}.startbox *{min-width:0}.create select,.create input{max-width:100%;width:100%;box-sizing:border-box;text-overflow:ellipsis}.create .tpick,.create .tpick>*{max-width:100%;box-sizing:border-box}
 @media (max-width:640px){.startbox{margin-left:0}#start{padding-left:max(16px,env(safe-area-inset-left,0px))}}
@@ -830,7 +833,7 @@ details.analysis{margin-top:6px}details.analysis summary{cursor:pointer;color:va
     <button class="btn primary" data-act="pause" id="bPlay"><svg class="ico" viewBox="0 0 12 12" aria-hidden="true"><path d="M3.2 1.6v8.8l7.2-4.4z" fill="currentColor"/></svg> Resume <kbd>Space</kbd></button>
   </nav>
   <div class="status" id="status">Loading map…</div>
-  <div class="credit"><span class="ver" id="verTag">v27.07</span></div>
+  <div class="credit"><span class="ver" id="verTag">v27.08</span></div>
   <div class="tip" id="tip" hidden></div>
   <div class="toast" id="toast" role="status"></div>
   <section class="panel" id="panel" hidden aria-live="polite">
@@ -858,7 +861,7 @@ details.analysis{margin-top:6px}details.analysis summary{cursor:pointer;color:va
         <button class="btn" data-music-open>Music &amp; volume</button>
       </div>
       <div id="slotList" hidden></div>
-      <p class="note startv">Version <b class="ver" id="verStart">v27.07</b></p>
+      <p class="note startv">Version <b class="ver" id="verStart">v27.08</b></p>
     </div>
     <div class="startbox create" id="create" hidden>
       <h2>Create your mayor</h2>
@@ -1669,7 +1672,7 @@ function enact(s,p){DIVS.forEach(d=>{s.enacted[d.id]=p.divs[d.id];s.ratio[d.id]=
 // Voter groups. Each has a share of residents, turnout, home districts, concerns and an approval of you.
 // Citywide approval is the turnout-weighted average of the groups; each council district's approval comes from the groups that live there.
 // Shares, district mix and turnout are modeled, loosely grounded in Memphis demographics; they are not survey data.
-const VERSION='v27.07';
+const VERSION='v27.08';
 const GROUPS=[
  {id:'working',sh:'Working families',n:'Working families',ic:'⚒︎',c:'#f2a93b',share:24,turn:.5,start:56,w:{jobs:1,safety:.8,transit:.5},
   d:'Hourly workers in logistics, warehouses, health care and service jobs. The biggest bloc in the city.',dm:{1:1.1,2:.8,3:1.3,4:1.2,5:.6,6:1.2,7:1.1}},
@@ -10047,6 +10050,62 @@ openRankings=function(sel){RK_SEL=sel==null?RK_SEL:(sel<0?null:sel);const set=RK
 window.addEventListener('click',e=>{const b=e.target.closest('[data-rkset]');if(!b||!S)return;e.preventDefault();e.stopImmediatePropagation();RK_SET=b.dataset.rkset;RK_SEL=null;openRankings();try{$('mBody').scrollTop=0}catch(err){}},true);
 rkDeskRow=function(){if(!S||!(inOffice()||isCand()))return'';try{const R=rkInit();const H=R.sets.peer.hist;if(!H.length)H.push(rkSnap('peer'));const T=rkTable('peer');const d=H[0].pos-T.pos;let tn='',us='';try{tn=rkTable('tn').pos;us=rkTable('us').pos}catch(e){}
   return`<button class="hd-rank" data-hdact="ranks"><span class="hd-pi">#${T.pos}</span><span><small>HOW MEMPHIS RANKS · ${rkTier(T.pos,'peer')[1].toUpperCase()}</small>No. ${T.pos} of ${T.n} peer cities${d?` · <b class="${d>0?'pos':'neg'}">${d>0?'▲':'▼'}${Math.abs(d)}</b>`:''}<em class="hd-rk2">No. ${tn} in Tennessee · No. ${us} nationally</em></span><b aria-hidden="true">›</b></button>`}catch(e){return''}};
+
+// ======================= v27.08: ACTIONS TAKE TIME, AND TELL YOU WHAT HAPPENED =======================
+// One game, one clock. Every action, decision or activity now moves the calendar forward a little (a town hall
+// takes two days, a decision takes one), and afterward a "What happened" card shows the result: what you did,
+// how people took it, what changed, what came in while you were busy, and the new date.
+// Time stops at the last day of the month; Continue starts the next month, as before.
+const ACT={on:false,toasts:[],keys:[],res:[],msgs:[],busy:false};
+const ACT_NOISE=/^(Skill up|Money for|Campaign fund:|You were briefed)/;
+{const _t=toast;toast=function(m,...r){if(ACT.on&&m){ACT.toasts.push(String(m));return}return _t.call(this,m,...r)};ACT.rawToast=_t}
+{const _ma=markAct;markAct=function(k){if(ACT.on)ACT.keys.push(String(k));return _ma.apply(this,arguments)}}
+{const _r=resolve;resolve=function(ev,ci){if(ACT.on){try{ACT.res.push(evTitle(ev))}catch(e){ACT.res.push('')}}const m=_r.apply(this,arguments);if(ACT.on&&typeof m==='string'&&m)ACT.msgs.push(m);return m}}
+function actSnap(){let fam=null;try{const F=famInit();fam=F&&F.log?F.log[0]||null:null}catch(e){}
+  return{slots:S.slots,app:S.approval,res:S.reserve,met:{...S.met},log:(S.log||[])[0]||null,fam,ev:(S.events||[]).length,d:S.day,m:S.m,y:S.y,title:modalOpen?($('mTitle')||{}).textContent:null,open:!!modalOpen}}
+function actDaysFor(used,keys){if(keys.some(k=>/^(th\d|rally|ord_|plan|proj)/.test(k)))return 2;if(used)return 2;return 1}
+const ACT_MET=[['crime','Crime',true],['jobs','Jobs'],['reading','Reading'],['streets','Streets'],['blight','Blight',true],['transit','Transit'],['health','Health']];
+function actChanges(b){const out=[];const da=S.approval-b.app;if(Math.abs(da)>=0.1)out.push(`<span class="${da>0?'pos':'neg'}">Approval ${da>0?'+':'−'}${Math.abs(da).toFixed(1)}</span>`);
+  const dr=S.reserve-b.res;if(Math.abs(dr)>=0.01)out.push(`<span class="${dr>0?'pos':'neg'}">Reserve ${dr>0?'+':'−'}${fmtM(Math.abs(dr))}</span>`);
+  ACT_MET.forEach(([k,n,low])=>{const d=(S.met[k]||0)-(b.met[k]||0);if(Math.abs(d)>=0.1){const good=low?d<0:d>0;out.push(`<span class="${good?'pos':'neg'}">${n} ${d>0?'+':'−'}${Math.abs(d).toFixed(1)}</span>`)}});
+  return out}
+function actSince(arr,top){if(!arr)return[];const i=top?arr.indexOf(top):arr.length;return i<0?arr.slice(0,5):arr.slice(0,i)}
+function actAdvance(n){const start={d:S.day,m:S.m,y:S.y};let passed=0;const t0=modalOpen?($('mTitle')||{}).textContent:null,o0=!!modalOpen;let interrupted=false;
+  for(let i=0;i<n;i++){if(S.over||S.day>=daysIn(S.y,S.m))break;try{dayTick()}catch(e){console.warn('act tick',e)}passed++;
+    if(S.m!==start.m){break}const t1=modalOpen?($('mTitle')||{}).textContent:null;if(!!modalOpen!==o0||t1!==t0){interrupted=true;break}}
+  try{updateClock()}catch(e){}return{passed,interrupted}}
+function actFlash(){try{const el=$('hDate');if(el){el.classList.remove('act-flash');void el.offsetWidth;el.classList.add('act-flash')}}catch(e){}}
+function actFinish(b){ACT.on=false;const toasts=ACT.toasts.splice(0),keys=ACT.keys.splice(0),res=ACT.res.splice(0),msgs=ACT.msgs.splice(0);
+  if(!S||!S.started){toasts.forEach(m=>ACT.rawToast(m));return}
+  const used=Math.max(0,(b.slots||0)-(S.slots||0));const newLog=actSince(S.log,b.log).filter(x=>x&&x.t&&!ACT_NOISE.test(x.t)&&!/^New: /.test(x.t));
+  let famNew=[];try{const F=famInit();if(F&&F.log)famNew=actSince(F.log,b.fam).filter(x=>x&&x.t)}catch(e){}
+  const acted=used>0||keys.length||res.length||newLog.length||famNew.length;
+  if(!acted||b.d!==S.day||b.m!==S.m){toasts.forEach(m=>ACT.rawToast(m));return}
+  const want=actDaysFor(used,keys);const logTop=(S.log||[])[0]||null;const adv=actAdvance(want);
+  const arrived=actSince(S.log,logTop).filter(x=>x&&/^New: /.test(x.t)).map(x=>x.t.replace(/^New: /,''));
+  const lines=[...new Set([...msgs,...toasts,...famNew.map(x=>x.t),...newLog.map(x=>x.t)])].filter(t=>t&&!/^✓|^Next:|\d+ actions? left$|^Skill up/.test(String(t).trim())).slice(0,6);
+  const ch=actChanges(b);
+  const when=adv.passed?`${adv.passed} day${adv.passed===1?'':'s'} later · ${dateStr()}`:`${dateStr()} · the last day of the month`;
+  actFlash();try{save()}catch(e){}try{refreshHUD()}catch(e){}try{if(typeof renderHomeDesk==='function')renderHomeDesk(true)}catch(e){}
+  if(adv.interrupted){notify('info','What happened',`${lines[0]||'Done.'} ${when}.`,null,{ttl:10});return}
+  const head=res[0]||(newLog[0]&&newLog[0].t)||(famNew[0]&&famNew[0].t)||'Done';const lines2=lines.filter(t=>t!==head);if(lines2.length)lines.splice(0,lines.length,...lines2);
+  const timeLine=`<div class="act-time"><span aria-hidden="true">⏱</span><div><b>${adv.passed?`${adv.passed} day${adv.passed===1?'':'s'} pass${adv.passed===1?'es':''}`:'No time left this month'}</b><small>${adv.passed?`${b.d} ${MONTHS[b.m-1]} → ${dateStr()}`:'Press Continue to start next month'}${S.slots!=null&&inOffice()?` · ${Math.max(0,S.slots)} action${S.slots===1?'':'s'} left this month`:''}</small></div></div>`;
+  const body=`${timeLine}${lines.length?`<div class="act-lines">${lines.map(t=>`<p>${t}</p>`).join('')}</div>`:''}${ch.length?`<div class="act-ch">${ch.join('')}</div>`:''}${arrived.length?`<div class="facts"><h4>While you were busy</h4>${arrived.slice(0,4).map(t=>`<p class="note">New on your desk: ${t}</p>`).join('')}</div>`:''}`;
+  // If the action opened its own result screen, put the time and changes at the top of it
+  if(modalOpen&&(!b.open||($('mTitle')||{}).textContent!==b.title)){try{const mb=$('mBody');if(mb&&!mb.querySelector('.act-time')){const w=document.createElement('div');w.className='act-wrap';w.innerHTML=timeLine+(ch.length?`<div class="act-ch">${ch.join('')}</div>`:'')+(arrived.length?`<p class="note">New on your desk: ${arrived.slice(0,3).join(' · ')}</p>`:'');mb.prepend(w)}}catch(e){}return}
+  const back=b.open&&/action/i.test(b.title||'')?`<button class="choice" data-act="actions"><b>More actions</b></button>`:'';
+  if(window.BCInterior&&BCInterior.isOpen&&!document.body.classList.contains('dev-on')){actCard(head,body);return}
+  ACT.busy=true;openModal('What happened',head.length>70?head.slice(0,68)+'…':head,body+`<div class="choices"><button class="choice primary" data-act="close"><b>Back to work</b></button>${back}</div>`,false);ACT.busy=false}
+function actCard(head,body){let el=document.getElementById('actCard');if(el)el.remove();el=document.createElement('div');el.id='actCard';el.setAttribute('role','dialog');el.setAttribute('aria-label','What happened');
+  el.innerHTML=`<div class="ac-box"><small>WHAT HAPPENED</small><h3>${head}</h3>${body}<button class="ac-ok">Back to it</button></div>`;document.body.appendChild(el);
+  const close=()=>el.remove();el.addEventListener('click',e=>{if(e.target===el||e.target.closest('.ac-ok')){e.stopPropagation();close()}});setTimeout(()=>{try{el.querySelector('.ac-ok').focus()}catch(e){}},50)}
+window.addEventListener('click',e=>{if(ACT.on||!S||!S.started||S.over)return;try{if(!$('start').hidden)return}catch(err){}
+  const t=e.target.closest('button,a,[data-act],[data-ev],[data-ci],.choice');if(!t)return;
+  if(t.closest('#clock,#speeds,[data-speed],#bPlay,#cPause,.hd-nav,[data-hdview]'))return;
+  const b=actSnap();ACT.on=true;ACT._t=Date.now();setTimeout(()=>{try{actFinish(b)}catch(err){ACT.on=false;console.warn('act',err)}},120)},true);
+// keys too (Enter/Space on a focused choice fire click anyway); safety: never leave capture on
+setInterval(()=>{if(ACT.on&&ACT._t&&Date.now()-ACT._t>2000)ACT.on=false},1000);
+{const _a=openActions;openActions=function(...a){const r=_a.apply(this,a);try{const n=$('mBody').querySelector('.note');if(n&&!/take time/.test(n.textContent))n.insertAdjacentHTML('beforeend',' Every action takes time: most take 2 days, a quick one takes 1. The date moves forward as you work.')}catch(e){}return r}}
 
 function openLedger(){const L=S.log||[];openPanel('Everything that has happened, newest first','Ledger',L.length?`<div class="logl">${L.map(x=>`<div><span>${x.d}</span><p style="margin:0">${x.t}</p></div>`).join('')}</div>`:'<p class="note">Nothing yet. Tap ▶ Continue to move ahead.</p>','ledger')}
 function openPolicies(){const ks=Object.keys(POLICIES);
