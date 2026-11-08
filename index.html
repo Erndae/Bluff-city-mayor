@@ -484,6 +484,7 @@ body.deskon #endBanner{display:none!important}
 #actCard{position:fixed;inset:0;z-index:100003;background:rgba(6,10,14,.5);display:flex;align-items:center;justify-content:center;padding:16px}#actCard .ac-box{background:#0f1b25;color:#eef2f5;border:1px solid #2c4356;border-radius:14px;padding:18px;max-width:420px;width:100%;max-height:85vh;overflow:auto;box-shadow:0 20px 60px #0008}#actCard .ac-box>small{letter-spacing:2px;font-size:11px;color:var(--amber,#f0a83a)}#actCard h3{margin:4px 0 12px;font-size:20px}#actCard .ac-ok{width:100%;min-height:48px;margin-top:6px;border:none;border-radius:10px;background:var(--amber,#f0a83a);color:#0d1822;font:inherit;font-weight:700;cursor:pointer}#actCard .facts{background:#13212d;border-radius:10px;padding:8px 12px;margin:8px 0}#actCard .pos{color:var(--good,#5fd08a)}#actCard .neg{color:var(--bad,#ef6b5b)}
 body.panel-over #panel,body.deskon #panel{z-index:30}
 .act-jump{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 10px}.act-jump a{font-size:13px;padding:8px 10px;min-height:36px;display:inline-flex;align-items:center;border-radius:999px;background:#13212d;border:1px solid #24394b;color:var(--amber);text-decoration:none}.act-more{font-size:13px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin:14px 0 6px}
+body.aftermode #endBanner,body.mopen #endBanner,body:has(#panel:not([hidden])) #endBanner,body.inside-home #endBanner,body:has(#actCard) #endBanner{display:none!important}
 .adgain{display:block;width:100%;text-align:center;font-size:11px;font-weight:600;color:var(--good);margin-top:1px}
 #start{overflow-x:hidden;overflow-y:auto;touch-action:pan-y}.startbox{min-width:0;max-width:min(600px,100%);box-sizing:border-box}.startbox *{min-width:0}.create select,.create input{max-width:100%;width:100%;box-sizing:border-box;text-overflow:ellipsis}.create .tpick,.create .tpick>*{max-width:100%;box-sizing:border-box}
 @media (max-width:640px){.startbox{margin-left:0}#start{padding-left:max(16px,env(safe-area-inset-left,0px))}}
@@ -842,7 +843,7 @@ details.analysis{margin-top:6px}details.analysis summary{cursor:pointer;color:va
     <button class="btn primary" data-act="pause" id="bPlay"><svg class="ico" viewBox="0 0 12 12" aria-hidden="true"><path d="M3.2 1.6v8.8l7.2-4.4z" fill="currentColor"/></svg> Resume <kbd>Space</kbd></button>
   </nav>
   <div class="status" id="status">Loading map…</div>
-  <div class="credit"><span class="ver" id="verTag">v27.13</span></div>
+  <div class="credit"><span class="ver" id="verTag">v27.14</span></div>
   <div class="tip" id="tip" hidden></div>
   <div class="toast" id="toast" role="status"></div>
   <section class="panel" id="panel" hidden aria-live="polite">
@@ -870,7 +871,7 @@ details.analysis{margin-top:6px}details.analysis summary{cursor:pointer;color:va
         <button class="btn" data-music-open>Music &amp; volume</button>
       </div>
       <div id="slotList" hidden></div>
-      <p class="note startv">Version <b class="ver" id="verStart">v27.13</b></p>
+      <p class="note startv">Version <b class="ver" id="verStart">v27.14</b></p>
     </div>
     <div class="startbox create" id="create" hidden>
       <h2>Create your mayor</h2>
@@ -1681,7 +1682,7 @@ function enact(s,p){DIVS.forEach(d=>{s.enacted[d.id]=p.divs[d.id];s.ratio[d.id]=
 // Voter groups. Each has a share of residents, turnout, home districts, concerns and an approval of you.
 // Citywide approval is the turnout-weighted average of the groups; each council district's approval comes from the groups that live there.
 // Shares, district mix and turnout are modeled, loosely grounded in Memphis demographics; they are not survey data.
-const VERSION='v27.13';
+const VERSION='v27.14';
 const GROUPS=[
  {id:'working',sh:'Working families',n:'Working families',ic:'⚒︎',c:'#f2a93b',share:24,turn:.5,start:56,w:{jobs:1,safety:.8,transit:.5},
   d:'Hourly workers in logistics, warehouses, health care and service jobs. The biggest bloc in the city.',dm:{1:1.1,2:.8,3:1.3,4:1.2,5:.6,6:1.2,7:1.1}},
@@ -10175,6 +10176,7 @@ function afterActionsHTML(){const A=afterInit();const R=A.role&&ROLES[A.role];co
 // a town hall out of office: a campaign stop if you're running, otherwise nothing to do here
 {const _ha=hdAct;hdAct=function(a,dd){if(S&&S.after&&!inOffice()&&a==='townhall'){const A=S.after;if(A.role==='campaign'){const K=roleKit();const k=K&&K.acts&&(K.acts.doors?'doors':Object.keys(K.acts).find(x=>/door|rall|knock|canvass/i.test(K.acts[x].n)));if(k&&ROLE_ACTS-(A.ra||0)>0){const b=document.createElement('button');b.dataset.ract=k;b.innerHTML=`<b>${K.acts[k].n}</b>`;b.hidden=true;document.body.appendChild(b);b.click();b.remove();return}}openActions();return}
   if(a==='distpanel'){if(S&&S.after&&!inOffice()){try{openHoods(+dd)}catch(e){}return}document.body.classList.add('panel-over');try{openDistrict(+dd);return}catch(e){console.warn('openDistrict',e)}}return _ha.apply(this,arguments)}}
+{const _rh9=refreshHUD;refreshHUD=function(...a){const r=_rh9.apply(this,a);try{document.body.classList.toggle('aftermode',!!(S&&S.after&&!S.after.dead&&!S.after.prison))}catch(e){}return r}}
 {const _cp=closePanel;closePanel=function(...a){try{document.body.classList.remove('panel-over')}catch(e){}return _cp.apply(this,a)}}
 // "Next year" works from any desk screen: the year's button lives in the chapter box, which isn't on screen in Districts
 function hdClickNext(nb){if(nb.isConnected){nb.click();return}const box=HD.afterBox;if(!box){nb.click();return}const p=box.parentNode,nx=box.nextSibling;box.style.display='none';document.body.appendChild(box);

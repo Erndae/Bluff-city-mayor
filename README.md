@@ -4,6 +4,10 @@
 
 A Memphis political life on a real map of the city. Start as the mayor, run for mayor, or begin as a private citizen with a job and rise from there: the City Council, Shelby County mayor, Congress and the Senate, a law firm, a university presidency, or the back rooms as a kingmaker. As mayor you handle problems at real places, write the city budget, win votes from the 13-member City Council and run for re-election. Your family, health, party, rivals and record follow you through every chapter.
 
+## v27.14
+
+- **The "After City Hall" banner no longer covers screens.** Out of office it's gone entirely (the desk header already shows your role, and the Desk button takes you back). In other end-of-game moments it hides whenever a screen, panel or room is open.
+
 ## v27.13
 
 - **Actions shows everything you can act on.** The mayor's Actions screen now opens with:
