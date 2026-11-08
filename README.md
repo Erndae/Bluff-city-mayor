@@ -4,6 +4,20 @@
 
 A Memphis political life on a real map of the city. Start as the mayor, run for mayor, or begin as a private citizen with a job and rise from there: the City Council, Shelby County mayor, Congress and the Senate, a law firm, a university presidency, or the back rooms as a kingmaker. As mayor you handle problems at real places, write the city budget, win votes from the 13-member City Council and run for re-election. Your family, health, party, rivals and record follow you through every chapter.
 
+## v27.00: The district board
+
+- **The desk has a Districts tab.** The nine council districts are laid out roughly where they sit in Memphis, with the river on the left and Super Districts 8 and 9 below. Each tile shows its neighborhoods and how many people are waiting on you there.
+- **Four ways to look at the city:** approval, what each district needs most compared with the rest of the city, where its council member stands with you, and expected turnout.
+- **Tap a district to select it, tap again to open it.** Each district has its own screen:
+  - your approval there
+  - its council member (or all three in a super district), with a tap to meet them
+  - residents, turnout and what it wants most
+  - its neighborhoods and their mood, with a link to their leaders and asks
+  - everything waiting on you there
+  - a town hall, every detail about the district, or a view on the real street map
+- **The tab bar** is now Desk, Districts, Continue, Actions (Campaign for candidates) and More. The budget moved into More, and it still shows up under Waiting for you when it's due.
+- The district strip on the desk opens each district's screen.
+
 ## v26.99: The desk
 
 - **The game now opens on your desk instead of the map.** At the top is a Memphis skyline: the Pyramid, the Hernando de Soto Bridge and downtown, with the date and the weather. It changes with the seasons and ices over during an ice storm. Below it:

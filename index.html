@@ -427,6 +427,22 @@ details.bgfold{margin:6px 0 10px}details.bgfold summary{cursor:pointer;color:var
 body.deskmapview nav.actions [data-act="desk"]{display:none!important}
 body.deskon #nextchip,body.deskon #startchip,body.deskon #bSee{visibility:hidden}
 @media (min-width:861px){#homeDesk{right:auto;width:440px;border-right:1px solid #2a4052;box-shadow:6px 0 24px rgba(0,0,0,.35)}body.deskon .side{display:none}.hd-sheet{right:auto;left:250px}}
+.hd-link{background:none;border:none;color:var(--amber)!important;font-family:var(--f-body);letter-spacing:0;font-size:13px;font-weight:600;min-height:32px;padding:0}
+.hd-lens{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:4px;background:#13212d;border-radius:10px;padding:4px}.hd-lens button{min-height:38px;border:none;border-radius:8px;background:none;font-weight:600;font-size:13px}.hd-lens button.on{background:var(--amber);color:#0d1822!important}
+.hd-board{position:relative;width:100%;aspect-ratio:358/300;margin-top:4px}
+.hd-river{position:absolute;left:0;top:0;width:3.4%;height:100%;border-radius:6px;background:#1f4b6e}
+.hd-tile{position:absolute;box-sizing:border-box;border:none;border-radius:10px;padding:6px 8px;display:flex;flex-direction:column;align-items:flex-start;justify-content:space-between;text-align:left;overflow:hidden}
+.hd-tile.hd-wide{flex-direction:row;align-items:center;gap:8px}.hd-wide .hd-ta{flex:1}.hd-wide .hd-tn{font-size:18px}
+.hd-tile.sel{outline:3px solid var(--amber);outline-offset:2px}
+.hd-tn{font-family:var(--f-display);font-size:20px;line-height:1}.hd-tb{font-family:var(--f-mono);font-size:15px}.hd-ta{font-size:11px;line-height:1.2;opacity:.95}.hd-tw{font-size:11px;font-weight:700;background:var(--amber);color:#0d1822;border-radius:8px;padding:1px 6px}
+.hd-supers{display:grid;grid-template-columns:1fr 1fr;gap:6px}.hd-st{position:relative;min-height:54px;display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:8px}
+.hd-legend{display:flex;gap:12px;flex-wrap:wrap;font-size:12px;color:var(--muted)}.hd-legend span{display:flex;align-items:center;gap:5px}.hd-legend i{width:12px;height:12px;border-radius:3px;display:inline-block}
+.hd-dsum{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:12px;background:#13212d;border:1px solid #2a4052;text-align:left}
+.hd-dhead{margin:-10px -16px 4px;padding:10px 16px 14px;display:flex;flex-direction:column;gap:4px}.hd-back{align-self:flex-start;background:none;border:none;color:#fff!important;font-weight:600;font-size:14px;min-height:36px;padding:0}
+.hd-dh{display:flex;justify-content:space-between;align-items:flex-end;gap:10px}.hd-dh b{font-family:var(--f-display);font-weight:400;font-size:24px;display:block;line-height:1}.hd-dh small{font-size:13px}.hd-dr{text-align:right}.hd-dr b{font-family:var(--f-mono);font-size:24px}
+.hd-facts{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}.hd-facts div{background:#13212d;border-radius:8px;padding:6px 8px}.hd-facts small{display:block;font-size:11px;color:var(--muted)}.hd-facts b{font-size:14px}
+.hd-hood{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid #2a4052;font-size:14px}.hd-hood span{font-family:var(--f-mono);font-size:13px;color:var(--muted)}.hd-hood .pos{color:var(--good)}.hd-hood .neg{color:var(--bad)}
+.hd-dacts{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}.hd-dacts button{min-height:64px;border-radius:10px;border:1px solid #2a4052;background:#13212d;font-weight:600;font-size:13px;padding:6px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px}.hd-dacts small{font-weight:400;font-size:11px;color:var(--muted)}
 .adgain{display:block;width:100%;text-align:center;font-size:11px;font-weight:600;color:var(--good);margin-top:1px}
 #start{overflow-x:hidden;overflow-y:auto;touch-action:pan-y}.startbox{min-width:0;max-width:min(600px,100%);box-sizing:border-box}.startbox *{min-width:0}.create select,.create input{max-width:100%;width:100%;box-sizing:border-box;text-overflow:ellipsis}.create .tpick,.create .tpick>*{max-width:100%;box-sizing:border-box}
 @media (max-width:640px){.startbox{margin-left:0}#start{padding-left:max(16px,env(safe-area-inset-left,0px))}}
@@ -779,7 +795,7 @@ details.analysis{margin-top:6px}details.analysis summary{cursor:pointer;color:va
     <button class="btn primary" data-act="pause" id="bPlay"><svg class="ico" viewBox="0 0 12 12" aria-hidden="true"><path d="M3.2 1.6v8.8l7.2-4.4z" fill="currentColor"/></svg> Resume <kbd>Space</kbd></button>
   </nav>
   <div class="status" id="status">Loading map…</div>
-  <div class="credit"><span class="ver" id="verTag">v26.99</span></div>
+  <div class="credit"><span class="ver" id="verTag">v27.00</span></div>
   <div class="tip" id="tip" hidden></div>
   <div class="toast" id="toast" role="status"></div>
   <section class="panel" id="panel" hidden aria-live="polite">
@@ -807,7 +823,7 @@ details.analysis{margin-top:6px}details.analysis summary{cursor:pointer;color:va
         <button class="btn" data-music-open>Music &amp; volume</button>
       </div>
       <div id="slotList" hidden></div>
-      <p class="note startv">Version <b class="ver" id="verStart">v26.99</b></p>
+      <p class="note startv">Version <b class="ver" id="verStart">v27.00</b></p>
     </div>
     <div class="startbox create" id="create" hidden>
       <h2>Create your mayor</h2>
@@ -1618,7 +1634,7 @@ function enact(s,p){DIVS.forEach(d=>{s.enacted[d.id]=p.divs[d.id];s.ratio[d.id]=
 // Voter groups. Each has a share of residents, turnout, home districts, concerns and an approval of you.
 // Citywide approval is the turnout-weighted average of the groups; each council district's approval comes from the groups that live there.
 // Shares, district mix and turnout are modeled, loosely grounded in Memphis demographics; they are not survey data.
-const VERSION='v26.99';
+const VERSION='v27.00';
 const GROUPS=[
  {id:'working',sh:'Working families',n:'Working families',ic:'⚒︎',c:'#f2a93b',share:24,turn:.5,start:56,w:{jobs:1,safety:.8,transit:.5},
   d:'Hourly workers in logistics, warehouses, health care and service jobs. The biggest bloc in the city.',dm:{1:1.1,2:.8,3:1.3,4:1.2,5:.6,6:1.2,7:1.1}},
@@ -9466,7 +9482,7 @@ function hdNews(){const n=(S.news||[])[0];if(!n)return'';let o='The Bluff City L
 function hdNext(){try{const st=nextSteps()[0];if(!st)return'';return`<button class="hd-next" data-hdnext="1"><small>NEXT STEP</small><b>${hdEsc(st.t)}</b></button>`}catch(e){return''}}
 function hdPlay(){const b=$('bPlay');let t=b?b.innerText.replace(/\s*Space\s*$/,'').trim():'Continue';const lines=t.split('\n').map(x=>x.trim()).filter(Boolean);let main=lines[0]||'Continue',sub=lines.slice(1).join(' ');
   sub=sub.split(':')[0];if(S.paused===false){main='Pause';sub=dateStr()}main=main.replace(/^[▶❚\s]+/,'');return`<span class="hd-pm">${S.paused===false?'❚❚':'▶'} ${hdEsc(main)}</span>${sub?`<span class="hd-ps">${hdEsc(sub)}</span>`:''}`}
-const HD_ICON={desk:'<path d="M3 12h5l2 3h4l2-3h5"/><path d="M5 5h14l2 7v7H3v-7z"/>',act:'<path d="M13 2 4 14h7l-1 8 9-12h-7z"/>',budget:'<circle cx="12" cy="12" r="9"/><path d="M15 9h-4a2 2 0 0 0 0 4h2a2 2 0 0 1 0 4H9M12 6v2M12 16v2"/>',camp:'<path d="M4 20V10l8-6 8 6v10"/><path d="M9 20v-6h6v6"/>',more:'<circle cx="5" cy="12" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="19" cy="12" r="1.6"/>',map:'<path d="M9 4 3 6v14l6-2 6 2 6-2V4l-6 2-6-2z"/><path d="M9 4v14M15 6v14"/>',office:'<rect x="3" y="10" width="18" height="10" rx="1"/><path d="M8 10V6h8v4"/>',home:'<path d="M3 11 12 4l9 7"/><path d="M5 10v10h14V10"/>',pin:'<path d="M12 21s-7-6.5-7-12a7 7 0 0 1 14 0c0 5.5-7 12-7 12z"/><circle cx="12" cy="9" r="2.5"/>'};
+const HD_ICON={desk:'<path d="M3 12h5l2 3h4l2-3h5"/><path d="M5 5h14l2 7v7H3v-7z"/>',act:'<path d="M13 2 4 14h7l-1 8 9-12h-7z"/>',budget:'<circle cx="12" cy="12" r="9"/><path d="M15 9h-4a2 2 0 0 0 0 4h2a2 2 0 0 1 0 4H9M12 6v2M12 16v2"/>',camp:'<path d="M4 20V10l8-6 8 6v10"/><path d="M9 20v-6h6v6"/>',more:'<circle cx="5" cy="12" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="19" cy="12" r="1.6"/>',map:'<path d="M9 4 3 6v14l6-2 6 2 6-2V4l-6 2-6-2z"/><path d="M9 4v14M15 6v14"/>',office:'<rect x="3" y="10" width="18" height="10" rx="1"/><path d="M8 10V6h8v4"/>',home:'<path d="M3 11 12 4l9 7"/><path d="M5 10v10h14V10"/>',pin:'<path d="M12 21s-7-6.5-7-12a7 7 0 0 1 14 0c0 5.5-7 12-7 12z"/><circle cx="12" cy="9" r="2.5"/>',grid:'<rect x="3" y="3" width="8" height="8" rx="1"/><rect x="13" y="3" width="8" height="5" rx="1"/><rect x="13" y="10" width="8" height="11" rx="1"/><rect x="3" y="13" width="8" height="8" rx="1"/>'};
 function hdI(k,s){return`<svg viewBox="0 0 24 24" width="${s||22}" height="${s||22}" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${HD_ICON[k]}</svg>`}
 function hdHTML(){const cand=isCand();let visitors=0;try{visitors=officeVisitors().length}catch(e){}
   const where=cand?'ON THE CAMPAIGN TRAIL':'CITY HALL · 7TH FLOOR';
@@ -9475,33 +9491,32 @@ function hdHTML(){const cand=isCand();let visitors=0;try{visitors=officeVisitors
     <div class="hd-where"><small>${where}</small><span>${dateStr()} · ${hdWeather()}</span></div>
     <div class="hd-places">${cand?`<button data-hdact="hq">${hdI('camp',16)}Campaign HQ</button>`:`<button data-hdact="office" class="${visitors?'on':''}">${hdI('office',16)}Office${visitors?` <em>${visitors}</em>`:''}</button>`}<button data-hdact="home">${hdI('home',16)}Home</button><button data-hdact="map">${hdI('pin',16)}Around town</button></div></header>
    <button class="hd-stat" data-hdact="opinion">${hdStat()}</button>
-   <div class="hd-body">${hdNext()}<h3>WAITING FOR YOU</h3>${hdWaiting()}
-    <h3>THE DISTRICTS <span>tap one</span></h3><div class="hd-dists">${hdDistricts()}</div>${hdNews()}</div>
+   <div class="hd-body">${hdBodyFor()}</div>
    <nav class="hd-nav" aria-label="Desk">
-    <button class="on" data-hdact="top">${hdI('desk')}Desk</button>
-    <button data-hdact="actions">${hdI('act')}Actions</button>
+    <button class="${HD.view==='desk'?'on':''}" data-hdact="top">${hdI('desk')}Desk</button>
+    <button class="${HD.view!=='desk'?'on':''}" data-hdact="board">${hdI('grid')}Districts</button>
     <button class="hd-play" data-hdact="play">${hdPlay()}</button>
-    ${cand?`<button data-hdact="hq">${hdI('camp')}Campaign</button>`:`<button data-hdact="budget">${hdI('budget')}Budget</button>`}
+    ${cand?`<button data-hdact="hq">${hdI('camp')}Campaign</button>`:`<button data-hdact="actions">${hdI('act')}Actions</button>`}
     <button data-hdact="more" aria-expanded="${HD.more}">${hdI('more')}More</button></nav>
-   ${HD.more?`<div class="hd-sheet" role="menu">${(cand?[]:[['hq','Campaign HQ']]).concat([['council','The council'],['opinion','Public opinion'],['news','The news'],['ledger','Everything that happened'],['help','Guide'],['music','Music'],['map','Street map'],['menu','Save and settings']]).map(([a,n])=>`<button role="menuitem" data-hdact="${a}">${n}</button>`).join('')}</div>`:''}`}
+   ${HD.more?`<div class="hd-sheet" role="menu">${(cand?[['actions','Actions']]:[['budget','The budget'],['hq','Campaign HQ']]).concat([['council','The council'],['opinion','Public opinion'],['news','The news'],['ledger','Everything that happened'],['help','Guide'],['music','Music'],['map','Street map'],['menu','Save and settings']]).map(([a,n])=>`<button role="menuitem" data-hdact="${a}">${n}</button>`).join('')}</div>`:''}`}
 function renderHomeDesk(force){if(!S)return;const el=(()=>{let e=$('homeDesk');if(!e){const app=$('app');if(!app)return null;e=document.createElement('section');e.id='homeDesk';e.setAttribute('aria-label','Your desk');app.appendChild(e)}return e})();if(!el)return;
   if(!$('bDeskBack')){const nav=document.querySelector('nav.actions');if(nav)nav.insertAdjacentHTML('afterbegin',`<button class="btn" id="bDeskBack" data-hdact="desk">${hdI('desk',16)} Desk</button>`)}
   const show=hdShown();document.body.classList.toggle('deskon',show);document.body.classList.toggle('deskmapview',hdEligible()&&!HD.on);el.hidden=!show;if(!show)return;
-  const h=hdHTML();if(force||h!==HD.last){const sc=(el.querySelector('.hd-body')||{}).scrollTop||0;el.innerHTML=h;HD.last=h;const bd=el.querySelector('.hd-body');if(bd)bd.scrollTop=sc}}
+  const h=hdHTML();if(force||h!==HD.last){const sc=HD.top?0:((el.querySelector('.hd-body')||{}).scrollTop||0);HD.top=false;el.innerHTML=h;HD.last=h;const bd=el.querySelector('.hd-body');if(bd)bd.scrollTop=sc}}
 {const _rh=refreshHUD;refreshHUD=function(...a){const r=_rh.apply(this,a);try{renderHomeDesk()}catch(e){console.warn('desk',e)}return r}}
 {const _uc=updateClock;updateClock=function(...a){const r=_uc.apply(this,a);try{if(hdShown()){const p=document.querySelector('#homeDesk .hd-play');if(p){const h=hdPlay();if(p._h!==h){p.innerHTML=h;p._h=h}}}}catch(e){}return r}}
 // ---------- what the buttons do ----------
-function hdAct(a){const cand=isCand();HD.more=a==='more'?!HD.more:false;
-  const R={map:()=>hdSetView(false),desk:()=>hdSetView(true),top:()=>{const b=document.querySelector('#homeDesk .hd-body');if(b)b.scrollTop=0},menu:()=>{const m=$('bMenu');if(m)m.click()},
+function hdAct(a,dd){const cand=isCand();HD.more=a==='more'?!HD.more:false;
+  const R={map:()=>hdSetView(false),desk:()=>hdSetView(true),top:()=>{HD.view='desk';HD.top=true},board:()=>{HD.view='board';HD.top=true},townhall:()=>{try{goSection(openActions,'Hold a town hall')}catch(e){openActions()}},distpanel:()=>openPlace('dist:'+dd),hoods:()=>openHoods(+dd),mapdist:()=>{hdSetView(false);setTimeout(()=>{try{flyTo('dist:'+dd,false)}catch(e){}},80)},menu:()=>{const m=$('bMenu');if(m)m.click()},
    opinion:()=>openOpinion(),actions:()=>openActions(),budget:()=>openBudget(),hq:()=>openHQ(),council:()=>openCouncil(),news:()=>openNews(),ledger:()=>openLedger(),help:()=>openHelp(),
    music:()=>{const m=document.querySelector('[data-music-open]');if(m)m.click()},play:()=>{const b=$('bPlay');if(b)b.click()},
    office:()=>{const V=officeVisitors();try{enterOffice();if(V.length)setTimeout(()=>{try{openAudience()}catch(e){}},400)}catch(e){openPlace('cityhall')}},
    home:()=>{try{enterHome()}catch(e){try{openHousehold()}catch(e2){}}},more:()=>renderHomeDesk(true)};
-  try{(R[a]||(()=>{}))()}catch(e){console.warn('desk act',a,e)}if(a!=='more'&&a!=='map'&&a!=='desk')renderHomeDesk(true)}
+  try{(R[a]||(()=>{}))()}catch(e){console.warn('desk act',a,e)}if(a!=='more'&&a!=='map'&&a!=='desk'&&a!=='mapdist')renderHomeDesk(true)}
 document.addEventListener('click',e=>{const t=e.target.closest('[data-hdact],[data-hdgo],[data-hddist],[data-hdnext]');if(!t||!S)return;
-  if(t.dataset.hdact){e.preventDefault();e.stopPropagation();hdAct(t.dataset.hdact);return}
+  if(t.dataset.hdact){e.preventDefault();e.stopPropagation();hdAct(t.dataset.hdact,t.dataset.d);return}
   if(t.dataset.hdgo){e.preventDefault();e.stopPropagation();const g=t.dataset.hdgo;if(g==='desk'){openDesk();return}try{deskGo(g)}catch(err){console.warn(err)}return}
-  if(t.dataset.hddist){e.preventDefault();e.stopPropagation();try{openPlace('dist:'+t.dataset.hddist)}catch(err){}return}
+  if(t.dataset.hddist){e.preventDefault();e.stopPropagation();HD.d=+t.dataset.hddist;HD.view='dist';HD.top=true;renderHomeDesk(true);return}
   if(t.dataset.hdnext){e.preventDefault();e.stopPropagation();try{const st=nextSteps()[0];if(st)st.go()}catch(err){}}},true);
 // the old phone "Desk" button now brings the desk back
 document.addEventListener('click',e=>{const b=e.target.closest('nav.actions [data-act="desk"]');if(!b||!S||!hdEligible())return;e.preventDefault();e.stopImmediatePropagation();hdSetView(true)},true);
@@ -9510,6 +9525,50 @@ document.addEventListener('click',e=>{if(e.target.closest('#homeDesk [data-ev]')
 // the tour points at the map screen, so it runs there and the desk comes back afterward
 if(typeof tutStart==='function'){const _ts=tutStart;tutStart=function(...a){const r=_ts.apply(this,a);try{if(typeof TUT!=='undefined'&&TUT&&HD.on&&hdEligible()){HD.tour=true;HD.on=false;renderHomeDesk(true)}}catch(e){}return r}}
 if(typeof tutEnd==='function'){const _te=tutEnd;tutEnd=function(...a){const r=_te.apply(this,a);if(HD.tour){HD.tour=false;HD.on=true;try{renderHomeDesk(true)}catch(e){}}return r}}
+
+// ======================= v27.00: THE DISTRICT BOARD =======================
+// The desk gets a Districts tab: the nine council districts laid out roughly where they sit in Memphis (the river
+// on the left, super districts 8 and 9 below), switchable between approval, what each district needs most, where
+// the council stands and turnout. Tap a district for its own screen: its council members, its neighborhoods and
+// their mood, who's waiting there, and what you can do. The street map is still one tap away from either.
+HD.view=HD.view||'desk';HD.lens=HD.lens||'app';
+const HD_TILE={1:[5.6,0,62.6,17.3],2:[69.8,0,30.2,50],7:[5.6,19.3,33,28],5:[40.2,19.3,28,30.7],6:[5.6,49.3,33,24],3:[5.6,75.3,41.9,24.7],4:[49.2,52,50.8,48]};
+const HD_AREA={1:'Frayser · Raleigh',2:'Berclair · Cordova',3:'Whitehaven',4:'Hickory Hill · Oakhaven',5:'Midtown · East Memphis',6:'South Memphis · Westwood',7:'North Memphis · Downtown',8:'West half of the city',9:'East half of the city'};
+function hdHoodsIn(d){try{return HOODS.filter(h=>(d>7?superAt(h[2],h[1]):districtAt(h[2],h[1]))===d).map(h=>h[0])}catch(e){return[]}}
+function hdArea(d){const h=hdHoodsIn(d);return h.length>=2?h.slice(0,2).join(' · '):HD_AREA[d]}
+function hdMembers(d){return(S.council||[]).map((m,i)=>({m,i})).filter(x=>x.m.d===d)}
+function hdTurn(d){try{const c=dComp(d);let t=0,w=0;GROUPS.forEach(g=>{const G=S.groups[g.id];t+=c[g.id]*tEff(g,G.app);w+=c[g.id]});return w?t/w:0.5}catch(e){return 0.5}}
+function hdNeed(d){try{const c=dComp(d);let best=null,bv=-1e9;for(const p in PRIO_LABEL){let w=0,wc=0;GROUPS.forEach(g=>{const x=(g.w&&g.w[p])||0;w+=(c[g.id]||0)*x;wc+=(g.share/100)*x});if(!wc)continue;const v=Math.pow(w/wc,3)*Math.max(4,66-prioScore(S,p));if(v>bv){bv=v;best=p}}return{p:best,v:bv,score:best?prioScore(S,best):50}}catch(e){return{p:null,v:0,score:50}}}
+function hdLensOf(d){const L=HD.lens;
+  if(L==='app'){const a=dApp(d);return{cls:a>=55?'hi':a>=45?'mid':'lo',big:`${Math.round(a)}%`,sm:''}}
+  if(L==='need'){const n=hdNeed(d);return{cls:n.score<40?'lo':n.score<52?'mid':'hi',big:'',sm:n.p?PRIO_LABEL[n.p]:'–'}}
+  if(L==='council'){const M=hdMembers(d);const f=M.filter(x=>x.m.opinion>=0).length;if(M.length===1){const m=M[0].m;return{cls:m.opinion>=10?'hi':m.opinion>=0?'mid':'lo',big:fmtOp(m.opinion),sm:m.name.split(' ').pop()}}return{cls:f>=2?'hi':f===1?'mid':'lo',big:`${f} of ${M.length}`,sm:'on your side'}}
+  const t=hdTurn(d);const all=[1,2,3,4,5,6,7,8,9].map(hdTurn).sort((x,y)=>x-y);return{cls:t>=all[6]?'hi':t>=all[3]?'mid':'lo',big:`${Math.round(t*100)}%`,sm:'expected turnout'}}
+const HD_LENS=[['app','Approval'],['need','Needs'],['council','Council'],['turn','Turnout']];
+const HD_LEG={app:['55%+','45–54%','Under 45%'],need:['Doing fine','Some worry','Hurting'],council:['With you','Neutral','Against you'],turn:['High','Medium','Low']};
+function hdTileHTML(d,pos){const L=hdLensOf(d);const ev=hdEvsIn(d).length;const [x,y,w,h]=pos;
+  return`<button class="hd-tile hd-${L.cls}${HD.d===d?' sel':''}${d===1?' hd-wide':''}" style="left:${x}%;top:${y}%;width:${w}%;height:${h}%" data-hdd="${d}" aria-label="District ${d}, ${hdArea(d)}"><span class="hd-tn">${d}</span>${L.big?`<span class="hd-tb">${L.big}</span>`:''}<span class="hd-ta">${L.sm||hdArea(d)}</span>${ev?`<span class="hd-tw">${ev} waiting</span>`:''}</button>`}
+function hdEvsIn(d){const hs=new Set(hdHoodsIn(d));return(S.events||[]).map((e,i)=>({e,i})).filter(({e})=>{try{const at=evAt(e);return at==='dist:'+d||(e.hood&&hs.has(e.hood))}catch(err){return false}})}
+function hdBoard(){let h=`<div class="hd-lens" role="group" aria-label="Show">${HD_LENS.map(([k,n])=>`<button data-hdlens="${k}" class="${HD.lens===k?'on':''}">${n}</button>`).join('')}</div>
+  <div class="hd-board"><div class="hd-river" aria-hidden="true"></div>${Object.entries(HD_TILE).map(([d,p])=>hdTileHTML(+d,p)).join('')}</div>
+  <div class="hd-supers">${[8,9].map(d=>{const L=hdLensOf(d);return`<button class="hd-tile hd-st hd-${L.cls}" data-hdd="${d}"><span class="hd-tn">${d}</span><span class="hd-ta">Super District · ${(HD.lens==='need'||HD.lens==='council')&&L.sm?L.sm.toLowerCase():HD_AREA[d].toLowerCase()}</span>${L.big?`<span class="hd-tb">${L.big}</span>`:''}</button>`}).join('')}</div>
+  <div class="hd-legend">${HD_LEG[HD.lens].map((t,i)=>`<span><i class="hd-${['hi','mid','lo'][i]}"></i>${t}</span>`).join('')}</div>`;
+  const d=HD.d||4;const M=hdMembers(d);const n=hdNeed(d);
+  h+=`<button class="hd-dsum" data-hdd="${d}"><span class="hd-ct"><b>District ${d}${M.length===1?' · '+M[0].m.name:''}</b><small>${hdArea(d)} · approval ${Math.round(dApp(d))}%${n.p?' · wants: '+PRIO_LABEL[n.p].toLowerCase():''}</small></span><span class="hd-open">Open ›</span></button>
+   <button class="hd-all" data-hdact="mapdist" data-d="${d}">See District ${d} on the street map ›</button>`;return h}
+function hdDist(d){const a=dApp(d),cls=a>=55?'hi':a>=45?'mid':'lo';const M=hdMembers(d);const n=hdNeed(d);const hoods=hdHoodsIn(d);const evs=hdEvsIn(d);
+  let h=`<div class="hd-dhead hd-${cls}"><button class="hd-back" data-hdact="board">‹ All districts</button><div class="hd-dh"><div><b>DISTRICT ${d}</b><small>${hdArea(d)}</small></div><div class="hd-dr"><b>${Math.round(a)}%</b><small>approve of you</small></div></div></div>`;
+  h+=`<h3>${d>7?'COUNCIL MEMBERS':'COUNCIL MEMBER'}</h3>`+M.map(({m,i})=>`<button class="hd-row" data-char="${i}"><span class="hd-face">${portrait(m,40)}</span><span class="hd-ct"><b>${m.name}</b><small>${m.seat} · <span style="color:${opColor(m.opinion)}">${fmtOp(m.opinion)}</span>${m.favors?` · owes you ${m.favors}`:''}</small></span><span class="hd-open">Meet ›</span></button>`).join('');
+  h+=`<div class="hd-facts"><div><small>Residents</small><b>${(()=>{try{return Math.round(S.popn*(d>7?0.5:1/7)/100)*100}catch(e){return'–'}})().toLocaleString()}</b></div><div><small>Turnout</small><b>${Math.round(hdTurn(d)*100)}%</b></div><div><small>Wants most</small><b>${n.p?PRIO_LABEL[n.p]:'–'}</b></div></div>`;
+  const named=hoods.filter(x=>{try{return!!hoodsInit()[x]}catch(e){return false}});
+  if(hoods.length){h+=`<h3>NEIGHBORHOODS</h3>`+hoods.slice(0,6).map(x=>{let mood=null;if(named.includes(x)){try{mood=hoodMood(x)}catch(e){}}const w=mood==null?'':mood>=60?'<span class="pos">Warm</span>':mood>=40?'<span>Steady</span>':'<span class="neg">Upset</span>';return`<div class="hd-hood"><b>${x}</b>${w}</div>`}).join('')+(named.length?`<button class="hd-all" data-hdact="hoods" data-d="${d}">Neighborhood leaders and their asks ›</button>`:'')}
+  if(evs.length)h+=`<h3>WAITING HERE · ${evs.length}</h3>`+evs.slice(0,4).map(({e,i})=>{let t='';try{t=evTitle(e)}catch(err){t='Something needs you'}return`<button class="hd-row" data-hdgo="ev:${i}">${hdThumb(e)}<span class="hd-ct"><b>${hdEsc(t)}</b><small>${e.expires-(nowM()-e.born)<=1?'this month':'decide soon'}</small></span><span class="hd-open">Open ›</span></button>`}).join('');
+  h+=`<h3>DO SOMETHING HERE</h3><div class="hd-dacts"><button data-hdact="townhall">Hold a town hall<small>1 action</small></button><button data-hdact="distpanel" data-d="${d}">Everything about District ${d}<small>projects, requests, history</small></button><button data-hdact="mapdist" data-d="${d}">See it on the street map<small>the real streets</small></button></div>`;
+  return h}
+function hdBodyFor(){if(HD.view==='board')return hdBoard();if(HD.view==='dist')return hdDist(HD.d||4);
+  return`${hdNext()}<h3>WAITING FOR YOU</h3>${hdWaiting()}<h3>THE DISTRICTS <button class="hd-link" data-hdact="board">Open the board ›</button></h3><div class="hd-dists">${hdDistricts()}</div>${hdNews()}`}
+document.addEventListener('click',e=>{const t=e.target.closest('#homeDesk [data-hdlens],#homeDesk [data-hdd]');if(!t||!S)return;e.preventDefault();e.stopPropagation();
+  if(t.dataset.hdlens){HD.lens=t.dataset.hdlens;renderHomeDesk(true);return}const d=+t.dataset.hdd;if(HD.view==='board'&&HD.d!==d&&!t.classList.contains('hd-dsum')&&!t.classList.contains('hd-st')){HD.d=d;renderHomeDesk(true);return}HD.d=d;HD.view='dist';HD.top=true;renderHomeDesk(true)},true);
 
 function openLedger(){const L=S.log||[];openPanel('Everything that has happened, newest first','Ledger',L.length?`<div class="logl">${L.map(x=>`<div><span>${x.d}</span><p style="margin:0">${x.t}</p></div>`).join('')}</div>`:'<p class="note">Nothing yet. Tap ▶ Continue to move ahead.</p>','ledger')}
 function openPolicies(){const ks=Object.keys(POLICIES);
