@@ -4,6 +4,17 @@
 
 A Memphis political life on a real map of the city. Start as the mayor, run for mayor, or begin as a private citizen with a job and rise from there: the City Council, Shelby County mayor, Congress and the Senate, a law firm, a university presidency, or the back rooms as a kingmaker. As mayor you handle problems at real places, write the city budget, win votes from the 13-member City Council and run for re-election. Your family, health, party, rivals and record follow you through every chapter.
 
+## v27.11
+
+- **The next chapter gets popups and a moving clock.** Out of office (running for office, County mayor, Congress, kingmaker, law firm and the rest), every move now moves the calendar forward two months and ends with a "What happened" popup: the result, the months that passed, how many moves are left this year, and what changed (influence, savings, your odds of winning, approval). "Next year" finishes whatever is left of the year, so a year never runs twice.
+- **Take action works out of office.** It now shows this year's moves for your role instead of the mayor's menu.
+- **District buttons work.**
+  - In office, "Everything about District N" opens the district screen on top of the desk (it used to open hidden behind it).
+  - Out of office, "Hold a town hall" becomes "Campaign stop here" when you're running, and "Everything about District N" becomes the district's neighborhoods.
+- **Next year works from the Districts screen** (it did nothing there before).
+- **No more empty feed entries.** Visiting home or the office when nothing happened no longer adds "You spent some time at home." Old entries like that are cleared.
+- Merged Codex's v27.10 desk illustrations and portraits.
+
 ## v27.09
 
 - **Actions take time.** Every action, decision or activity now moves the calendar forward. Town halls, rallies, ordinances, projects and anything that uses one of your monthly actions take 2 days; decisions, meetings, press conferences and family time take 1. The date in the header flashes when it changes.
