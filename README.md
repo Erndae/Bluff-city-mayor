@@ -4,7 +4,7 @@
 
 A Memphis political life on a real map of the city. Start as the mayor, run for mayor, or begin as a private citizen with a job and rise from there: the City Council, Shelby County mayor, Congress and the Senate, a law firm, a university presidency, or the back rooms as a kingmaker. As mayor you handle problems at real places, write the city budget, win votes from the 13-member City Council and run for re-election. Your family, health, party, rivals and record follow you through every chapter.
 
-## v27.08
+## v27.09
 
 - **Actions take time.** Every action, decision or activity now moves the calendar forward. Town halls, rallies, ordinances, projects and anything that uses one of your monthly actions take 2 days; decisions, meetings, press conferences and family time take 1. The date in the header flashes when it changes.
 - **A "What happened" card after everything you do.** It shows how it went, the new date and how many days passed, the actions you have left, what changed (approval, reserve, crime, jobs and the rest), and anything new that landed on your desk while you were busy.
