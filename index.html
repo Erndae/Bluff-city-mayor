@@ -476,6 +476,8 @@ body.deskon #endBanner{display:none!important}
 .rk-n b{display:block;font-size:14px}.rk-n small{font-size:12px;color:var(--muted)}.rk-v{font-family:var(--f-mono);font-size:13px}.rk-r{font-family:var(--f-mono);font-size:13px;text-align:right}.rk-c{text-align:right;font-size:13px}
 .rk-bar{display:grid;grid-template-columns:120px 1fr 74px;align-items:center;gap:8px;font-size:13px;margin:3px 0}.rk-bar i{height:8px;border-radius:4px;background:#22323f;overflow:hidden;display:block}.rk-bar i b{display:block;height:100%;background:#6b7a88}.rk-bar.me{font-weight:700}.rk-bar.me i b{background:var(--amber)}.rk-bar em{font-style:normal;font-family:var(--f-mono);text-align:right}
 .rk-hist{display:flex;gap:6px;flex-wrap:wrap}.rk-hist span{display:flex;flex-direction:column;align-items:center;padding:4px 8px;border-radius:8px;min-width:42px}.rk-hist small{font-size:10px;opacity:.85}.rk-hist b{font-family:var(--f-mono)}.rk-hist .now{outline:1px solid var(--amber)}
+.rk-tabs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:4px;background:#13212d;border-radius:10px;padding:4px;margin-bottom:8px}.rk-tabs button{min-height:44px;border:none;border-radius:8px;background:none;color:inherit;font:inherit;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer}.rk-tabs button.on{background:var(--amber);color:#0d1822}.rk-tabs small{font-size:11px;opacity:.85}
+.hd-rk2{display:block;font-style:normal;font-size:12px;color:var(--muted)}
 .adgain{display:block;width:100%;text-align:center;font-size:11px;font-weight:600;color:var(--good);margin-top:1px}
 #start{overflow-x:hidden;overflow-y:auto;touch-action:pan-y}.startbox{min-width:0;max-width:min(600px,100%);box-sizing:border-box}.startbox *{min-width:0}.create select,.create input{max-width:100%;width:100%;box-sizing:border-box;text-overflow:ellipsis}.create .tpick,.create .tpick>*{max-width:100%;box-sizing:border-box}
 @media (max-width:640px){.startbox{margin-left:0}#start{padding-left:max(16px,env(safe-area-inset-left,0px))}}
@@ -828,7 +830,7 @@ details.analysis{margin-top:6px}details.analysis summary{cursor:pointer;color:va
     <button class="btn primary" data-act="pause" id="bPlay"><svg class="ico" viewBox="0 0 12 12" aria-hidden="true"><path d="M3.2 1.6v8.8l7.2-4.4z" fill="currentColor"/></svg> Resume <kbd>Space</kbd></button>
   </nav>
   <div class="status" id="status">Loading map…</div>
-  <div class="credit"><span class="ver" id="verTag">v27.05</span></div>
+  <div class="credit"><span class="ver" id="verTag">v27.06</span></div>
   <div class="tip" id="tip" hidden></div>
   <div class="toast" id="toast" role="status"></div>
   <section class="panel" id="panel" hidden aria-live="polite">
@@ -856,7 +858,7 @@ details.analysis{margin-top:6px}details.analysis summary{cursor:pointer;color:va
         <button class="btn" data-music-open>Music &amp; volume</button>
       </div>
       <div id="slotList" hidden></div>
-      <p class="note startv">Version <b class="ver" id="verStart">v27.05</b></p>
+      <p class="note startv">Version <b class="ver" id="verStart">v27.06</b></p>
     </div>
     <div class="startbox create" id="create" hidden>
       <h2>Create your mayor</h2>
@@ -1667,7 +1669,7 @@ function enact(s,p){DIVS.forEach(d=>{s.enacted[d.id]=p.divs[d.id];s.ratio[d.id]=
 // Voter groups. Each has a share of residents, turnout, home districts, concerns and an approval of you.
 // Citywide approval is the turnout-weighted average of the groups; each council district's approval comes from the groups that live there.
 // Shares, district mix and turnout are modeled, loosely grounded in Memphis demographics; they are not survey data.
-const VERSION='v27.05';
+const VERSION='v27.06';
 const GROUPS=[
  {id:'working',sh:'Working families',n:'Working families',ic:'⚒︎',c:'#f2a93b',share:24,turn:.5,start:56,w:{jobs:1,safety:.8,transit:.5},
   d:'Hourly workers in logistics, warehouses, health care and service jobs. The biggest bloc in the city.',dm:{1:1.1,2:.8,3:1.3,4:1.2,5:.6,6:1.2,7:1.1}},
@@ -9997,6 +9999,53 @@ function rkDeskRow(){if(!S||!(inOffice()||isCand()))return'';try{const R=rkInit(
 {const _b=hdBodyFor;hdBodyFor=function(){const h=_b.apply(this,arguments);if(HD.view!=='desk')return h;return h.replace('<h3>WAITING FOR YOU</h3>',rkDeskRow()+'<h3>WAITING FOR YOU</h3>')}}
 {const _h=hdHTML;hdHTML=function(){let h=_h.apply(this,arguments);if(S&&(inOffice()||isCand())&&HD.more)h=h.replace('<button role="menuitem" data-hdact="council">','<button role="menuitem" data-hdact="ranks">How Memphis ranks</button><button role="menuitem" data-hdact="council">');return h}}
 window.addEventListener('click',e=>{const t=e.target.closest('#homeDesk [data-hdact="ranks"]');if(!t||!S)return;e.preventDefault();e.stopImmediatePropagation();HD.more=false;renderHomeDesk(true);RK_SEL=null;openRankings()},true);
+
+// ======================= v27.06: TENNESSEE AND NATIONAL RANKINGS =======================
+// Two more lists beside the peer cities: Memphis among Tennessee's biggest cities and its own suburbs, and Memphis
+// among the 32 largest cities in the country. Same eight categories, each list with its own standings, tiers and
+// history. The January rankings report all three.
+// [crime, unemployment, income, graduation, reading, life expectancy, growth, transit]
+const RK_TN={'Nashville':[1100,2.8,73000,83,30,76,0.8,27],'Knoxville':[1000,3.0,48000,85,35,75,0.5,22],'Chattanooga':[1100,3.1,55000,84,30,75,0.6,20],'Clarksville':[500,3.8,63000,93,35,76,2.5,10],'Murfreesboro':[450,2.6,72000,94,42,78,2.3,8],'Franklin':[120,2.3,119000,97,60,82,1.5,5],'Jackson':[1300,4.5,46000,85,22,73,-0.2,10],'Johnson City':[500,3.2,48000,92,40,76,0.5,10],'Germantown':[150,2.5,135000,96,65,82,-0.1,5],'Collierville':[140,2.4,130000,96,62,82,0.5,4],'Bartlett':[300,2.7,90000,94,48,79,-0.2,6]};
+const RK_US={'New York':[580,5.3,76000,83,48,80.5,-0.6,89],'Los Angeles':[750,5.4,76000,80,42,79,-0.5,53],'Chicago':[900,5.0,71000,84,30,77,-0.4,65],'Houston':[1100,4.4,60000,84,35,77,0.3,37],'Phoenix':[750,3.5,72000,80,35,78,0.8,32],'Philadelphia':[1000,5.0,57000,78,32,75,-0.4,67],'San Antonio':[800,3.8,59000,86,35,77,1.0,35],'San Diego':[380,4.2,98000,88,50,81,0.2,37],'Dallas':[800,3.9,63000,83,35,77,0.3,40],'Jacksonville':[650,3.4,64000,88,45,76,1.3,24],'Austin':[450,3.2,86000,90,45,80,1.0,35],'Fort Worth':[550,3.8,72000,85,35,77,2.0,25],'San Jose':[400,4.5,136000,87,55,83,-0.4,40],'Columbus':[550,3.8,62000,79,30,76,0.8,30],'Charlotte':[700,3.6,75000,85,40,78,1.5,30],'Indianapolis':[1200,3.6,60000,78,25,74,0,25],'San Francisco':[700,3.8,136000,88,50,82,-0.5,77],'Seattle':[700,4.0,116000,86,60,81,0.5,60],'Denver':[950,3.9,88000,79,40,79,0.3,47],'Oklahoma City':[800,3.3,64000,72,20,74,1.2,17],'Nashville':[1100,2.8,73000,83,30,76,0.8,27],'Washington':[900,5.3,101000,75,30,78,0.5,70],'El Paso':[400,4.2,55000,86,40,78,0.3,30],'Las Vegas':[700,6.0,67000,82,32,76,1.0,36],'Boston':[650,3.6,90000,80,40,81,-0.2,72],'Detroit':[2000,8.0,37000,77,12,71,-0.3,38],'Portland':[750,4.0,85000,82,45,79,-0.7,50],'Louisville':[900,4.2,64000,82,30,74.5,-0.2,33],'Baltimore':[1800,4.5,58000,70,17,72,-1.0,57],'Milwaukee':[1550,4.0,49000,72,17,74,-0.6,48],'Albuquerque':[1300,4.0,62000,77,25,76,0,32]};
+const RK_SETS={peer:{n:'Peer cities',d:'cities its size and in its region',data:RK_PEERS,tiers:[3,7,12]},tn:{n:'Tennessee',d:'the biggest cities and suburbs in Tennessee',data:RK_TN,tiers:[2,5,9]},us:{n:'National',d:'the 32 largest cities in the country',data:RK_US,tiers:[6,13,24]}};
+let RK_SET='peer';
+function rkTrend(){return RK_KEYS.map(k=>{const r=Math.random()-0.5;return k==='crime'?r*0.06:k==='unemp'?r*0.3:k==='income'?0.005+r*0.02:k==='grad'?r*0.8:k==='read'?r*0.8:k==='life'?r*0.15:k==='growth'?r*0.3:r*1.2})}
+rkInit=function(){if(!S)return null;if(!S.rank)S.rank={y:S.y};const R=S.rank;R.sets=R.sets||{};
+  if(!R.sets.peer&&R.peers)R.sets.peer={vals:R.peers,tr:R.tr,hist:R.hist||[]};
+  for(const k in RK_SETS){if(!R.sets[k]){const vals=JSON.parse(JSON.stringify(RK_SETS[k].data)),tr={};Object.keys(vals).forEach(c=>tr[c]=rkTrend());R.sets[k]={vals,tr,hist:[]}}}
+  delete R.peers;delete R.tr;R.hist=R.sets.peer.hist;return R};
+rkTable=function(set){set=set||'peer';const R=rkInit();const all={Memphis:rkMemphis(),...R.sets[set].vals};const cities=Object.keys(all);const ranks={};cities.forEach(c=>ranks[c]=[]);
+  RK_CATS.forEach((C,i)=>{const ord=cities.slice().sort((a,b)=>C.low?all[a][i]-all[b][i]:all[b][i]-all[a][i]);ord.forEach((c,j)=>ranks[c][i]=j+1)});
+  const score={};cities.forEach(c=>score[c]=0);RK_CATS.forEach((C,i)=>{const v=cities.map(c=>all[c][i]);const lo=Math.min(...v),hi=Math.max(...v);cities.forEach(c=>{let t=(all[c][i]-lo)/((hi-lo)||1);if(C.low)t=1-t;score[c]+=t*125})});cities.forEach(c=>score[c]=Math.round(score[c]));
+  const overall=cities.slice().sort((a,b)=>score[b]-score[a]);return{all,ranks,score,overall,pos:overall.indexOf('Memphis')+1,n:cities.length}};
+rkTier=function(pos,set){const t=RK_SETS[set||'peer'].tiers;return pos<=t[0]?[t[0],'Great city','rk-t1']:pos<=t[1]?[t[1],'Major city','rk-t2']:pos<=t[2]?[t[2],'Minor city','rk-t3']:[99,'Struggling city','rk-t4']};
+rkSnap=function(set){set=set||'peer';const T=rkTable(set);return{y:S.y,m:S.m,pos:T.pos,score:T.score.Memphis,cats:T.ranks.Memphis.slice()}};
+rkYear=function(){const R=rkInit();for(const k in R.sets){const X=R.sets[k];Object.keys(X.vals).forEach(c=>{const v=X.vals[c],t=X.tr[c]||(X.tr[c]=rkTrend());v[0]=Math.max(50,v[0]*(1+t[0]+(Math.random()-.5)*0.04));v[1]=clamp(v[1]+t[1]+(Math.random()-.5)*0.4,1.5,14);v[2]=v[2]*(1+t[2]+(Math.random()-.5)*0.01);v[3]=clamp(v[3]+t[3]+(Math.random()-.5)*0.8,55,99);v[4]=clamp(v[4]+t[4]+(Math.random()-.5)*0.8,5,80);v[5]=clamp(v[5]+t[5]+(Math.random()-.5)*0.1,65,85);v[6]=clamp(v[6]+t[6]*0.3+(Math.random()-.5)*0.3,-3,4);v[7]=clamp(v[7]+t[7]+(Math.random()-.5)*1,2,95)})}};
+// January: the peer list moves opinion; the news reports all three
+let RK_JAN=null;
+function rkOtherParts(before){const R=rkInit();const parts=[];['tn','us'].forEach(k=>{const now=rkSnap(k);R.sets[k].hist.push(now);if(R.sets[k].hist.length>20)R.sets[k].hist.shift();const b=before[k];parts.push(`No. ${now.pos} of ${rkTable(k).n} ${k==='tn'?'in Tennessee':'nationally'}${b?` (${b>now.pos?'up '+(b-now.pos):b<now.pos?'down '+(now.pos-b):'no change'})`:''}`)});return parts.join(' · ')+'.'}
+{const _n=notify;notify=function(kind,title,text,...r){try{if(RK_JAN&&!RK_JAN.done&&/rankings/i.test(title||'')){RK_JAN.done=rkOtherParts(RK_JAN.before);text=(text||'')+' '+RK_JAN.done}}catch(e){}return _n.call(this,kind,title,text,...r)}}
+{const _rj=rkJanuary;rkJanuary=function(){if(!inOffice())return;const R=rkInit();if(R.y===S.y&&R.sets.peer.hist.length)return;const before={};for(const k in RK_SETS){const h=R.sets[k].hist;if(!h.length&&k!=='peer'){const x=rkSnap(k);const p0=R.sets.peer.hist[0];if(p0){x.y=p0.y;x.m=p0.m}h.push(x)}before[k]=h.length?h[h.length-1].pos:null}
+  RK_JAN={before,done:null};try{_rj.apply(this,arguments)}finally{const J=RK_JAN;RK_JAN=null;if(!J.done)J.done=rkOtherParts(before);try{logIt('City rankings: '+J.done)}catch(e){}}}}
+// ---------- the screen, with three lists ----------
+openRankings=function(sel){RK_SEL=sel==null?RK_SEL:(sel<0?null:sel);const set=RK_SET,SET=RK_SETS[set];const R=rkInit();const H=R.sets[set].hist;if(!H.length)H.push(rkSnap(set));const T=rkTable(set);const first=H[0],last=H.length>1?H[H.length-1]:null;const tier=rkTier(T.pos,set);
+  const ch=(a,b)=>{const d=a-b;return d>0?`<span class="pos">▲${d}</span>`:d<0?`<span class="neg">▼${-d}</span>`:'<span class="note">–</span>'};const me=T.ranks.Memphis;
+  const tabs=Object.keys(RK_SETS).map(k=>{let p='';try{p='No. '+rkTable(k).pos}catch(e){}return`<button data-rkset="${k}" class="${k===set?'on':''}"><b>${RK_SETS[k].n}</b><small>${p}</small></button>`}).join('');
+  let h=`<div class="rk-tabs" role="tablist">${tabs}</div><p>Memphis against ${SET.d}. Memphis's numbers come from your city right now; the other cities keep changing too. New rankings come out every January.</p>
+   <div class="rk-head"><span class="rk-badge ${tier[2]}">${tier[1]}</span><div><b>No. ${T.pos} of ${T.n}</b><small>Standing ${T.score.Memphis} · since ${first.y} ${ch(first.pos,T.pos)}${last&&last!==first?` · since last January ${ch(last.pos,T.pos)}`:''}</small></div></div>
+   <div class="facts"><h4>The standings</h4><div class="rk-league">${T.overall.map((c,j)=>{const t=rkTier(j+1,set);const brk=T.overall[j+1]&&rkTier(j+2,set)[1]!==t[1];return`<div class="rk-lg${c==='Memphis'?' me':''}"><span class="rk-pos">${j+1}</span><span class="rk-dot ${t[2]}"></span><span class="rk-city">${c}</span><span class="rk-sc">${T.score[c]}</span></div>${brk?`<div class="rk-sep">${rkTier(j+2,set)[1].replace('city','cities')}</div>`:''}`}).join('')}</div>
+    <p class="note">Great cities are the top ${SET.tiers[0]}, major cities through No. ${SET.tiers[1]}, minor cities through No. ${SET.tiers[2]}, struggling cities the rest. Standing adds up all eight categories.</p></div>
+   <div class="rk-rows">${RK_CATS.map((C,i)=>`<button class="rk-row${RK_SEL===i?' on':''}" data-rk="${i}"><span class="rk-n"><b>${C.n}</b><small>${C.u}</small></span><span class="rk-v">${C.fmt(T.all.Memphis[i])}</span><span class="rk-r">No. ${me[i]}</span><span class="rk-c">${ch(first.cats[i],me[i])}</span></button>`).join('')}</div>`;
+  if(RK_SEL!=null){const i=RK_SEL,C=RK_CATS[i];const ord=Object.keys(T.all).sort((a,b)=>T.ranks[a][i]-T.ranks[b][i]);const vals=ord.map(c=>T.all[c][i]);const mx=Math.max(...vals.map(Math.abs)),mn=Math.min(...vals),hx=Math.max(...vals);
+    h+=`<div class="facts"><h4>${C.n}: ${C.u}${C.low?' (lower is better)':''}</h4>${ord.map((c,j)=>{const v=T.all[c][i];const w=C.id==='growth'?Math.round((v-mn)/((hx-mn)||1)*100):Math.round(Math.abs(v)/mx*100);return`<div class="rk-bar${c==='Memphis'?' me':''}"><span>${j+1}. ${c}</span><i><b style="width:${Math.max(3,w)}%"></b></i><em>${C.fmt(v)}</em></div>`}).join('')}</div>`}
+  else h+=`<p class="note">Tap a category to see every city.</p>`;
+  h+=`<div class="facts"><h4>Over the years</h4>${H.length>1?`<p class="rk-hist">${H.map(x=>`<span class="${rkTier(x.pos,set)[2]}"><small>${x.y}</small><b>${x.pos}</b></span>`).join('')}<span class="now"><small>now</small><b>${T.pos}</b></span></p>`:'<p class="note">Your first rankings come out in January.</p>'}</div>
+   <p class="note">The other cities' numbers are game estimates, loosely based on recent public data, and they change as the game goes on. They aren't official statistics, and test scores from different states don't compare perfectly.</p>
+   <div class="choices"><button class="choice" data-act="close"><b>Back</b></button></div>`;
+  openModal('How Memphis ranks',`Memphis and ${set==='peer'?'its peer cities':set==='tn'?'Tennessee':'the nation'}`,h,true)};
+window.addEventListener('click',e=>{const b=e.target.closest('[data-rkset]');if(!b||!S)return;e.preventDefault();e.stopImmediatePropagation();RK_SET=b.dataset.rkset;RK_SEL=null;openRankings();try{$('mBody').scrollTop=0}catch(err){}},true);
+rkDeskRow=function(){if(!S||!(inOffice()||isCand()))return'';try{const R=rkInit();const H=R.sets.peer.hist;if(!H.length)H.push(rkSnap('peer'));const T=rkTable('peer');const d=H[0].pos-T.pos;let tn='',us='';try{tn=rkTable('tn').pos;us=rkTable('us').pos}catch(e){}
+  return`<button class="hd-rank" data-hdact="ranks"><span class="hd-pi">#${T.pos}</span><span><small>HOW MEMPHIS RANKS · ${rkTier(T.pos,'peer')[1].toUpperCase()}</small>No. ${T.pos} of ${T.n} peer cities${d?` · <b class="${d>0?'pos':'neg'}">${d>0?'▲':'▼'}${Math.abs(d)}</b>`:''}<em class="hd-rk2">No. ${tn} in Tennessee · No. ${us} nationally</em></span><b aria-hidden="true">›</b></button>`}catch(e){return''}};
 
 function openLedger(){const L=S.log||[];openPanel('Everything that has happened, newest first','Ledger',L.length?`<div class="logl">${L.map(x=>`<div><span>${x.d}</span><p style="margin:0">${x.t}</p></div>`).join('')}</div>`:'<p class="note">Nothing yet. Tap ▶ Continue to move ahead.</p>','ledger')}
 function openPolicies(){const ks=Object.keys(POLICIES);

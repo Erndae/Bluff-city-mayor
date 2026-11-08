@@ -4,6 +4,17 @@
 
 A Memphis political life on a real map of the city. Start as the mayor, run for mayor, or begin as a private citizen with a job and rise from there: the City Council, Shelby County mayor, Congress and the Senate, a law firm, a university presidency, or the back rooms as a kingmaker. As mayor you handle problems at real places, write the city budget, win votes from the 13-member City Council and run for re-election. Your family, health, party, rivals and record follow you through every chapter.
 
+## v27.06
+
+- **State and national rankings.** The rankings screen now has three tabs: Peer cities, Tennessee, and National.
+  - **Tennessee** puts Memphis against Nashville, Knoxville, Chattanooga, Clarksville, Murfreesboro, Franklin, Jackson and Johnson City, plus its own suburbs Germantown, Collierville and Bartlett.
+  - **National** puts Memphis against the other 31 largest cities in the country.
+- Each list has its own standings, tiers (great, major, minor, struggling) and year-by-year history. Tap any category to see every city in that list.
+- The January rankings now report all three: your peer rank, where Memphis sits in Tennessee, and where it sits nationally, with the change from last year.
+- The desk's ranking row shows the Tennessee and national ranks under the peer rank.
+- Other cities' numbers are game estimates loosely based on recent public data, and they drift each year.
+- Old saves move their peer rankings and history over automatically.
+
 ## v27.05: How Memphis ranks
 
 - **Memphis now ranks against 15 peer cities**, Victoria 3 style: Nashville, Louisville, Birmingham, New Orleans, St. Louis, Kansas City, Atlanta, Little Rock, Jackson, Oklahoma City, Charlotte, Indianapolis, Baltimore, Detroit and Cleveland.
