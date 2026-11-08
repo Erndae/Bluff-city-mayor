@@ -4,6 +4,14 @@
 
 A Memphis political life on a real map of the city. Start as the mayor, run for mayor, or begin as a private citizen with a job and rise from there: the City Council, Shelby County mayor, Congress and the Senate, a law firm, a university presidency, or the back rooms as a kingmaker. As mayor you handle problems at real places, write the city budget, win votes from the 13-member City Council and run for re-election. Your family, health, party, rivals and record follow you through every chapter.
 
+## v27.16
+
+- **"Done" on Change your look works.** It used to reopen your character page behind the look screen, so nothing seemed to happen. Now any side panel (your character, City Hall, a district, the desk) closes the window that was covering it when it opens.
+- **Button press test across the game.** A new crawler (`tools/crawl.py`) opens every screen and presses every button, one at a time from the same saved game, and records whether something happened, where it went, and any errors. It covered the mayor (desk, districts, street map, Actions, budget, council, schools, tourism, neighborhoods, rankings, opinion, news, campaign HQ, platform, cabinet, money, household, shop, bank, ledger, guide, legacy, your look, family, your character, City Hall, a district, the menu, your phone and laptop, the 3D home and office), the mayoral campaign, and the County, Congress, kingmaker and law-firm chapters after City Hall: about 1,100 button presses. No errors. Every button did something except ones that were already selected.
+- **Fixed what it found:**
+  - Out of office, Actions could show moves from an earlier screen (a law partner saw campaign moves). It now always reads your current situation.
+  - Out of office, your character page still said "Mayor" and "Mayor of Memphis." It now shows your name, your current role, and "former mayor of Memphis."
+
 ## v27.15
 
 - **The street map's top bar shows your numbers after City Hall.** Out of office it no longer shows the mayor's reserve fund, approval, council and actions. Instead:

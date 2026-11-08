@@ -844,7 +844,7 @@ details.analysis{margin-top:6px}details.analysis summary{cursor:pointer;color:va
     <button class="btn primary" data-act="pause" id="bPlay"><svg class="ico" viewBox="0 0 12 12" aria-hidden="true"><path d="M3.2 1.6v8.8l7.2-4.4z" fill="currentColor"/></svg> Resume <kbd>Space</kbd></button>
   </nav>
   <div class="status" id="status">Loading map…</div>
-  <div class="credit"><span class="ver" id="verTag">v27.15</span></div>
+  <div class="credit"><span class="ver" id="verTag">v27.16</span></div>
   <div class="tip" id="tip" hidden></div>
   <div class="toast" id="toast" role="status"></div>
   <section class="panel" id="panel" hidden aria-live="polite">
@@ -872,7 +872,7 @@ details.analysis{margin-top:6px}details.analysis summary{cursor:pointer;color:va
         <button class="btn" data-music-open>Music &amp; volume</button>
       </div>
       <div id="slotList" hidden></div>
-      <p class="note startv">Version <b class="ver" id="verStart">v27.15</b></p>
+      <p class="note startv">Version <b class="ver" id="verStart">v27.16</b></p>
     </div>
     <div class="startbox create" id="create" hidden>
       <h2>Create your mayor</h2>
@@ -1683,7 +1683,7 @@ function enact(s,p){DIVS.forEach(d=>{s.enacted[d.id]=p.divs[d.id];s.ratio[d.id]=
 // Voter groups. Each has a share of residents, turnout, home districts, concerns and an approval of you.
 // Citywide approval is the turnout-weighted average of the groups; each council district's approval comes from the groups that live there.
 // Shares, district mix and turnout are modeled, loosely grounded in Memphis demographics; they are not survey data.
-const VERSION='v27.15';
+const VERSION='v27.16';
 const GROUPS=[
  {id:'working',sh:'Working families',n:'Working families',ic:'⚒︎',c:'#f2a93b',share:24,turn:.5,start:56,w:{jobs:1,safety:.8,transit:.5},
   d:'Hourly workers in logistics, warehouses, health care and service jobs. The biggest bloc in the city.',dm:{1:1.1,2:.8,3:1.3,4:1.2,5:.6,6:1.2,7:1.1}},
@@ -10153,7 +10153,8 @@ window.addEventListener('click',e=>{if(!S||!S.after||ACT.aon)return;const t=e.ta
 function afterMovesHTML(){const btns=[...document.querySelectorAll('#homeDesk [data-ract]')];if(!btns.length){try{const A=afterInit();const K=roleKit();if(K&&K.acts){const left=ROLE_ACTS-(A.ra||0),st=K.st;return Object.entries(K.acts).map(([k,X])=>{const can=left>0&&(!X.need||X.need(st));const d=typeof X.d==='function'?X.d():X.d;return`<button class="choice" data-ract="${k}" ${can?'':'disabled'}><b>${X.n}</b><small>${d}</small></button>`}).join('')}}catch(e){}return''}
   return btns.map(b=>b.outerHTML).join('')}
 // Every action you can take out of office, in one place
-function afterActionsHTML(){const A=afterInit();const R=A.role&&ROLES[A.role];const box=HD.afterBox;const seen=new Set();let h='';
+function freshAfterBox(){const keep=AFTER_MSG;AFTER_MSG=null;let box=null;try{openAfter();if(HD.on&&HD.afterBox&&!modalOpen)box=HD.afterBox;else{const mb=$('mBody');box=mb?mb.cloneNode(true):HD.afterBox}}catch(e){box=HD.afterBox}AFTER_MSG=keep;return box}
+function afterActionsHTML(){const A=afterInit();const R=A.role&&ROLES[A.role];const box=freshAfterBox();const seen=new Set();let h='';
   const take=(sel)=>{if(!box)return[];return[...box.querySelectorAll(sel)].filter(b=>{const k=b.outerHTML;if(seen.has(k))return false;seen.add(k);return true}).map(b=>{const c=b.cloneNode(true);c.removeAttribute('hidden');return c.outerHTML})};
   if(A.prison||A.dead)return'<p>Your public life is over.</p>';
   if(!A.role){const roles=take('[data-role]');h+=`<div class="facts"><h4>Choose your next chapter</h4><p class="note">Pick what you do after City Hall. Each one plays differently.</p><div class="choices">${roles.join('')||afterMovesHTML()}</div></div>`}
@@ -10248,6 +10249,12 @@ function hudAfter(){if(!hudAfterOn()){if(document.body.classList.contains('hud-a
 {const _uc=updateClock;updateClock=function(...a){const r=_uc.apply(this,a);try{if(hudAfterOn())hudAfter()}catch(e){}return r}}
 {const _oa=openAfter;openAfter=function(...a){const r=_oa.apply(this,a);try{hudAfter()}catch(e){}return r}}
 {const _as=afterStart;afterStart=function(...a){try{closePanel()}catch(e){}return _as.apply(this,a)}}
+// opening a side panel always brings it to the front: close whatever window was covering it
+{const _op=openPanel;openPanel=function(...a){try{if(modalOpen&&!ACT.busy)closeModal()}catch(e){}return _op.apply(this,a)}}
+// your character page out of office: you're not the mayor anymore
+{const _om=openMayor;openMayor=function(...a){const r=_om.apply(this,a);try{if(S&&S.after&&S.mayor){const A=S.after,R=A.role&&ROLES[A.role];const t=$('pTitle'),sb=$('pSub');if(t)t.textContent=S.mayor.name;if(sb)sb.textContent=`Your character · ${R?R.n.replace(/ \(.*\)/,''):'after City Hall'}`;
+  const pb=$('pBody');if(pb)pb.querySelectorAll('.charinfo .note').forEach(n=>{n.innerHTML=n.innerHTML.replace('Mayor of Memphis',R?`${R.n.replace(/ \(.*\)/,'')} · former mayor of Memphis`:'Former mayor of Memphis')})}}catch(e){}return r}}
+{const _t=toast;toast=function(m,...r){if(S&&S.after&&typeof m==='string')m=m.replace(/^You are now Mayor /,'You are now ');return _t.call(this,m,...r)}}
 window.addEventListener('click',e=>{if(!hudAfterOn())return;const t=e.target.closest('#bPlay,#cPause');if(!t)return;e.preventDefault();e.stopImmediatePropagation();
   try{const nb=hdNextBtn();if(nb&&!nb.disabled){hdClickNext(nb);return}if(nb&&nb.disabled){toast('Deal with what\'s on your desk first.');hdSetView(true);return}openAfter()}catch(err){console.warn('next year',err)}},true);
 
