@@ -420,7 +420,7 @@ details.bgfold{margin:6px 0 10px}details.bgfold summary{cursor:pointer;color:var
 .hd-nav>button{min-width:0;min-height:52px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;background:none;border:none;color:#c3cdd4!important;font-weight:600;font-size:12px}
 .hd-nav>button.on{color:var(--amber)!important}
 .hd-nav>button.hd-play{height:66px;margin-top:-22px;border-radius:16px;background:var(--amber);color:#0d1822!important;box-shadow:0 4px 14px rgba(0,0,0,.45);padding:0 4px}
-.hd-pm{font-size:16px;font-weight:700;white-space:nowrap}.hd-ps{font-size:11px;font-weight:600;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.hd-pm{font-size:15px;font-weight:700;white-space:nowrap;max-width:100%;overflow:hidden;text-overflow:ellipsis}.hd-ps{font-size:11px;font-weight:600;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .hd-sheet{position:absolute;right:10px;bottom:84px;z-index:2;display:flex;flex-direction:column;min-width:210px;padding:6px;border-radius:12px;background:#13212d;border:1px solid #2a4052;box-shadow:0 8px 24px rgba(0,0,0,.5)}
 .hd-sheet button{min-height:44px;text-align:left;padding:0 12px;border:none;background:none;border-radius:8px;font-size:15px}.hd-sheet button:hover{background:#1a2c3b}
 #bDeskBack{display:none}body.deskmapview #bDeskBack{display:inline-flex;align-items:center;gap:6px;border-color:var(--amber);color:var(--amber)}
@@ -443,6 +443,21 @@ body.deskon #nextchip,body.deskon #startchip,body.deskon #bSee{visibility:hidden
 .hd-facts{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}.hd-facts div{background:#13212d;border-radius:8px;padding:6px 8px}.hd-facts small{display:block;font-size:11px;color:var(--muted)}.hd-facts b{font-size:14px}
 .hd-hood{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid #2a4052;font-size:14px}.hd-hood span{font-family:var(--f-mono);font-size:13px;color:var(--muted)}.hd-hood .pos{color:var(--good)}.hd-hood .neg{color:var(--bad)}
 .hd-dacts{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}.hd-dacts button{min-height:64px;border-radius:10px;border:1px solid #2a4052;background:#13212d;font-weight:600;font-size:13px;padding:6px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px}.hd-dacts small{font-weight:400;font-size:11px;color:var(--muted)}
+.hd-nav.hd-nav3{grid-template-columns:1fr minmax(0,1.7fr) 1fr}
+.hd-absorb{display:flex;flex-direction:column;gap:8px}.hd-absorb>*:first-child{margin-top:0}
+#homeDesk.th-dc,#homeDesk.th-porch,#homeDesk.th-mday,#homeDesk.th-campus{}
+.th-dc .hd-where,.th-porch .hd-where,.th-mday .hd-where,.th-campus .hd-where,.th-nash .hd-where{background:rgba(13,24,34,.74);padding:6px 10px;border-radius:10px;left:10px;bottom:54px}
+#homeDesk.th-dc{--amber:#f2d48b;background:#14213a}
+.th-dc .hd-stat{background:#f3efe6;color:#1b2433;border-bottom:2px solid #b08d3c}.th-dc .hd-sub{color:#3c4a5e}.th-dc .hd-sub b{color:#1b2433}.th-dc .hd-big b{color:#22385c}.th-dc .hd-big small,.th-dc .hd-chev{color:#5a6476}
+.th-dc .hd-nav{background:#1b2a44;border-top:2px solid #b08d3c}.th-dc .hd-play{background:#f2d48b!important;color:#1b2433!important}
+#homeDesk.th-nash{--amber:#f4c4c9;background:#0f1b33}.th-nash .hd-stat{background:#14244a;border-bottom:2px solid #bf1e2e}.th-nash .hd-nav{background:#0b1427;border-top:2px solid #bf1e2e}.th-nash .hd-play{background:#bf1e2e!important;color:#fff!important}.th-nash .hd-big b{color:#f4a3ab}
+#homeDesk.th-king{--amber:#e0a650;background:#140e0a}.th-king .hd-stat{background:#1f150e;border-bottom-color:#3a2618}.th-king .hd-nav{background:#1a110b;border-top-color:#3a2618}.th-king .hd-where small{color:#e0a650}
+#homeDesk.th-porch{--amber:#f0a07a;background:#221a14}.th-porch .hd-stat{background:#fffaf0;color:#2b2118;border-bottom:1px solid #e3d6bf}.th-porch .hd-sub{color:#4a3f33}.th-porch .hd-sub b{color:#2b2118}.th-porch .hd-big b{color:#9a4630}.th-porch .hd-big small,.th-porch .hd-chev{color:#6b5d48}.th-porch .hd-nav{background:#2b2118;border-top-color:#4a3a2c}.th-porch .hd-play{background:#b5543a!important;color:#fffaf0!important}
+#homeDesk.th-campus{--amber:#e6c547;background:#121c16}.th-campus .hd-stat{background:#1a2a1f;border-bottom-color:#2f4a36}.th-campus .hd-nav{background:#0f1a13;border-top-color:#2f4a36}
+.hd-play[aria-disabled="true"]{opacity:.75}
+body.deskon #endBanner{display:none!important}
+#homeDesk .hd-absorb [data-act="close"]{display:none!important}
+.hd-brand{flex:0 1 auto;margin-right:auto;padding:6px 10px;border-radius:10px;background:rgba(13,24,34,.6)}
 .adgain{display:block;width:100%;text-align:center;font-size:11px;font-weight:600;color:var(--good);margin-top:1px}
 #start{overflow-x:hidden;overflow-y:auto;touch-action:pan-y}.startbox{min-width:0;max-width:min(600px,100%);box-sizing:border-box}.startbox *{min-width:0}.create select,.create input{max-width:100%;width:100%;box-sizing:border-box;text-overflow:ellipsis}.create .tpick,.create .tpick>*{max-width:100%;box-sizing:border-box}
 @media (max-width:640px){.startbox{margin-left:0}#start{padding-left:max(16px,env(safe-area-inset-left,0px))}}
@@ -795,7 +810,7 @@ details.analysis{margin-top:6px}details.analysis summary{cursor:pointer;color:va
     <button class="btn primary" data-act="pause" id="bPlay"><svg class="ico" viewBox="0 0 12 12" aria-hidden="true"><path d="M3.2 1.6v8.8l7.2-4.4z" fill="currentColor"/></svg> Resume <kbd>Space</kbd></button>
   </nav>
   <div class="status" id="status">Loading map…</div>
-  <div class="credit"><span class="ver" id="verTag">v27.00</span></div>
+  <div class="credit"><span class="ver" id="verTag">v27.01</span></div>
   <div class="tip" id="tip" hidden></div>
   <div class="toast" id="toast" role="status"></div>
   <section class="panel" id="panel" hidden aria-live="polite">
@@ -823,7 +838,7 @@ details.analysis{margin-top:6px}details.analysis summary{cursor:pointer;color:va
         <button class="btn" data-music-open>Music &amp; volume</button>
       </div>
       <div id="slotList" hidden></div>
-      <p class="note startv">Version <b class="ver" id="verStart">v27.00</b></p>
+      <p class="note startv">Version <b class="ver" id="verStart">v27.01</b></p>
     </div>
     <div class="startbox create" id="create" hidden>
       <h2>Create your mayor</h2>
@@ -1634,7 +1649,7 @@ function enact(s,p){DIVS.forEach(d=>{s.enacted[d.id]=p.divs[d.id];s.ratio[d.id]=
 // Voter groups. Each has a share of residents, turnout, home districts, concerns and an approval of you.
 // Citywide approval is the turnout-weighted average of the groups; each council district's approval comes from the groups that live there.
 // Shares, district mix and turnout are modeled, loosely grounded in Memphis demographics; they are not survey data.
-const VERSION='v27.00';
+const VERSION='v27.01';
 const GROUPS=[
  {id:'working',sh:'Working families',n:'Working families',ic:'⚒︎',c:'#f2a93b',share:24,turn:.5,start:56,w:{jobs:1,safety:.8,transit:.5},
   d:'Hourly workers in logistics, warehouses, health care and service jobs. The biggest bloc in the city.',dm:{1:1.1,2:.8,3:1.3,4:1.2,5:.6,6:1.2,7:1.1}},
@@ -9569,6 +9584,88 @@ function hdBodyFor(){if(HD.view==='board')return hdBoard();if(HD.view==='dist')r
   return`${hdNext()}<h3>WAITING FOR YOU</h3>${hdWaiting()}<h3>THE DISTRICTS <button class="hd-link" data-hdact="board">Open the board ›</button></h3><div class="hd-dists">${hdDistricts()}</div>${hdNews()}`}
 document.addEventListener('click',e=>{const t=e.target.closest('#homeDesk [data-hdlens],#homeDesk [data-hdd]');if(!t||!S)return;e.preventDefault();e.stopPropagation();
   if(t.dataset.hdlens){HD.lens=t.dataset.hdlens;renderHomeDesk(true);return}const d=+t.dataset.hdd;if(HD.view==='board'&&HD.d!==d&&!t.classList.contains('hd-dsum')&&!t.classList.contains('hd-st')){HD.d=d;renderHomeDesk(true);return}HD.d=d;HD.view='dist';HD.top=true;renderHomeDesk(true)},true);
+
+// ======================= v27.01: EVERY PLACE ITS OWN LOOK =======================
+// Every career now plays on the desk, not a pop-up, and the desk looks like where you are: the Capitol and marble
+// in Washington, your district office on a Memphis street when you're home, a late-night back booth for the
+// kingmaker, a front porch for a private citizen, a campus for the university and law school, and Memphis by day
+// for the council, the County, the law firm and campaigns. A mayor can drive to Nashville while the legislature is
+// in session: the desk turns red, white and blue, the bills that hit Memphis come along, and "Drive home" brings
+// you back. Everything the career screen did still works; it just lives on the desk now.
+const HD_SCENE={
+ dc:`<rect width="390" height="176" fill="url(#hdg)"/><circle cx="60" cy="40" r="16" fill="#fff6dc" opacity=".9"/><path d="M352 150 L357 54 L362 150 Z" fill="#f1ede4"/><rect x="0" y="146" width="390" height="30" fill="#7ba05b"/><rect x="0" y="160" width="390" height="16" fill="#a9c3d9"/><path d="M110 146 V126 H280 V146 Z" fill="#f7f5f0"/><path d="M150 126 V112 H240 V126 Z" fill="#fbfaf7"/><path d="M162 112 Q195 66 228 112 Z" fill="#fdfcfa"/><path d="M170 112 Q195 76 220 112" stroke="#e3ddd0" stroke-width="1.5" fill="none"/><rect x="191" y="60" width="8" height="12" fill="#fdfcfa"/><circle cx="195" cy="58" r="3" fill="#e9e3d6"/><path d="M120 128v18M132 128v18M144 128v18M246 128v18M258 128v18M270 128v18M160 114v12M172 114v12M218 114v12M230 114v12" stroke="#d9d2c4" stroke-width="2"/>BLOSSOM`,
+ nash:`<rect width="390" height="176" fill="url(#hdg)"/><circle cx="80" cy="96" r="22" fill="#ffe2a8" opacity=".9"/><rect x="250" y="70" width="22" height="80" fill="#4a5568"/><path d="M250 70 L254 44 L258 70 Z M264 70 L268 44 L272 70 Z" fill="#4a5568"/><rect x="276" y="92" width="18" height="58" fill="#56627a"/><rect x="298" y="84" width="20" height="66" fill="#4a5568"/><rect x="322" y="100" width="16" height="50" fill="#56627a"/><rect x="342" y="78" width="22" height="72" fill="#4a5568"/><rect x="366" y="96" width="24" height="54" fill="#56627a"/><path d="M0 176 V146 Q120 108 240 146 V176 Z" fill="#5f8a45"/><path d="M70 134 V108 H170 V134 Z" fill="#e8dcc0"/><path d="M64 108 L120 92 L176 108 Z" fill="#d9caa6"/><path d="M80 112 v22 M92 112 v22 M104 112 v22 M136 112 v22 M148 112 v22 M160 112 v22" stroke="#c9b88f" stroke-width="3"/><rect x="108" y="66" width="24" height="26" fill="#ece2c9"/><rect x="112" y="52" width="16" height="14" fill="#efe6d0"/><path d="M114 52 L120 40 L126 52 Z" fill="#e3d6b8"/><rect x="0" y="150" width="390" height="26" fill="#2a2f3a"/><rect x="262" y="156" width="20" height="6" fill="#e8644f"/><rect x="292" y="156" width="26" height="6" fill="#f2c46b"/><rect x="328" y="156" width="18" height="6" fill="#7fd0e6"/><rect x="354" y="156" width="24" height="6" fill="#f08ab8"/>`,
+ king:`<rect width="390" height="176" fill="#2a1b12"/><path d="M0 0v176M28 0v176M56 0v176M84 0v176M300 0v176M328 0v176M356 0v176M384 0v176" stroke="#1f140d" stroke-width="2"/><rect x="120" y="18" width="160" height="92" fill="#0b1426"/><rect x="120" y="18" width="160" height="92" fill="none" stroke="#4a3220" stroke-width="6"/><path d="M200 18 V110 M120 64 H280" stroke="#4a3220" stroke-width="3"/><polygon points="132,108 160,72 188,108" fill="#2a5b9c"/><rect x="214" y="82" width="10" height="26" fill="#121c2c"/><rect x="226" y="70" width="12" height="38" fill="#0f1828"/><rect x="240" y="86" width="10" height="22" fill="#121c2c"/><rect x="252" y="78" width="14" height="30" fill="#0f1828"/><rect x="229" y="78" width="2" height="2" fill="#f2c46b"/><rect x="256" y="88" width="2" height="2" fill="#f2c46b"/><path d="M195 0 V40" stroke="#1a110b" stroke-width="2"/><path d="M176 40 H214 L206 56 H184 Z" fill="#7a4a24"/><ellipse cx="195" cy="112" rx="120" ry="40" fill="#e0a650" opacity=".14"/><rect x="40" y="124" width="310" height="52" fill="#4a2e1a"/><rect x="40" y="120" width="310" height="6" fill="#6b4226"/><rect x="150" y="104" width="12" height="18" rx="2" fill="#d9a85a" opacity=".85"/><rect x="226" y="106" width="12" height="16" rx="2" fill="#d9a85a" opacity=".85"/><rect x="182" y="114" width="26" height="8" rx="2" fill="#0d0d0d"/><rect x="184" y="115" width="22" height="6" rx="1" fill="#7fb3dd"/>`,
+ porch:`<rect width="390" height="176" fill="url(#hdg)"/><circle cx="60" cy="42" r="18" fill="#fff1c4"/><rect x="0" y="140" width="390" height="36" fill="#6f9a4e"/><rect x="0" y="160" width="390" height="16" fill="#b9b2a5"/><path d="M120 140 V96 H330 V140 Z" fill="#a65a3e"/><path d="M110 98 L225 62 L340 98 Z" fill="#4a3a30"/><rect x="130" y="104" width="40" height="22" fill="#cfe2ee"/><rect x="270" y="104" width="40" height="22" fill="#cfe2ee"/><rect x="196" y="106" width="22" height="34" fill="#2b5f8a"/><rect x="182" y="98" width="52" height="6" fill="#f4f1ea"/><path d="M186 104 V140 M230 104 V140" stroke="#f4f1ea" stroke-width="3"/><path d="M60 140 V100" stroke="#5e4a3a" stroke-width="5"/><circle cx="60" cy="92" r="28" fill="#3f6a34"/><circle cx="40" cy="104" r="16" fill="#4f7a3a"/><circle cx="82" cy="102" r="16" fill="#4f7a3a"/><circle cx="52" cy="84" r="4" fill="#fbf7ee"/><circle cx="72" cy="96" r="4" fill="#fbf7ee"/><rect x="338" y="132" width="44" height="16" rx="5" fill="#c0392b"/><rect x="346" y="124" width="26" height="10" rx="3" fill="#c0392b"/><circle cx="348" cy="149" r="4" fill="#222"/><circle cx="372" cy="149" r="4" fill="#222"/>`,
+ mday:`<rect width="390" height="176" fill="url(#hdg)"/><circle cx="330" cy="36" r="16" fill="#fff4d0"/><polygon points="20,112 44,80 68,112" fill="#8aa0b5"/><rect x="76" y="86" width="12" height="26" fill="#7d93a8"/><rect x="90" y="74" width="14" height="38" fill="#71879c"/><rect x="106" y="90" width="12" height="22" fill="#7d93a8"/><rect x="0" y="150" width="390" height="26" fill="#55595f"/><path d="M0 162 H390" stroke="#e6c547" stroke-width="2" stroke-dasharray="14 10"/><rect x="0" y="144" width="390" height="6" fill="#b9b2a5"/><rect x="130" y="70" width="190" height="74" fill="#a65a3e"/><rect x="130" y="64" width="190" height="8" fill="#8c4a33"/><rect x="144" y="86" width="162" height="18" fill="#22385c"/><path d="M140 104 H310 L302 116 H148 Z" fill="#c0392b"/><rect x="150" y="120" width="54" height="24" fill="#b9d6ea"/><rect x="246" y="120" width="54" height="24" fill="#b9d6ea"/><rect x="212" y="118" width="26" height="26" fill="#3d2a20"/><path d="M326 144 V96" stroke="#5e4a3a" stroke-width="4"/><circle cx="326" cy="90" r="22" fill="#4f7a3a"/><circle cx="344" cy="100" r="14" fill="#5b8a44"/>`,
+ campus:`<rect width="390" height="176" fill="url(#hdg)"/><circle cx="320" cy="40" r="15" fill="#fff4d0"/><rect x="0" y="138" width="390" height="38" fill="#5f8a45"/><path d="M0 160 Q195 140 390 160 V176 H0 Z" fill="#c9b88f"/><rect x="110" y="70" width="170" height="70" fill="#9a4630"/><path d="M104 72 L195 40 L286 72 Z" fill="#6b2f22"/><rect x="186" y="18" width="18" height="30" fill="#9a4630"/><path d="M183 18 L195 6 L207 18 Z" fill="#6b2f22"/><circle cx="195" cy="30" r="5" fill="#f4f1ea"/><path d="M126 84 h14 v18 h-14z M152 84 h14 v18 h-14z M224 84 h14 v18 h-14z M250 84 h14 v18 h-14z" fill="#e8dcc4"/><rect x="182" y="104" width="26" height="36" fill="#3d2a20"/><circle cx="50" cy="118" r="26" fill="#3f6a34"/><rect x="47" y="122" width="6" height="18" fill="#5e4a3a"/><circle cx="345" cy="114" r="24" fill="#4f7a3a"/><rect x="342" y="120" width="6" height="18" fill="#5e4a3a"/>`};
+const HD_GRAD={dc:['#8fb4d8','#c7dbeb','#e9eef2'],nash:['#3b5c8f','#c88a5a','#f2c88a'],porch:['#9cc4e4','#d9e8f0','#f6e2bd'],mday:['#5d93c6','#a9cbe6','#f2d9a8'],campus:['#7fa9cf','#cfe0ec','#f0d9b0']};
+function hdSceneSVG(th){const g=HD_GRAD[th]||['#000','#000','#000'];let body=HD_SCENE[th]||'';if(th==='dc')body=body.replace('BLOSSOM',[3,4,5].includes(S.m)?'<circle cx="30" cy="140" r="20" fill="#f4b6c8"/><circle cx="56" cy="134" r="16" fill="#f7c7d5"/><circle cx="78" cy="142" r="14" fill="#efa9be"/><circle cx="320" cy="142" r="14" fill="#f4b6c8"/><circle cx="300" cy="138" r="12" fill="#f7c7d5"/>':'<circle cx="40" cy="138" r="18" fill="#4f7a3a"/><circle cx="320" cy="140" r="14" fill="#5b8a44"/>');
+  return`<svg class="hd-svg" viewBox="0 0 390 176" preserveAspectRatio="xMidYMax slice" aria-hidden="true"><defs><linearGradient id="hdg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${g[0]}"/><stop offset=".65" stop-color="${g[1]}"/><stop offset="1" stop-color="${g[2]}"/></linearGradient></defs>${body}</svg>`}
+// ---------- which place, which look ----------
+function hdAfterRole(){const A=S.after;return A&&A.role}
+function hdCongressWhere(){try{const r=resOf();return r&&r.dc?r.where:'home'}catch(e){return'home'}}
+function hdTheme(){if(S&&S.after){const r=hdAfterRole();if(r==='congress'||r==='senate')return hdCongressWhere()==='dc'?'dc':'mday';if(r==='king')return'king';if(r==='uni'||r==='lawschool')return'campus';if(r==='council'||r==='county'||r==='law'||r==='campaign')return'mday';return'porch'}
+  if(HD.place==='nash')return'nash';return'memphis'}
+function hdWhereLine(){const A=S.after;const r=hdAfterRole();
+  if(r==='congress'||r==='senate')return hdCongressWhere()==='dc'?'WASHINGTON, D.C. · CAPITOL HILL':`HOME IN ${r==='senate'?'TENNESSEE':'MEMPHIS'} · DISTRICT OFFICE`;
+  if(r==='king')return'THE BACK BOOTH · LATE';if(r==='uni')return"THE UNIVERSITY · PRESIDENT'S OFFICE";if(r==='lawschool')return'LAW SCHOOL · CLASS IN SESSION';
+  if(r==='council'){try{return'CITY COUNCIL · '+cnSeat(A.cn?A.cn.d:A.cdist).toUpperCase()}catch(e){return'CITY COUNCIL'}}
+  if(r==='county')return'SHELBY COUNTY · VASCO A. SMITH BUILDING';if(r==='law')return'DOWNTOWN · YOUR LAW FIRM';if(r==='campaign')return'ON THE CAMPAIGN TRAIL';
+  return'YOUR FRONT PORCH · MEMPHIS'}
+function hdCityRole(){const r=hdAfterRole();return r==='council'||r==='king'||r==='campaign'||(!r&&S.after&&S.after.fresh)}
+// ---------- the career screen moves onto the desk ----------
+HD.afterBox=null;HD.nashBox=null;
+const _hdElig=hdEligible;hdEligible=function(){if(S&&S.started&&S.after&&!S.after.dead&&!S.died)return true;return _hdElig()};
+function hdAbsorb(kind){const mb=$('mBody');if(!mb||!modalOpen)return false;const box=document.createElement('div');box.className='hd-absorb';
+  const t=($('mTitle')||{}).textContent||'',ey=(($('mEyebrow')||document.querySelector('#modal .eyebrow'))||{}).textContent||'';box.dataset.title=t;box.dataset.ey=ey;
+  while(mb.firstChild)box.appendChild(mb.firstChild);onClose=null;closeModal();if(kind==='after')HD.afterBox=box;else HD.nashBox=box;return true}
+{const _oa=openAfter;openAfter=function(...a){const r=_oa.apply(this,a);try{if(HD.on&&S&&S.after&&!S.after.dead&&!S.died&&hdAbsorb('after')){if(HD.view!=='board')HD.view='after';renderHomeDesk(true)}}catch(e){console.warn('desk after',e)}return r}}
+{const _on=openNash;openNash=function(...a){const r=_on.apply(this,a);try{if(HD.on&&HD.place==='nash'&&inOffice()&&hdAbsorb('nash')){HD.view='nash';renderHomeDesk(true)}}catch(e){console.warn('desk nash',e)}return r}}
+function hdSessionOn(){try{return inOffice()&&S.m>=1&&S.m<=4&&typeof legInit==='function'&&legInit().y===S.y&&(!S.unl||S.unl.all||(S.unl.got||{}).nash||unlocked('nash'))}catch(e){return inOffice()&&S.m>=1&&S.m<=4}}
+// ---------- the after-phase desk ----------
+function hdNextBtn(){const box=HD.afterBox;if(!box)return null;return box.querySelector('[data-cnext]')||box.querySelector('[data-ayear]')}
+function hdAfterHTML(){const A=S.after,th=hdTheme(),r=hdAfterRole();const box=HD.afterBox;const title=box?box.dataset.title:'Your career';
+  const occ=(typeof OCCS!=='undefined'&&OCCS[S.mayor.occ])||null;const R=r&&ROLES[r];
+  const roleLine=R?R.n:(A.fresh&&occ?occ.n:'Private citizen');const cg=A.cg;const nb=hdNextBtn();
+  let nbMain='Next year',nbSub='';if(nb){nbMain=nb.dataset.cnext!=null?'Next stretch':(!r&&A.fresh?'Keep working':'Next year');const sm=nb.querySelector('small');nbSub=sm?sm.textContent.trim().split(' · ')[0]:''}
+  const dis=!nb||nb.disabled;const cong=r==='congress'||r==='senate';let fly='';
+  if(cong){try{const rr=resOf();if(rr&&rr.dc){const dest=rr.where==='dc'?'home':'dc';fly=`<button data-hdact="fly" data-d="${dest}">${hdI('pin',16)}${dest==='dc'?'Fly to D.C.':'Fly home'} <em>${Math.max(0,FLIGHTS-rr.flights)}</em></button>`}}catch(e){}}
+  const city=hdCityRole();
+  return`<header class="hd-sky">${hdSceneSVG(th)}
+    <div class="hd-top"><button class="hd-ib" data-hdact="menu" aria-label="Menu">☰</button><div class="hd-brand">BLUFF CITY <span>RISING</span></div><button class="hd-ib" data-hdact="map" aria-label="Street map">${hdI('map',20)}</button></div>
+    <div class="hd-where"><small>${hdWhereLine()}</small><span>${hdEsc(title)}</span></div>
+    <div class="hd-places">${fly||`<button data-hdact="family">${hdI('home',16)}Family</button>`}<button data-hdact="home">${hdI('home',16)}Home</button><button data-hdact="map">${hdI('pin',16)}Around town</button></div></header>
+   <button class="hd-stat" data-hdact="top"><div class="hd-big"><small>INFLUENCE</small><b>${Math.round(A.inf||0)}</b></div><div class="hd-sub"><span><b>${hdEsc(roleLine)}</b></span><span>${cg&&(r==='congress'||r==='senate')?`Approval back home <b>${Math.round(cg.app)}%</b> · `:''}Savings <b>${$0(S.purse?S.purse.cash:0)}</b> · ${S.y}</span></div></button>
+   <div class="hd-body">${HD.view==='board'?hdBoard():HD.view==='dist'?hdDist(HD.d||4):'<div id="hdSlot"></div>'}</div>
+   <nav class="hd-nav" aria-label="Desk">
+    <button class="${HD.view==='after'?'on':''}" data-hdact="top">${hdI('desk')}Desk</button>
+    ${city?`<button class="${HD.view!=='after'?'on':''}" data-hdact="board">${hdI('grid')}Districts</button>`:`<button data-hdact="family">${hdI('home')}Family</button>`}
+    <button class="hd-play" data-hdact="anext" ${dis?'aria-disabled="true"':''}><span class="hd-pm">${dis?'⏸':'▶'} ${hdEsc(nbMain)}</span>${nbSub?`<span class="hd-ps">${hdEsc(nbSub)}</span>`:''}</button>
+    ${city?`<button data-hdact="family">${hdI('home')}Family</button>`:`<button data-hdact="legacy">${hdI('camp')}Legacy</button>`}
+    <button data-hdact="more" aria-expanded="${HD.more}">${hdI('more')}More</button></nav>
+   ${HD.more?`<div class="hd-sheet" role="menu">${[['legacy','Mayors of Memphis'],['help','Guide'],['music','Music'],['map','Street map'],['menu','Save and settings']].map(([a,n])=>`<button role="menuitem" data-hdact="${a}">${n}</button>`).join('')}</div>`:''}`}
+// ---------- Nashville ----------
+function hdNashHTML(){const box=HD.nashBox;const title=box?box.dataset.title:'The state legislature';
+  return`<header class="hd-sky">${hdSceneSVG('nash')}
+    <div class="hd-top"><button class="hd-ib" data-hdact="menu" aria-label="Menu">☰</button><div class="hd-brand">BLUFF CITY <span>RISING</span></div><button class="hd-ib" data-hdact="map" aria-label="Street map">${hdI('map',20)}</button></div>
+    <div class="hd-where"><small><svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true" style="vertical-align:-3px"><circle cx="12" cy="12" r="11" fill="#bf1e2e"/><circle cx="12" cy="12" r="8" fill="#fff"/><circle cx="12" cy="12" r="7" fill="#1f3a8a"/><circle cx="12" cy="8" r="1.6" fill="#fff"/><circle cx="8.7" cy="14" r="1.6" fill="#fff"/><circle cx="15.3" cy="14" r="1.6" fill="#fff"/></svg> NASHVILLE · STATE CAPITOL</small><span>${dateStr()} · day trip</span></div></header>
+   <div class="hd-stat"><div class="hd-big"><small>${hdEsc(title).toUpperCase().slice(0,30)}</small><b style="font-size:20px">Mayor ${hdEsc(S.mayor.name.split(' ').pop())}</b></div><div class="hd-sub"><span>Three hours from home</span><span>Approval <b>${Math.round(S.approval)}%</b></span></div></div>
+   <div class="hd-body"><div id="hdSlot"></div></div>
+   <nav class="hd-nav hd-nav3" aria-label="Nashville"><span></span><button class="hd-play" data-hdact="drivehome"><span class="hd-pm">▶ Drive home</span><span class="hd-ps">I-40 west</span></button><span></span></nav>`}
+// ---------- hook into the desk ----------
+{const _h=hdHTML;hdHTML=function(){if(S&&S.after)return hdAfterHTML();if(HD.place==='nash'&&HD.view==='nash')return hdNashHTML();return _h()}}
+{const _r=renderHomeDesk;renderHomeDesk=function(force){if(S&&S.after&&(HD.view==='desk'||HD.view==='nash'))HD.view='after';if(S&&!S.after&&HD.view==='after')HD.view='desk';if(S&&HD.place==='nash'&&!inOffice()){HD.place=null;if(HD.view==='nash')HD.view='desk'}
+  _r.call(this,force);const el=$('homeDesk');if(!el||el.hidden)return;const th=hdTheme();el.className='th-'+th;
+  const slot=el.querySelector('#hdSlot');if(slot){const box=S.after?HD.afterBox:HD.nashBox;if(box)slot.replaceWith(box);else if(S.after){slot.innerHTML='<p class="hd-empty">Loading your career…</p>';setTimeout(()=>{try{openAfter()}catch(e){}},30)}}
+  try{if(!S.after&&inOffice()&&HD.view==='desk'&&hdSessionOn()){const pl=el.querySelector('.hd-places');if(pl&&!pl.querySelector('[data-hdact="nash"]')){const m=pl.querySelector('[data-hdact="map"]');if(m)m.outerHTML=`<button data-hdact="nash">${hdI('pin',16)}Nashville</button>`}}}catch(e){}}}
+window.addEventListener('click',e=>{const t=e.target.closest('#homeDesk [data-hdact="anext"],#homeDesk [data-hdact="fly"],#homeDesk [data-hdact="family"],#homeDesk [data-hdact="legacy"],#homeDesk [data-hdact="nash"],#homeDesk [data-hdact="drivehome"]');if(!t||!S)return;e.preventDefault();e.stopImmediatePropagation();const a=t.dataset.hdact;HD.more=false;
+  try{if(a==='anext'){const nb=hdNextBtn();if(nb&&!nb.disabled)nb.click();else{toast('Deal with what\'s on your desk first.');const b=document.querySelector('#homeDesk .hd-body');if(b)b.scrollTop=0}return}
+   if(a==='fly'){cgFlyTo(t.dataset.d);return}if(a==='family'){openFamily();return}if(a==='legacy'){openLegacy();return}
+   if(a==='nash'){HD.place='nash';HD.nashBox=null;openNash();return}if(a==='drivehome'){HD.place=null;HD.view='desk';HD.nashBox=null;HD.top=true;renderHomeDesk(true);toast('You drove home to Memphis.');return}}catch(err){console.warn('desk',a,err)}},true);
+// going back to the desk from the map reopens the career screen there
+{const _sv=hdSetView;hdSetView=function(desk){_sv.apply(this,arguments);if(desk&&S&&S.after){try{openAfter()}catch(e){}}}}
+{const _ha=hdAct;hdAct=function(a,dd){if(a==='top'&&S&&S.after){HD.view='after';HD.top=true;HD.more=false;renderHomeDesk(true);return}return _ha.apply(this,arguments)}}
 
 function openLedger(){const L=S.log||[];openPanel('Everything that has happened, newest first','Ledger',L.length?`<div class="logl">${L.map(x=>`<div><span>${x.d}</span><p style="margin:0">${x.t}</p></div>`).join('')}</div>`:'<p class="note">Nothing yet. Tap ▶ Continue to move ahead.</p>','ledger')}
 function openPolicies(){const ks=Object.keys(POLICIES);

@@ -4,6 +4,19 @@
 
 A Memphis political life on a real map of the city. Start as the mayor, run for mayor, or begin as a private citizen with a job and rise from there: the City Council, Shelby County mayor, Congress and the Senate, a law firm, a university presidency, or the back rooms as a kingmaker. As mayor you handle problems at real places, write the city budget, win votes from the 13-member City Council and run for re-election. Your family, health, party, rivals and record follow you through every chapter.
 
+## v27.01: Every place its own look
+
+- **Every career now plays on the desk instead of a pop-up**, and the desk looks like where you are:
+  - **Congress in Washington:** the Capitol and the Washington Monument (with cherry blossoms in spring), marble and navy, gold trim.
+  - **Congress back home:** your district office on a Memphis street. "Fly to D.C." and "Fly home" sit on the skyline with the flights you have left, and the whole desk changes when you land.
+  - **Kingmaker:** a back booth late at night, with wood paneling, a lamp over the table and the lit-up Pyramid through the window.
+  - **Private citizen:** your front porch on a Saturday morning.
+  - **University president and law school:** a brick campus with a bell tower.
+  - **City Council, the County, the law firm and campaigns:** Memphis by day. Council members, kingmakers and citizens also get the Districts tab.
+- **Each desk has its own center button:** Next year, Next stretch (Congress) or Keep working. When something has to be decided first, it says what.
+- **Mayors can go to Nashville.** While the legislature is in session (January to April), a Nashville button appears on the skyline. The desk turns Tennessee red, white and blue over the State Capitol, the bills that hit Memphis come with you, and Drive home brings you back.
+- Everything the career screen did still works, including events, moves, pickers, elections and comebacks. It just lives on the desk now, and the street map is still one tap away.
+
 ## v27.00: The district board
 
 - **The desk has a Districts tab.** The nine council districts are laid out roughly where they sit in Memphis, with the river on the left and Super Districts 8 and 9 below. Each tile shows its neighborhoods and how many people are waiting on you there.
