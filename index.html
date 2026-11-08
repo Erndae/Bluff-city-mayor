@@ -816,7 +816,7 @@ details.analysis{margin-top:6px}details.analysis summary{cursor:pointer;color:va
     <button class="btn primary" data-act="pause" id="bPlay"><svg class="ico" viewBox="0 0 12 12" aria-hidden="true"><path d="M3.2 1.6v8.8l7.2-4.4z" fill="currentColor"/></svg> Resume <kbd>Space</kbd></button>
   </nav>
   <div class="status" id="status">Loading map…</div>
-  <div class="credit"><span class="ver" id="verTag">v27.02</span></div>
+  <div class="credit"><span class="ver" id="verTag">v27.03</span></div>
   <div class="tip" id="tip" hidden></div>
   <div class="toast" id="toast" role="status"></div>
   <section class="panel" id="panel" hidden aria-live="polite">
@@ -844,7 +844,7 @@ details.analysis{margin-top:6px}details.analysis summary{cursor:pointer;color:va
         <button class="btn" data-music-open>Music &amp; volume</button>
       </div>
       <div id="slotList" hidden></div>
-      <p class="note startv">Version <b class="ver" id="verStart">v27.02</b></p>
+      <p class="note startv">Version <b class="ver" id="verStart">v27.03</b></p>
     </div>
     <div class="startbox create" id="create" hidden>
       <h2>Create your mayor</h2>
@@ -1655,7 +1655,7 @@ function enact(s,p){DIVS.forEach(d=>{s.enacted[d.id]=p.divs[d.id];s.ratio[d.id]=
 // Voter groups. Each has a share of residents, turnout, home districts, concerns and an approval of you.
 // Citywide approval is the turnout-weighted average of the groups; each council district's approval comes from the groups that live there.
 // Shares, district mix and turnout are modeled, loosely grounded in Memphis demographics; they are not survey data.
-const VERSION='v27.02';
+const VERSION='v27.03';
 const GROUPS=[
  {id:'working',sh:'Working families',n:'Working families',ic:'⚒︎',c:'#f2a93b',share:24,turn:.5,start:56,w:{jobs:1,safety:.8,transit:.5},
   d:'Hourly workers in logistics, warehouses, health care and service jobs. The biggest bloc in the city.',dm:{1:1.1,2:.8,3:1.3,4:1.2,5:.6,6:1.2,7:1.1}},
@@ -9716,6 +9716,152 @@ function hdFeedHTML(){const F=(S&&S.deskFeed)||[];if(!F.length)return'';
 // ---------- on the desk ----------
 {const _b=hdBodyFor;hdBodyFor=function(){const h=_b.apply(this,arguments);if(HD.view!=='desk')return h;return hdPeekHTML()+h.replace('<h3>THE DISTRICTS',hdFeedHTML()+'<h3>THE DISTRICTS')}}
 {const _a=hdAfterHTML;hdAfterHTML=function(){const h=_a.apply(this,arguments);if(HD.view!=='after')return h;return h.replace('<div id="hdSlot"></div>',`${hdPeekHTML()}${hdFeedHTML()}<div id="hdSlot"></div>`)}}
+
+// ======================= v27.03: THE SCHOOLS, AND THE RIVERFRONT =======================
+// 1. Memphis-Shelby County Schools becomes a power player. The city doesn't run the schools, but it funds a lot
+//    around them, and how you get along with the district moves reading scores. MSCS makes demands like the
+//    unions and the County, and the school year brings its own decisions: closings, a state takeover threat,
+//    a superintendent search, the summer slide, safety outside a high school, graduation.
+// 2. Tourism and the riverfront. The city's image and its visitors are tracked month to month and pay off in
+//    hotel and sales taxes. Festivals you show up for, crime, Beale Street and the riverfront move them. Mud Island
+//    can be redeveloped as a multi-month story, and big decisions arrive on their own: Beale Street weekends, a
+//    convention choosing between Memphis and Louisville, the riverfront in summer.
+// ---------- 1. the schools as a power player ----------
+FACS.mscs={n:'Memphis-Shelby County Schools',tn:'MSCS',sh:'The schools',ic:'✎',sk:'learn',grp:['parents'],
+  lead:{name:'Dr. Alan Pierce',g:'m',age:52,frame:'#e0803a'},role:'Superintendent, Memphis-Shelby County Schools',
+  d:'About 100,000 students in more than 200 schools, run by an elected school board, not City Hall. The city can\'t hire teachers, but it funds crossing guards, after-school programs, libraries, summer jobs and safety around the schools.',
+  hi:'Reading scores rise a little faster every month, and the district lets the city run programs in its buildings.',
+  lo:'Cooperation stalls: reading scores slip, and the board blames City Hall in public.'};
+if(!FAC_IDS.includes('mscs'))FAC_IDS.push('mscs');
+FDEM.mscs=[
+ {id:'guards',t:'Pay for 80 more school crossing guards',b:'"Our kids are crossing six-lane roads to get to school. The city hires the crossing guards. We need more of them."',cost:1.2,grp:{parents:2},bk:{sk:'dip',b:0.5,cost:0.6}},
+ {id:'after',t:'Fund after-school programs at community centers',b:'"From 3 to 6 p.m. is when kids get in trouble. Keep the community centers open with tutoring and we\'ll send the buses."',cost:2,fx:{reading:0.3,crime:-0.2},grp:{parents:2,faith:1},bk:{sk:'learn',b:0.5,cost:1,fx:{reading:0.15}}},
+ {id:'summer',t:'Run summer reading at the libraries',b:'"Our students lose two months of reading every summer. Your libraries could stop that."',cost:0.8,fx:{reading:0.25},grp:{parents:1},bk:{sk:'learn',b:0.55,cost:0.4,fx:{reading:0.12}}},
+ {id:'repair',t:'Split the cost of fixing heat and air in old buildings',b:'"Forty of our buildings had no heat for a week last winter. Put up $4M and the County will match it."',cost:4,fx:{reading:0.2},grp:{parents:2},bk:{sk:'stew',b:0.45,cost:2,fx:{reading:0.1}}},
+ {id:'sro',t:'Put police officers in more high schools',b:'"After the fight at our high school, the board wants officers in every high school. MPD would have to provide them."',cost:2.5,fx:{crime:-0.15},grp:{owners:1,young:-2,parents:1},bk:{sk:'safe',b:0.5,cost:1.2}}];
+{const _fs=facStance;facStance=function(id){const L=_fs.apply(this,arguments);if(id!=='mscs'||!inOffice())return L;try{if(S.read0==null)S.read0=S.met.reading;const d=S.met.reading-S.read0;if(Math.abs(d)>=0.2)L.push({t:d>0?'Reading scores are rising':'Reading scores are falling',v:Math.round(d*6)});if(S.schProg&&S.schProg.length)L.push({t:'Programs the city runs with the schools',v:Math.min(12,S.schProg.length*4)})}catch(e){}return L}}
+function schRel(){try{return facRel('mscs')}catch(e){return 0}}
+function schProg(t){S.schProg=S.schProg||[];if(!S.schProg.includes(t))S.schProg.push(t)}
+// ---------- 1b. the school year ----------
+function fx2(f){return()=>{try{f()}catch(e){console.warn(e)}}}
+EVENTS.push(
+ {id:'sch_closures',title:'MSCS wants to close nine half-empty schools',at:'mscs',tags:['education'],months:[1,2,3],cd:36,when:s=>s.y>=2027,
+  body:()=>'Enrollment has dropped for a decade, and nine buildings are less than half full. The school board says closing them saves $11 million a year for classrooms. Parents in Frayser, South Memphis and Orange Mound are packing the board meeting.',
+  fact:'Memphis has closed dozens of schools since 2012 as enrollment fell. Empty school buildings are one of the city\'s biggest blight problems.',
+  choices:[{label:'Back the closings: the money goes to classrooms',fx:{blight:0.3},grp:{parents:-2,business:1,owners:1},council:{fiscal:2,education:-2},x:()=>facMod('mscs','You backed the school closings',12)},
+   {label:'Fight the closings alongside parents',grp:{parents:2,faith:1},council:{education:2},x:()=>facMod('mscs','You fought the closings in public',-14)},
+   {label:'Offer a deal: the city turns closed schools into community centers',cost:2,fx:{blight:-0.2},grp:{parents:1,faith:1,renters:1},council:{education:2,fiscal:-1},x:()=>{facMod('mscs','You took the empty buildings off their hands',8);schProg('Community centers in closed schools')}}],
+  ignore:{fx:{blight:0.3},grp:{parents:-1}}},
+ {id:'sch_takeover',title:'Nashville threatens to take over more Memphis schools',at:'mscs',tags:['education'],cd:48,when:s=>s.y>=2027&&s.met.reading<30,
+  body:()=>'The state education commissioner says 14 Memphis schools are among the worst in Tennessee and could be handed to state-picked operators. The school board is furious. Some parents say anything would be better than now.',
+  fact:'Tennessee\'s Achievement School District took over dozens of Memphis schools starting in 2012. Most were later returned after results fell short.',
+  choices:[{label:'Stand with MSCS against the takeover',grp:{parents:1,faith:1},council:{education:1},x:()=>{facMod('mscs','You stood with us against Nashville',12);try{facMod('state','You fought the school takeover',-8)}catch(e){}}},
+   {label:'Stay out of it: it\'s between the state and the board',x:()=>facMod('mscs','You left us alone against Nashville',-8)},
+   {label:'Pay for a city-backed turnaround plan at the 14 schools',cost:2,fx:{reading:0.4},grp:{parents:2},council:{education:3,fiscal:-1},x:()=>{facMod('mscs','You helped us keep our schools',8);schProg('Turnaround plan at 14 schools')}}],
+  ignore:{grp:{parents:-1}}},
+ {id:'sch_supt',title:'The school board is choosing a new superintendent',at:'mscs',tags:['education'],cd:72,when:s=>s.y>=2027&&Math.random()<0.5,
+  body:()=>'Dr. Pierce is leaving for a job in Atlanta. The board has two finalists: a Memphis principal who grew up in Whitehaven, and a reformer who turned around schools in Denver. Both want to know where the mayor stands.',
+  choices:[{label:'Back the hometown principal',grp:{parents:1,faith:1,working:1},x:()=>{facMod('mscs','You backed our pick',8);FACS.mscs.lead={name:'Dr. Carla Moten',g:'f',age:49,frame:'#e0803a'}}},
+   {label:'Back the reformer from Denver',fx:{reading:0.3},grp:{business:1,young:1,labor:-1},x:()=>{facMod('mscs','You leaned on the board',-6);FACS.mscs.lead={name:'Dr. Marcus Ellery',g:'m',age:46,frame:'#e0803a'}}},
+   {label:'Stay out: the board decides',x:()=>{FACS.mscs.lead={name:'Dr. Carla Moten',g:'f',age:49,frame:'#e0803a'}}}]},
+ {id:'sch_fight',title:'A fight outside a high school goes viral',at:'mscs',tags:['safety','education'],cd:18,when:s=>s.y>=2026,
+  body:()=>'A video of a brawl at dismissal outside a high school in Raleigh has a million views. Parents are scared, the board wants help, and a TV station is camped outside.',
+  choices:[{label:'Send violence interrupters to the schools at dismissal',cost:0.6,fx:{crime:-0.15},grp:{parents:2,faith:1},council:{safety:1},x:()=>{facMod('mscs','You helped keep our students safe',8);schProg('Violence interrupters at dismissal')}},
+   {label:'Put extra patrol cars outside the schools',cost:0.4,fx:{crime:-0.1},grp:{owners:1,young:-1},council:{safety:2},x:()=>facMod('mscs','You sent police without asking us',-2)},
+   {label:'Go talk to the students yourself',grp:{parents:1,young:2},x:()=>facMod('mscs','The mayor came to our school',5)}],
+  ignore:{grp:{parents:-2}}},
+ {id:'sch_slide',title:'The summer slide',at:'library',tags:['education'],months:[5],cd:12,
+  body:()=>'School lets out in a week. Every summer Memphis students lose about two months of reading. The library director has a plan, and MSCS would send teachers.',
+  choices:[{label:'Fund summer reading at every library branch',cost:0.5,fx:{reading:0.3},grp:{parents:2},council:{education:2},x:()=>{facMod('mscs','You ran summer reading with us',6);schProg('Summer reading at the libraries')}},
+   {label:'Put the money into summer youth jobs instead',cost:1,fx:{jobs:0.2,crime:-0.15},grp:{young:2,working:1},council:{jobs:2}},
+   {label:'Not this year'}],
+  ignore:{}},
+ {id:'sch_grad',title:'Graduation season',at:'liberty',tags:['education'],months:[5],cd:12,
+  body:()=>'Thousands of seniors are graduating this month, many the first in their families. The district asks if the mayor will speak at a ceremony.',
+  choices:[{label:'Give the commencement speech',grp:{parents:2,faith:1},x:()=>facMod('mscs','The mayor spoke at graduation',4)},
+   {label:'Announce a scholarship fund with local businesses',fx:{jobs:0.1},grp:{parents:2,business:1},x:()=>{facMod('mscs','You started a scholarship fund',5);schProg('Graduate scholarship fund')}},
+   {label:'Send a video message',grp:{parents:0.5}}]});
+// reading moves with the relationship, every month
+function schMonth(){if(!inOffice())return;try{if(S.read0==null)S.read0=S.met.reading;const r=schRel();S.met.reading=clamp(S.met.reading+r/3000,5,95)}catch(e){}}
+// ---------- 2. tourism and the riverfront ----------
+function tourInit(){if(!S.tour)S.tour={img:50,vis:12.5,mods:[],tax:0,yr:S.y,crime0:S.met.crime};return S.tour}
+function tourMod(t,v){const T=tourInit();T.mods.unshift({t,v,m:nowM()});if(T.mods.length>10)T.mods.length=10}
+function tourParts(){const T=tourInit();const L=[];const dc=S.met.crime-T.crime0;if(Math.abs(dc)>=0.3)L.push({t:dc>0?'Violent crime is up':'Violent crime is down',v:-Math.round(dc*4)});
+  T.mods.forEach(x=>{const v=x.v*Math.pow(0.9,Math.max(0,nowM()-x.m));if(Math.abs(v)>=0.5)L.push({t:x.t,v:Math.round(v)})});
+  if(S.river&&S.river.done)L.push({t:S.river.done,v:S.river.v||8});if(S.beale)L.push({t:S.beale.t,v:S.beale.v});return L}
+function tourTarget(){return clamp(50+tourParts().reduce((a,x)=>a+x.v,0),5,95)}
+function tourMonth(){if(!inOffice())return;const T=tourInit();T.img=clamp(T.img+(tourTarget()-T.img)*0.25,0,100);T.vis=+(12.5*(0.82+T.img/280)).toFixed(2);
+  const tax=+((T.img-50)/50*0.18).toFixed(2);S.reserve+=tax;T.tax=+((T.yr===S.y?T.tax:0)+tax).toFixed(2);T.yr=S.y}
+{const _eom=endOfMonth;endOfMonth=function(...a){const r=_eom.apply(this,a);try{if(S&&S.started&&inOffice()){schMonth();tourMonth()}}catch(e){console.warn('sch/tour',e)}return r}}
+// festivals you show up for help the city's image
+{const _rc=resolveChar;resolveChar=function(ev,ci){const r=_rc.apply(this,arguments);try{if(ev&&ev.type==='fest'&&inOffice()&&ci===0){const F=festFor(ev);tourMod(`You showed up for ${F.n}`,3)}}catch(e){}return r}}
+STORY_NAMES.river='Mud Island\'s future';STORY_FIRST.river='river1';
+EVENTS.push(
+ {id:'river1',story:'river',scripted:true,title:'What should happen to Mud Island?',at:'pyramid',tags:['jobs'],
+  body:()=>'The river park on Mud Island has been half closed for years: the monorail is shut, the amphitheater is empty, and the scale model of the river is cracking. Three proposals are on your desk.',
+  fact:'Mud Island River Park opened in 1982 with a five-block scale model of the lower Mississippi. The city has debated what to do with it for most of the time since.',
+  choices:[{label:'A big outdoor park with trails, a beach and concerts',cost:1,grp:{young:2,parents:1},flag:'park',next:'river2',delay:3},
+   {label:'Let a developer build housing and a smaller park',fx:{revenue:0.4},grp:{business:2,young:-1,renters:-1},flag:'dev',next:'river2',delay:3},
+   {label:'Restore the river museum, the monorail and the scale model',cost:1.5,grp:{owners:1,faith:1},flag:'museum',next:'river2',delay:3}]},
+ {id:'river2',story:'river',scripted:true,title:'Mud Island: the fight over the plan',at:'pyramid',tags:['jobs'],
+  body:s=>{const f=SF(s,'river');return`${f.dev?'Neighbors in Harbor Town are suing to stop the apartments.':f.park?'The park plan needs $40 million, and the Riverfront Development board wants the city to commit.':'The monorail repair estimate came in at three times the guess.'} The project can still go either way.`},
+  choices:[{label:'Raise private money first',sk:'stew',b:0.5,grp:{business:1},flag:'raised',next:'river3',delay:4,fail:{flag:'short',next:'river3',delay:4}},
+   {label:'Put city money behind it now',cost:2,grp:{young:1,business:1},flag:'city',next:'river3',delay:4},
+   {label:'Bring the neighbors to the table',sk:'dip',b:0.55,grp:{owners:1,renters:1},flag:'neighbors',next:'river3',delay:4,fail:{flag:'stalled',next:'river3',delay:4}}]},
+ {id:'river3',story:'river',scripted:true,title:'Mud Island opens',at:'pyramid',tags:['jobs'],
+  body:s=>{const f=SF(s,'river');const good=(f.raised||f.city||f.neighbors)&&!f.short&&!f.stalled;return good?`The ribbon is cut. ${f.dev?'New apartments and a riverfront lawn':f.park?'Trails, a sandy beach and a concert lawn':'The restored scale model and a running monorail'} open to big crowds, and the tourism bureau is already putting it in ads.`:`It's opening, but smaller and later than promised. ${f.short?'The private money never fully came in.':'Neighbors are still unhappy.'}`},
+  choices:[{label:'Throw an opening weekend on the river',cost:0.3,grp:{young:2,working:1,business:1},x:()=>{const f=(S.stories.river||{}).flags||{};const good=(f.raised||f.city||f.neighbors)&&!f.short&&!f.stalled;S.river={done:'Mud Island reopened',v:good?10:5};tourMod('Mud Island opening weekend',4)},end:{t:'Reopened Mud Island',camp:{d:1,t:'Your ad shows families on the Mud Island lawn.'}}},
+   {label:'Open it quietly',x:()=>{const f=(S.stories.river||{}).flags||{};const good=(f.raised||f.city||f.neighbors)&&!f.short&&!f.stalled;S.river={done:'Mud Island reopened',v:good?8:4}},end:{t:'Reopened Mud Island',camp:{d:0.5,t:'Mud Island comes up in your ads.'}}}]},
+ {id:'beale_wk',title:'Another rough weekend on Beale Street',at:'beale',tags:['safety','jobs'],cd:14,
+  body:()=>'Two shootings near Beale Street in a month. Club owners say tourists are scared off; neighbors say the crowds after 1 a.m. are the problem. The Beale Street board wants a decision.',
+  fact:'The city owns the Beale Street district. It has tried weekend cover charges, security screening and earlier closings at different times.',
+  choices:[{label:'A weekend cover charge with security screening at the entrances',cost:0.4,fx:{crime:-0.15},grp:{owners:1,business:1,young:-2},x:()=>{S.beale={t:'Beale Street feels safer',v:5};tourMod('Beale Street security',2)}},
+   {label:'More police on foot, all weekend',cost:0.6,fx:{crime:-0.2},grp:{owners:1,young:-1},council:{safety:2},x:()=>{S.beale={t:'Police on Beale every weekend',v:3}}},
+   {label:'Close the street to cars and close the clubs at 1 a.m.',grp:{owners:1,business:-2,young:-1},x:()=>{S.beale={t:'Beale clubs close at 1 a.m.',v:-2};tourMod('Fewer late-night visitors on Beale',-3)}}],
+  ignore:{x:()=>tourMod('Violence on Beale Street',-6)}},
+ {id:'convention',title:'A big convention is choosing between Memphis and Louisville',at:'cityhall',tags:['jobs'],cd:20,when:s=>s.y>=2026,
+  body:()=>'A national church convention would bring 25,000 people to Memphis for a week in July. Louisville is offering free convention space. The tourism bureau says Memphis needs to match it.',
+  choices:[{label:'Match Louisville\'s offer',cost:1,grp:{business:2,faith:1},x:()=>{tourMod('Won a 25,000-person convention',6);S.reserve+=0.6;logIt('The convention chose Memphis. Hotel tax is up.')}},
+   {label:'Pitch the city itself: the river, the music, the food',sk:'cha',b:0.45,grp:{business:1},x:ok=>{if(ok){tourMod('Won a 25,000-person convention',6);S.reserve+=0.6;logIt('The convention chose Memphis on the pitch alone.')}else{tourMod('Lost a big convention to Louisville',-2);logIt('The convention went to Louisville.')}}},
+   {label:'Let it go to Louisville',x:()=>tourMod('Lost a big convention to Louisville',-2)}]},
+ {id:'riverfront_summer',title:'The riverfront in summer',at:'pyramid',tags:['jobs'],months:[6,7],cd:12,
+  body:()=>'Tom Lee Park is full every evening since the redesign, but there\'s no shade along Riverside Drive, the bathrooms close at 6 and the trash cans overflow by Sunday.',
+  choices:[{label:'Keep the parks open and staffed until 11 p.m.',cost:0.4,grp:{young:2,parents:1,renters:1},x:()=>tourMod('Riverfront open late all summer',4)},
+   {label:'Ask the riverfront nonprofit and businesses to pay for it',sk:'dip',b:0.5,grp:{business:1},x:ok=>tourMod(ok?'Riverfront open late, paid by sponsors':'The riverfront stays half-run',ok?4:-1)},
+   {label:'Leave it as it is',x:()=>tourMod('Overflowing trash on the riverfront',-2)}]});
+// the generic choice resolver learns to run a choice's own effect, once, after it goes through
+{const _rs=resolve;resolve=function(ev,ci){const def=ev&&(ev.kind==='event'||!ev.kind)?evDef(ev):null;const c=def&&def.choices&&def.choices[ci];const had=S.events.includes(ev);const r=_rs.apply(this,arguments);
+  try{if(c&&c.x&&had&&!S.events.includes(ev)){const ok=c.sk?!!(typeof STORY_LAST!=='undefined'&&STORY_LAST&&STORY_LAST.ok):true;if(c.sk&&!def.story){c.x(persuadeOdds?Math.random()<persuadeOdds(c.sk,c.b):true)}else c.x(ok)}}catch(e){console.warn('choice x',e)}return r}}
+// ignoring an event can run an effect too
+{const _ex=expire;expire=function(s,report){const before=(s.events||[]).slice();const r=_ex.apply(this,arguments);try{before.filter(e=>e.kind==='event'&&!s.events.includes(e)).forEach(e=>{try{const d=evDef(e);if(d&&d.ignore&&d.ignore.x)d.ignore.x()}catch(err){}})}catch(e){}return r}}
+// a chance each month for the Mud Island story to begin
+function riverMaybe(){if(!inOffice())return;S.stories=S.stories||{};if(S.stories.river||S.river)return;if(nowM()-(S.termStart||0)<6)return;if(Math.random()>0.06)return;startStory('river',{});logIt('A new storyline begins: Mud Island\'s future.')}
+{const _eom=endOfMonth;endOfMonth=function(...a){const r=_eom.apply(this,a);try{if(S&&S.started&&inOffice())riverMaybe()}catch(e){}return r}}
+// ---------- the two screens ----------
+function openSchools(){facInit();const v=schRel(),[tn,tc]=facTier(v),L=FACS.mscs.lead;const d=S.read0!=null?S.met.reading-S.read0:0;const grad=Math.round(80+d*0.8);const P=S.schProg||[];
+  openModal('Memphis-Shelby County Schools','The schools',`<p>City Hall doesn't run the schools: an elected board and the superintendent do. But the city funds a lot around them, and how well you work together shows up in reading scores.</p>
+   <div class="qrgrid"><div><small>Superintendent</small><p><b>${L.name}</b></p></div><div><small>Your relationship</small><p><b class="${tc}">${tn} (${v>0?'+':''}${v})</b></p></div>
+   <div><small>Students reading on grade level</small><p><b>${S.met.reading.toFixed(1)}%</b> <span class="${d>=0?'pos':'neg'}">${d>=0?'+':'−'}${Math.abs(d).toFixed(1)}</span></p></div><div><small>Graduation rate (estimated)</small><p><b>${grad}%</b></p></div></div>
+   <div class="facts"><h4>What moves the relationship</h4><ul>${facParts('mscs').map(x=>`<li>${x.t} <b class="${x.v>=0?'pos':'neg'}">${x.v>0?'+':''}${Math.round(x.v)}</b></li>`).join('')||'<li>Nothing yet. Meet the superintendent or fund a program.</li>'}</ul></div>
+   ${P.length?`<div class="facts"><h4>Programs the city runs with the schools</h4><ul>${P.map(t=>`<li>${t}</li>`).join('')}</ul></div>`:''}
+   <div class="facts"><h4>${FACS.mscs.hi?'When you get along':''}</h4><p class="note">${FACS.mscs.hi}</p><h4>When you don't</h4><p class="note">${FACS.mscs.lo}</p></div>
+   <div class="choices"><button class="choice" data-sch="meet" ${S.slots>0?'':'disabled'}><b>Meet with ${L.name}</b><small>1 action · relationship +8</small></button><button class="choice" data-sch="visit" ${S.slots>0?'':'disabled'}><b>Visit a school and read to a class</b><small>1 action · ${oddsTag('cha',0.6)} · parents +2, relationship +5</small></button><button class="choice" data-act="close"><b>Back</b></button></div>`,true)}
+document.addEventListener('click',e=>{const b=e.target.closest('[data-sch]');if(!b||!S)return;e.preventDefault();e.stopImmediatePropagation();if(S.slots<1)return;S.slots--;let m;
+  if(b.dataset.sch==='meet'){facMod('mscs','You met with the superintendent',8);gainXP('dip',4);m=`You and ${FACS.mscs.lead.name} went over the district's budget and the city's programs. Relationship +8.`}
+  else{const ok=persuade('cha',0.6,[],6);if(ok){facMod('mscs','The mayor read to our students',5);groupLift('parents',2,'Mayor visited a school');m='The second graders loved it, and a picture of you on the reading rug went around.'}else{facMod('mscs','The mayor visited a school',2);m='The visit was fine. The kids were more interested in your security detail.'}}
+  logIt(m);save();refreshHUD();toast(m);openSchools()},true);
+function openTourism(){const T=tourInit();const img=Math.round(T.img);const w=img>=65?['Great','pos']:img>=52?['Good','pos']:img>=42?['Mixed','']:['Struggling','neg'];
+  const up=[];try{for(let k=0;k<4;k++){const m=((S.m-1+k)%12)+1;FESTS.filter(f=>f.m===m).forEach(f=>up.push(`${MONTHS_L[m-1]}: ${f.n}`))}}catch(e){}
+  const st=S.stories&&S.stories.river;const river=S.river?S.river.done:st&&!st.ended?'In progress: '+STORY_NAMES.river:'Mostly closed. A plan could come to your desk.';
+  openModal('Tourism and the riverfront','Visitors and the city\'s image',`<p>Visitors fill hotel rooms and restaurants, and the hotel and sales taxes they pay go into the city budget. How the city looks to the rest of the country decides how many come.</p>
+   <div class="qrgrid"><div><small>The city's image</small><p><b class="${w[1]}">${w[0]} (${img})</b></p></div><div><small>Visitors a year</small><p><b>${T.vis.toFixed(1)} million</b></p></div>
+   <div><small>Extra tax from tourism this year</small><p><b class="${T.tax>=0?'pos':'neg'}">${T.tax>=0?'+':'−'}${fmtM(Math.abs(T.tax))}</b></p></div><div><small>Mud Island</small><p><b>${river}</b></p></div></div>
+   <div class="facts"><h4>What's moving it</h4><ul>${tourParts().map(x=>`<li>${x.t} <b class="${x.v>=0?'pos':'neg'}">${x.v>0?'+':''}${x.v}</b></li>`).join('')||'<li>Nothing unusual right now.</li>'}</ul></div>
+   ${up.length?`<div class="facts"><h4>Coming up</h4><ul>${up.slice(0,6).map(x=>`<li>${x}</li>`).join('')}</ul><p class="note">Showing up for festivals helps the city's image.</p></div>`:''}
+   <div class="choices"><button class="choice" data-act="close"><b>Back</b></button></div>`,true)}
+// on the desk's More menu
+{const _h=hdHTML;hdHTML=function(){let h=_h.apply(this,arguments);if(S&&inOffice()&&HD.more)h=h.replace('<button role="menuitem" data-hdact="council">','<button role="menuitem" data-hdact="schools">The schools</button><button role="menuitem" data-hdact="tourism">Tourism and the riverfront</button><button role="menuitem" data-hdact="council">');return h}}
+window.addEventListener('click',e=>{const t=e.target.closest('#homeDesk [data-hdact="schools"],#homeDesk [data-hdact="tourism"]');if(!t||!S)return;e.preventDefault();e.stopImmediatePropagation();HD.more=false;renderHomeDesk(true);if(t.dataset.hdact==='schools')openSchools();else openTourism()},true);
 
 function openLedger(){const L=S.log||[];openPanel('Everything that has happened, newest first','Ledger',L.length?`<div class="logl">${L.map(x=>`<div><span>${x.d}</span><p style="margin:0">${x.t}</p></div>`).join('')}</div>`:'<p class="note">Nothing yet. Tap ▶ Continue to move ahead.</p>','ledger')}
 function openPolicies(){const ks=Object.keys(POLICIES);

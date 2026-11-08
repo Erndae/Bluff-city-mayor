@@ -4,6 +4,24 @@
 
 A Memphis political life on a real map of the city. Start as the mayor, run for mayor, or begin as a private citizen with a job and rise from there: the City Council, Shelby County mayor, Congress and the Senate, a law firm, a university presidency, or the back rooms as a kingmaker. As mayor you handle problems at real places, write the city budget, win votes from the 13-member City Council and run for re-election. Your family, health, party, rivals and record follow you through every chapter.
 
+## v27.03: The schools, and the riverfront
+
+- **Memphis-Shelby County Schools is now a power player**, led by Superintendent Dr. Alan Pierce. City Hall doesn't run the schools, but how well you work with the district moves reading scores a little every month. Its demands arrive like the unions' and the County's: crossing guards, after-school programs, summer reading at the libraries, fixing heat in old buildings, officers in high schools. You can agree, bargain or say no.
+- **The school year brings its own decisions:**
+  - the district wants to close nine half-empty schools
+  - Nashville threatens a state takeover of struggling schools
+  - the school board picks a new superintendent
+  - a fight outside a high school goes viral
+  - the summer slide
+  - graduation season
+- **The schools screen** (More → The schools) shows the superintendent, your relationship and what's moving it, reading scores, an estimated graduation rate and the programs the city runs with the district. You can spend an action to meet the superintendent or read to a class.
+- **Tourism and the riverfront** (More → Tourism and the riverfront):
+  - **The city's image** moves month to month and decides how many visitors come, about 12 million a year. A good image means extra hotel and sales tax in the budget every month; a bad one costs you.
+  - **What moves it:** crime, festivals you show up for, Beale Street, the riverfront and big wins or losses.
+  - **Mud Island's future** is a new multi-month story: a big outdoor park, housing with a smaller park, or restoring the river museum and monorail, then the fight over paying for it, then the opening.
+  - **New decisions:** rough weekends on Beale Street, a 25,000-person convention choosing between Memphis and Louisville, and the riverfront in summer.
+  - **Coming up:** the screen also shows the festivals ahead.
+
 ## v27.02: A peek inside, and what happened there
 
 - **The 3D office and home stay exactly as they are.** The desk's Office and Home buttons still take you into them.
