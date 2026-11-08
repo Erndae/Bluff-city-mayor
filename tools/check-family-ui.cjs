@@ -1,0 +1,12 @@
+const fs=require('node:fs'),vm=require('node:vm'),assert=require('node:assert/strict');
+const html=fs.readFileSync('index.html','utf8');
+const start=html.indexOf('function famInit()'),end=html.indexOf('function famLog(',start);
+const c={S:{mayor:{name:'Test'}},famGen:kind=>({kind,of:'Test',home:65,kids:[],log:[]})};vm.createContext(c);vm.runInContext(html.slice(start,end),c);
+assert.equal(c.famInit().kind,'single');assert.equal(c.famMembers().length,0);
+c.S.fam={of:'Test',spouse:{name:'Chosen Partner'},kids:[],log:[]};c.S.famAsk=false;
+assert.equal(c.famMembers()[0].name,'Chosen Partner','preserve established family');
+c.S.famAsk=true;c.S.fam={of:'Test',spouse:{name:'Unchosen Random Partner'},kids:[],log:[]};
+assert.equal(c.famMembers().length,0,'discard unconfirmed legacy random family');
+assert(!html.includes("if(n==='openFamily'&&S&&S.mayor)"));
+assert(html.includes("if(hdShown()&&!S.after)"),'career label is not overwritten by monthly clock');
+console.log('PASS: single default, established-family preservation, unconfirmed family migration, family/party separation, career clock label');

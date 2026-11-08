@@ -12,7 +12,7 @@
 <link rel="stylesheet" href="assets/vendor/maplibre-gl-4.7.1/maplibre-gl.css">
 <meta name="theme-color" content="#0d1822">
 <link rel="stylesheet" href="music.css?v=25">
-<link rel="stylesheet" href="home-interior.css?v=26.27">
+<link rel="stylesheet" href="home-interior.css?v=27.08">
 <link rel="stylesheet" href="meetings.css?v=26.44">
 <link rel="stylesheet" href="room-stories.css?v=26.45">
 <link rel="stylesheet" href="room-actions.css?v=26.51">
@@ -767,6 +767,12 @@ details.analysis{margin-top:6px}details.analysis summary{cursor:pointer;color:va
 .dkall{margin-top:6px;background:none;border:1px dashed var(--line);color:var(--amber);border-radius:4px;padding:4px;font:inherit;font-size:12.5px;cursor:pointer}
 .card.story{border-left:3px solid #5aa7d8}.storytag{font-family:var(--f-label);font-weight:600;font-size:11.5px;letter-spacing:.1em;text-transform:uppercase;color:#5aa7d8;margin-bottom:2px}
 @media (max-width:640px){.grow{grid-template-columns:30px minmax(0,1fr) 44px;}.grow .gbar,.grow .gst{display:none}}
+/* Keep scrolling content and all touch targets above the navigation. */
+.hd-body{min-height:0;padding-bottom:30px}.hd-body>*{flex-shrink:0}
+.hd-nav{position:relative;z-index:3;align-items:stretch}.hd-nav>button.hd-play{margin-top:0;height:auto;min-height:66px}
+.hd-pm,.hd-ps{white-space:normal;overflow:visible;text-overflow:clip;text-align:center}
+.hd-sheet{bottom:calc(94px + env(safe-area-inset-bottom,0px))}
+.modal .sheet,.panel{background:#13212d;opacity:1}
 </style>
 <link rel="stylesheet" href="city-design.css?v=25.5">
 <link rel="stylesheet" href="city-life.css?v=25">
@@ -3135,9 +3141,9 @@ function enterHome(){
   homeInit(S);const wasPaused=S.paused;
   if(typeof TUT!=='undefined'&&TUT)tutEnd(false);
   onClose=null;closeModal();closePanel();navReset();keysDown.clear();S.paused=true;refreshHUD();
-  BCInterior.open({state:()=>S,save,menu:()=>typeof laptopItems==='function'?laptopItems():[],device:typeof openDevice==='function'?k=>openDevice(k):null,tv:typeof homeTV==='function'?()=>homeTV():null,books:typeof homeBooks==='function'?()=>homeBooks():null,read:typeof homeRead==='function'?id=>homeRead(id):null,close:next=>{
+  BCInterior.open({state:()=>S,save,family:()=>famMembers(),menu:()=>typeof laptopItems==='function'?laptopItems():[],device:typeof openDevice==='function'?k=>openDevice(k):null,tv:typeof homeTV==='function'?()=>homeTV():null,books:typeof homeBooks==='function'?()=>homeBooks():null,read:typeof homeRead==='function'?id=>homeRead(id):null,close:next=>{
     keysDown.clear();S.paused=wasPaused;save();refreshHUD();
-    if(next==='news')openNews();else if(next==='campaign')openHQ();else if(next&&typeof homeRoute==='function')homeRoute(next);
+    if(next==='family')openFamily();else if(next==='news')openNews();else if(next==='campaign')openHQ();else if(next&&typeof homeRoute==='function')homeRoute(next);
   }});
 }
 function hoodDistrict(id){const h=LMAP[id];return h?districtAt(h.lon,h.lat):null}
@@ -7515,7 +7521,7 @@ function famGen(kind){const g=(S.mayor&&S.mayor.g)||'m',sg=g==='m'?'f':'m',a=(S.
   if(kind==='married'||kind==='marriedkids')F.spouse={name:`${pk2(FAM_FIRST[sg])} ${surname()}`,g:sg,age:Math.max(28,a+Math.round(Math.random()*6-3)),job:pk2(Object.keys(SPOUSE_JOBS)),pol:pk2(['loves','tolerates','tolerates','hates']),mood:70,frame:'#6b4a5a'};
   if(kind==='marriedkids'||kind==='single1'){const n=kind==='single1'?1:1+Math.floor(Math.random()*2);F.kids=[];for(let i=0;i<n;i++){const kg=Math.random()<.5?'f':'m';F.kids.push({name:`${pk2(KID_FIRST[kg])} ${surname()}`,g:kg,age:Math.min(17,Math.max(7,a-30-i*3+Math.floor(Math.random()*5))),mood:70,frame:'#4a6b5a'})}}
   F.kids=F.kids||[];return F}
-function famInit(){if(!S)return null;if(S.fam&&S.fam.of&&S.mayor&&S.fam.of!==S.mayor.name)S.fam=null;if(!S.fam)S.famAsk=true;if(!S.fam)S.fam=famGen(Math.random()<0.65?'marriedkids':Math.random()<0.5?'married':'single1');return S.fam}
+function famInit(){if(!S)return null;if(S.fam&&S.fam.of&&S.mayor&&S.fam.of!==S.mayor.name)S.fam=null;if(!S.fam)S.famAsk=true;if(!S.fam)S.fam=famGen('single');if(S.famAsk&&!S.fam.log.length&&!S.fam.partner)S.fam=famGen('single');return S.fam}
 function famMembers(){const F=famInit();return[...(F.spouse&&!F.spouse.gone?[{...F.spouse,rel:F.spouse.g==='f'?'Wife':'Husband',id:'s'}]:[]),...F.kids.map((k,i)=>({...k,rel:k.g==='f'?'Daughter':'Son',id:'k'+i}))]}
 function famLog(t){const F=famInit();F.log.unshift({t,d:dateStr()});if(F.log.length>12)F.log.length=12}
 function homeAdd(v,why){const F=famInit();F.home=clamp(F.home+v,0,100);if(why&&Math.abs(v)>=5)famLog(`${why} (${v>0?'+':''}${Math.round(v)})`)}
@@ -7585,7 +7591,7 @@ const FAM_ACT={
   do:F=>{S.slots--;F.cd.trail=nowM();const sp=F.spouse&&!F.spouse.gone?F.spouse:null;const v=sp?(sp.pol==='loves'?1.5:sp.pol==='hates'?0.6:1):0.8;groupLift('parents',v,'Your family on the trail');groupLift('faith',v*0.7,'Your family on the trail');if(sp&&sp.pol==='hates')homeAdd(-12,'Dragged them onto the trail');else homeAdd(-3);if(sp)(spouseJob().grp||[]).forEach(g=>groupLift(g,v*0.5,`Your spouse, a ${spouseJob().short}`));return sp?`${sp.name.split(' ')[0]} worked the room. ${sp.pol==='hates'?(sp.g==='f'?'She':'He')+' did it for you, and let you know it.':'People loved '+(sp.g==='f'?'her':'him')+'.'}`:'The kids handed out stickers. Parents loved it.'}}};
 function famDo(k){const F=famInit(),A=FAM_ACT[k];if(!A||!A.ok(F))return;const msg=A.do(F);try{sfx('good')}catch(e){}save();refreshHUD();toast(msg);FAM_MSG=msg;openFamily()}
 let FAM_MSG=null;
-function famSet(kind){S.fam=famGen(kind);save();FAM_MSG='Your family is set.';openFamily()}
+function famSet(kind){S.famAsk=false;S.fam=famGen(kind);save();FAM_MSG='Your family is set.';openFamily()}
 function openFamily(){const F=famInit(),last=FAM_MSG;FAM_MSG=null;const M=famMembers();const h=Math.round(F.home);const hc=h>=60?'pos':h<30?'neg':'';
   const card=m=>{const sp=m.id==='s';const J=sp?SPOUSE_JOBS[m.job]:null;return`<div class="famcard"><div class="fam-pic">${(()=>{try{return portrait(m,56)}catch(e){return''}})()}</div><div><b>${m.name}</b><small>${m.rel} · ${m.age}${sp?` · ${J.n}`:` · ${m.age>=14?'high school':m.age>=11?'middle school':'elementary school'}`}</small>${sp?`<p class="note">${m.name.split(' ')[0]} ${SP_POL[m.pol]}.</p>`:''}</div></div>`};
   const acts=Object.keys(FAM_ACT).map(k=>{const A=FAM_ACT[k],ok=A.ok(F);const d=typeof A.d==='function'?A.d():A.d;if(k==='trail'&&!(S.camp&&!S.camp.voted&&(isCand()||monthsToElection()<=12)))return'';return`<button class="choice" data-famact="${k}" ${ok?'':'disabled'}><b>${A.n}</b><small>${ok?d:k==='trail'&&S.slots<=0?'No actions left':'Done this month'}</small></button>`}).join('');
@@ -8314,13 +8320,13 @@ function setParty(p){if(!PARTY[p]||!S||!S.mayor)return;const old=myParty();if(ol
 function partyRow(){const p=myParty();return`<div class="partyrow"><span>Party: <b style="color:${p?PARTY[p].c:'inherit'}">${partyName(p)}</b></span>${['D','R','I'].filter(k=>k!==p).map(k=>`<button class="btn" data-party="${k}">${p?'Switch to ':''}${PARTY[k].n}</button>`).join('')}</div>${p?'<p class="note">Switching parties costs influence and resets your standing in Congress.</p>':'<p class="note">Pick a party before you run for County mayor, Congress or the Senate. Memphis mayor races are nonpartisan.</p>'}`}
 document.addEventListener('click',e=>{const b=e.target.closest('[data-party]');if(!b||!S)return;e.preventDefault();e.stopImmediatePropagation();setParty(b.dataset.party)},true);
 // the next-chapter screen: the party row, the party's effect on each race, and Congress labels
-{const _oa=openAfter;openAfter=function(...a){const r=_oa.apply(this,a);try{const A=afterInit(),b=$('mBody');if(!b||b.querySelector('.partyrow'))return r;const grid=b.querySelector('.qrgrid');const x=document.createElement('div');x.innerHTML=partyRow();if(grid)grid.after(...x.childNodes);
-  if(!A.role){const p=myParty();['county','congress','senate'].forEach(k=>{const btn=b.querySelector(`[data-role="${k}"]`);if(!btn)return;if(!p){btn.disabled=true;btn.querySelector('small').textContent='Choose a party first (above). '+btn.querySelector('small').textContent}else btn.querySelector('small').insertAdjacentHTML('beforeend',` <b>As ${p==='I'?'an Independent':'a '+PARTY[p].n}: ${PARTY_WHY[k][p]}.</b>`)})}
+{const _oa=openAfter;openAfter=function(...a){const r=_oa.apply(this,a);try{const A=afterInit(),b=$('mBody');if(!b||b.querySelector('.partyrow'))return r;const grid=b.querySelector('.qrgrid');const x=document.createElement('div');x.innerHTML='<button class="btn" data-hdact="party">Political affiliation</button>';if(grid)grid.after(...x.childNodes);
+  if(!A.role){const p=myParty();['county','congress','senate'].forEach(k=>{const btn=b.querySelector(`[data-role="${k}"]`);if(!btn)return;if(!p){btn.disabled=true;btn.querySelector('small').textContent='Choose a party in Political affiliation. '+btn.querySelector('small').textContent}else btn.querySelector('small').insertAdjacentHTML('beforeend',` <b>As ${p==='I'?'an Independent':'a '+PARTY[p].n}: ${PARTY_WHY[k][p]}.</b>`)})}
   const st=b.querySelector('.rolestats');if(st&&(A.role==='congress'||A.role==='senate')){const p=myParty();st.querySelectorAll('small').forEach(s=>{if(s.textContent==='Party standing')s.textContent=p==='I'?'Standing with your caucus':`Standing with ${A.role==='senate'?'Senate':'House'} ${PARTY[p||'D'].pl}`})}
   const note=b.querySelector('.cgx > .note');if(note&&myParty()==='I')note.insertAdjacentHTML('beforeend',' · As an Independent you caucus with a party but can\'t join leadership, and you never hold the majority.');
   if(A.role==='congress'||A.role==='senate'){b.querySelectorAll('[data-cvote] small').forEach((s,i)=>{const c=A.cg;if(!c||!c.vote)return;const E=voteFx(c.vote,i===0);s.textContent=`${myParty()==='I'?'Caucus':'Party'} ${E.party>0?'+':''}${E.party} · approval back home ${E.app>0?'+':''}${E.app}${E.fed?` · $${E.fed}M for Memphis`:''}`});const vd=b.querySelector('.cgx .faccard .note');if(vd&&A.cg&&A.cg.vote){const V=A.cg.vote;vd.textContent=V.by==='both'?V.d:`${V.d} ${V.by===myParty()?'Your party\'s leadership is whipping yes.':myParty()==='I'?'You\'re free to vote either way.':'Your party\'s leadership opposes it.'}`}}}catch(e){console.warn('party',e)}return r}}
 // the party shows on your character page
-{const _om=openModal;openModal=function(...a){const r=_om.apply(this,a);try{const n=NAV.cur?NAV.cur.name:'';if(n==='openFamily'&&S&&S.mayor){const b=$('mBody');if(b&&!b.querySelector('.partyrow')){const x=document.createElement('div');x.innerHTML=partyRow();const first=b.querySelector('.famlist')||b.firstChild;b.insertBefore(x,first)}}}catch(e){}return r}}
+{const _om=openModal;openModal=function(...a){const r=_om.apply(this,a);try{const n=NAV.cur?NAV.cur.name:'';if(n==='openMayor'&&S&&S.mayor){const b=$('mBody');if(b&&!b.querySelector('.partyrow')){const x=document.createElement('div');x.innerHTML=partyRow();const first=b.querySelector('.famlist')||b.firstChild;b.insertBefore(x,first)}}}catch(e){}return r}}
 // ======================= v26.75: THE 2026 MAP, TWO HOMES, AND FLYING TO WASHINGTON =======================
 // Tennessee's 2026 congressional map splits Shelby County among the 5th, 8th and 9th districts, each running from
 // Memphis out into rural Tennessee. You pick which seat to run in. Win Congress or the Senate and you need two homes:
@@ -9542,9 +9548,9 @@ function renderHomeDesk(force){if(!S)return;const el=(()=>{let e=$('homeDesk');i
   const show=hdShown();document.body.classList.toggle('deskon',show);document.body.classList.toggle('deskmapview',hdEligible()&&!HD.on);el.hidden=!show;if(!show)return;
   const h=hdHTML();if(force||h!==HD.last){const sc=HD.top?0:((el.querySelector('.hd-body')||{}).scrollTop||0);HD.top=false;el.innerHTML=h;HD.last=h;const bd=el.querySelector('.hd-body');if(bd)bd.scrollTop=sc}}
 {const _rh=refreshHUD;refreshHUD=function(...a){const r=_rh.apply(this,a);try{renderHomeDesk()}catch(e){console.warn('desk',e)}return r}}
-{const _uc=updateClock;updateClock=function(...a){const r=_uc.apply(this,a);try{if(hdShown()){const p=document.querySelector('#homeDesk .hd-play');if(p){const h=hdPlay();if(p._h!==h){p.innerHTML=h;p._h=h}}}}catch(e){}return r}}
+{const _uc=updateClock;updateClock=function(...a){const r=_uc.apply(this,a);try{if(hdShown()&&!S.after){const p=document.querySelector('#homeDesk .hd-play');if(p){const h=hdPlay();if(p._h!==h){p.innerHTML=h;p._h=h}}}}catch(e){}return r}}
 // ---------- what the buttons do ----------
-function hdAct(a,dd){const cand=isCand();HD.more=a==='more'?!HD.more:false;
+function hdAct(a,dd){if(a==='party'){openModal('Your political career','Political affiliation',partyRow(),true);return}const cand=isCand();HD.more=a==='more'?!HD.more:false;
   const R={map:()=>hdSetView(false),desk:()=>hdSetView(true),top:()=>{HD.view='desk';HD.top=true},board:()=>{HD.view='board';HD.top=true},townhall:()=>{try{goSection(openActions,'Hold a town hall')}catch(e){openActions()}},distpanel:()=>openPlace('dist:'+dd),hoods:()=>openHoods(+dd),mapdist:()=>{hdSetView(false);setTimeout(()=>{try{flyTo('dist:'+dd,false)}catch(e){}},80)},menu:()=>{const m=$('bMenu');if(m)m.click()},
    opinion:()=>openOpinion(),actions:()=>openActions(),budget:()=>openBudget(),hq:()=>openHQ(),council:()=>openCouncil(),news:()=>openNews(),ledger:()=>openLedger(),help:()=>openHelp(),
    music:()=>{const m=document.querySelector('[data-music-open]');if(m)m.click()},play:()=>{const b=$('bPlay');if(b)b.click()},
@@ -9708,7 +9714,7 @@ function hdHomePeek(){let F=null,M=[];try{F=famInit();M=famMembers()}catch(e){}i
   if(F.home<40)return'Your family misses you. You\'ve been gone a lot.';
   const kids=M.filter(m=>m.rel==='Son'||m.rel==='Daughter'),sp=M.find(m=>m.id==='s');const k=(S.m+S.y)%3;
   if(kids.length&&k!==2){const kid=kids[(S.m+S.day)%kids.length];return kid.age<13?`${hdFirst(kid.name)} wants to show you something.`:kid.age<18?`${hdFirst(kid.name)} has a game this week.`:`${hdFirst(kid.name)} is coming by for dinner.`}
-  if(sp)return`${hdFirst(sp.name)} saved you a plate. Dinner's at 7.`;return`${hdFirst(kids[0].name)} wants to show you something.`}
+  if(sp)return`Your ${sp.rel.toLowerCase()}, ${hdFirst(sp.name)}. Open Family to spend time together.`;return kids.length?`${hdFirst(kids[0].name)} wants to show you something.`:'A quiet house. Time to rest.'}
 function hdPeekHTML(){const o=hdOfficePeek(),h=hdHomePeek();if(!o&&!h)return'';
   return`<div class="hd-peek">${o?`<button data-hdact="office"><span class="hd-pi">${hdI('office',18)}</span><span><small>IN YOUR OFFICE</small>${hdEsc(o)}</span><b aria-hidden="true">›</b></button>`:''}${h?`<button data-hdact="home"><span class="hd-pi">${hdI('home',18)}</span><span><small>AT HOME</small>${hdEsc(h)}</span><b aria-hidden="true">›</b></button>`:''}</div>`}
 // ---------- what happened inside ----------
@@ -9732,7 +9738,7 @@ function hdFeedHTML(){const F=(S&&S.deskFeed)||[];if(!F.length)return'';
   return`<h3>WHAT HAPPENED <button class="hd-link" data-hdact="ledger">Everything ›</button></h3>`+F.slice(0,3).map(x=>`<div class="hd-feed"><span class="hd-pi">${hdI(x.k==='office'?'office':'home',18)}</span><div><small>${x.k==='office'?'IN YOUR OFFICE':'AT HOME'} · ${hdEsc(x.d)}</small>${x.items.map(t=>`<p>${hdEsc(t)}</p>`).join('')}</div></div>`).join('')}
 // ---------- on the desk ----------
 {const _b=hdBodyFor;hdBodyFor=function(){const h=_b.apply(this,arguments);if(HD.view!=='desk')return h;return hdPeekHTML()+h.replace('<h3>THE DISTRICTS',hdFeedHTML()+'<h3>THE DISTRICTS')}}
-{const _a=hdAfterHTML;hdAfterHTML=function(){const h=_a.apply(this,arguments);if(HD.view!=='after')return h;return h.replace('<div id="hdSlot"></div>',`${hdPeekHTML()}${hdFeedHTML()}<div id="hdSlot"></div>`)}}
+{const _a=hdAfterHTML;hdAfterHTML=function(){const h=_a.apply(this,arguments);if(HD.view!=='after')return h;return h.replace('<div id="hdSlot"></div>',`<section class="hd-next"><small>YOUR NEXT STEP</small><b>${S.after&&S.after.role?'Review your current career decisions below before advancing time.':'Choose a career below, or use your available moves to build influence before running for office.'}</b><span>Family manages relationships. Home lets you explore and furnish your house. Continue advances time.</span></section>${hdPeekHTML()}${hdFeedHTML()}<div id="hdSlot"></div>`)}}
 
 // ======================= v27.03: THE SCHOOLS, AND THE RIVERFRONT =======================
 // 1. Memphis-Shelby County Schools becomes a power player. The city doesn't run the schools, but it funds a lot
@@ -10741,7 +10747,7 @@ window.claude?.hot?.snapshot?.(()=>({S}));
 window.claude?.hot?.ready?window.claude.hot.ready(start):start(window.claude?.hot?.data??{});
 </script>
 <script src="home-renderer.js?v=26.11"></script>
-<script src="home-interior.js?v=26.43"></script>
+<script src="home-interior.js?v=27.08"></script>
 <script src="city-life.js?v=26.48"></script>
 <script src="city-flow.js?v=26.31"></script>
 <script src="music.js?v=26.43"></script>

@@ -4,3 +4,15 @@
 #home-interior .hi-tv{background:#0f1d1c;border:1px solid #5b6f63;border-radius:10px;padding:12px 14px;margin-bottom:12px}#home-interior .hi-tv>small{display:block;font-size:10px;letter-spacing:1.5px;color:#dec598;margin-bottom:8px;text-transform:uppercase}#home-interior .hi-story{border-left:3px solid #74867a;padding:4px 0 4px 10px;margin:8px 0}#home-interior .hi-story.up{border-color:#7fc28d}#home-interior .hi-story.down{border-color:#e07a68}#home-interior .hi-story b{display:block;font-size:13px}#home-interior .hi-story p{margin:3px 0 0!important;font-size:12px}#home-interior .hi-signoff{font-style:italic;font-size:11px!important;margin-top:10px!important}
 #home-interior .hi-done{background:#2f5a46;border:1px solid #7fc28d;border-radius:8px;padding:10px 12px;color:#f4efdf!important;font-size:13px!important}
 #home-interior #hi-aud{background:#c9a15a!important;color:#1d2b28!important;border-color:#e6c98e!important;font-weight:700!important}
+
+/* Size the HUD to the visible viewport and keep controls on opaque surfaces. */
+#home-interior{width:100%;height:100dvh;max-width:100vw;inset:0 auto auto 0}
+#home-interior .hi-header{background:#182d2b;flex-wrap:wrap;padding:calc(12px + env(safe-area-inset-top,0px)) 14px 12px;pointer-events:auto}
+#home-interior .hi-header>div{min-width:0}#home-interior .hi-head-btns{flex-wrap:wrap}
+#home-interior .hi-actions{right:max(14px,env(safe-area-inset-right,0px));max-width:calc(100% - 28px);bottom:calc(140px + env(safe-area-inset-bottom,0px))}
+#home-interior .hi-actions button{max-width:100%;white-space:normal}
+#home-interior .hi-guide{position:absolute;top:calc(112px + env(safe-area-inset-top,0px));left:14px;right:14px;margin:0;padding:10px;background:#182d2b;border-radius:8px;font-size:12px;pointer-events:none}
+#home-interior #hi-status{top:calc(192px + env(safe-area-inset-top,0px));background:#203b36}
+#home-interior #hi-panel{background:#172e2b;z-index:5}
+#home-interior .hi-look-help{background:#182d2b;padding:8px;border-radius:6px}
+@media(max-height:540px){#home-interior .hi-guide{display:none}}
