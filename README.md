@@ -4,6 +4,17 @@
 
 A Memphis political life on a real map of the city. Start as the mayor, run for mayor, or begin as a private citizen with a job and rise from there: the City Council, Shelby County mayor, Congress and the Senate, a law firm, a university presidency, or the back rooms as a kingmaker. As mayor you handle problems at real places, write the city budget, win votes from the 13-member City Council and run for re-election. Your family, health, party, rivals and record follow you through every chapter.
 
+## v27.12
+
+- **Actions sits right next to Desk.** The bottom bar is now Desk · Actions · Continue (or Next year) · Districts · More, in office and out. Family moved into More out of office (it's also still in the header). While campaigning for mayor, Campaign takes the Districts spot and Districts is in More.
+- **Actions out of office shows everything you can do**, grouped:
+  - **This year's moves**, with how many are left. When they're used up it says so and tells you to press Next year, instead of just greying them out. A move you can't afford or don't qualify for says "Not available right now."
+  - **Waiting on you**: decisions, votes and bills that need an answer.
+  - **Call in a favor** (kingmaker).
+  - **Your life**: family dinner, outings and the rest, your family, going home, political affiliation.
+  - **Big decisions**: next year, running for mayor again, backing your child, retiring.
+- Family time out of office now gets a "What happened" popup too.
+
 ## v27.11
 
 - **The next chapter gets popups and a moving clock.** Out of office (running for office, County mayor, Congress, kingmaker, law firm and the rest), every move now moves the calendar forward two months and ends with a "What happened" popup: the result, the months that passed, how many moves are left this year, and what changed (influence, savings, your odds of winning, approval). "Next year" finishes whatever is left of the year, so a year never runs twice.

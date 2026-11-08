@@ -841,7 +841,7 @@ details.analysis{margin-top:6px}details.analysis summary{cursor:pointer;color:va
     <button class="btn primary" data-act="pause" id="bPlay"><svg class="ico" viewBox="0 0 12 12" aria-hidden="true"><path d="M3.2 1.6v8.8l7.2-4.4z" fill="currentColor"/></svg> Resume <kbd>Space</kbd></button>
   </nav>
   <div class="status" id="status">Loading map…</div>
-  <div class="credit"><span class="ver" id="verTag">v27.11</span></div>
+  <div class="credit"><span class="ver" id="verTag">v27.12</span></div>
   <div class="tip" id="tip" hidden></div>
   <div class="toast" id="toast" role="status"></div>
   <section class="panel" id="panel" hidden aria-live="polite">
@@ -869,7 +869,7 @@ details.analysis{margin-top:6px}details.analysis summary{cursor:pointer;color:va
         <button class="btn" data-music-open>Music &amp; volume</button>
       </div>
       <div id="slotList" hidden></div>
-      <p class="note startv">Version <b class="ver" id="verStart">v27.11</b></p>
+      <p class="note startv">Version <b class="ver" id="verStart">v27.12</b></p>
     </div>
     <div class="startbox create" id="create" hidden>
       <h2>Create your mayor</h2>
@@ -1680,7 +1680,7 @@ function enact(s,p){DIVS.forEach(d=>{s.enacted[d.id]=p.divs[d.id];s.ratio[d.id]=
 // Voter groups. Each has a share of residents, turnout, home districts, concerns and an approval of you.
 // Citywide approval is the turnout-weighted average of the groups; each council district's approval comes from the groups that live there.
 // Shares, district mix and turnout are modeled, loosely grounded in Memphis demographics; they are not survey data.
-const VERSION='v27.11';
+const VERSION='v27.12';
 const GROUPS=[
  {id:'working',sh:'Working families',n:'Working families',ic:'⚒︎',c:'#f2a93b',share:24,turn:.5,start:56,w:{jobs:1,safety:.8,transit:.5},
   d:'Hourly workers in logistics, warehouses, health care and service jobs. The biggest bloc in the city.',dm:{1:1.1,2:.8,3:1.3,4:1.2,5:.6,6:1.2,7:1.1}},
@@ -9540,11 +9540,11 @@ function hdHTML(){const cand=isCand();let visitors=0;try{visitors=officeVisitors
    <div class="hd-body">${hdBodyFor()}</div>
    <nav class="hd-nav" aria-label="Desk">
     <button class="${HD.view==='desk'?'on':''}" data-hdact="top">${hdI('desk')}Desk</button>
-    <button class="${HD.view!=='desk'?'on':''}" data-hdact="board">${hdI('grid')}Districts</button>
+    <button data-hdact="actions">${hdI('act')}Actions</button>
     <button class="hd-play" data-hdact="play">${hdPlay()}</button>
-    ${cand?`<button data-hdact="hq">${hdI('camp')}Campaign</button>`:`<button data-hdact="actions">${hdI('act')}Actions</button>`}
+    ${cand?`<button data-hdact="hq">${hdI('camp')}Campaign</button>`:`<button class="${HD.view!=='desk'?'on':''}" data-hdact="board">${hdI('grid')}Districts</button>`}
     <button data-hdact="more" aria-expanded="${HD.more}">${hdI('more')}More</button></nav>
-   ${HD.more?`<div class="hd-sheet" role="menu">${(cand?[['actions','Actions']]:[['budget','The budget'],['hq','Campaign HQ']]).concat([['council','The council'],['opinion','Public opinion'],['news','The news'],['ledger','Everything that happened'],['help','Guide'],['music','Music'],['map','Street map'],['menu','Save and settings']]).map(([a,n])=>`<button role="menuitem" data-hdact="${a}">${n}</button>`).join('')}</div>`:''}`}
+   ${HD.more?`<div class="hd-sheet" role="menu">${(cand?[['board','Districts']]:[['budget','The budget'],['hq','Campaign HQ']]).concat([['council','The council'],['opinion','Public opinion'],['news','The news'],['ledger','Everything that happened'],['help','Guide'],['music','Music'],['map','Street map'],['menu','Save and settings']]).map(([a,n])=>`<button role="menuitem" data-hdact="${a}">${n}</button>`).join('')}</div>`:''}`}
 function renderHomeDesk(force){if(!S)return;const el=(()=>{let e=$('homeDesk');if(!e){const app=$('app');if(!app)return null;e=document.createElement('section');e.id='homeDesk';e.setAttribute('aria-label','Your desk');app.appendChild(e)}return e})();if(!el)return;
   if(!$('bDeskBack')){const nav=document.querySelector('nav.actions');if(nav)nav.insertAdjacentHTML('afterbegin',`<button class="btn" id="bDeskBack" data-hdact="desk">${hdI('desk',16)} Desk</button>`)}
   const show=hdShown();document.body.classList.toggle('deskon',show);document.body.classList.toggle('deskmapview',hdEligible()&&!HD.on);el.hidden=!show;if(!show)return;
@@ -9671,11 +9671,11 @@ function hdAfterHTML(){const A=S.after,th=hdTheme(),r=hdAfterRole();const box=HD
    <div class="hd-body">${HD.view==='board'?hdBoard():HD.view==='dist'?hdDist(HD.d||4):'<div id="hdSlot"></div>'}</div>
    <nav class="hd-nav" aria-label="Desk">
     <button class="${HD.view==='after'?'on':''}" data-hdact="top">${hdI('desk')}Desk</button>
-    ${city?`<button class="${HD.view!=='after'?'on':''}" data-hdact="board">${hdI('grid')}Districts</button>`:`<button data-hdact="family">${hdI('home')}Family</button>`}
+    <button data-hdact="actions">${hdI('act')}Actions</button>
     <button class="hd-play" data-hdact="anext" ${dis?'aria-disabled="true"':''}><span class="hd-pm">${dis?'⏸':'▶'} ${hdEsc(nbMain)}</span>${nbSub?`<span class="hd-ps">${hdEsc(nbSub)}</span>`:''}</button>
-    ${city?`<button data-hdact="family">${hdI('home')}Family</button>`:`<button data-hdact="legacy">${hdI('camp')}Legacy</button>`}
+    ${city?`<button class="${HD.view!=='after'?'on':''}" data-hdact="board">${hdI('grid')}Districts</button>`:`<button data-hdact="family">${hdI('home')}Family</button>`}
     <button data-hdact="more" aria-expanded="${HD.more}">${hdI('more')}More</button></nav>
-   ${HD.more?`<div class="hd-sheet" role="menu">${[['legacy','Mayors of Memphis'],['help','Guide'],['music','Music'],['map','Street map'],['menu','Save and settings']].map(([a,n])=>`<button role="menuitem" data-hdact="${a}">${n}</button>`).join('')}</div>`:''}`}
+   ${HD.more?`<div class="hd-sheet" role="menu">${[...(city?[['family','Family']]:[]),['legacy','Mayors of Memphis'],['help','Guide'],['music','Music'],['map','Street map'],['menu','Save and settings']].map(([a,n])=>`<button role="menuitem" data-hdact="${a}">${n}</button>`).join('')}</div>`:''}`}
 // ---------- Nashville ----------
 function hdNashHTML(){const box=HD.nashBox;const title=box?box.dataset.title:'The state legislature';
   return`<header class="hd-sky">${hdSceneSVG('nash')}
@@ -10124,15 +10124,16 @@ setInterval(()=>{if(ACT.on&&ACT._t&&Date.now()-ACT._t>2000)ACT.on=false},1000);
 // Visiting home or the office when nothing happened no longer fills the feed with "You spent some time at home."
 function afterMonthStep(){try{aiMonth()}catch(e){console.warn(e)}try{const F=S.fam;if(F)F.kids.forEach(k=>{kidInit(k);kidGrow(k,1)})}catch(e){}}
 const ACT_AFTER_SKIP='[data-ayear],[data-role],[data-aev],[data-acome],[data-aheir],[data-after],[data-cnext],[data-party],[data-act="legacy"],[data-hdact="anext"]';
-function actAfterSnap(){const A=S.after;return{n:A.log.length,top:A.log[0]||null,inf:A.inf,cash:S.purse?S.purse.cash:0,odds:A.camp?A.camp.odds:null,y:S.y,m:S.m,app:A.app}}
+function actAfterSnap(){const A=S.after;let ft=null;try{ft=S.fam&&S.fam.log?S.fam.log[0]||null:null}catch(e){}return{ft,n:A.log.length,top:A.log[0]||null,inf:A.inf,cash:S.purse?S.purse.cash:0,odds:A.camp?A.camp.odds:null,y:S.y,m:S.m,app:A.app}}
 function actAfterChanges(b){const A=S.after,out=[];const di=A.inf-b.inf;if(Math.abs(di)>=0.5)out.push(`<span class="${di>0?'pos':'neg'}">Influence ${di>0?'+':'−'}${Math.round(Math.abs(di))}</span>`);
   const dc=(S.purse?S.purse.cash:0)-b.cash;if(Math.abs(dc)>=1)out.push(`<span class="${dc>0?'pos':'neg'}">Savings ${dc>0?'+':'−'}$${Math.round(Math.abs(dc)).toLocaleString()}</span>`);
   if(b.odds!=null&&A.camp){const d=(A.camp.odds-b.odds)*100;if(Math.abs(d)>=0.5)out.push(`<span class="${d>0?'pos':'neg'}">Odds ${d>0?'+':'−'}${Math.round(Math.abs(d))}% (now ${Math.round(A.camp.odds*100)}%)</span>`)}
   if(b.app!=null&&A.app!=null){const d=A.app-b.app;if(Math.abs(d)>=0.5)out.push(`<span class="${d>0?'pos':'neg'}">Approval ${d>0?'+':'−'}${Math.round(Math.abs(d))}</span>`)}return out}
 function actAfterFinish(b,target){const A=S.after;if(!A||A.dead||A.prison||S.died)return false;
   const fresh=A.log.slice(0,Math.max(0,A.log.indexOf(b.top)<0?A.log.length-b.n:A.log.indexOf(b.top))).map(x=>x.t).filter(Boolean);
-  if(!fresh.length||S.y!==b.y)return false;
-  const move=!(target&&target.closest(ACT_AFTER_SKIP));const m0=S.m;let passed=0;
+  let famFresh=[];try{const L=S.fam&&S.fam.log||[];const i=b.ft?L.indexOf(b.ft):L.length;famFresh=(i<0?L.slice(0,1):L.slice(0,i)).map(x=>x.t).filter(Boolean)}catch(e){}
+  if((!fresh.length&&!famFresh.length)||S.y!==b.y)return false;
+  const move=fresh.length>0&&!(target&&target.closest(ACT_AFTER_SKIP));fresh.unshift(...famFresh);const m0=S.m;let passed=0;
   if(move){for(let i=0;i<2&&S.m<11&&S.y===b.y;i++){afterMonthStep();passed++}}
   try{save()}catch(e){}try{refreshHUD()}catch(e){}try{if(HD.on&&HD.view==='after'&&typeof openAfter==='function'){AFTER_MSG=null;openAfter()}}catch(e){}try{renderHomeDesk(true)}catch(e){}
   let left='';try{const K=roleKit();if(K&&K.acts&&A.role!=='king')left=` · ${Math.max(0,ROLE_ACTS-(A.ra||0))} of ${ROLE_ACTS} moves left this year`}catch(e){}
@@ -10148,8 +10149,30 @@ window.addEventListener('click',e=>{if(!S||!S.after||ACT.aon)return;const t=e.ta
 // ---------- mayor-only buttons, out of office ----------
 function afterMovesHTML(){const btns=[...document.querySelectorAll('#homeDesk [data-ract]')];if(!btns.length){try{const A=afterInit();const K=roleKit();if(K&&K.acts){const left=ROLE_ACTS-(A.ra||0),st=K.st;return Object.entries(K.acts).map(([k,X])=>{const can=left>0&&(!X.need||X.need(st));const d=typeof X.d==='function'?X.d():X.d;return`<button class="choice" data-ract="${k}" ${can?'':'disabled'}><b>${X.n}</b><small>${d}</small></button>`}).join('')}}catch(e){}return''}
   return btns.map(b=>b.outerHTML).join('')}
-{const _oa=openActions;openActions=function(...a){if(S&&S.after&&!inOffice()){const A=S.after;const h=afterMovesHTML();const R=A.role&&ROLES[A.role];
-    openModal(R?`${R.n} · ${S.y}`:'Your next chapter','Your moves',h?`<p>Each move takes about two months. When the year's moves are used up, press Next year.</p><div class="choices">${h}</div><div class="choices"><button class="choice" data-act="close"><b>Back</b></button></div>`:`<p>${A.role?'Your moves are on your desk.':'Choose your next chapter on your desk first.'}</p><div class="choices"><button class="choice" data-act="close"><b>Back</b></button></div>`,true);return}
+// Every action you can take out of office, in one place
+function afterActionsHTML(){const A=afterInit();const R=A.role&&ROLES[A.role];const box=HD.afterBox;const seen=new Set();let h='';
+  const take=(sel)=>{if(!box)return[];return[...box.querySelectorAll(sel)].filter(b=>{const k=b.outerHTML;if(seen.has(k))return false;seen.add(k);return true}).map(b=>{const c=b.cloneNode(true);c.removeAttribute('hidden');return c.outerHTML})};
+  if(A.prison||A.dead)return'<p>Your public life is over.</p>';
+  if(!A.role){const roles=take('[data-role]');h+=`<div class="facts"><h4>Choose your next chapter</h4><p class="note">Pick what you do after City Hall. Each one plays differently.</p><div class="choices">${roles.join('')||afterMovesHTML()}</div></div>`}
+  else{const left=Math.max(0,ROLE_ACTS-(A.ra||0));let moves=take('[data-ract]');if(!moves.length){const g=afterMovesHTML();if(g)moves=[g]}
+    if(left>0)moves=moves.map(m=>/\sdisabled/.test(m.split('>')[0])?m.replace('<small>','<small><b class="neg">Not available right now</b> · '):m);
+    if(moves.length)h+=`<div class="facts"><h4>This year's moves · ${A.role==='king'?'':`${left} of ${ROLE_ACTS} left`}</h4><p class="note">${left>0||A.role==='king'?'Each move takes about two months.':`You've used all ${ROLE_ACTS} of this year's moves. Press Next year to get ${ROLE_ACTS} more. Everything below still works.`}</p><div class="choices">${moves.join('')}</div></div>`;
+    const decide=take('[data-rev],[data-aev],[data-cvote],[data-bill],[data-cmte],[data-mapside],[data-kmspend],[data-kmmspend]');
+    if(decide.length)h+=`<div class="facts"><h4>Waiting on you</h4><div class="choices">${decide.join('')}</div></div>`;
+    const favs=take('[data-kmfav]');if(favs.length)h+=`<div class="facts"><h4>Call in a favor</h4><div class="choices">${favs.join('')}</div></div>`;
+    const other=box?[...box.querySelectorAll('button')].filter(b=>!b.closest('.hd-absorb-close')&&![...'ract,rev,aev,cvote,bill,cmte,mapside,kmspend,kmmspend,kmfav,ayear,cnext,acome,aheir,role,act,hdact,party'.split(',')].some(k=>b.dataset[k]!=null)&&!seen.has(b.outerHTML)).map(b=>{seen.add(b.outerHTML);return b.outerHTML}):[];
+    if(other.length)h+=`<div class="facts"><h4>More for ${R?R.as:'you'}</h4><div class="choices">${other.join('')}</div></div>`}
+  // your life
+  let fam='';try{const F=famInit();fam=Object.keys(FAM_ACT).filter(k=>k!=='trail').map(k=>{const X=FAM_ACT[k];let ok=false;try{ok=X.ok(F)}catch(e){}let d='';try{d=typeof X.d==='function'?X.d():X.d}catch(e){}return`<button class="choice" data-famact="${k}" ${ok?'':'disabled'}><b>${X.n}</b><small>${d||''}</small></button>`}).join('')}catch(e){}
+  h+=`<div class="facts"><h4>Your life</h4><div class="choices">${fam}<button class="choice" data-act="actgo" data-go="family"><b>Your family</b><small>See everyone and how they're doing</small></button><button class="choice" data-act="actgo" data-go="home"><b>Go home</b><small>Walk around your house, furnish it, spend time there</small></button><button class="choice" data-act="actgo" data-go="party"><b>Political affiliation</b><small>Your party, or none</small></button></div></div>`;
+  // big decisions
+  const big=take('[data-acome],[data-aheir]');const yr=take('[data-ayear],[data-cnext]');
+  h+=`<div class="facts"><h4>Big decisions</h4><div class="choices">${yr.join('')}${big.join('')}<button class="choice" data-act="legacy"><b>Retire for good</b><small>See how the Mayors of Memphis will remember you</small></button></div></div>`;
+  return h}
+document.addEventListener('click',e=>{const b=e.target.closest('[data-act="actgo"]');if(!b||!S)return;e.preventDefault();e.stopImmediatePropagation();const g=b.dataset.go;try{closeModal()}catch(err){}
+  if(g==='family')openFamily();else if(g==='home')enterHome();else if(g==='party')hdAct('party')},true);
+{const _oa=openActions;openActions=function(...a){if(S&&S.after&&!inOffice()){const A=S.after;const R=A.role&&ROLES[A.role];
+    openModal(R?`${R.n} · ${S.y}`:'Your next chapter','Everything you can do',afterActionsHTML()+`<div class="choices"><button class="choice" data-act="close"><b>Back</b></button></div>`,true);return}
   return _oa.apply(this,a)}}
 // a town hall out of office: a campaign stop if you're running, otherwise nothing to do here
 {const _ha=hdAct;hdAct=function(a,dd){if(S&&S.after&&!inOffice()&&a==='townhall'){const A=S.after;if(A.role==='campaign'){const K=roleKit();const k=K&&K.acts&&(K.acts.doors?'doors':Object.keys(K.acts).find(x=>/door|rall|knock|canvass/i.test(K.acts[x].n)));if(k&&ROLE_ACTS-(A.ra||0)>0){const b=document.createElement('button');b.dataset.ract=k;b.innerHTML=`<b>${K.acts[k].n}</b>`;b.hidden=true;document.body.appendChild(b);b.click();b.remove();return}}openActions();return}
