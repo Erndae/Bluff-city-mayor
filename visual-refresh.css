@@ -1,0 +1,48 @@
+/* Brass, river blue and warm paper keep the desk legible over its illustration. */
+#homeDesk{--amber:#edbc78;background:#111e29}
+#homeDesk .hd-sky{height:228px;background:#284350}
+#homeDesk .hd-sky:after{content:'';position:absolute;inset:0;background:linear-gradient(#0b1c3066,transparent 38%,transparent 57%,#10202e9c);pointer-events:none}
+#homeDesk .hd-top,#homeDesk .hd-where,#homeDesk .hd-places{z-index:1}
+#homeDesk .hd-top{padding:12px 14px;gap:10px}
+#homeDesk .hd-brand{font-size:13px;letter-spacing:.3px;background:#102331e8;border:1px solid #ffffff20;border-radius:10px;padding:10px 12px;color:#f2c68d;box-shadow:0 4px 12px #10233125}
+#homeDesk .hd-brand span{display:block;font-size:10px;letter-spacing:4px;margin-top:4px}
+#homeDesk .hd-ib{background:#102331;border:1px solid #ffffff26;border-radius:12px;box-shadow:0 4px 12px #10233125}
+#homeDesk .hd-where{left:16px;bottom:58px;padding:7px 10px;border-radius:8px;background:#102331ed;max-width:calc(100% - 32px);box-sizing:border-box}
+#homeDesk .hd-where small{font-size:10px;letter-spacing:1.5px;color:#f2c68d}
+#homeDesk .hd-where span{font-size:12px;line-height:1.5}
+#homeDesk .hd-places{left:14px;right:14px;bottom:12px;gap:7px}
+#homeDesk .hd-places button{background:#142b36;border:1px solid #a4b9b554;border-radius:10px;min-height:38px;font-size:12px;box-shadow:0 3px 8px #0d182230}
+#homeDesk .hd-stat{padding:12px 16px;border-bottom:1px solid #61778044;background:#162b37}
+#homeDesk .hd-body{padding:14px 14px 26px;gap:12px;background:linear-gradient(135deg,#17283333,transparent)}
+#homeDesk .hd-row,#homeDesk .hd-card,#homeDesk .hd-peek>button,#homeDesk .hd-feed{border:1px solid #71889438;background:#1a2d3a;border-radius:14px;box-shadow:0 4px 12px #050e171a}
+#homeDesk .hd-next{background:#213b35;border:1px solid #7a9b7666;border-left:3px solid #d3bd83;padding:13px 14px;gap:5px;border-radius:10px}
+#homeDesk .hd-next b{font-size:15px;line-height:1.35}#homeDesk .hd-next span{font-size:12px;line-height:1.5;color:#c3d1c7}
+#homeDesk .hd-th{border:1px solid #ffffff21;box-shadow:0 3px 7px #0003;border-radius:10px}
+#homeDesk .hd-nav{background:#11232f;border-top:1px solid #67828a66;padding-top:9px}
+#homeDesk .hd-nav>button.hd-play{background:linear-gradient(135deg,#efc88c,#cf9c5e);color:#172630!important;box-shadow:0 3px 10px #0003;border:1px solid #f7dcaa}
+#homeDesk .hd-nav>button.on{background:#b5cdcf0b;border-radius:9px}
+#homeDesk.th-porch{background:#222a29}#homeDesk.th-porch .hd-stat{background:#f0e7d5;color:#26383b}
+#homeDesk.th-porch .hd-sub,#homeDesk.th-porch .hd-sub b{color:#344547}
+#create.startbox{max-width:980px;padding:26px;background:linear-gradient(135deg,#1b303b,#101e2b);border:1px solid #809b9b50;border-radius:20px;box-shadow:0 24px 80px #0006;gap:18px}
+#create h2{color:#efc58c;font-size:clamp(24px,4vw,36px);line-height:1.2}
+#create .cgrid{grid-template-columns:230px minmax(0,1fr);gap:24px}
+#create #cPt{display:flex;flex-direction:column;align-items:center;gap:15px;padding:18px 16px;background:linear-gradient(#314c54,#182d39);border:1px solid #e0c08c45;border-radius:16px;position:sticky;top:0}
+#create #cPt svg{width:190px;height:auto;max-width:100%;border-radius:16px;box-shadow:0 12px 22px #0004}
+.portrait-caption{text-align:center;display:grid;gap:7px}.portrait-caption small{font:600 10px var(--f-label);letter-spacing:2px;color:#e3bd82}.portrait-caption b{font:24px Georgia,serif;color:#f3e6cf}.portrait-caption span{font-size:12px;line-height:1.4;color:#bbcbd0}
+#create .cform{gap:15px}#create .cform label{font-size:11px;letter-spacing:1.2px;color:#c4d0cf}
+#create input,#create select{min-height:44px;border-radius:9px;background:#132735;border:1px solid #6c879151;padding:10px 12px}
+#create .lookgrid{gap:12px}#create .swatches{gap:8px;padding:10px 0}
+#create .sw{width:34px;height:34px;flex-shrink:0;box-shadow:0 0 0 1px #ffffff33;border:3px solid transparent;position:relative}
+#create .sw.on{border-color:#fff0d5;box-shadow:0 0 0 2px #d6ad72}
+#create h3{margin-top:16px;padding-top:16px;border-top:1px solid #7a929a33;font-size:16px;letter-spacing:1px}
+#create .tpick{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+#create .tpick button{padding:12px;border-radius:11px;background:#1b303c;gap:6px;max-width:none;border:1px solid #71889442;line-height:1.3}
+#create .tpick button.on{background:#30443f;border-color:#d3b47d;box-shadow:inset 3px 0 #d3b47d}
+#create .tpick button small{font-size:12px;line-height:1.45;color:#b6c6cb}
+#create .skc{border:1px solid #71889442;border-radius:12px;padding:12px;background:#142935}
+#create .row:has(#cGo){position:sticky;bottom:-26px;background:#10212fee;padding:14px 0;border-top:1px solid #71889442;z-index:3;flex-wrap:wrap}
+#create #cGo{margin-left:auto;background:#e5b87d;color:#172630;border-color:#f2d1a0}
+#create button:focus-visible,#homeDesk button:focus-visible{outline:3px solid #f3d3a0;outline-offset:3px}
+@media(max-width:640px){#create.startbox{padding:18px;border-radius:14px}#create .cgrid{grid-template-columns:1fr;gap:18px}#create #cPt{position:static;flex-direction:row;justify-content:center;padding:14px;gap:18px}#create #cPt svg{width:126px;flex-shrink:0}.portrait-caption{text-align:left;max-width:145px}.portrait-caption b{font-size:23px}#create .tpick{grid-template-columns:1fr 1fr}#create .row:has(#cGo){bottom:-18px}#create .cform>.row{flex-wrap:wrap}#create .sw{width:36px;height:36px}}
+@media(max-height:700px){#homeDesk .hd-sky{height:198px}#homeDesk .hd-top{padding-top:8px}}
+@media(prefers-reduced-motion:no-preference){#create .sw,#create .tpick button,#homeDesk .hd-places button{transition:border-color .15s,background .15s}#create .sw:hover{transform:translateY(-2px)}}

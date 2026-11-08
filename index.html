@@ -12,6 +12,7 @@
 <link rel="stylesheet" href="assets/vendor/maplibre-gl-4.7.1/maplibre-gl.css">
 <meta name="theme-color" content="#0d1822">
 <link rel="stylesheet" href="music.css?v=25">
+<link rel="stylesheet" href="visual-refresh.css?v=27.09">
 <link rel="stylesheet" href="home-interior.css?v=27.08">
 <link rel="stylesheet" href="meetings.css?v=26.44">
 <link rel="stylesheet" href="room-stories.css?v=26.45">
@@ -839,7 +840,7 @@ details.analysis{margin-top:6px}details.analysis summary{cursor:pointer;color:va
     <button class="btn primary" data-act="pause" id="bPlay"><svg class="ico" viewBox="0 0 12 12" aria-hidden="true"><path d="M3.2 1.6v8.8l7.2-4.4z" fill="currentColor"/></svg> Resume <kbd>Space</kbd></button>
   </nav>
   <div class="status" id="status">Loading map…</div>
-  <div class="credit"><span class="ver" id="verTag">v27.09</span></div>
+  <div class="credit"><span class="ver" id="verTag">v27.10</span></div>
   <div class="tip" id="tip" hidden></div>
   <div class="toast" id="toast" role="status"></div>
   <section class="panel" id="panel" hidden aria-live="polite">
@@ -867,7 +868,7 @@ details.analysis{margin-top:6px}details.analysis summary{cursor:pointer;color:va
         <button class="btn" data-music-open>Music &amp; volume</button>
       </div>
       <div id="slotList" hidden></div>
-      <p class="note startv">Version <b class="ver" id="verStart">v27.09</b></p>
+      <p class="note startv">Version <b class="ver" id="verStart">v27.10</b></p>
     </div>
     <div class="startbox create" id="create" hidden>
       <h2>Create your mayor</h2>
@@ -1678,7 +1679,7 @@ function enact(s,p){DIVS.forEach(d=>{s.enacted[d.id]=p.divs[d.id];s.ratio[d.id]=
 // Voter groups. Each has a share of residents, turnout, home districts, concerns and an approval of you.
 // Citywide approval is the turnout-weighted average of the groups; each council district's approval comes from the groups that live there.
 // Shares, district mix and turnout are modeled, loosely grounded in Memphis demographics; they are not survey data.
-const VERSION='v27.09';
+const VERSION='v27.10';
 const GROUPS=[
  {id:'working',sh:'Working families',n:'Working families',ic:'⚒︎',c:'#f2a93b',share:24,turn:.5,start:56,w:{jobs:1,safety:.8,transit:.5},
   d:'Hourly workers in logistics, warehouses, health care and service jobs. The biggest bloc in the city.',dm:{1:1.1,2:.8,3:1.3,4:1.2,5:.6,6:1.2,7:1.1}},
@@ -10057,7 +10058,7 @@ window.addEventListener('click',e=>{const b=e.target.closest('[data-rkset]');if(
 rkDeskRow=function(){if(!S||!(inOffice()||isCand()))return'';try{const R=rkInit();const H=R.sets.peer.hist;if(!H.length)H.push(rkSnap('peer'));const T=rkTable('peer');const d=H[0].pos-T.pos;let tn='',us='';try{tn=rkTable('tn').pos;us=rkTable('us').pos}catch(e){}
   return`<button class="hd-rank" data-hdact="ranks"><span class="hd-pi">#${T.pos}</span><span><small>HOW MEMPHIS RANKS · ${rkTier(T.pos,'peer')[1].toUpperCase()}</small>No. ${T.pos} of ${T.n} peer cities${d?` · <b class="${d>0?'pos':'neg'}">${d>0?'▲':'▼'}${Math.abs(d)}</b>`:''}<em class="hd-rk2">No. ${tn} in Tennessee · No. ${us} nationally</em></span><b aria-hidden="true">›</b></button>`}catch(e){return''}};
 
-// ======================= v27.09: ACTIONS TAKE TIME, AND TELL YOU WHAT HAPPENED =======================
+// ======================= v27.10: ACTIONS TAKE TIME, AND TELL YOU WHAT HAPPENED =======================
 // One game, one clock. Every action, decision or activity now moves the calendar forward a little (a town hall
 // takes two days, a decision takes one), and afterward a "What happened" card shows the result: what you did,
 // how people took it, what changed, what came in while you were busy, and the new date.
@@ -10756,5 +10757,6 @@ window.claude?.hot?.ready?window.claude.hot.ready(start):start(window.claude?.ho
 <script src="office-life.js?v=26.51"></script>
 <script src="campaign-districts.js?v=26.55"></script>
 <script src="campaign-advisor.js?v=26.55"></script>
+<script src="visual-refresh.js?v=27.09"></script>
 </body>
 </html>
