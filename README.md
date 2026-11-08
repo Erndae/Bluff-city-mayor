@@ -4,6 +4,29 @@
 
 A Memphis political life on a real map of the city. Start as the mayor, run for mayor, or begin as a private citizen with a job and rise from there: the City Council, Shelby County mayor, Congress and the Senate, a law firm, a university presidency, or the back rooms as a kingmaker. As mayor you handle problems at real places, write the city budget, win votes from the 13-member City Council and run for re-election. Your family, health, party, rivals and record follow you through every chapter.
 
+## v26.97: The ice storm
+
+- **Some winters, an ice storm hits Memphis.** As mayor it's a crisis in five steps. First, a forecast three days out: pre-treat the roads, call in out-of-state line crews early, open warming centers, or wait and see. Then the night it hits, with up to 390,000 homes dark: run the emergency center and brief the city, open 24-hour warming centers with free MATA rides, or ask the governor for the National Guard. Then day four, when MLGW says some homes will wait a week: put MLGW's president in front of the public, pay crews to clear fallen trees, or send firefighters and nurses door to door. In a bad storm, burst pipes bring a citywide boil-water notice. Finally, the aftermath: bury power lines, shake up MLGW, or move on.
+- **What you did adds up.** Preparation, crews and warming centers shorten the outage and save lives. The final tally (days without power, deaths, how people judge you) moves every voter group and makes the news. It goes on your record for the campaign.
+- **The map turns cold** while the storm lasts.
+- **Every other path gets a part.** Council members can run a warming center or grill MLGW. The County mayor can open shelters. Members of Congress can push FEMA for a disaster declaration. Kingmakers can bankroll warming centers. Citizens can volunteer or organize their block. When you're not the mayor, how the mayor handled the storm can swing the next mayor's race.
+- Storms come in about one winter in three, between December and February.
+
+## v26.96: The kingmaker's back room; the city votes without you
+
+- **Kingmaker is now a real operation.**
+  - **Scouting:** choose among three people who want to run: a pastor, a FedEx union steward, a retired police lieutenant and others. Races are for City Council, County Commission or the Tennessee House, each on its own election calendar.
+  - **Money:** build a donor network (up to 10 donors), raise money into a war chest, and put it into the races you care about.
+  - **Turnout:** build a get-out-the-vote operation that helps every candidate you back.
+- **Keep your people loyal.** The people you elect owe you favors, but their loyalty fades unless you tend it. Drift too far and they break with you, and on the council they stop counting as yours.
+- **Call in favors** to steer city money to a neighborhood, put friends on city boards, or make a story go away.
+- **Pick a side in the mayor's race.** Back the winner and City Hall owes you for four years, with favors and a yearly project. Back the loser and the new mayor's office won't take your calls.
+- **Watch your heat.** Dark-money ads, job-for-dropout deals and big spending draw attention. Too much and investigators come asking.
+- **New events:** dark-money offers, an ally crossing your donors, precinct captains who want to be paid, a pastors' coalition, the mayor needing your votes, and an ally who wants to move up.
+- **It pays off later.** If you or your child run for mayor, the people you put in office endorse you, your war chest funds the campaign, and your operation turns out the vote.
+- **The city votes without you.** Once you're out of City Hall, or before you ever get there, the mayor now faces voters every four years and leaves after two terms. New mayors join the Mayors of Memphis, and the race shows on your career screen.
+- Balance: an active kingmaker's influence settles in the 60s and 70s instead of maxing out. Older kingmaker saves carry over: candidates already on your slate move to the new race list.
+
 ## v26.95: The new name everywhere
 
 - **Every leftover mention of the old name is gone.** The loading screen now reads "Rise in Memphis politics. Council seats, City Hall, campaigns, Congress and the whole city on one map." instead of the mayor-only line, the soundtrack's info file names Bluff City Rising, and the guide in this README points to the Bluff City Rising logo.

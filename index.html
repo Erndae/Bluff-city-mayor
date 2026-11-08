@@ -378,6 +378,8 @@ body.mopen #notes,body.seeon #notes{display:none}body:has(#panel:not([hidden])) 
 .fxchips{display:flex!important;flex-wrap:wrap;gap:4px;margin-top:5px;font-family:var(--f-body)!important}.fxc{font:600 12.5px/1.25 var(--f-body);padding:2px 7px;border-radius:9px;background:rgba(255,255,255,.06);color:var(--muted);letter-spacing:0}.fxc.pos{background:rgba(92,184,112,.16);color:#8fd6a0}.fxc.neg{background:rgba(224,96,96,.16);color:#f0a0a0}
 details.bgfold{margin:6px 0 10px}details.bgfold summary{cursor:pointer;color:var(--amber);font:600 13px var(--f-body);list-style:none}details.bgfold summary::before{content:'▸ ';}details.bgfold[open] summary::before{content:'▾ '}details.bgfold .note{margin-top:4px}
 .mcgrid span.pos,.mcmets b.pos{color:var(--good,#5cb870)}.mcgrid span.neg,.mcmets b.neg{color:var(--bad,#e06060)}.mcgrid span{font-size:13px;font-weight:600}
+.kmrow{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--line,#2c3e4c)}.kmrow>div{flex:1;min-width:0}.kmrow b{display:block}.kmrow small{color:var(--muted,#9aa7b2);display:block;line-height:1.35}.kmrow .btn{flex-shrink:0;white-space:nowrap}.kmlist{margin-bottom:6px}.kmnews b{display:block}
+#iceFx{position:absolute;inset:0;pointer-events:none;z-index:2;background:radial-gradient(ellipse at center,rgba(236,246,255,0) 30%,rgba(236,246,255,.8) 100%),linear-gradient(rgba(150,195,240,.26),rgba(150,195,240,.26))}#iceFx[hidden]{display:none}.stormcard{border-color:#6fa8d6}
 .adgain{display:block;width:100%;text-align:center;font-size:11px;font-weight:600;color:var(--good);margin-top:1px}
 #start{overflow-x:hidden;overflow-y:auto;touch-action:pan-y}.startbox{min-width:0;max-width:min(600px,100%);box-sizing:border-box}.startbox *{min-width:0}.create select,.create input{max-width:100%;width:100%;box-sizing:border-box;text-overflow:ellipsis}.create .tpick,.create .tpick>*{max-width:100%;box-sizing:border-box}
 @media (max-width:640px){.startbox{margin-left:0}#start{padding-left:max(16px,env(safe-area-inset-left,0px))}}
@@ -730,7 +732,7 @@ details.analysis{margin-top:6px}details.analysis summary{cursor:pointer;color:va
     <button class="btn primary" data-act="pause" id="bPlay"><svg class="ico" viewBox="0 0 12 12" aria-hidden="true"><path d="M3.2 1.6v8.8l7.2-4.4z" fill="currentColor"/></svg> Resume <kbd>Space</kbd></button>
   </nav>
   <div class="status" id="status">Loading map…</div>
-  <div class="credit"><span class="ver" id="verTag">v26.95</span></div>
+  <div class="credit"><span class="ver" id="verTag">v26.97</span></div>
   <div class="tip" id="tip" hidden></div>
   <div class="toast" id="toast" role="status"></div>
   <section class="panel" id="panel" hidden aria-live="polite">
@@ -758,7 +760,7 @@ details.analysis{margin-top:6px}details.analysis summary{cursor:pointer;color:va
         <button class="btn" data-music-open>Music &amp; volume</button>
       </div>
       <div id="slotList" hidden></div>
-      <p class="note startv">Version <b class="ver" id="verStart">v26.95</b></p>
+      <p class="note startv">Version <b class="ver" id="verStart">v26.97</b></p>
     </div>
     <div class="startbox create" id="create" hidden>
       <h2>Create your mayor</h2>
@@ -1569,7 +1571,7 @@ function enact(s,p){DIVS.forEach(d=>{s.enacted[d.id]=p.divs[d.id];s.ratio[d.id]=
 // Voter groups. Each has a share of residents, turnout, home districts, concerns and an approval of you.
 // Citywide approval is the turnout-weighted average of the groups; each council district's approval comes from the groups that live there.
 // Shares, district mix and turnout are modeled, loosely grounded in Memphis demographics; they are not survey data.
-const VERSION='v26.95';
+const VERSION='v26.97';
 const GROUPS=[
  {id:'working',sh:'Working families',n:'Working families',ic:'⚒︎',c:'#f2a93b',share:24,turn:.5,start:56,w:{jobs:1,safety:.8,transit:.5},
   d:'Hourly workers in logistics, warehouses, health care and service jobs. The biggest bloc in the city.',dm:{1:1.1,2:.8,3:1.3,4:1.2,5:.6,6:1.2,7:1.1}},
@@ -9122,6 +9124,225 @@ CO_EVENTS.push(
 CG_EVENTS.push(
  {t:'A district office caseworker uncovers a VA scandal at the Memphis VA hospital',ch:[['Go public and demand a hearing',(c,A)=>{c.app+=4;c.clout=(c.clout||0)+2;return'The VA promised changes after your hearing.'}],['Work it out quietly with the VA',(c,A)=>{c.app+=1;return'Veterans got help faster. Few people heard about it.'}]]},
  {t:'Your party\'s leadership asks you to take a tough vote for them',ch:[['Take the vote',(c,A)=>{c.party=(c.party||50)+6;c.app-=2;return'Leadership owes you one.'}],['Vote your district',(c,A)=>{c.party=(c.party||50)-5;c.app+=2;return'Back home, people respected it.'}]]});
+
+// ======================= v26.96: THE KINGMAKER'S BACK ROOM; THE CITY VOTES WITHOUT YOU =======================
+// 1. Kingmaker becomes a real operation. Scout candidates for City Council, County Commission and the Tennessee
+//    House (each on its own election calendar), build a donor network and a war chest, put money into races one
+//    by one, keep the people you elected loyal, call in favors, pick a side in the mayor's race, and watch your
+//    heat: too much attention brings investigators.
+// 2. Once you're out of City Hall (or before you ever get there), the AI mayor faces voters every four years and
+//    leaves after two terms. New mayors join the Mayors of Memphis.
+// ---------- the mayor's race, when you're not in it ----------
+function lastElPassed(){let y=2023;while(y+4<S.y||(y+4===S.y&&S.m>=11))y+=4;return y}
+function mElY(){let y=2027;while(y<S.y)y+=4;return y}
+function mkPol(){const g=Math.random()<.5?'f':'m';return{name:`${pk2(NEWNAMES[g])} ${pk2(NEWNAMES.l)}`,g,age:42+Math.floor(Math.random()*18)}}
+function mRaceInit(){const A=S&&S.after;if(!A||S.phase!=='ai'||A.dead)return;if(A.mseen==null)A.mseen=lastElPassed();const y=mElY();if(y!==S.y||S.m>=11||A.mseen>=y)return;if(A.mrace&&A.mrace.y===y)return;
+  const inc=A.incumb||{name:cityMayor(),g:'m',age:58};const open=(inc.terms||1)>=2;A.mrace={y,inc:inc.name,open,a:open?mkPol():{name:inc.name,g:inc.g||'m',age:inc.age||58,inc:true},b:mkPol(),storm:0}}
+function kmMRace(){const A=S&&S.after;return A&&A.mrace&&A.mrace.y===S.y&&S.m<11?A.mrace:null}
+function mSideName(R,s){return s==='a'?(R.open?R.a.name:`Mayor ${R.a.name}`):R.b.name}
+function mayorVote(){const A=S&&S.after;if(!A||S.phase!=='ai'||A.dead||A.prison)return null;if(A.mseen==null){A.mseen=lastElPassed();return null}
+  const y=A.mseen+4;if(!(y<S.y||(y===S.y&&S.m>=11)))return null;
+  let R=A.mrace&&A.mrace.y===y?A.mrace:null;if(!R){const inc=A.incumb||{name:cityMayor(),g:'m',age:58};const open=(inc.terms||1)>=2;R={y,inc:inc.name,open,a:open?mkPol():{name:inc.name,g:inc.g||'m',age:inc.age||58,inc:true},b:mkPol(),storm:0}}
+  let p=(R.open?0.5:0.6)+(R.storm||0);const k=A.role==='king'&&A.km?A.km:null;
+  if(k&&k.mbet){const push=0.06+A.inf/600+Math.min(0.08,(k.mspend||0)*0.02)+(k.gotv||0)*0.01;p+=k.mbet==='a'?push:-push}
+  const aWin=Math.random()<clamp(p,0.1,0.9);const w=aWin?R.a:R.b;let msg;
+  if(aWin&&!R.open){const inc=A.incumb||(A.incumb={name:R.a.name,g:R.a.g,age:R.a.age});inc.terms=(inc.terms||1)+1;if(S.reign)S.reign.terms=(S.reign.terms||1)+1;try{S.reign&&S.reign.elections&&S.reign.elections.push({y,won:true,share:Math.round(50+Math.random()*12),opp:0,kind:'ai'})}catch(e){}msg=`Election ${y}: Mayor ${R.a.name} won a second term over ${R.b.name}.`}
+  else{try{reignEnd(R.open?'term-limited':'lost re-election',A.incumb||{name:R.inc})}catch(e){}const nw={name:w.name,g:w.g,age:w.age+(S.y-y),terms:1};A.incumb=nw;S.incumb={...nw,frame:'#8a96a3'};try{reignStart(nw,true)}catch(e){}
+    msg=R.open?`Election ${y}: ${w.name} won the open race for mayor over ${(aWin?R.b:R.a).name}. Mayor ${R.inc} was term-limited.`:`Election ${y}: ${w.name} beat Mayor ${R.inc}. Memphis has a new mayor.`}
+  if(k&&k.mbet){const won=(k.mbet==='a')===aWin;if(won){k.hall={name:w.name,until:y+4};k.favors+=3;A.inf+=6;msg+=` You backed the winner, and City Hall owes you.`}else{k.cold={name:w.name,until:y+4};k.hall=null;A.inf-=5;msg+=` You backed the loser. The new mayor's office won't take your calls.`}k.mbet=null;k.mspend=0}
+  else if(k&&k.hall&&k.hall.name!==w.name)k.hall=null;
+  A.mseen=y;A.mrace=null;A.mnews={t:msg,y:S.y};return msg}
+// ---------- the kingmaker's operation ----------
+ROLES.king.inf=4;
+const RACE_N={council:'City Council',comm:'County Commission',house:'Tennessee House'};
+const KM_BG=[['A pastor with a big congregation',50],['A union steward at the FedEx hub',48],['A young lawyer from a prominent family',46],['A neighborhood association president',44],['A nurse at Regional One',45],['A small-business owner on Broad Avenue',43],['A retired police lieutenant',47],['A schoolteacher who led a campaign against school closings',44],['A former Grizzlies player who runs a youth league',52],['A community organizer from Frayser',42],['A real estate developer',46],['A barber who knows everyone in Orange Mound',43]];
+const HOUSE_D=[84,85,86,87,88,90,91,93,96,97,98,99];
+function kmRaceY(race){if(race==='council')return nextElYear();if(race==='comm'){let y=2026;while(y<S.y)y+=4;return y}return S.y%2===0?S.y:S.y+1}
+function kmSeatFor(race){if(race==='council'){const k=S.after&&S.after.km;const held=new Set(((k&&k.list)||[]).concat((k&&k.races)||[]).filter(x=>x.race==='council').map(x=>x.seat.replace(/ · Pos\. \d/,'')));const free=[1,2,3,4,5,6,7,8,9].map(d=>d<=7?`District ${d}`:`Super District ${d}`).filter(x=>!held.has(x)||x.startsWith('Super'));const pool=free.length?free:['Super District 8','Super District 9'];return pk2(pool)}if(race==='comm')return`County Commission District ${1+Math.floor(Math.random()*13)}`;return`State House District ${pk2(HOUSE_D)}`}
+function kmFix(k){if(!k)return k;if(!k.races){k.races=[];(k.slate||[]).forEach(c=>k.races.push({name:c.name,g:'m',bgn:'A first-time candidate',race:'council',seat:kmSeatFor('council'),y:nextElYear(),str:c.str,open:false}))}k.slate=[];
+  if(!k.list){k.list=[];try{(S.council||[]).forEach(m=>{if(m.km)k.list.push({name:m.name,g:m.g,seat:m.seat,race:'council',loy:65,y:S.y})})}catch(e){}}
+  ['chest','gotv','boards','mspend','fp'].forEach(x=>{if(k[x]==null)k[x]=0});if(k.donors==null)k.donors=2;if(k.heat==null)k.heat=10;if(k.favors==null)k.favors=0;k.allies=k.list.length;return k}
+{const _ki=kmInit;kmInit=function(A){return kmFix(_ki(A))}}
+function kmName(k){const used=new Set([...(k.list||[]),...(k.races||[])].map(x=>x.name).concat((S.council||[]).map(m=>m.name)));let n,g=0;do{n=`${pk2(KM_FIRST)} ${pk2(NEWNAMES.l)}`}while(used.has(n)&&g++<30);return n}
+function kmProspects(k){if(k.pros&&k.pros.y===S.y)return k.pros.list;const races=['council','comm','house'];const list=[];const bgs=[...KM_BG].sort(()=>Math.random()-.5);
+  for(let i=0;i<3;i++){const race=races[i];const g=Math.random()<.5?'f':'m';const open=Math.random()<0.35;const bg=bgs[i];list.push({name:kmName(k),g,bgn:bg[0],race,seat:kmSeatFor(race),y:kmRaceY(race),str:clamp(bg[1]+(open?8:0)+Math.round(rnd(-5,5)),25,70),open})}
+  k.pros={y:S.y,list};return list}
+function kmOdds(k,r){return clamp((r.str+(k.gotv||0)*4)/100,0.05,0.85)}
+function kmMoney(n){return n>=1e6?`$${(n/1e6).toFixed(1)}M`:`$${Math.round(n/1000)}K`}
+function kmHeatW(h){return h>=60?'High: investigators are interested':h>=35?'Some: reporters are asking questions':'Low'}
+function kmLoyW(l){return l>=70?'loyal':l>=50?'reliable':l>=30?'drifting':'about to break with you'}
+function kmSeat(r){if(r.race!=='council')return;try{const opts=S.council.map((m,i)=>({m,i})).filter(x=>!x.m.kin&&!x.m.km&&(r.seat.startsWith('Super')?x.m.seat.startsWith(r.seat):x.m.seat===r.seat));const x=opts.length?pk2(opts):null;if(!x)return;newCouncilFace(x.i);const m=S.council[x.i];m.name=r.name;m.g=r.g||m.g;m.km=true;m.mods=[{t:'Owes you their seat',v:25,perm:true}];r.seat=m.seat}catch(e){}}
+function kmUnseat(x){if(x.race!=='council')return;try{const m=S.council.find(m=>m.km&&m.name===x.name);if(m){m.km=false;m.mods=(m.mods||[]).filter(d=>d.t!=='Owes you their seat');m.mods.push({t:'Broke with your machine',v:-8,perm:true})}}catch(e){}}
+function kmHall(k){return k.hall&&S.y<=k.hall.until?k.hall:null}
+// ---------- moves ----------
+const _kmOld={...KM_ACTS};Object.keys(KM_ACTS).forEach(x=>delete KM_ACTS[x]);
+Object.assign(KM_ACTS,{
+ recruit:{n:'Scout a candidate',d:'Pick from three people who could run for council, County Commission or the state House',need:k=>k.races.length<6,do:(k,A,ok)=>kmRecruit(0,ok)},
+ donors:{n:'Court new donors',sk:'stew',b:0.5,d:k=>k.donors>=10?'Your donor network is as big as it gets (10)':`Works: donor network +2, so you raise more from now on (heat +2) · fails: +1 · now ${k.donors} of 10`,need:k=>k.donors<10,do:(k,A,ok)=>{k.donors=Math.min(10,k.donors+(ok?2:1));if(ok)k.heat+=2;return ok?'Two developers and a hospital executive joined your circle over dinner at Folk\'s Folly.':'One new donor, and a lot of maybes.'}},
+ fund:{n:'Raise money from your network',sk:'stew',b:0.55,d:k=>`Works: about ${kmMoney(k.donors*10000)} into your war chest · fails: about ${kmMoney(k.donors*4000)}`,do:(k,A,ok)=>{const v=k.donors*(ok?10000:4000);k.chest+=v;A.inf+=ok?1:0;return ok?`${kmMoney(v)} came in. Your war chest stands at ${kmMoney(k.chest)}.`:`Only ${kmMoney(v)} came in. People are tapped out.`}},
+ tend:{n:'Tend the people you put in office',sk:'dip',b:0.55,d:'Dinners, calls and birthdays · works: every ally\'s loyalty +12 · fails: +5',need:k=>k.list.length>0,do:(k,A,ok)=>{k.list.forEach(x=>x.loy+=ok?12:5);return ok?'You remembered every birthday and every kid\'s graduation. Your people feel looked after.':'Some of them noticed you only call when you need something.'}},
+ gotv:{n:'Build a get-out-the-vote operation',d:k=>k.gotv>=3?'Your operation is as big as it gets':`${kmMoney(30000)} from the war chest · every candidate you back gets +4 on Election Day from now on (level ${k.gotv} of 3)`,need:k=>k.chest>=30000&&k.gotv<3,do:(k,A)=>{k.chest-=30000;k.gotv++;return`Vans, phone banks and block captains in Whitehaven, Raleigh and Frayser. Your operation is at level ${k.gotv} of 3.`}},
+ endorse:{n:'Put your name on your slate in public',d:'Every candidate +6 · if they lose, it costs you more influence',need:k=>k.races.length>0,do:(k,A)=>{k.races.forEach(r=>r.str+=6);k.public=true;A.inf+=1;return'Your name is on their mailers now. So is your reputation.'}},
+ mayor:{n:'Pick a side in the mayor\'s race',d:k=>{const R=kmMRace();return R?`${R.y}: ${R.open?`an open seat, ${R.a.name} vs. ${R.b.name}`:`Mayor ${R.a.name} vs. ${R.b.name}`} · back the winner and City Hall owes you`:'Only in a mayoral election year'},need:k=>!!kmMRace()&&!k.mbet,do:(k,A)=>kmBet('a')},
+ hall:{n:'Ask City Hall for a project',sk:'dip',b:0.6,d:k=>{const h=kmHall(k);return h?`Mayor ${h.name} owes you · works: paving and a park upgrade in a neighborhood you care about, influence +3 · fails: a polite no`:'Only when the mayor owes you'},need:k=>!!kmHall(k)&&!k.hallUsed,do:(k,A,ok)=>{k.hallUsed=S.y;if(ok){try{applyFx(S,{streets:0.15,blight:-0.15})}catch(e){}A.inf+=3;return`Mayor ${k.hall.name} put ${pk2(['Orange Mound','Frayser','South Memphis','Hickory Hill','Whitehaven','Binghampton'])} at the top of the paving list. Everyone knows who asked.`}return'The mayor\'s chief of staff said "next year."'}},
+ broker:{..._kmOld.broker,do:(k,A,ok)=>{k.heat+=5;if(kmHall(k)&&ok)k.favors+=1;return _kmOld.broker.do(k,A,ok)}},
+ groom:_kmOld.groom});
+// recruiting and backing a mayor are choices, so they open a picker
+function kmRecruit(i,ok){const A=S.after,k=kmInit(A);const list=kmProspects(k);const p=list[i];if(!p)return'Nobody was ready to run.';list.splice(i,1);p.str+=ok?6:-6;p.str=clamp(p.str,10,90);k.races.push(p);
+  return`${p.name} is running for ${p.seat} (${RACE_N[p.race]}) in ${p.y}${ok?', with you behind them':', though they\'re green'}.`}
+function kmBet(side){const A=S.after,k=kmInit(A);const R=kmMRace();if(!R)return'There is no mayor\'s race this year.';k.mbet=side;return`You're backing ${mSideName(R,side)}. Your money and your network are behind them now.`}
+function kmUseMove(){const A=S.after;if(!A||(A.ra||0)>=ROLE_ACTS)return false;A.ra=(A.ra||0)+1;return true}
+function openKmScout(){const A=S.after,k=kmInit(A);const list=kmProspects(k);
+  openModal('Kingmaker · scouting','Who should run?',`<p>Three people have come to you about running. Each runs on their own calendar: council races every four years, County Commission in ${kmRaceY('comm')}, the state House every two years.</p>
+   <div class="choices">${list.map((p,i)=>`<button class="choice" data-kmpick="${i}"><b>${p.name}</b><small>${p.bgn} · ${p.seat}, ${RACE_N[p.race]} · Election ${p.y}${p.open?' · an open seat':''} · strength about ${p.str}</small></button>`).join('')}${list.length?'':'<p class="note">Nobody else is ready this year.</p>'}
+   <button class="choice" data-kmback="1"><b>Not now</b><small>Go back without using a move</small></button></div><p class="note">${oddsTag('dip',0.6)}: a good pitch gives your pick +6 strength; a bad one, −6.</p>`,true)}
+function openKmBet(){const R=kmMRace();if(!R)return;
+  openModal('Kingmaker · the mayor\'s race',`The ${R.y} race for mayor`,`<p>${R.open?`Mayor ${R.inc} is term-limited, so the seat is open.`:`Mayor ${R.inc} is running for a second term.`} Back the winner and City Hall owes you for four years. Back the loser and the new mayor's office won't take your calls.</p>
+   <div class="choices"><button class="choice" data-kmbet="a"><b>Back ${mSideName(R,'a')}</b><small>${R.open?'A former County commissioner with establishment money':'The incumbent, with name recognition'}</small></button><button class="choice" data-kmbet="b"><b>Back ${R.b.name}</b><small>${R.open?'A first-time candidate with energy and young voters':'The challenger, an outsider with momentum'}</small></button><button class="choice" data-kmback="1"><b>Not now</b><small>Go back without using a move</small></button></div>
+   <p class="note">Your influence, your get-out-the-vote operation and money you put in move the odds, but not by much. Most of the race is out of your hands.</p>`,true)}
+window.addEventListener('click',e=>{if(!S||!S.after||S.after.role!=='king')return;const r=e.target.closest('[data-ract="recruit"],[data-ract="mayor"],[data-kmpick],[data-kmbet],[data-kmback]');if(!r)return;e.preventDefault();e.stopImmediatePropagation();
+  if(r.dataset.ract==='recruit'){if((S.after.ra||0)<ROLE_ACTS)openKmScout();return}if(r.dataset.ract==='mayor'){if((S.after.ra||0)<ROLE_ACTS)openKmBet();return}if(r.dataset.kmback){openAfter();return}
+  if(!kmUseMove()){openAfter();return}let m;if(r.dataset.kmpick!=null){const ok=persuade('dip',0.6,[],8);m=kmRecruit(+r.dataset.kmpick,ok)}else m=kmBet(r.dataset.kmbet);afterLog(m);try{sfx('good')}catch(err){}save();AFTER_MSG=m;openAfter()},true);
+// ---------- spending money and favors (no move needed) ----------
+const KM_FAVS={proj:{n:'Steer city money to a neighborhood',c:2,d:'Needs an ally on the council or a friendly mayor · paving and blight cleanup, influence +2',ok:k=>k.list.some(x=>x.race==='council')||!!kmHall(k),do:(k,A)=>{try{applyFx(S,{streets:0.1,blight:-0.15})}catch(e){}A.inf+=2;return'A cleanup crew and a paving crew showed up in the same week. The neighborhood association sent a thank-you card.'}},
+ board:{n:'Get a friend appointed to a city board',c:1,d:k=>`Each friend on a board adds influence every year (${k.boards} of 5)`,ok:k=>k.boards<5,do:(k,A)=>{k.boards++;return`${pk2(['The MLGW board','The airport authority','The Land Bank board','The planning commission','The library board'])} has a new member who returns your calls.`}},
+ story:{n:'Make a story go away',c:2,d:'Heat −20',ok:k=>k.heat>=10,do:(k,A)=>{k.heat=Math.max(0,k.heat-20);return'A friendly editor decided the story needed "more reporting." It never ran.'}}};
+document.addEventListener('click',e=>{const b=e.target.closest('[data-kmfav],[data-kmspend],[data-kmmspend]');if(!b||!S||!S.after||S.after.role!=='king')return;e.preventDefault();e.stopImmediatePropagation();const A=S.after,k=kmInit(A);let m=null;
+  if(b.dataset.kmfav){const F=KM_FAVS[b.dataset.kmfav];if(!F||k.favors<F.c||!F.ok(k))return;k.favors-=F.c;m=F.do(k,A)}
+  else if(b.dataset.kmspend!=null){const r=k.races[+b.dataset.kmspend];if(!r||k.chest<25000||(r.spent||0)>=3)return;k.chest-=25000;r.spent=(r.spent||0)+1;r.str=clamp(r.str+5,0,90);k.heat+=2;m=`${kmMoney(25000)} into ${r.name}'s race: mail, yard signs and a radio ad on KJMS.`}
+  else{if(k.chest<50000||!k.mbet||(k.mspend||0)>=4)return;k.chest-=50000;k.mspend=(k.mspend||0)+1;k.heat+=3;const R=kmMRace();m=`${kmMoney(50000)} into the mayor's race for ${R?mSideName(R,k.mbet):'your pick'}.`}
+  A.inf=clamp(A.inf,0,100);afterLog(m);save();AFTER_MSG=m;openAfter()},true);
+// ---------- events ----------
+{const ev0=KM_EVENTS.find(E=>/caught in a scandal/.test(E.t));if(ev0){ev0.w=k=>k.races.length?1:0;ev0.ch=[['Cut them loose',k=>{const c=k.races.pop();return c?`You dropped ${c.name}. Cold, but clean.`:'Nothing to cut.'}],['Stand by them',k=>{const c=k.races[k.races.length-1];if(c)c.str-=15;S.after.inf-=4;k.heat+=5;return'You stood by them. It cost you.'}]]}
+ const ev1=KM_EVENTS.find(E=>/rival power broker/.test(E.t));if(ev1)ev1.ch=[['Outspend them',k=>{if(k.chest>=50000){k.chest-=50000;k.races.forEach(c=>c.str+=6);return`You spent ${kmMoney(50000)} from your war chest. Your slate held.`}return'Your war chest came up short.'}],['Make peace and split the seats',k=>{k.favors+=1;return'You split the map. Everyone owes everyone.'}]];
+ const ev2=KM_EVENTS.find(E=>/bankroll your operation/.test(E.t));if(ev2)ev2.ch=[['Take the money',k=>{k.chest+=80000;k.heat+=6;S.after.inf+=2;return`${kmMoney(80000)} for your war chest. The donor will want something someday.`}],['Turn it down',k=>{S.after.inf+=1;return'You stayed your own boss.'}]]}
+function kmPickAlly(k){const x=pk2(k.list);k.evAlly=x?x.name:null;return x||{name:'An ally'}}
+function kmEvAlly(k){return k.list.find(x=>x.name===k.evAlly)}
+KM_EVENTS.push(
+ {w:k=>k.races.length?1.2:0,t:'A dark-money group offers to run ads for your candidates',ch:[['Let them',k=>{k.races.forEach(r=>r.str+=8);k.heat+=15;return'The ads ran on every station. Nobody knows who paid for them, and reporters are asking.'}],['Turn them down',k=>{k.heat=Math.max(0,k.heat-3);return'You kept your hands clean.'}]]},
+ {w:k=>k.list.length?1.3:0,t:()=>{const k=kmInit(S.after);const x=kmPickAlly(k);return`${x.name}, who owes you their seat, voted against a project your donors wanted`},ch:[['Make an example of them',k=>{const x=kmEvAlly(k);if(x)x.loy-=25;k.donors+=1;S.after.inf+=1;return`Word got around. ${x?x.name:'They'} won't cross you again, but they won't forget it either.`}],['Let it go',k=>{const x=kmEvAlly(k);if(x)x.loy+=6;k.donors=Math.max(1,k.donors-1);return'Your ally was grateful. One of your donors stopped calling.'}]]},
+ {w:k=>k.races.length?1:0,t:'Precinct captains in South Memphis want to be paid for Election Day',ch:[[`Pay them ${kmMoney(30000)} from your war chest`,k=>{if(k.chest<30000)return'Your war chest came up short. They worked for someone else.';k.chest-=30000;k.races.forEach(r=>r.str+=5);k.heat+=4;return'Vans to the polls, coffee at every precinct. Your candidates will feel it.'}],['Refuse',k=>{k.races.forEach(r=>r.str-=3);return'They sat this one out. So did some of their voters.'}]]},
+ {w:k=>k.races.length?0.8:0,t:'Your candidate\'s opponent would drop out for a good job',ch:[['Find them a job',k=>{const r=[...k.races].sort((a,b)=>a.str-b.str)[0];if(r)r.str+=15;k.favors=Math.max(0,k.favors-1);k.heat+=8;return`A county job opened up, and the opponent left the race. ${r?r.name+' has a clear path.':''} Some people noticed the timing.`}],['No deals',k=>{S.after.inf+=1;return'You told them to win or lose on their own.'}]]},
+ {w:()=>1,t:'A coalition of pastors wants you to back their candidate',ch:[['Add their candidate to your slate',k=>{const race=Math.random()<.5?'council':'comm';const g=Math.random()<.5?'f':'m';k.races.push({name:kmName(k),g,bgn:'Backed by a coalition of pastors',race,seat:kmSeatFor(race),y:kmRaceY(race),str:52,open:false});S.after.inf+=2;return'Sunday morning, your name was in the announcements at a dozen churches.'}],['Decline',k=>{S.after.inf-=1;return'The pastors found someone else to bless.'}]]},
+ {w:k=>kmHall(k)?1.5:0,t:()=>`Mayor ${(kmInit(S.after).hall||{}).name||''} needs your allies' votes for the budget`,ch:[['Whip your allies',k=>{k.list.forEach(x=>x.loy-=4);k.favors+=2;S.after.inf+=2;return'The budget passed. The mayor\'s office owes you twice now.'}],['Tell them you\'re busy',k=>{k.favors=Math.max(0,k.favors-1);return'The mayor got it done without you, and noticed.'}]]},
+ {w:k=>k.list.length?0.9:0,t:()=>{const k=kmInit(S.after);const x=kmPickAlly(k);return`${x.name} wants your backing to run for higher office`},ch:[[`Back them with ${kmMoney(40000)}`,k=>{const x=kmEvAlly(k);if(k.chest<40000)return'Your war chest came up short. They ran without you, and remembered.';k.chest-=40000;if(Math.random()<0.55){k.favors+=3;S.after.inf+=5;if(x){x.loy+=10;x.seat=`${x.seat} → ${pk2(['the state Senate','the County Commission chair','Juvenile Court clerk'])}`}return`${x?x.name:'Your ally'} won. Your reach grew.`}if(x)x.loy+=15;return`${x?x.name:'Your ally'} lost, but they'll never forget you stood with them.`}],['Tell them to wait their turn',k=>{const x=kmEvAlly(k);if(x)x.loy-=15;return'They took it badly.'}]]},
+ {w:k=>k.heat>=45?k.heat/15:0,inv:true,t:'Investigators are asking about your money',ch:[['Hire the best defense lawyer in town ($150,000)',k=>{S.purse.cash-=150000;k.heat=Math.max(0,k.heat-30);return'Your lawyer did the talking. The investigation went quiet.'}],['Cooperate and give up a donor',k=>{k.heat=Math.max(0,k.heat-40);k.donors=Math.max(1,k.donors-2);S.after.inf-=6;k.list.forEach(x=>x.loy-=8);return'A donor took the fall. The rest of your circle got nervous.'}],['Say nothing and wait it out',k=>{if(Math.random()<0.5){k.heat=Math.max(0,k.heat-10);return'It blew over, for now.'}S.after.inf-=18;k.heat=Math.max(0,k.heat-15);k.list.forEach(x=>x.loy-=15);return'The story ran on the front page of The Bluff City Ledger. Your allies kept their distance.'}]]});
+function kmPickEvent(A){const k=kmInit(A);const pool=KM_EVENTS.map((E,i)=>({E,i,w:E.w?E.w(k):1})).filter(x=>x.w>0);const inv=pool.find(x=>x.E.inv);
+  let pick=null;if(inv&&Math.random()<k.heat/130)pick=inv;else if(A.rev||Math.random()<0.15){let t=pool.reduce((a,x)=>a+x.w,0),r=Math.random()*t;pick=pool.find(x=>(r-=x.w)<0)||null}
+  if(pick){A.rev={t:typeof pick.E.t==='function'?pick.E.t():pick.E.t,i:pick.i};A.ev=null}}
+// ---------- the year ----------
+function kmYear(){const A=S.after,k=kmInit(A);const out=[];
+  const done=k.races.filter(r=>r.y<S.y);k.races=k.races.filter(r=>r.y>=S.y);
+  if(done.length){let w=0;const wn=[];done.forEach(r=>{if(Math.random()<kmOdds(k,r)){w++;wn.push(`${r.name}, ${r.seat}`);kmSeat(r);k.list.push({name:r.name,g:r.g,seat:r.seat,race:r.race,loy:70,y:r.y})}});
+    k.favors+=w*2;A.inf+=w*3-(done.length-w)*(k.public?3:1);k.public=false;out.push(`Election results: ${w} of ${done.length} of your candidates won${wn.length?` (${wn.join('; ')})`:''}.`)}
+  let loyal=0;k.list.forEach(x=>{x.loy=clamp(x.loy-5+rnd(-2,2),0,100);if(x.loy>=50)loyal++});k.fp+=loyal*0.5;const nf=Math.floor(k.fp);k.favors+=nf;k.fp-=nf;
+  A.inf+=Math.min(4,k.list.length*0.5)+Math.min(2,k.boards*0.4);
+  k.list.filter(x=>x.loy<30&&Math.random()<0.45).forEach(x=>{k.list.splice(k.list.indexOf(x),1);kmUnseat(x);out.push(`${x.name} (${x.seat}) stopped taking your calls. They're on their own now.`)});
+  k.list.filter(x=>S.y-x.y>=9&&Math.random()<0.3).forEach(x=>{k.list.splice(k.list.indexOf(x),1);out.push(`${x.name} retired from office.`)});
+  const h=kmHall(k);if(h){k.favors+=1;A.inf+=2}else k.hall=null;if(k.cold&&S.y>k.cold.until)k.cold=null;if(k.cold)A.inf-=1;
+  k.heat=clamp(k.heat-4,0,100);k.hallUsed=null;k.allies=k.list.length;if(A.inf>50)A.inf-=(A.inf-50)*0.25;A.inf=clamp(A.inf,0,100);return out}
+let __afterMsg=null;
+{const _ay=afterYear;afterYear=function(...a){const A0=S&&S.after;const king=A0&&A0.role==='king';const yB=S?S.y:0;if(A0)A0.mnews=null;__afterMsg=null;const r=_ay.apply(this,a);
+  try{const A=S&&S.after;if(!A||A.dead||A.prison||S.phase!=='ai'||S.y===yB||S.died)return r;const extra=[];const mv=mayorVote();if(mv)extra.push(mv);
+    if(king&&A.role==='king'){extra.push(...kmYear());kmPickEvent(A)}
+    mRaceInit();extra.forEach(x=>afterLog(x));AFTER_MSG=[__afterMsg,...extra.filter(x=>x!==mv)].filter(Boolean).join(' ');save();openAfter()}catch(e){console.warn('v96 year',e)}return r}}
+{const _as=afterStart;afterStart=function(...a){if(S&&S.after)S.after.mseen=9999;const r=_as.apply(this,a);try{if(S.after){S.after.mseen=lastElPassed();S.after.mrace=null}}catch(e){}return r}}
+// ---------- the screen ----------
+{const _oa=openAfter;openAfter=function(...a){if(AFTER_MSG)__afterMsg=AFTER_MSG;try{if(S&&S.after&&S.phase==='ai'&&!S.after.dead){const mv=mayorVote();if(mv)afterLog(mv);mRaceInit()}}catch(e){}const r=_oa.apply(this,a);
+  try{const A=S.after,b=$('mBody');if(!A||!b||A.dead)return r;let top='';
+    if(A.mnews)top+=`<div class="faccard kmnews"><b>The city voted</b><p class="note">${A.mnews.t}</p></div>`;
+    const R=kmMRace();if(R&&!A.mnews)top+=`<div class="faccard kmnews"><b>The ${R.y} mayor's race</b><p class="note">${R.open?`Mayor ${R.inc} is term-limited. ${R.a.name} and ${R.b.name} are running for the open seat.`:`Mayor ${R.a.name} is running for a second term against ${R.b.name}.`} Election Day is in October.${A.role==='king'&&A.km&&A.km.mbet?` You're backing ${mSideName(R,A.km.mbet)}.`:''}</p></div>`;
+    if(top&&!b.querySelector('.kmnews')){const first=b.querySelector('.qrgrid');const x=document.createElement('div');x.innerHTML=top;if(first)first.after(...x.children);else b.prepend(...x.children)}
+    if(A.role!=='king')return r;const k=kmInit(A),desk=b.querySelector('.roledesk');if(!desk||desk.querySelector('.kmops'))return r;
+    // clear the old slate summary
+    while(desk.firstElementChild&&!desk.firstElementChild.classList.contains('faccard')&&!/This year's moves/.test(desk.firstElementChild.textContent))desk.firstElementChild.remove();
+    const h=kmHall(k);
+    let html=`<div class="kmops"><h4 class="plh">Your operation</h4><div class="qrgrid agrid rolestats"><div><small>Allies in office</small><p><b>${k.list.length}</b></p></div><div><small>Favors owed</small><p><b>${k.favors}</b></p></div><div><small>War chest</small><p><b>${kmMoney(k.chest)}</b></p></div><div><small>Donor network</small><p><b>${k.donors} donor${k.donors===1?'':'s'}</b></p></div><div><small>Heat</small><p><b class="${k.heat>=60?'neg':''}">${Math.round(k.heat)}</b></p></div><div><small>City Hall</small><p><b>${h?'Owes you':k.cold?'Cold':'Neutral'}</b></p></div></div>
+     <p class="note">Heat: ${kmHeatW(k.heat)}.${h?` Mayor ${h.name} owes you until ${h.until}.`:k.cold?` Mayor ${k.cold.name} remembers you backed the other side.`:''} Get-out-the-vote operation: level ${k.gotv} of 3.${k.boards?` Friends on city boards: ${k.boards}.`:''}</p>`;
+    html+=`<h4 class="plh">Your candidates</h4>`;
+    html+=k.races.length?`<div class="kmlist">${k.races.map((r,i)=>`<div class="kmrow"><div><b>${r.name}</b><small>${r.bgn} · ${r.seat} (${RACE_N[r.race]}) · Election ${r.y}${r.open?' · open seat':''} · ${Math.round(kmOdds(k,r)*100)}% chance</small></div><button class="btn" data-kmspend="${i}" ${k.chest>=25000&&(r.spent||0)<3?'':'disabled'} title="Strength +5 (up to 3 times)">+${kmMoney(25000)}</button></div>`).join('')}</div>`:'<p class="note">Nobody is running with your backing. Scout a candidate.</p>';
+    const R2=kmMRace();if(R2&&k.mbet)html+=`<div class="kmrow"><div><b>Mayor's race: ${mSideName(R2,k.mbet)}</b><small>Money you've put in: ${kmMoney((k.mspend||0)*50000)} of up to ${kmMoney(200000)}</small></div><button class="btn" data-kmmspend="1" ${k.chest>=50000&&(k.mspend||0)<4?'':'disabled'}>+${kmMoney(50000)}</button></div>`;
+    if(k.list.length)html+=`<h4 class="plh">People you put in office</h4><ul class="numlist">${k.list.map(x=>`<li><b>${x.name}</b> · ${x.seat} · <span class="${x.loy<30?'neg':x.loy>=70?'pos':''}">${kmLoyW(x.loy)}</span></li>`).join('')}</ul>`;
+    html+=`<h4 class="plh">Call in a favor · ${k.favors} owed</h4><div class="choices">${Object.entries(KM_FAVS).map(([id,F])=>`<button class="choice" data-kmfav="${id}" ${k.favors>=F.c&&F.ok(k)?'':'disabled'}><b>${F.n}</b><small>${F.c} favor${F.c===1?'':'s'} · ${typeof F.d==='function'?F.d(k):F.d}</small></button>`).join('')}</div>
+     <p class="note">Your candidates win seats and owe you favors. Allies who stay loyal keep paying you favors, and if you or your child run for mayor, they endorse you and your operation turns out the vote.</p></div>`;
+    desk.insertAdjacentHTML('afterbegin',html);
+    ['mayor','hall'].forEach(id=>{const btn=desk.querySelector(`[data-ract="${id}"]`);if(btn&&btn.disabled)btn.remove()})}catch(e){console.warn('kmdesk',e)}return r}}
+// ---------- it pays off in a mayoral race ----------
+{const _cb=comebackRun;comebackRun=function(...a){const k=S.after&&S.after.km?JSON.parse(JSON.stringify(S.after.km)):null;const r=_cb.apply(this,a);try{if(k&&S.cand&&S.camp){const cn=(k.list||[]).length;if(cn){S.cand.rec=clamp(S.cand.rec+Math.min(0.1,cn*0.025),0,0.9)}const cash=Math.min(300,Math.round((k.chest||0)/1000));if(cash)S.camp.cash=(S.camp.cash||0)+cash;if(k.gotv)S.camp.organizers=(S.camp.organizers||0)+k.gotv*2;
+  if(cn||cash||k.gotv)notify('good','Your machine is behind you',`${cn?`${cn} official${cn===1?'':'s'} you put in office endorsed you. `:''}${cash?`Your war chest added $${cash}K to the campaign. `:''}${k.gotv?`Your get-out-the-vote operation signed on.`:''}`,null,{ttl:14})}}catch(e){}return r}}
+{const _ah=afterHeir;afterHeir=function(...a){const k=S.after&&S.after.km?JSON.parse(JSON.stringify(S.after.km)):null;const r=_ah.apply(this,a);try{if(k&&S.cand&&S.camp){const cn=(k.list||[]).length;S.cand.rec=clamp(S.cand.rec+Math.min(0.1,cn*0.025),0,0.9);S.camp.cash=(S.camp.cash||0)+Math.min(300,Math.round((k.chest||0)/1000));S.camp.organizers=(S.camp.organizers||0)+(k.gotv||0)*2}}catch(e){}return r}}
+
+// ======================= v26.97: THE ICE STORM =======================
+// Some winters, an ice storm takes down trees and power lines across Memphis. As mayor it's a five-step crisis:
+// get ready (or don't), the night it hits, the long wait for MLGW to restore power, burst pipes and a boil-water
+// notice if it's bad, and what you change afterward. How you handled it moves every group of voters and shows
+// up in the campaign. Every other path gets its own part to play, and the AI mayor's handling can swing a
+// mayor's race.
+Object.assign(STORY_NAMES,{ice:'The ice storm'});Object.assign(STORY_FIRST,{ice:'ice1'});
+const ICE=s=>((s.stories||{}).ice||{}).ctx||{};
+function iceScore(f,sev){return(f.salt?1:0)+(f.crews?1.5:0)+(f.warm?1:0)+(f.brief?1:0)-(f.badbrief?1:0)+(f.centers?1.5:0)+(f.guard?1:0)+(f.trees?1:0)+(f.checks?1.5:0)+(f.water?1:0)+(f.donate?0.5:0)-(f.nodonate?0.5:0)-(f.wait?1:0)-(sev-1)*1.5}
+EVENTS.push(
+ {id:'ice1',story:'ice',scripted:true,title:'An ice storm is three days out',atFn:()=>'oem',tags:['streets'],
+  body:()=>'The National Weather Service is warning of a half inch of ice or more across Shelby County by the weekend. Ice that thick snaps tree limbs onto power lines. The Office of Emergency Management wants to know how hard to prepare.',
+  fact:'MLGW, the city-owned utility, serves about 430,000 electric customers. Ice storms in 1994 and 2023 left hundreds of thousands of them in the dark for days.',
+  choices:[{label:'Pre-treat bridges and main roads, and stage city crews',cost:0.3,grp:{owners:1},flag:'salt',next:'ice2',delay:0},
+   {label:'Have MLGW call in line crews from other states before it hits',cost:0.5,grp:{business:1},flag:'crews',next:'ice2',delay:0},
+   {label:'Open warming centers before the power goes out',cost:0.3,grp:{renters:1,faith:1},flag:'warm',next:'ice2',delay:0},
+   {label:'Wait and see. Forecasts are wrong half the time',flag:'wait',next:'ice2',delay:0}]},
+ {id:'ice2',story:'ice',scripted:true,title:'The ice storm hits',atFn:()=>'mlgw',tags:['streets'],
+  body:s=>{const c=ICE(s),f=SF(s,'ice');return`It came in overnight. You could hear the trees cracking from Midtown to Whitehaven. By morning, about ${(c.out||0).toLocaleString()} MLGW customers have no power and it's ${c.sev>=3?'14':'22'} degrees outside. ${f.salt?'The pre-treated main roads are passable.':'Main roads are glazed with ice and littered with limbs.'} ${f.warm?'Your warming centers are already filling up.':''}`.replace(/\s{2,}/g,' ').trim()},
+  choices:[{label:'Run the response from the emergency center and brief the city every day',sk:'cha',b:0.5,grp:{owners:1,working:1,faith:1},flag:'brief',next:'ice3',delay:0,fail:{flag:'badbrief',next:'ice3',delay:0,grp:{owners:-1,young:-1}}},
+   {label:'Open 24-hour warming centers at community centers and libraries, with free MATA rides to them',cost:0.6,grp:{renters:2,working:1,faith:1},flag:'centers',next:'ice3',delay:0},
+   {label:'Ask the governor for the National Guard to clear roads and check on people',sk:'dip',b:0.45,grp:{owners:1},flag:'guard',next:'ice3',delay:0,fail:{flag:'noguard',next:'ice3',delay:0}}]},
+ {id:'ice3',story:'ice',scripted:true,title:'Day four: some homes will be dark for a week',atFn:()=>'mlgw',tags:['streets'],
+  body:s=>{const c=ICE(s),f=SF(s,'ice');return`MLGW has restored about half the outages${f.crews?', helped by the out-of-state crews you called in early':''}, but its president says some neighborhoods could wait ${c.days||7} more days. Fallen trees are blocking the line crews. ${f.guard?'National Guard trucks are hauling limbs off the streets.':f.noguard?'The governor said the state is stretched thin.':''} Three people have been treated for carbon monoxide poisoning from generators run indoors.`.replace(/\s{2,}/g,' ')},
+  choices:[{label:'Make MLGW\'s president answer to the public, at your side',grp:{renters:1,working:1,business:-1},flag:'blame',next:'ice4',delay:0},
+   {label:'Pay overtime for city crews to clear fallen trees ahead of the line crews',cost:0.8,grp:{owners:1,working:1},flag:'trees',next:'ice4',delay:0},
+   {label:'Send firefighters and nurses door to door to check on seniors',cost:0.4,grp:{faith:2,owners:1},flag:'checks',next:'ice4',delay:0}]},
+ {id:'ice4w',story:'ice',scripted:true,title:'Burst pipes and a boil-water notice',atFn:()=>'mlgw',tags:['health'],
+  body:()=>'As the ice melts, thousands of burst pipes are draining the water system. Pressure has dropped citywide, and MLGW has issued a boil-water notice for all of Memphis. Hospitals are trucking in water. Restaurants are calling City Hall.',
+  choices:[{label:'Hand out bottled water at fire stations and churches',cost:0.5,grp:{renters:2,faith:2,parents:1},flag:'water',next:'ice5',delay:1},
+   {label:'Ask businesses to donate water while the city organizes it',sk:'dip',b:0.5,grp:{business:1},flag:'donate',next:'ice5',delay:1,fail:{flag:'nodonate',next:'ice5',delay:1,grp:{renters:-1}}},
+   {label:'Close schools and restaurants until the water is safe',grp:{parents:-1,business:-2},flag:'close',next:'ice5',delay:1}]},
+ {id:'ice5',story:'ice',scripted:true,title:'After the ice storm',atFn:()=>'cityhall',tags:['streets'],
+  body:s=>{const c=ICE(s);const sc=c.score||0;return`The last homes got their power back after ${c.total||9} days. ${c.dead?`${['','One','Two','Three','Four','Five','Six','Seven','Eight'][c.dead]||c.dead} ${c.dead===1?'person':'people'} died, most from the cold or from generators run indoors.`:'Nobody died, which the fire chief calls a small miracle.'} ${sc>=4?'Most people think the city handled it well. The Commercial Appeal\'s editorial page says so too.':sc>=2?'People are tired and angry at MLGW, but most don\'t blame you.':'A lot of people think City Hall was slow and disorganized, and they\'re saying it.'} The question now is what changes before the next one.`},
+  choices:[{label:'Fund a 10-year plan with MLGW to trim trees and bury power lines',cost:2,fx:{streets:0.3},grp:{owners:1,young:1,business:1},end:{t:'Started burying Memphis power lines after the ice storm',camp:{d:1,t:'Your ad: "The next storm won\'t take the lights."'}}},
+   {label:'Push the MLGW board to replace the utility\'s leadership',sk:'intr',b:0.5,grp:{renters:1,working:1},end:{t:'Shook up MLGW after the ice storm',camp:{d:0.5,t:'Your ad: "Memphis deserved better from MLGW, so we changed it."'}},fail:{grp:{business:-1},end:{t:'Fought MLGW\'s board after the ice storm, and lost',camp:{d:-0.3,t:'Your opponent says you picked a fight you couldn\'t win.'}}}},
+   {label:'Thank the crews and move on',grp:{working:1},end:{t:'Got Memphis through the ice storm',camp:{d:0,t:'The ice storm comes up in every debate.'}}}]});
+// how bad, and how it's going, depends on what you did
+{const _qs=queueStory;queueStory=function(sid,step,delay){try{if(sid==='ice'){const st=S.stories.ice,f=st.flags||{},c=st.ctx;
+  if(step==='ice2'){c.sev=c.sev||1;c.out=[140000,250000,390000][c.sev-1]+Math.round(rnd(-15,15))*1000;c.days=Math.max(2,c.sev*3+2-(f.crews?3:0)-(f.salt?1:0));try{logIt(`The ice storm hit: about ${c.out.toLocaleString()} homes and businesses lost power.`)}catch(e){}}
+  if(step==='ice4'){c.total=c.days+4-(f.trees?2:0)-(f.guard?1:0);step=c.sev>=2?'ice4w':'ice5';if(step==='ice5')delay=1}
+  if(step!=='ice1')delay=step==='ice5'?1:0;
+  if(step==='ice5'){const sc=iceScore(f,c.sev);c.score=sc;c.dead=Math.max(0,Math.round(c.sev*2-(f.checks?2:0)-(f.centers?1.5:0)-(f.warm?1:0)+rnd(-1,1)));
+    const lift=clamp((sc-2.5)*0.6,-3,3);try{GROUPS.forEach(g=>groupLift(g.id,lift,'Your ice storm response'))}catch(e){}try{newsAdd(sc>=3?0.4:-0.5,sc>=3?'City\'s ice storm response wins praise':'Memphians fault City Hall\'s ice storm response',{tag:'streets',w:1.4,dek:`Power was out for up to ${c.total||9} days.`})}catch(e){}}}}catch(e){console.warn('iceq',e)}return _qs.call(this,sid,step,delay)}}
+{const _rq=releaseQueued;releaseQueued=function(...a){const n=_rq.apply(this,a);try{const st=S&&S.stories&&S.stories.ice;if(st&&!st.ended&&!st.ctx.hit&&(S.events||[]).some(e=>e.id==='ice2')){const c=st.ctx;c.hit=true;applyFx(S,{streets:-0.3-0.15*(c.sev||1),health:-0.2,mood:-1});refreshHUD()}}catch(e){}return n}}
+// when it comes: December through February, not every winter
+function iceMonth(){if(!S||!inOffice()||S.over)return;S.stories=S.stories||{};if(S.stories.ice&&!S.stories.ice.ended)return;if(![12,1,2].includes(S.m))return;
+  const wk=S.m===12?S.y:S.y-1;if(S.iceW===wk)return;if(nowM()-(S.termStart||0)<3)return;if(Math.random()>0.12)return;S.iceW=wk;
+  const x=Math.random();startStory('ice',{sev:x<0.4?1:x<0.8?2:3});queueStory('ice','ice1',0);logIt('Forecasters are warning of an ice storm.')}
+{const _eom=endOfMonth;endOfMonth=function(...a){const r=_eom.apply(this,a);try{if(S&&S.started&&S.phase!=='ai')iceMonth()}catch(e){console.warn('ice',e)}return r}}
+// the map looks cold while it lasts
+function iceFx(){try{const on=!!(S&&S.stories&&S.stories.ice&&!S.stories.ice.ended&&S.stories.ice.steps&&S.stories.ice.steps.length&&inOffice());let el=$('iceFx');if(on&&!el){const m=$('map');if(!m)return;el=document.createElement('div');el.id='iceFx';m.appendChild(el)}if(el)el.hidden=!on}catch(e){}}
+{const _rh=refreshHUD;refreshHUD=function(...a){const r=_rh.apply(this,a);iceFx();return r}}
+// ---------- every other path ----------
+function mayorRef(){const n=cityMayor();return/^the /i.test(n)?n:'Mayor '+n}
+function stormKit(A){const R=A.role,c=A.cn,co=A.co,cg=A.cg,k=A.km,u=A.uni,l=A.lw,m=cityMayor();
+  if(R==='council'&&c)return[['Run a warming center out of your district office',()=>{c.app+=5;A.inf+=1;return'Cots, coffee and phone chargers. Your district office was full for a week.'}],['Call MLGW\'s president before the council for a public grilling',()=>{c.app+=3;c.mayor-=3;A.inf+=2;return'The hearing ran four hours. The mayor didn\'t enjoy it.'}],['Go door to door checking on seniors',()=>{c.app+=4;try{const H=hInit();if(H)H.st=clamp(H.st+6,0,100)}catch(e){}return'You found a woman on Chelsea Avenue with no heat and got her to a shelter.'}]];
+  if(R==='county'&&co)return[['Open County shelters and send Health Department nurses to them',()=>{co.ph+=4;co.app+=3;co.bud-=3;return'The County ran six shelters. Nurses treated hundreds of people.'}],[`Team up with ${mayorRef()} on one joint response`,()=>{co.partner=(co.partner||0)+1;co.app+=2;return'One command center, one daily briefing. People noticed the two of you working together.'}],['Let the city handle it',()=>{co.app-=3;return'People asked where the County was.'}]];
+  if((R==='congress'||R==='senate')&&cg)return[['Press FEMA for a federal disaster declaration',()=>{if(persuade('dip',0.5,[],6)){cg.fed=(cg.fed||0)+25;cg.app+=4;return'FEMA approved it. About $25 million is coming to Memphis.'}cg.app+=1;return'FEMA said the damage didn\'t meet the threshold. You keep pushing.'}],['Fly home and tour the damage',()=>{cg.app+=3;return'You walked the worst streets in Frayser with the line crews.'}],['Stay in Washington for a key vote',()=>{cg.party=(cg.party||50)+5;cg.app-=4;return'Leadership was grateful. People at home were not.'}]];
+  if(R==='king'&&k)return[['Have your donors pay for warming centers',()=>{if(k.chest<40000)return'Your war chest came up short.';k.chest-=40000;A.inf+=5;k.heat=Math.max(0,k.heat-5);return'Your network paid for warming centers at six churches. Nobody asked where the money came from.'}],['Use your allies to push MLGW for answers',()=>{(k.list||[]).forEach(x=>x.loy+=4);A.inf+=2;return'Your council allies grilled MLGW in public and got credit for it.'}],['Stay out of it',()=>'You let other people take the lead.']];
+  if(R==='uni'&&u)return[['Open the campus as a shelter',()=>{u.mood+=2;u.rep+=4;A.inf+=2;return'The gym and the student center became shelters for 600 people.'}],['Close campus and send students home',()=>{u.mood-=2;return'A quiet campus, and a few hard questions from the city.'}]];
+  if(R==='law'&&l)return[['Represent tenants whose landlords won\'t fix burst pipes, for free',()=>{l.rep+=5;A.inf+=2;return'You won repairs for forty families.'}],['Represent the insurance companies',()=>{S.purse.cash+=100000;l.rep-=3;return'A big fee, and some hard looks.'}]];
+  if(R==='campaign'&&A.camp)return[['Pause the campaign and volunteer',()=>{A.camp.odds=clamp((A.camp.odds||0.3)+0.03,0.05,0.95);A.inf+=1;return'No speeches for a week, just hauling water. People noticed.'}],['Keep campaigning',()=>{A.camp.odds=clamp((A.camp.odds||0.3)-0.02,0.05,0.95);return'A campaign event in a dark city looked out of touch.'}]];
+  return[['Volunteer at a warming center',()=>{A.inf+=3;return'You worked nights at the shelter in the Whitehaven community center.'}],['Organize your block: check on neighbors and share a generator',()=>{A.inf+=4;return'Your street made the evening news for looking after each other.'}],['Ride it out at home',()=>'You and your family got through it, cold and bored.']]}
+{const _ay=afterYear;afterYear=function(...a){const A0=S&&S.after;const yB=S?S.y:0;if(A0)A0.storm=null;const r=_ay.apply(this,a);
+  try{const A=S&&S.after;if(!A||A.dead||A.prison||S.phase!=='ai'||S.y===yB||S.died)return r;if(Math.random()<0.25){const good=Math.random()<0.5;A.storm={good};const R=A.mrace&&A.mrace.y===S.y?A.mrace:null;if(R&&!R.open)R.storm=(R.storm||0)+(good?0.05:-0.07);save();AFTER_MSG=__afterMsg;openAfter()}}catch(e){console.warn('storm',e)}return r}}
+{const _oa=openAfter;openAfter=function(...a){const r=_oa.apply(this,a);try{const A=S&&S.after,b=$('mBody');if(!A||!A.storm||!b||A.dead||b.querySelector('.stormcard'))return r;const kit=stormKit(A);
+  const h=`<div class="faccard stormcard"><b>An ice storm hits Memphis</b><p class="note">Half an inch of ice brought down trees and power lines across the city. About 300,000 MLGW customers lost power, some for more than a week. ${A.storm.good?`${mayorRef()}'s response is getting good reviews.`:`People are angry at MLGW, and at ${mayorRef()} for a slow response.`} What do you do?</p><div class="choices">${kit.map((c,i)=>`<button class="choice" data-storm="${i}"><b>${c[0]}</b></button>`).join('')}</div></div>`;
+  const x=document.createElement('div');x.innerHTML=h;const first=b.querySelector('.qrgrid');if(first)first.after(x.firstChild);else b.prepend(x.firstChild);
+  const yb=b.querySelector('[data-ayear]');if(yb){yb.disabled=true;const sm=yb.querySelector('small');if(sm)sm.textContent='Deal with the storm first'}}catch(e){console.warn('stormcard',e)}return r}}
+document.addEventListener('click',e=>{const b=e.target.closest('[data-storm]');if(!b||!S||!S.after||!S.after.storm)return;e.preventDefault();e.stopImmediatePropagation();const A=S.after;const kit=stormKit(A);const c=kit[+b.dataset.storm];if(!c)return;const m=c[1]();A.storm=null;try{roleClamp()}catch(err){}A.inf=clamp(A.inf,0,100);afterLog(m);save();AFTER_MSG=m;openAfter()},true);
 
 function openLedger(){const L=S.log||[];openPanel('Everything that has happened, newest first','Ledger',L.length?`<div class="logl">${L.map(x=>`<div><span>${x.d}</span><p style="margin:0">${x.t}</p></div>`).join('')}</div>`:'<p class="note">Nothing yet. Tap ▶ Continue to move ahead.</p>','ledger')}
 function openPolicies(){const ks=Object.keys(POLICIES);
