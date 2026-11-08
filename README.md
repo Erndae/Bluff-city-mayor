@@ -4,6 +4,20 @@
 
 A Memphis political life on a real map of the city. Start as the mayor, run for mayor, or begin as a private citizen with a job and rise from there: the City Council, Shelby County mayor, Congress and the Senate, a law firm, a university presidency, or the back rooms as a kingmaker. As mayor you handle problems at real places, write the city budget, win votes from the 13-member City Council and run for re-election. Your family, health, party, rivals and record follow you through every chapter.
 
+## v26.99: The desk
+
+- **The game now opens on your desk instead of the map.** At the top is a Memphis skyline: the Pyramid, the Hernando de Soto Bridge and downtown, with the date and the weather. It changes with the seasons and ices over during an ice storm. Below it:
+  - **One headline number:** your approval (or favorable rating as a candidate), with the reserve, the council and your actions beside it. Tap it for public opinion.
+  - **Next step:** the most useful thing to do now.
+  - **Waiting for you:** the decisions, visitors and votes on your plate, each with a small picture or the person's face. The first simple decision can be answered right on the desk.
+  - **The districts:** all nine at a glance, colored by how they feel about you. Tap one to open it.
+  - **The day's headline**, from the papers in the game.
+- **Your office, your home and the rest of town** are buttons on the skyline. Office shows how many people are waiting and takes you up to the 7th floor. Home takes you home. Around town opens the street map.
+- **Continue sits in the middle of the tab bar**, between Desk, Actions, Budget (Campaign for candidates) and More. More holds the council, opinion, news, the ledger, the guide, music, the map and save.
+- **The street map is one tap away** (the map button, or Around town) and works exactly as before. A **Desk** button on the map brings you back. The game remembers which one you were using.
+- **On a wide screen** the desk sits on the left with the map beside it.
+- The first-time tour still runs on the map screen, and the desk comes back when it ends.
+
 ## v26.98: Storm timing
 
 - **Each step of the ice storm now arrives two days after the last**, so the storm hits two days after the forecast instead of sometimes a month later.

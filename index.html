@@ -380,6 +380,53 @@ details.bgfold{margin:6px 0 10px}details.bgfold summary{cursor:pointer;color:var
 .mcgrid span.pos,.mcmets b.pos{color:var(--good,#5cb870)}.mcgrid span.neg,.mcmets b.neg{color:var(--bad,#e06060)}.mcgrid span{font-size:13px;font-weight:600}
 .kmrow{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--line,#2c3e4c)}.kmrow>div{flex:1;min-width:0}.kmrow b{display:block}.kmrow small{color:var(--muted,#9aa7b2);display:block;line-height:1.35}.kmrow .btn{flex-shrink:0;white-space:nowrap}.kmlist{margin-bottom:6px}.kmnews b{display:block}
 #iceFx{position:absolute;inset:0;pointer-events:none;z-index:2;background:radial-gradient(ellipse at center,rgba(236,246,255,0) 30%,rgba(236,246,255,.8) 100%),linear-gradient(rgba(150,195,240,.26),rgba(150,195,240,.26))}#iceFx[hidden]{display:none}.stormcard{border-color:#6fa8d6}
+#homeDesk{position:absolute;inset:0;z-index:5;display:flex;flex-direction:column;background:#0b131a;color:#e8eef2;font-family:var(--f-body);overflow:hidden}
+#homeDesk[hidden]{display:none}
+#homeDesk button{font-family:inherit;color:inherit;cursor:pointer}
+.hd-sky{position:relative;height:178px;flex-shrink:0;overflow:hidden;padding-top:env(safe-area-inset-top,0px)}
+.hd-svg{position:absolute;left:0;top:0;width:100%;height:100%}
+.hd-top{position:relative;display:flex;align-items:center;gap:8px;padding:10px 12px 0}
+.hd-ib{width:44px;height:44px;border-radius:10px;border:none;background:rgba(13,24,34,.74);color:var(--amber)!important;font-size:18px;display:grid;place-items:center}
+.hd-brand{flex:1;font-family:var(--f-display);font-size:14px;color:var(--amber);text-shadow:0 1px 2px rgba(0,0,0,.6)}.hd-brand span{font-family:var(--f-label);font-weight:600;letter-spacing:3px;color:#fff}
+.hd-where{position:absolute;left:14px;bottom:52px;display:flex;flex-direction:column;gap:2px;text-shadow:0 1px 3px rgba(0,0,0,.9)}
+.hd-where small{font-family:var(--f-label);font-size:12px;letter-spacing:2px;color:#ffd27a}.hd-where span{font-family:var(--f-mono);font-size:14px;color:#fff}
+.hd-places{position:absolute;left:10px;right:10px;bottom:9px;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}
+.hd-places button{min-height:36px;display:flex;align-items:center;justify-content:center;gap:6px;border-radius:18px;background:rgba(13,24,34,.84);border:1px solid #2a4052;color:#fff!important;font-weight:600;font-size:13px;padding:0 6px;white-space:nowrap}
+.hd-places button svg{color:var(--amber)}.hd-places button.on{border-color:var(--amber)}.hd-places em{font-style:normal;background:var(--amber);color:#0d1822;border-radius:9px;padding:0 6px;font-size:12px}
+.hd-stat{display:flex;align-items:center;gap:12px;padding:8px 16px;background:#0d1822;border:none;border-bottom:1px solid #2a4052;text-align:left;flex-shrink:0}
+.hd-big small{display:block;font-family:var(--f-label);font-size:12px;letter-spacing:1px;color:var(--muted)}.hd-big b{font-family:var(--f-mono);font-size:26px;color:var(--amber);font-weight:500;white-space:nowrap}
+.hd-big i{font-style:normal;font-size:13px}.hd-big i.pos,.hd-body .pos{color:var(--good)}.hd-big i.neg{color:var(--bad)}
+.hd-sub{flex:1;display:flex;flex-direction:column;gap:3px;font-size:13px;color:#c3cdd4;min-width:0}.hd-sub b{color:#e8eef2;font-weight:600}.hd-sub em{font-style:normal;color:var(--amber);letter-spacing:2px}
+.hd-chev{color:var(--muted);font-size:18px}
+.hd-body{flex:1;overflow-y:auto;overscroll-behavior:contain;padding:10px 16px 16px;display:flex;flex-direction:column;gap:8px}
+.hd-body h3{margin:6px 0 0;font-family:var(--f-label);font-size:14px;letter-spacing:2px;color:var(--amber);display:flex;justify-content:space-between;align-items:baseline}.hd-body h3 span{font-family:var(--f-body);letter-spacing:0;font-size:12px;color:var(--muted);font-weight:400}
+.hd-next{display:flex;flex-direction:column;gap:2px;text-align:left;padding:10px 12px;border-radius:12px;border:1px solid #3a6a4a;background:#13281f}.hd-next small{font-family:var(--f-label);letter-spacing:2px;font-size:11px;color:#7fcf9b}.hd-next b{font-size:15px}
+.hd-row{display:flex;align-items:center;gap:12px;padding:8px;border-radius:12px;border:1px solid #2a4052;background:#13212d;text-align:left;min-height:60px}
+.hd-th{width:56px;height:48px;border-radius:8px;flex-shrink:0;display:block}
+.hd-face{width:48px;height:48px;border-radius:50%;overflow:hidden;flex-shrink:0;background:#2a4052;display:flex;align-items:flex-start;justify-content:center}.hd-face svg{width:48px;height:auto}
+.hd-ct{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}.hd-ct b{font-size:15px;line-height:1.25}.hd-ct small{font-size:13px;color:var(--muted)}
+.hd-open{font-size:13px;font-weight:600;color:var(--amber);white-space:nowrap}
+.hd-card{display:grid;grid-template-columns:auto 1fr;gap:8px 12px;align-items:center;padding:10px;border-radius:12px;border:1px solid var(--amber);background:#1a2c3b}
+.hd-ch{grid-column:1/-1;display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:6px}
+.hd-cbtn{min-height:46px;border-radius:10px;border:1px solid #2a4052;background:#13212d;padding:6px 8px;text-align:left;display:flex;flex-direction:column;gap:2px}.hd-cbtn b{font-size:13px;line-height:1.25}.hd-cbtn small{font-size:11px;color:#9caab4;line-height:1.3}
+.hd-more{grid-column:1/-1;justify-self:start;background:none;border:none;color:var(--amber)!important;font-size:13px;font-weight:600;padding:4px 0;min-height:32px}
+.hd-all{align-self:flex-start;background:none;border:none;color:var(--amber)!important;font-weight:600;font-size:13px;min-height:36px;padding:0}
+.hd-empty{margin:0;color:var(--muted);font-size:14px}
+.hd-dists{display:grid;grid-template-columns:repeat(9,minmax(0,1fr));gap:4px}
+.hd-d{border:none;border-radius:6px;padding:5px 0;display:flex;flex-direction:column;align-items:center;min-height:44px;justify-content:center}.hd-d b{font-family:var(--f-display);font-size:13px;font-weight:400}.hd-d small{font-family:var(--f-mono);font-size:10px}
+.hd-hi{background:#2f6aa3;color:#fff!important}.hd-mid{background:#3a4a57;color:#fff!important}.hd-lo{background:#a8562a;color:#fff!important}
+.hd-news{display:flex;flex-direction:column;gap:2px;text-align:left;padding:10px 12px;border-radius:10px;border:none;background:#efe8da;color:#1b1712!important;margin-top:4px}.hd-news small{font-family:var(--f-label);font-size:11px;letter-spacing:2px;color:#6b5d48}.hd-news b{font-family:Georgia,'Times New Roman',serif;font-size:16px;line-height:1.2}
+.hd-nav{display:grid;grid-template-columns:repeat(2,minmax(0,1fr)) minmax(0,1.7fr) repeat(2,minmax(0,1fr));gap:4px;align-items:end;padding:8px 10px calc(10px + env(safe-area-inset-bottom,0px));background:#0d1822;border-top:1px solid #2a4052;flex-shrink:0}
+.hd-nav>button{min-width:0;min-height:52px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;background:none;border:none;color:#c3cdd4!important;font-weight:600;font-size:12px}
+.hd-nav>button.on{color:var(--amber)!important}
+.hd-nav>button.hd-play{height:66px;margin-top:-22px;border-radius:16px;background:var(--amber);color:#0d1822!important;box-shadow:0 4px 14px rgba(0,0,0,.45);padding:0 4px}
+.hd-pm{font-size:16px;font-weight:700;white-space:nowrap}.hd-ps{font-size:11px;font-weight:600;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.hd-sheet{position:absolute;right:10px;bottom:84px;z-index:2;display:flex;flex-direction:column;min-width:210px;padding:6px;border-radius:12px;background:#13212d;border:1px solid #2a4052;box-shadow:0 8px 24px rgba(0,0,0,.5)}
+.hd-sheet button{min-height:44px;text-align:left;padding:0 12px;border:none;background:none;border-radius:8px;font-size:15px}.hd-sheet button:hover{background:#1a2c3b}
+#bDeskBack{display:none}body.deskmapview #bDeskBack{display:inline-flex;align-items:center;gap:6px;border-color:var(--amber);color:var(--amber)}
+body.deskmapview nav.actions [data-act="desk"]{display:none!important}
+body.deskon #nextchip,body.deskon #startchip,body.deskon #bSee{visibility:hidden}
+@media (min-width:861px){#homeDesk{right:auto;width:440px;border-right:1px solid #2a4052;box-shadow:6px 0 24px rgba(0,0,0,.35)}body.deskon .side{display:none}.hd-sheet{right:auto;left:250px}}
 .adgain{display:block;width:100%;text-align:center;font-size:11px;font-weight:600;color:var(--good);margin-top:1px}
 #start{overflow-x:hidden;overflow-y:auto;touch-action:pan-y}.startbox{min-width:0;max-width:min(600px,100%);box-sizing:border-box}.startbox *{min-width:0}.create select,.create input{max-width:100%;width:100%;box-sizing:border-box;text-overflow:ellipsis}.create .tpick,.create .tpick>*{max-width:100%;box-sizing:border-box}
 @media (max-width:640px){.startbox{margin-left:0}#start{padding-left:max(16px,env(safe-area-inset-left,0px))}}
@@ -732,7 +779,7 @@ details.analysis{margin-top:6px}details.analysis summary{cursor:pointer;color:va
     <button class="btn primary" data-act="pause" id="bPlay"><svg class="ico" viewBox="0 0 12 12" aria-hidden="true"><path d="M3.2 1.6v8.8l7.2-4.4z" fill="currentColor"/></svg> Resume <kbd>Space</kbd></button>
   </nav>
   <div class="status" id="status">Loading map…</div>
-  <div class="credit"><span class="ver" id="verTag">v26.98</span></div>
+  <div class="credit"><span class="ver" id="verTag">v26.99</span></div>
   <div class="tip" id="tip" hidden></div>
   <div class="toast" id="toast" role="status"></div>
   <section class="panel" id="panel" hidden aria-live="polite">
@@ -760,7 +807,7 @@ details.analysis{margin-top:6px}details.analysis summary{cursor:pointer;color:va
         <button class="btn" data-music-open>Music &amp; volume</button>
       </div>
       <div id="slotList" hidden></div>
-      <p class="note startv">Version <b class="ver" id="verStart">v26.98</b></p>
+      <p class="note startv">Version <b class="ver" id="verStart">v26.99</b></p>
     </div>
     <div class="startbox create" id="create" hidden>
       <h2>Create your mayor</h2>
@@ -1571,7 +1618,7 @@ function enact(s,p){DIVS.forEach(d=>{s.enacted[d.id]=p.divs[d.id];s.ratio[d.id]=
 // Voter groups. Each has a share of residents, turnout, home districts, concerns and an approval of you.
 // Citywide approval is the turnout-weighted average of the groups; each council district's approval comes from the groups that live there.
 // Shares, district mix and turnout are modeled, loosely grounded in Memphis demographics; they are not survey data.
-const VERSION='v26.98';
+const VERSION='v26.99';
 const GROUPS=[
  {id:'working',sh:'Working families',n:'Working families',ic:'⚒︎',c:'#f2a93b',share:24,turn:.5,start:56,w:{jobs:1,safety:.8,transit:.5},
   d:'Hourly workers in logistics, warehouses, health care and service jobs. The biggest bloc in the city.',dm:{1:1.1,2:.8,3:1.3,4:1.2,5:.6,6:1.2,7:1.1}},
@@ -9344,6 +9391,125 @@ function stormKit(A){const R=A.role,c=A.cn,co=A.co,cg=A.cg,k=A.km,u=A.uni,l=A.lw
   const x=document.createElement('div');x.innerHTML=h;const first=b.querySelector('.qrgrid');if(first)first.after(x.firstChild);else b.prepend(x.firstChild);
   const yb=b.querySelector('[data-ayear]');if(yb){yb.disabled=true;const sm=yb.querySelector('small');if(sm)sm.textContent='Deal with the storm first'}}catch(e){console.warn('stormcard',e)}return r}}
 document.addEventListener('click',e=>{const b=e.target.closest('[data-storm]');if(!b||!S||!S.after||!S.after.storm)return;e.preventDefault();e.stopImmediatePropagation();const A=S.after;const kit=stormKit(A);const c=kit[+b.dataset.storm];if(!c)return;const m=c[1]();A.storm=null;try{roleClamp()}catch(err){}A.inf=clamp(A.inf,0,100);afterLog(m);save();AFTER_MSG=m;openAfter()},true);
+
+// ======================= v26.99: THE DESK =======================
+// The game now opens on your desk instead of the map. A Memphis skyline that changes with the seasons (and ices
+// over in a storm), one headline number, the next step, everything waiting on you (simple decisions answered right
+// there), the districts at a glance and the day's headline, with Continue in the middle of the tab bar. The full
+// street map is one tap away and works exactly as before; "Desk" brings you back. Your office, your home and the
+// rest of town are buttons on the skyline. On a wide screen the desk sits on the left with the map beside it.
+const HD={on:true,last:'',more:false};
+try{HD.on=localStorage.getItem('bcr-view')!=='map'}catch(e){}
+function hdEligible(){return!!(S&&S.started&&!S.over&&!S.after&&(inOffice()||isCand()))}
+function hdShown(){return HD.on&&hdEligible()}
+function hdSetView(desk){HD.on=desk;try{localStorage.setItem('bcr-view',desk?'desk':'map')}catch(e){}HD.more=false;renderHomeDesk(true)}
+// ---------- the skyline ----------
+const HD_SKY={w:['#1b2740','#4f6585','#b9c9da'],sp:['#25386a','#b0657a','#f0b089'],su:['#1d4c8c','#d9844a','#f6c86a'],fa:['#1f2c4c','#874636','#e39a4a'],ice:['#4b5d74','#93a8bf','#dfe9f2']};
+const HD_HI=[50,55,64,73,81,89,92,91,85,75,63,52];
+function hdSeason(){const m=S.m;return[12,1,2].includes(m)?'w':m<=5?'sp':m<=8?'su':'fa'}
+function hdStorm(){try{const st=S.stories&&S.stories.ice;return!!(st&&!st.ended&&st.ctx&&st.ctx.hit)}catch(e){return false}}
+function hdWeather(){const t=HD_HI[S.m-1]+((S.day*7+S.m*3)%9)-4;if(hdStorm())return`${Math.min(t,28)}° · ice storm`;const w=['clear','clear','partly cloudy','cloudy','rain'][(S.day*13+S.m)%5];return`${t}° ${w}`}
+function hdSkySVG(){const st=hdStorm(),k=st?'ice':hdSeason(),c=HD_SKY[k],win=k==='w'||k==='ice';
+  const lit=`<rect x="314" y="74" width="3" height="3" fill="#f2c46b"/><rect x="322" y="84" width="3" height="3" fill="#f2c46b"/><rect x="314" y="98" width="3" height="3" fill="#f2c46b"/><rect x="360" y="82" width="3" height="3" fill="#f2c46b"/><rect x="366" y="96" width="3" height="3" fill="#f2c46b"/><rect x="338" y="94" width="3" height="3" fill="#f2c46b"/><rect x="294" y="104" width="3" height="3" fill="#f2c46b"/>`;
+  return`<svg class="hd-svg" viewBox="0 0 390 168" preserveAspectRatio="xMidYMax slice" role="img" aria-label="Downtown Memphis${st?' iced over':''}: the Pyramid, the Hernando de Soto Bridge and the river">
+   <defs><linearGradient id="hdg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${c[0]}"/><stop offset=".6" stop-color="${c[1]}"/><stop offset="1" stop-color="${c[2]}"/></linearGradient></defs>
+   <rect width="390" height="168" fill="url(#hdg)"/>
+   ${k==='su'?'<circle cx="320" cy="62" r="16" fill="#ffe6a8" opacity=".9"/>':k==='w'?'<circle cx="320" cy="54" r="10" fill="#f4f1ea" opacity=".85"/>':st?'':'<circle cx="330" cy="58" r="12" fill="#ffd9a0" opacity=".85"/>'}
+   <rect x="0" y="134" width="390" height="34" fill="${st?'#6f8aa6':'#13314c'}"/>
+   <path d="M20 146 H80 M140 152 H210 M260 144 H330 M60 158 H120" stroke="${st?'#e9f1f8':'#e7a25a'}" stroke-width="2" opacity=".35"/>
+   <polygon points="8,134 64,58 120,134" fill="${st?'#8ea3b8':'#3b5168'}"/><polygon points="64,58 120,134 96,134" fill="${st?'#7a90a6':'#2b3d50'}"/>
+   <path d="M104 126 H286" stroke="#cfd9e3" stroke-width="2.5"/><path d="M118 126 Q154 82 190 126 Q226 82 262 126" stroke="#cfd9e3" stroke-width="2.5" fill="none"/>
+   ${st?'':'<circle cx="136" cy="104" r="1.6" fill="#ffe7a8"/><circle cx="154" cy="96" r="1.6" fill="#b9e2ff"/><circle cx="172" cy="104" r="1.6" fill="#ffc0e0"/><circle cx="208" cy="104" r="1.6" fill="#ffe7a8"/><circle cx="226" cy="96" r="1.6" fill="#b9e2ff"/><circle cx="244" cy="104" r="1.6" fill="#ffc0e0"/>'}
+   ${k==='su'||k==='sp'?'<path d="M136 138 H174 L170 146 H140 Z" fill="#e9e2d2"/><rect x="146" y="130" width="18" height="8" fill="#e9e2d2"/><rect x="152" y="124" width="3" height="6" fill="#c0392b"/>':''}
+   <rect x="290" y="92" width="18" height="42" fill="#0d1822"/><rect x="310" y="66" width="22" height="68" fill="#101e2a"/><rect x="319" y="52" width="4" height="14" fill="#101e2a"/><rect x="334" y="84" width="20" height="50" fill="#0d1822"/><rect x="356" y="74" width="20" height="60" fill="#13212d"/><rect x="378" y="96" width="12" height="38" fill="#0d1822"/>
+   ${st?'':lit}${win?'<path d="M290 92 H308 M310 66 H332 M334 84 H354 M356 74 H376 M8 134 L64 58" stroke="#f4f8fb" stroke-width="2" opacity=".7"/>':''}
+   ${st?'<rect width="390" height="168" fill="#dcebf7" opacity=".18"/>':''}</svg>`}
+// ---------- small pictures for the cards ----------
+const HD_TH={
+ streets:'<rect width="56" height="48" fill="#9bb7cf"/><rect y="30" width="56" height="18" fill="#4a5058"/><path d="M0 39 H56" stroke="#e6c547" stroke-width="2" stroke-dasharray="6 5"/><path d="M20 30 L26 16 L32 30 Z" fill="#f28c38"/><rect x="21" y="22" width="10" height="3" fill="#fff"/>',
+ safety:'<rect width="56" height="48" fill="#1d2c44"/><rect x="8" y="24" width="40" height="14" rx="3" fill="#e8eef2"/><rect x="8" y="30" width="40" height="4" fill="#22385c"/><rect x="20" y="17" width="7" height="7" fill="#e8644f"/><rect x="29" y="17" width="7" height="7" fill="#4f8fd6"/><circle cx="16" cy="39" r="4" fill="#111"/><circle cx="40" cy="39" r="4" fill="#111"/>',
+ jobs:'<rect width="56" height="48" fill="#cfdbe6"/><rect y="38" width="56" height="10" fill="#8a7f6a"/><rect x="6" y="20" width="26" height="18" fill="#7d8a95"/><path d="M6 20 L14 14 V20 L22 14 V20 L30 14 V20" fill="#7d8a95"/><rect x="38" y="6" width="3" height="32" fill="#e6c547"/><path d="M38 8 H54 M50 8 V18" stroke="#e6c547" stroke-width="2"/>',
+ health:'<rect width="56" height="48" fill="#e8f1f6"/><rect x="10" y="12" width="36" height="30" fill="#fff" stroke="#c9d6e2"/><rect x="24" y="16" width="8" height="20" fill="#e8644f"/><rect x="18" y="22" width="20" height="8" fill="#e8644f"/>',
+ education:'<rect width="56" height="48" fill="#a9cbe6"/><rect y="38" width="56" height="10" fill="#6f9a4e"/><rect x="10" y="20" width="36" height="18" fill="#b5543a"/><path d="M8 20 L28 8 L48 20 Z" fill="#7a2e2e"/><rect x="24" y="28" width="8" height="10" fill="#3d2a20"/><rect x="26" y="10" width="4" height="6" fill="#f2f2f2"/>',
+ culture:'<rect width="56" height="48" fill="#2a1b3a"/><circle cx="18" cy="34" r="7" fill="#f2a93b"/><rect x="23" y="10" width="3" height="24" fill="#f2a93b"/><path d="M26 10 Q36 12 36 20" stroke="#f2a93b" stroke-width="3" fill="none"/><circle cx="42" cy="14" r="2" fill="#f4c4c9"/><circle cx="48" cy="24" r="2" fill="#7fd0e6"/>',
+ transit:'<rect width="56" height="48" fill="#a9cbe6"/><rect y="38" width="56" height="10" fill="#55595f"/><rect x="6" y="16" width="44" height="22" rx="4" fill="#f4f1ea"/><rect x="10" y="20" width="36" height="7" fill="#2b5f8a"/><rect x="6" y="30" width="44" height="3" fill="#c0392b"/><circle cx="16" cy="39" r="4" fill="#222"/><circle cx="40" cy="39" r="4" fill="#222"/>',
+ blight:'<rect width="56" height="48" fill="#b7b3a8"/><rect y="38" width="56" height="10" fill="#7a8a5a"/><path d="M12 38 V22 L28 12 L44 22 V38 Z" fill="#6b5a4a"/><rect x="18" y="24" width="8" height="8" fill="#c9a66b"/><path d="M18 24 L26 32 M26 24 L18 32" stroke="#4a3a2a" stroke-width="1.5"/><rect x="30" y="26" width="8" height="12" fill="#3d2a20"/>',
+ fiscal:'<rect width="56" height="48" fill="#1f3a2c"/><ellipse cx="22" cy="34" rx="12" ry="4" fill="#e6c547"/><ellipse cx="22" cy="30" rx="12" ry="4" fill="#f2d48b"/><ellipse cx="22" cy="26" rx="12" ry="4" fill="#e6c547"/><rect x="34" y="14" width="16" height="22" rx="2" fill="#5cc28d"/><text x="42" y="30" font-size="12" text-anchor="middle" fill="#0d1822" font-family="sans-serif" font-weight="700">$</text>',
+ council:'<rect width="56" height="48" fill="#d8cdb5"/><rect width="56" height="12" fill="#6b4a3a"/><path d="M6 44 Q28 18 50 44" stroke="#7a5340" stroke-width="6" fill="none"/><rect x="22" y="14" width="12" height="8" fill="#7a5340"/>',
+ storm:'<rect width="56" height="48" fill="#c7d9ea"/><rect y="38" width="56" height="10" fill="#eef4f9"/><rect x="40" y="4" width="3" height="36" fill="#6b4f3a"/><path d="M0 12 Q24 18 42 10 L56 8" stroke="#3b4b5a" stroke-width="1.5" fill="none"/><path d="M8 14v3 M18 16v3 M28 15v3" stroke="#fff" stroke-width="1.5"/>',
+ cityhall:'<rect width="56" height="48" fill="#a9cbe6"/><rect y="40" width="56" height="8" fill="#9a9488"/><rect x="10" y="10" width="36" height="30" fill="#d9d2c4"/><path d="M10 16 H46 M10 22 H46 M10 28 H46 M10 34 H46 M18 10 V40 M28 10 V40 M38 10 V40" stroke="#b9b2a5" stroke-width="1"/>'};
+const HD_TAG={streets:'streets',safety:'safety',crime:'safety',jobs:'jobs',health:'health',education:'education',culture:'culture',transit:'transit',blight:'blight',fiscal:'fiscal',oversight:'council',labor:'jobs'};
+function hdThumb(ev){try{if(ev.kind==='request'||ev.kind==='memo'){const m=S.council[ev.mi];if(m)return`<span class="hd-face">${portrait(m,40)}</span>`}
+  if(ev.kind==='char'){const v=visitorOf(ev);if(v&&v.who&&v.who.name){try{return`<span class="hd-face">${portrait(v.who,40)}</span>`}catch(e){}}}
+  if(ev.sid==='ice'||/^ice/.test(ev.id||''))return`<svg class="hd-th" viewBox="0 0 56 48" aria-hidden="true">${HD_TH.storm}</svg>`;
+  const d=evDef(ev);const tag=d&&d.tags&&d.tags[0];const k=HD_TAG[tag]||(ev.kind==='projx'?'streets':ev.kind==='budget'?'fiscal':'cityhall');return`<svg class="hd-th" viewBox="0 0 56 48" aria-hidden="true">${HD_TH[k]||HD_TH.cityhall}</svg>`}catch(e){return`<svg class="hd-th" viewBox="0 0 56 48" aria-hidden="true">${HD_TH.cityhall}</svg>`}}
+function hdOtherThumb(it){const k=/^prop:|^proj:|whip/.test(it.go)?'council':it.go==='promises'?'cityhall':it.go==='household'?'fiscal':/^plan:road/.test(it.go)?'streets':'cityhall';return`<svg class="hd-th" viewBox="0 0 56 48" aria-hidden="true">${HD_TH[k]}</svg>`}
+// ---------- the pieces ----------
+function hdEsc(t){return String(t==null?'':t).replace(/</g,'&lt;')}
+function hdStat(){const cand=isCand();const H=(S.pop&&S.pop.hist)||[];const prev=H.length>1?H[H.length-2].a:null;const d=prev!=null?S.approval-prev:0;
+  const dots='●'.repeat(Math.max(0,S.slots))+'○'.repeat(Math.max(0,3-S.slots));
+  let vote='';try{const v=$('hVote');if(cand&&v)vote=v.textContent}catch(e){}
+  return`<div class="hd-big"><small>${cand?'FAVORABLE':'APPROVAL'}</small><b>${Math.round(S.approval)}%${Math.abs(d)>=0.1?` <i class="${d>0?'pos':'neg'}">${d>0?'▲':'▼'}${Math.abs(d).toFixed(1)}</i>`:''}</b></div>
+   <div class="hd-sub"><span>${cand?`${vote?hdEsc(vote)+' · ':''}Cash <b>${fmtK((S.camp||{}).cash||0)}</b>`:`Reserve <b>${fmtM(S.reserve)}</b> · Council <b>${favorable(S)} of 13</b>`}</span><span>Actions <em>${dots}</em> ${Math.max(0,S.slots)} left this month</span></div><span class="hd-chev" aria-hidden="true">›</span>`}
+function hdWaiting(){let items=[];try{items=deskItems().filter(i=>['urgent','decide','votes','deals'].includes(i.cat))}catch(e){}
+  const all=items.length;items=items.slice(0,4);if(!items.length)return`<p class="hd-empty">Nothing is waiting on you right now. Take an action, visit somewhere, or press Continue.</p>`;
+  let first=true;const rows=items.map(it=>{const m=/^ev:(\d+)$/.exec(it.go||'');const ev=m?S.events[+m[1]]:null;
+    if(ev&&ev.kind==='event'&&first){const def=evDef(ev);if(def&&def.choices&&def.choices.length>=2&&def.choices.length<=3&&ev.id!=='briefing'){first=false;
+      return`<div class="hd-card hd-hot">${hdThumb(ev)}<div class="hd-ct"><b>${hdEsc(it.t)}</b><small>${hdEsc(it.s)}</small></div>
+       <div class="hd-ch">${def.choices.map((c,ci)=>{let sub='';try{sub=describe(c)}catch(e){}return`<button class="hd-cbtn" data-ev="${m[1]}" data-ci="${ci}"><b>${hdEsc(c.label)}</b>${sub?`<small>${hdEsc(sub)}</small>`:''}</button>`}).join('')}</div>
+       <button class="hd-more" data-hdgo="${it.go}">Details and background ›</button></div>`}}
+    return`<button class="hd-row" data-hdgo="${it.go}">${ev?hdThumb(ev):hdOtherThumb(it)}<span class="hd-ct"><b>${hdEsc(it.t)}</b><small>${hdEsc(it.s)}</small></span><span class="hd-open">Open ›</span></button>`});
+  return rows.join('')+(all>items.length?`<button class="hd-all" data-hdgo="desk">All ${all} on your desk ›</button>`:'')}
+function hdDistricts(){let h='';for(let d=1;d<=9;d++){let a=50;try{a=dApp(d)}catch(e){}const c=a>=55?'hi':a>=45?'mid':'lo';h+=`<button class="hd-d hd-${c}" data-hddist="${d}" aria-label="District ${d}: ${Math.round(a)}%"><b>${d}</b><small>${Math.round(a)}</small></button>`}return h}
+function hdNews(){const n=(S.news||[])[0];if(!n)return'';let o='The Bluff City Ledger';try{const O=OUTLETS.find(x=>x.id===n.o);if(O)o=O.n}catch(e){}
+  return`<button class="hd-news" data-hdact="news"><small>${hdEsc(o).toUpperCase()}</small><b>${hdEsc(n.head)}</b></button>`}
+function hdNext(){try{const st=nextSteps()[0];if(!st)return'';return`<button class="hd-next" data-hdnext="1"><small>NEXT STEP</small><b>${hdEsc(st.t)}</b></button>`}catch(e){return''}}
+function hdPlay(){const b=$('bPlay');let t=b?b.innerText.replace(/\s*Space\s*$/,'').trim():'Continue';const lines=t.split('\n').map(x=>x.trim()).filter(Boolean);let main=lines[0]||'Continue',sub=lines.slice(1).join(' ');
+  sub=sub.split(':')[0];if(S.paused===false){main='Pause';sub=dateStr()}main=main.replace(/^[▶❚\s]+/,'');return`<span class="hd-pm">${S.paused===false?'❚❚':'▶'} ${hdEsc(main)}</span>${sub?`<span class="hd-ps">${hdEsc(sub)}</span>`:''}`}
+const HD_ICON={desk:'<path d="M3 12h5l2 3h4l2-3h5"/><path d="M5 5h14l2 7v7H3v-7z"/>',act:'<path d="M13 2 4 14h7l-1 8 9-12h-7z"/>',budget:'<circle cx="12" cy="12" r="9"/><path d="M15 9h-4a2 2 0 0 0 0 4h2a2 2 0 0 1 0 4H9M12 6v2M12 16v2"/>',camp:'<path d="M4 20V10l8-6 8 6v10"/><path d="M9 20v-6h6v6"/>',more:'<circle cx="5" cy="12" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="19" cy="12" r="1.6"/>',map:'<path d="M9 4 3 6v14l6-2 6 2 6-2V4l-6 2-6-2z"/><path d="M9 4v14M15 6v14"/>',office:'<rect x="3" y="10" width="18" height="10" rx="1"/><path d="M8 10V6h8v4"/>',home:'<path d="M3 11 12 4l9 7"/><path d="M5 10v10h14V10"/>',pin:'<path d="M12 21s-7-6.5-7-12a7 7 0 0 1 14 0c0 5.5-7 12-7 12z"/><circle cx="12" cy="9" r="2.5"/>'};
+function hdI(k,s){return`<svg viewBox="0 0 24 24" width="${s||22}" height="${s||22}" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${HD_ICON[k]}</svg>`}
+function hdHTML(){const cand=isCand();let visitors=0;try{visitors=officeVisitors().length}catch(e){}
+  const where=cand?'ON THE CAMPAIGN TRAIL':'CITY HALL · 7TH FLOOR';
+  return`<header class="hd-sky">${hdSkySVG()}
+    <div class="hd-top"><button class="hd-ib" data-hdact="menu" aria-label="Menu">☰</button><div class="hd-brand">BLUFF CITY <span>RISING</span></div><button class="hd-ib" data-hdact="map" aria-label="Street map" title="Street map">${hdI('map',20)}</button></div>
+    <div class="hd-where"><small>${where}</small><span>${dateStr()} · ${hdWeather()}</span></div>
+    <div class="hd-places">${cand?`<button data-hdact="hq">${hdI('camp',16)}Campaign HQ</button>`:`<button data-hdact="office" class="${visitors?'on':''}">${hdI('office',16)}Office${visitors?` <em>${visitors}</em>`:''}</button>`}<button data-hdact="home">${hdI('home',16)}Home</button><button data-hdact="map">${hdI('pin',16)}Around town</button></div></header>
+   <button class="hd-stat" data-hdact="opinion">${hdStat()}</button>
+   <div class="hd-body">${hdNext()}<h3>WAITING FOR YOU</h3>${hdWaiting()}
+    <h3>THE DISTRICTS <span>tap one</span></h3><div class="hd-dists">${hdDistricts()}</div>${hdNews()}</div>
+   <nav class="hd-nav" aria-label="Desk">
+    <button class="on" data-hdact="top">${hdI('desk')}Desk</button>
+    <button data-hdact="actions">${hdI('act')}Actions</button>
+    <button class="hd-play" data-hdact="play">${hdPlay()}</button>
+    ${cand?`<button data-hdact="hq">${hdI('camp')}Campaign</button>`:`<button data-hdact="budget">${hdI('budget')}Budget</button>`}
+    <button data-hdact="more" aria-expanded="${HD.more}">${hdI('more')}More</button></nav>
+   ${HD.more?`<div class="hd-sheet" role="menu">${(cand?[]:[['hq','Campaign HQ']]).concat([['council','The council'],['opinion','Public opinion'],['news','The news'],['ledger','Everything that happened'],['help','Guide'],['music','Music'],['map','Street map'],['menu','Save and settings']]).map(([a,n])=>`<button role="menuitem" data-hdact="${a}">${n}</button>`).join('')}</div>`:''}`}
+function renderHomeDesk(force){if(!S)return;const el=(()=>{let e=$('homeDesk');if(!e){const app=$('app');if(!app)return null;e=document.createElement('section');e.id='homeDesk';e.setAttribute('aria-label','Your desk');app.appendChild(e)}return e})();if(!el)return;
+  if(!$('bDeskBack')){const nav=document.querySelector('nav.actions');if(nav)nav.insertAdjacentHTML('afterbegin',`<button class="btn" id="bDeskBack" data-hdact="desk">${hdI('desk',16)} Desk</button>`)}
+  const show=hdShown();document.body.classList.toggle('deskon',show);document.body.classList.toggle('deskmapview',hdEligible()&&!HD.on);el.hidden=!show;if(!show)return;
+  const h=hdHTML();if(force||h!==HD.last){const sc=(el.querySelector('.hd-body')||{}).scrollTop||0;el.innerHTML=h;HD.last=h;const bd=el.querySelector('.hd-body');if(bd)bd.scrollTop=sc}}
+{const _rh=refreshHUD;refreshHUD=function(...a){const r=_rh.apply(this,a);try{renderHomeDesk()}catch(e){console.warn('desk',e)}return r}}
+{const _uc=updateClock;updateClock=function(...a){const r=_uc.apply(this,a);try{if(hdShown()){const p=document.querySelector('#homeDesk .hd-play');if(p){const h=hdPlay();if(p._h!==h){p.innerHTML=h;p._h=h}}}}catch(e){}return r}}
+// ---------- what the buttons do ----------
+function hdAct(a){const cand=isCand();HD.more=a==='more'?!HD.more:false;
+  const R={map:()=>hdSetView(false),desk:()=>hdSetView(true),top:()=>{const b=document.querySelector('#homeDesk .hd-body');if(b)b.scrollTop=0},menu:()=>{const m=$('bMenu');if(m)m.click()},
+   opinion:()=>openOpinion(),actions:()=>openActions(),budget:()=>openBudget(),hq:()=>openHQ(),council:()=>openCouncil(),news:()=>openNews(),ledger:()=>openLedger(),help:()=>openHelp(),
+   music:()=>{const m=document.querySelector('[data-music-open]');if(m)m.click()},play:()=>{const b=$('bPlay');if(b)b.click()},
+   office:()=>{const V=officeVisitors();try{enterOffice();if(V.length)setTimeout(()=>{try{openAudience()}catch(e){}},400)}catch(e){openPlace('cityhall')}},
+   home:()=>{try{enterHome()}catch(e){try{openHousehold()}catch(e2){}}},more:()=>renderHomeDesk(true)};
+  try{(R[a]||(()=>{}))()}catch(e){console.warn('desk act',a,e)}if(a!=='more'&&a!=='map'&&a!=='desk')renderHomeDesk(true)}
+document.addEventListener('click',e=>{const t=e.target.closest('[data-hdact],[data-hdgo],[data-hddist],[data-hdnext]');if(!t||!S)return;
+  if(t.dataset.hdact){e.preventDefault();e.stopPropagation();hdAct(t.dataset.hdact);return}
+  if(t.dataset.hdgo){e.preventDefault();e.stopPropagation();const g=t.dataset.hdgo;if(g==='desk'){openDesk();return}try{deskGo(g)}catch(err){console.warn(err)}return}
+  if(t.dataset.hddist){e.preventDefault();e.stopPropagation();try{openPlace('dist:'+t.dataset.hddist)}catch(err){}return}
+  if(t.dataset.hdnext){e.preventDefault();e.stopPropagation();try{const st=nextSteps()[0];if(st)st.go()}catch(err){}}},true);
+// the old phone "Desk" button now brings the desk back
+document.addEventListener('click',e=>{const b=e.target.closest('nav.actions [data-act="desk"]');if(!b||!S||!hdEligible())return;e.preventDefault();e.stopImmediatePropagation();hdSetView(true)},true);
+// after a decision on the desk, redraw it
+document.addEventListener('click',e=>{if(e.target.closest('#homeDesk [data-ev]'))setTimeout(()=>{try{renderHomeDesk(true)}catch(err){}},60)});
+// the tour points at the map screen, so it runs there and the desk comes back afterward
+if(typeof tutStart==='function'){const _ts=tutStart;tutStart=function(...a){const r=_ts.apply(this,a);try{if(typeof TUT!=='undefined'&&TUT&&HD.on&&hdEligible()){HD.tour=true;HD.on=false;renderHomeDesk(true)}}catch(e){}return r}}
+if(typeof tutEnd==='function'){const _te=tutEnd;tutEnd=function(...a){const r=_te.apply(this,a);if(HD.tour){HD.tour=false;HD.on=true;try{renderHomeDesk(true)}catch(e){}}return r}}
 
 function openLedger(){const L=S.log||[];openPanel('Everything that has happened, newest first','Ledger',L.length?`<div class="logl">${L.map(x=>`<div><span>${x.d}</span><p style="margin:0">${x.t}</p></div>`).join('')}</div>`:'<p class="note">Nothing yet. Tap ▶ Continue to move ahead.</p>','ledger')}
 function openPolicies(){const ks=Object.keys(POLICIES);
