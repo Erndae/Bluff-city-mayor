@@ -4,6 +4,16 @@
 
 A Memphis political life on a real map of the city. Start as the mayor, run for mayor, or begin as a private citizen with a job and rise from there: the City Council, Shelby County mayor, Congress and the Senate, a law firm, a university presidency, or the back rooms as a kingmaker. As mayor you handle problems at real places, write the city budget, win votes from the 13-member City Council and run for re-election. Your family, health, party, rivals and record follow you through every chapter.
 
+## v27.02: A peek inside, and what happened there
+
+- **The 3D office and home stay exactly as they are.** The desk's Office and Home buttons still take you into them.
+- **A peek before you go in.** At the top of the desk:
+  - **In your office:** who's waiting, like "Pastor Hayes and the police chief are waiting."
+  - **At home:** how your family is doing, like "Maya wants to show you something," "Your son has been quiet lately," or "Vanessa saved you a plate. Dinner's at 7."
+  - Tap either one to go straight in.
+- **What happened, when you come back out.** After a visit to the office or home, the desk shows what happened inside under "What happened": the meetings you took, the decisions you made, and the time with your family. The last three visits stay on the desk, and "Everything" opens the full ledger.
+- On phones, notifications now sit just above the desk's tab bar instead of over the middle of the screen.
+
 ## v27.01: Every place its own look
 
 - **Every career now plays on the desk instead of a pop-up**, and the desk looks like where you are:

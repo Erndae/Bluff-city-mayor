@@ -458,6 +458,12 @@ body.deskon #nextchip,body.deskon #startchip,body.deskon #bSee{visibility:hidden
 body.deskon #endBanner{display:none!important}
 #homeDesk .hd-absorb [data-act="close"]{display:none!important}
 .hd-brand{flex:0 1 auto;margin-right:auto;padding:6px 10px;border-radius:10px;background:rgba(13,24,34,.6)}
+.hd-peek{display:flex;flex-direction:column;gap:6px}
+.hd-peek button{display:flex;align-items:center;gap:10px;text-align:left;padding:8px 10px;border-radius:12px;border:1px solid #2a4052;background:#13212d;font-size:14px;line-height:1.3;min-height:52px}
+.hd-peek button>span:nth-child(2){flex:1;min-width:0}.hd-peek small,.hd-feed small{display:block;font-family:var(--f-label);font-size:11px;letter-spacing:2px;color:var(--amber)}.hd-peek b{color:var(--amber);font-size:18px}
+.hd-pi{width:34px;height:34px;border-radius:50%;background:rgba(242,169,59,.14);color:var(--amber);display:grid;place-items:center;flex-shrink:0}
+@media (max-width:860px){body.deskon #notes{bottom:calc(96px + env(safe-area-inset-bottom,0px))!important}}
+.hd-feed{display:flex;gap:10px;padding:8px 10px;border-radius:12px;background:#101c26;border-left:3px solid var(--amber)}.hd-feed>div{flex:1;min-width:0}.hd-feed p{margin:2px 0 0;font-size:14px;line-height:1.35}
 .adgain{display:block;width:100%;text-align:center;font-size:11px;font-weight:600;color:var(--good);margin-top:1px}
 #start{overflow-x:hidden;overflow-y:auto;touch-action:pan-y}.startbox{min-width:0;max-width:min(600px,100%);box-sizing:border-box}.startbox *{min-width:0}.create select,.create input{max-width:100%;width:100%;box-sizing:border-box;text-overflow:ellipsis}.create .tpick,.create .tpick>*{max-width:100%;box-sizing:border-box}
 @media (max-width:640px){.startbox{margin-left:0}#start{padding-left:max(16px,env(safe-area-inset-left,0px))}}
@@ -810,7 +816,7 @@ details.analysis{margin-top:6px}details.analysis summary{cursor:pointer;color:va
     <button class="btn primary" data-act="pause" id="bPlay"><svg class="ico" viewBox="0 0 12 12" aria-hidden="true"><path d="M3.2 1.6v8.8l7.2-4.4z" fill="currentColor"/></svg> Resume <kbd>Space</kbd></button>
   </nav>
   <div class="status" id="status">Loading map…</div>
-  <div class="credit"><span class="ver" id="verTag">v27.01</span></div>
+  <div class="credit"><span class="ver" id="verTag">v27.02</span></div>
   <div class="tip" id="tip" hidden></div>
   <div class="toast" id="toast" role="status"></div>
   <section class="panel" id="panel" hidden aria-live="polite">
@@ -838,7 +844,7 @@ details.analysis{margin-top:6px}details.analysis summary{cursor:pointer;color:va
         <button class="btn" data-music-open>Music &amp; volume</button>
       </div>
       <div id="slotList" hidden></div>
-      <p class="note startv">Version <b class="ver" id="verStart">v27.01</b></p>
+      <p class="note startv">Version <b class="ver" id="verStart">v27.02</b></p>
     </div>
     <div class="startbox create" id="create" hidden>
       <h2>Create your mayor</h2>
@@ -1649,7 +1655,7 @@ function enact(s,p){DIVS.forEach(d=>{s.enacted[d.id]=p.divs[d.id];s.ratio[d.id]=
 // Voter groups. Each has a share of residents, turnout, home districts, concerns and an approval of you.
 // Citywide approval is the turnout-weighted average of the groups; each council district's approval comes from the groups that live there.
 // Shares, district mix and turnout are modeled, loosely grounded in Memphis demographics; they are not survey data.
-const VERSION='v27.01';
+const VERSION='v27.02';
 const GROUPS=[
  {id:'working',sh:'Working families',n:'Working families',ic:'⚒︎',c:'#f2a93b',share:24,turn:.5,start:56,w:{jobs:1,safety:.8,transit:.5},
   d:'Hourly workers in logistics, warehouses, health care and service jobs. The biggest bloc in the city.',dm:{1:1.1,2:.8,3:1.3,4:1.2,5:.6,6:1.2,7:1.1}},
@@ -9666,6 +9672,50 @@ window.addEventListener('click',e=>{const t=e.target.closest('#homeDesk [data-hd
 // going back to the desk from the map reopens the career screen there
 {const _sv=hdSetView;hdSetView=function(desk){_sv.apply(this,arguments);if(desk&&S&&S.after){try{openAfter()}catch(e){}}}}
 {const _ha=hdAct;hdAct=function(a,dd){if(a==='top'&&S&&S.after){HD.view='after';HD.top=true;HD.more=false;renderHomeDesk(true);return}return _ha.apply(this,arguments)}}
+
+// ======================= v27.02: A PEEK INSIDE, AND WHAT HAPPENED THERE =======================
+// The 3D office and home stay exactly as they are. The desk now tells you what's waiting in them before you go
+// ("Pastor Hayes and the police chief are waiting", "Maya wants to show you something"), and when you come back
+// out, what happened inside shows up on the desk under "What happened": the meetings you took, the decisions you
+// made, the time with your family.
+function hdFirst(n){return String(n||'').split(' ')[0]}
+function hdShortWho(v){try{const n=v.who&&v.who.name||'Someone';const r=(v.role||'').toLowerCase();if(/chief|director|superintendent|president|sheriff|commissioner/.test(r)&&!/council/.test(r))return'the '+r.replace(/^(memphis |mpd |mlgw )/,'').split('·')[0].trim();const parts=n.split(' ');return parts.length>1?(/^(pastor|rev|dr|mr|ms|mrs)\.?$/i.test(parts[0])?parts[0]+' '+parts[parts.length-1]:parts[0]+' '+parts[parts.length-1]):n}catch(e){return'Someone'}}
+function hdOfficePeek(){if(!inOffice())return null;let V=[];try{V=officeVisitors()}catch(e){}
+  if(!V.length)return'Nobody is waiting. A quiet afternoon on the 7th floor.';const n=V.map(hdShortWho);
+  const cap=s=>s.charAt(0).toUpperCase()+s.slice(1);if(n.length===1)return`${cap(n[0])} is waiting to see you.`;if(n.length===2)return`${cap(n[0])} and ${n[1]} are waiting.`;return`${cap(n[0])}, ${n[1]} and ${n.length-2} more are waiting.`}
+function hdHomePeek(){let F=null,M=[];try{F=famInit();M=famMembers()}catch(e){}if(!F)return null;
+  try{const ev=(S.events||[]).find(e=>{try{return evAt(e)==='home'}catch(err){return false}});if(ev)return evTitle(ev)+'.'}catch(e){}
+  if(!M.length)return F.home<40?'The house feels empty lately. Home life is slipping.':'A quiet house. Time to rest.';
+  const low=M.filter(m=>(m.mood??70)<45).sort((a,b)=>(a.mood??70)-(b.mood??70))[0];
+  if(low){const who=hdFirst(low.name),rel=String(low.rel||'').toLowerCase();return(low.mood??70)<30?`${who} is upset with you. Your ${rel} needs some time.`:`${who} has been quiet lately.`}
+  if(F.home<40)return'Your family misses you. You\'ve been gone a lot.';
+  const kids=M.filter(m=>m.rel==='Son'||m.rel==='Daughter'),sp=M.find(m=>m.id==='s');const k=(S.m+S.y)%3;
+  if(kids.length&&k!==2){const kid=kids[(S.m+S.day)%kids.length];return kid.age<13?`${hdFirst(kid.name)} wants to show you something.`:kid.age<18?`${hdFirst(kid.name)} has a game this week.`:`${hdFirst(kid.name)} is coming by for dinner.`}
+  if(sp)return`${hdFirst(sp.name)} saved you a plate. Dinner's at 7.`;return`${hdFirst(kids[0].name)} wants to show you something.`}
+function hdPeekHTML(){const o=hdOfficePeek(),h=hdHomePeek();if(!o&&!h)return'';
+  return`<div class="hd-peek">${o?`<button data-hdact="office"><span class="hd-pi">${hdI('office',18)}</span><span><small>IN YOUR OFFICE</small>${hdEsc(o)}</span><b aria-hidden="true">›</b></button>`:''}${h?`<button data-hdact="home"><span class="hd-pi">${hdI('home',18)}</span><span><small>AT HOME</small>${hdEsc(h)}</span><b aria-hidden="true">›</b></button>`:''}</div>`}
+// ---------- what happened inside ----------
+HD.room=null;
+function hdRoomStart(kind){try{const F=famInit();HD.room={kind,log:(S.log||[])[0]||null,fam:F&&F.log?F.log[0]||null:null,alog:S.after&&S.after.log?S.after.log[0]||null:null,d:dateStr()}}catch(e){HD.room=null}}
+{const _eo=enterOffice;enterOffice=function(...a){const was=!!(window.BCInterior&&BCInterior.isOpen);const r=_eo.apply(this,a);try{if(!was&&window.BCInterior&&BCInterior.isOpen)hdRoomStart('office')}catch(e){}return r}}
+{const _eh=enterHome;enterHome=function(...a){const was=!!(window.BCInterior&&BCInterior.isOpen);const r=_eh.apply(this,a);try{if(!was&&window.BCInterior&&BCInterior.isOpen)hdRoomStart('home')}catch(e){}return r}}
+const HD_NOISE=/^(Skill up|New: |Money for|Campaign fund:|You were briefed)/;
+function hdSince(arr,top){if(!arr)return[];const i=top?arr.indexOf(top):arr.length;return(i<0?arr.slice(0,6):arr.slice(0,i))}
+function hdRoomEnd(){const R=HD.room;HD.room=null;if(!R||!S)return;let items=[];
+  try{hdSince(S.log,R.log).forEach(x=>{if(x&&x.t&&!HD_NOISE.test(x.t))items.push(x.t)})}catch(e){}
+  try{const F=famInit();if(F&&F.log)hdSince(F.log,R.fam).forEach(x=>{if(x&&x.t)items.push(x.t)})}catch(e){}
+  try{if(S.after&&S.after.log)hdSince(S.after.log,R.alog).forEach(x=>{if(x&&x.t)items.push(x.t)})}catch(e){}
+  items=[...new Set(items)].slice(0,4);
+  if(!items.length)items=[R.kind==='office'?'You spent some time at your desk on the 7th floor.':'You spent some time at home.'];
+  S.deskFeed=S.deskFeed||[];S.deskFeed.unshift({k:R.kind,d:R.d,items});if(S.deskFeed.length>6)S.deskFeed.length=6;save()}
+function hdRoomCheck(){try{if(HD.room&&!(window.BCInterior&&BCInterior.isOpen)){hdRoomEnd();renderHomeDesk(true)}}catch(e){}}
+{const _rh=refreshHUD;refreshHUD=function(...a){hdRoomCheck();return _rh.apply(this,a)}}
+setInterval(hdRoomCheck,1500);
+function hdFeedHTML(){const F=(S&&S.deskFeed)||[];if(!F.length)return'';
+  return`<h3>WHAT HAPPENED <button class="hd-link" data-hdact="ledger">Everything ›</button></h3>`+F.slice(0,3).map(x=>`<div class="hd-feed"><span class="hd-pi">${hdI(x.k==='office'?'office':'home',18)}</span><div><small>${x.k==='office'?'IN YOUR OFFICE':'AT HOME'} · ${hdEsc(x.d)}</small>${x.items.map(t=>`<p>${hdEsc(t)}</p>`).join('')}</div></div>`).join('')}
+// ---------- on the desk ----------
+{const _b=hdBodyFor;hdBodyFor=function(){const h=_b.apply(this,arguments);if(HD.view!=='desk')return h;return hdPeekHTML()+h.replace('<h3>THE DISTRICTS',hdFeedHTML()+'<h3>THE DISTRICTS')}}
+{const _a=hdAfterHTML;hdAfterHTML=function(){const h=_a.apply(this,arguments);if(HD.view!=='after')return h;return h.replace('<div id="hdSlot"></div>',`${hdPeekHTML()}${hdFeedHTML()}<div id="hdSlot"></div>`)}}
 
 function openLedger(){const L=S.log||[];openPanel('Everything that has happened, newest first','Ledger',L.length?`<div class="logl">${L.map(x=>`<div><span>${x.d}</span><p style="margin:0">${x.t}</p></div>`).join('')}</div>`:'<p class="note">Nothing yet. Tap ▶ Continue to move ahead.</p>','ledger')}
 function openPolicies(){const ks=Object.keys(POLICIES);
